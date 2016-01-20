@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="s2.收费报表系统"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    mc:Ignorable="d"
+    d:DesignHeight="300" d:DesignWidth="400">
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+        <m:ResourceLoad d:IsHidden="True">
+            
+            
+        </m:ResourceLoad>
+        <toolkit:DockPanel>
+            <!-- <StackPanel Orientation="Horizontal" toolkit:DockPanel.Dock="Top">
+                 <TextBlock>操作员:</TextBlock>
+                <TextBox Name="worker"></TextBox>
+                <TextBlock>开始时间:</TextBlock>
+                <sdk:DatePicker IsEnabled="True"  Name="kssj"/>
+                <TextBlock>结束时间:</TextBlock>
+                <sdk:DatePicker IsEnabled="True" Name="jssj" />
+                <Button x:Name="ui_searchButton" Click="ui_searchButton_Click">查询</Button>
+            </StackPanel> -->
+            <sdk:DataGrid x:Name="ui_list" AutoGenerateColumns="False">
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding lx}"></sdk:DataGridTextColumn>
+                    <sdk:DataGridTextColumn Header="应交金额" Binding="{Binding fee_yj}"></sdk:DataGridTextColumn>
+                    <sdk:DataGridTextColumn Header="实际缴费" Binding="{Binding fee_sj}"></sdk:DataGridTextColumn>
+                    <sdk:DataGridTextColumn Header="欠费金额" Binding="{Binding fee_qf}"></sdk:DataGridTextColumn>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+        </toolkit:DockPanel>
+    </Grid>
+</UserControl>

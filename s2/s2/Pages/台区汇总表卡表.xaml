@@ -1,0 +1,85 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:r="clr-namespace:Com.Aote.Reports;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.台区汇总表卡表" d:DesignWidth="1024" d:DesignHeight="768">
+		
+    <Grid x:Name="LayoutRoot">
+    	<m:ResourceLoad Margin="0,0,-101,0">
+		 
+		<!--查询对象-->
+			<o:SearchObject Name="search"> 
+					
+					<o:PropertySetter PropertyName="f_yytdate1" NotNull="True" Operator="1=1"/>
+					
+					<o:PropertySetter PropertyName="f_yytdate2" NotNull="True" Operator="1=1"/>
+			</o:SearchObject>
+			
+	         
+	</m:ResourceLoad >	
+        <Grid Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=table.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid x:Name="daninfosearch" DataContext="{m:Exp Str=search}" toolkit:DockPanel.Dock="Top" Height="33" Width="Auto" Background="#FFF7F7F7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content=" 查  询" IsEnabled="{m:Exp Str=!daninfosearch.DataContext.HasErrors}" x:Name="dansearchbutton" Click="{m:Exp Str=search.Search()}" FontSize="14"  Width="60" Margin="10,0,0,0" Grid.Column="5" RenderTransformOrigin="-3.317,0.48" HorizontalAlignment="Right" VerticalAlignment="Center"  />
+                        <TextBlock TextWrapping="Wrap" Grid.Column="0" Margin="0,0,0,1" Height="25" TextAlignment="Right" Text="抄表日期从：" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+                        <sdk:DatePicker x:Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,2" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" d:LayoutOverrides="Height" >
+                           
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="-10,0,0,1" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+                        <sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,2" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.ColumnSpan="1" >
+                            
+                        </sdk:DatePicker>
+                        <Button Content=" 置  空" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.f_network\=null;daninfosearch.DataContext.f_yytdate2\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_payment\=null;daninfosearch.DataContext.f_startedate\=null;daninfosearch.DataContext.f_enddate\=null;daninfosearch.DataContext.f_handdate\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_menzhan\=null;daninfosearch.DataContext.f_zerenbumen\=null}" FontSize="14" HorizontalAlignment="Right" Width="60" Margin="0,2,0,0" RenderTransformOrigin="0,0.929"  />
+                        <Button Content="导出Excel" x:Name="searchbutton" Grid.Column="7" Click="{m:Exp Str=table.ToExcel()}" Margin="8,0,0,0" Width="90" FontSize="13.333" Height="30" VerticalAlignment="Top"/>
+						<c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{table.ExcelFileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"/>
+                    </Grid>
+                   
+
+                   <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.ColumnSpan="2" Grid.RowSpan="3" Margin="0">
+		<Grid Width="2500" Height="800" >
+		<r:Table Name="table" FileName="卡表台区汇总.rpt" Completed="{m:Exp Str=downLoad.Down()}"
+			 WebClientInfo="{StaticResource reportaddress}"  Condition="{m:Exp Str=search.Condition}" Grid.Row="0" d:LayoutOverrides="VerticalAlignment" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1"  Margin="0,0,0,8"/>
+		</Grid>
+		</ScrollViewer>
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+
+        </Grid>
+
+    </Grid>
+</UserControl>

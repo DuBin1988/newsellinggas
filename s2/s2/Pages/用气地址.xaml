@@ -1,0 +1,245 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    x:Class="Com.Aote.Pages.用气地址" FontSize="13"
+    mc:Ignorable="d" >
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-12,0"  x:Name="pageResource">
+            <o:ChildWindowObj Name="openchild" CWName="/Pages/获取小区" />
+        </m:ResourceLoad>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applys.ItemsSource.IsBusy}" Grid.Column="0">
+                <toolkit:DockPanel LastChildFill="True"  >
+                    <Grid Background="#FFDBE4F3" toolkit:DockPanel.Dock="Top"  Name="applysearch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+
+                        <a:Data.Context>
+                            <o:SearchObject x:Name="criteria" ></o:SearchObject>
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Text="楼号：" Margin="5,4,0,4" FontSize="13.333"  Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=cusDom1}" Width="150" Margin="0" Height="25" Grid.Row="0" Grid.Column="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="cusDom1"  Operator="f_cusDom = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="单元：" Margin="5,4,0,4" FontSize="13.333"  Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=cusDy1}" Width="150" Margin="0" Height="25"  Grid.Row="0" Grid.Column="3" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="cusDy1"  Operator="f_cusDy = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="楼层：" Margin="5,4,0,4" FontSize="13.333"  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=cusFloor1}" Width="150" Margin="0" Height="25"  Grid.Row="1" Grid.Column="1">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="cusFloor1"  Operator="f_cusFloor = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="房号：" Margin="5,4,0,4" FontSize="13.333"  Grid.Row="1" Grid.Column="2"  HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=apartment1}" Width="150" Margin="0" Height="25"  Grid.Row="1" Grid.Column="3">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="apartment1"  Operator="f_apartment = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="状态：" Margin="5,4,0,4" FontSize="13.333"  Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Right"/>
+                        <ComboBox Name="cmbState" Grid.Row="2" Grid.Column="1"  Margin="0" Height="25" SelectedIndex="0">
+                            <ComboBoxItem Content=""></ComboBoxItem>
+                            <ComboBoxItem Content="新增"></ComboBoxItem>
+                            <ComboBoxItem Content="重复"></ComboBoxItem>
+                            <ComboBoxItem Content="已建"></ComboBoxItem>
+                        </ComboBox>
+
+                        <Button Content="查询" x:Name="search" Click="search_Click" Height="25" Width="70" Style="{StaticResource 查询btn}"  Grid.Row="2" Grid.Column="3" IsEnabled="False" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <StackPanel toolkit:DockPanel.Dock="Bottom" Background="#94a8cd" Height="25" Orientation="Horizontal">
+                        <!--信息列表翻页-->
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{applys.ItemsSource.Count\}项$}" HorizontalAlignment="Left" Foreground="#FF140000" Width="300" Height="24"/>
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=applys}"  Margin="0,1,0,0" PageSize="15" Height="24" Foreground="#FF140000" VerticalAlignment="Top"/>
+                    </StackPanel>
+                    <sdk:DataGrid x:Name="applys" Margin="0"  
+				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
+                        <a:Data.Items>
+                            <o:PagedList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"  Path="sql" Names="state,road,districtname,cusDy,cusDom,cusFloor,apartment,placeholder"
+                             PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+                        </a:Data.Items>
+
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="状  态" Binding="{Binding state}"/>
+                            <sdk:DataGridTextColumn Header="街  道" Binding="{Binding road}"/>
+                            <sdk:DataGridTextColumn Header="小  区" Binding="{Binding districtname}"/>
+                            <sdk:DataGridTextColumn Header="楼  号" Binding="{Binding cusDom}"/>
+                            <sdk:DataGridTextColumn Header="单  元" Binding="{Binding cusDy}"/>
+                            <sdk:DataGridTextColumn Header="楼  层" Binding="{Binding cusFloor}"/>
+                            <sdk:DataGridTextColumn Header="房  号" Binding="{Binding apartment}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel >
+            </c:BusyIndicatorEx>
+            
+            
+            <c:BusyIndicatorEx 
+		BusyContent="{m:Exp Str=$正在工作，请稍等...$}" 
+		IsBusy="{m:Exp Str=apply.DataContext.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+                <toolkit:DockPanel Background="{x:Null}" x:Name="apply" >
+                    <a:Data.Context>
+                        <oo:GasADObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_gasaddresstemp" >
+                            <o:PropertySetter PropertyName="f_road" Default="{m:Exp Str=openchild.Result.f_road}" Value="{m:Exp Str=openchild.Result.f_road}"/>
+                        </oo:GasADObject>
+                    </a:Data.Context>
+
+
+                    
+                        <!--主操作区-->
+                        <Grid  HorizontalAlignment="Stretch" Height="Auto" Width="Auto">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                <GradientStop Color="#FFF2F8FF" Offset="0"/>
+                                <GradientStop Color="#FFDBE6E8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="80"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="100"/>
+                                <!--先增加-->
+                                <RowDefinition Height="100"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="楼号：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="2" Height="25" />
+
+                            <TextBlock Text="单元：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Height="25" />
+                            <TextBox Text="{m:Bind Path=f_startunit}"  Grid.Column="1"  LostFocus="{m:Exp Str=apply.DataContext.Change()}"  Margin="0" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_startunit"  NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
+                            <TextBlock Margin="0" TextWrapping="Wrap" Text="小      区：" TextAlignment="Right" Height="25" Grid.Row="1"/>
+                            <TextBox x:Name="districtname" Text="{m:Bind Path=f_districtname}" IsEnabled="False" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="2" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname" NotNull="True" Default="{m:Exp Str=apply.DataContext.f_districtname}"  Value="{m:Exp Str=openchild.Result.f_districtname}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
+                            <Button Content="获取小区" Grid.Column="3" Grid.Row="1" Height="25" Click="{m:Exp Str=openchild.IsOpen\=True}" Width="60" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                            <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
+                            <TextBox Text="{m:Bind Path=f_startbuild}" LostFocus="{m:Exp Str=apply.DataContext.Change()}"  Grid.Column="1" Margin="0,10" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_startbuild" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_endbuild}"  LostFocus="{m:Exp Str=apply.DataContext.Change()}" Grid.Column="3" Margin="0,10" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_endbuild" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="号楼" Grid.Column="4" Margin="0,10,74,10" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Center" Height="25"  />
+                            <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="3" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
+                            <TextBox Text="{m:Bind Path=f_endunit}"  LostFocus="{m:Exp Str=apply.DataContext.Change()}"  Grid.Column="3" Margin="0,10" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_endunit" NotNull="True" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="单元" Grid.Column="4" Margin="0,10" Grid.Row="3" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
+                            <TextBlock Text="从：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" />
+                            <TextBox Text="{m:Bind Path=f_startlayer}"  LostFocus="{m:Exp Str=apply.DataContext.Change()}"  Grid.Column="1" Margin="0,10" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_startlayer" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="4" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
+                            <TextBox Text="{m:Bind Path=f_endlayer}"  LostFocus="{m:Exp Str=apply.DataContext.Change()}"   Grid.Column="3" Margin="0,10" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_endlayer"  NotNull="True" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="每楼层从：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" />
+                            <TextBox Text="{m:Bind Path=f_startroom}"  LostFocus="{m:Exp Str=apply.DataContext.Change()}"  Grid.Column="1" Margin="0,10" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_startroom" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="层" Grid.Column="4" Margin="0,10" Grid.Row="4" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
+                            <TextBlock Text="室" Grid.Column="2" Margin="0,10" Grid.Row="5" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
+                            <TextBlock Text="建址时间：" Margin="0,8,0,12" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="6" Height="25" FontSize="13.333" />
+                            <sdk:DatePicker Grid.Column="1" Margin="-0.25,2,0,3" Grid.Row="6"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Height="25" HorizontalAlignment="Stretch" FontSize="13.333" VerticalAlignment="Stretch" Grid.RowSpan="1">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_date"
+                					Default="{m:Exp Str=SysTime.Today}"/>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+                            <TextBox Text="{m:Bind Path=f_endroom}" LostFocus="{m:Exp Str=apply.DataContext.Change()}" Grid.Column="3" Margin="0,6,0,14" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.RowSpan="1"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_endroom" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="室" Grid.Column="4" Margin="0,6,0,14" Grid.Row="5" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
+                            <TextBlock Text="模式" Grid.Column="4" Margin="0,9,0,9" Grid.Row="2" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
+                            <TextBlock Text="模式" Grid.Column="4" Margin="0,0,0,3" Grid.Row="3" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
+                            <TextBlock Text="模式" Grid.Column="4" Margin="0,9,0,7" Grid.Row="4" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
+                            <TextBlock Text="模式" Grid.Column="4" Margin="0,0,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
+                            <TextBox Text="{m:Bind Path=f_buildpattern}"  Grid.Column="5" Margin="0,10" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1"  />
+                            <TextBox Text="{m:Bind Path=f_unitpattern}"  Grid.Column="5" Margin="0,1,0,4" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
+                            <TextBox Text="{m:Bind Path=f_layerpattern}"  Grid.Column="5" Margin="0,9,0,8" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
+                            <TextBox Text="{m:Bind Path=f_roompattern}"  Grid.Column="5" Margin="0,8,0,12" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
+                            <TextBlock Text="共" Grid.Column="3" Margin="137,10,0,10" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12"  />
+                            <TextBox Text="{m:Bind Path=f_n}" Grid.Column="4" Margin="20,6,10,14" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.RowSpan="1" Grid.ColumnSpan="1"  >
+                            </TextBox>
+                            <TextBlock Text="户" Grid.Column="5" Margin="10,10,117,10" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12"  />
+                            <!--主操作区-->
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom" Grid.Row="7" Grid.ColumnSpan="6" Margin="-3">
+                            <Button x:Name="cancel" Content="取消" Margin="80,0,0,0" Click="cancel_Click" IsEnabled="False"  FontSize="13.333"
+                            Height="25" Width="70"  Style="{StaticResource 取消btn}"/>
+                            <Button x:Name="save" Content="保存"  Click="save_Click" IsEnabled="False" Margin="30,0,0,0"  FontSize="13.333"
+                            Height="25" Width="70"  Style="{StaticResource 保存btn}"/>
+                            <Button Content="预览" x:Name="previewButton"  Click="preview_Click" Height="25" Width="70" Margin="30,0,0,0"  FontSize="13.333" Style="{StaticResource 取消btn}"/>
+                            </StackPanel>
+                        </Grid>
+                   
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+            
+        </Grid>
+    </Grid>
+</UserControl>

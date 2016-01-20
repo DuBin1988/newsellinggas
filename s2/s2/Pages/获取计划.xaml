@@ -1,0 +1,57 @@
+﻿<c:CustomChildWindow
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13.333"
+	x:Class="Com.Aote.Pages.获取计划"
+	Title="获取计划"
+	d:DesignWidth="400" d:DesignHeight="300" Name="child">
+
+    <Grid x:Name="Layout">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <toolkit:DockPanel Grid.Column="2"  x:Name="searchPanel" Grid.ColumnSpan="2">
+                <a:Data.Context>
+                    <o:SearchObject />
+                </a:Data.Context>
+                <TextBlock Text="计划名称：" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+                <TextBox Text="{m:Bind Path=f_name}" Width="150" Margin="10,0,0,0">
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_name"  Operator="f_name like 'this%'"/>
+                    </a:Data.Prop>
+                </TextBox>
+                <Button Content="查询"  Click="{m:Exp Str=searchPanel.DataContext.Search()}" Width="70" Margin="20,0,0,0"  />
+
+            </toolkit:DockPanel>
+            <sdk:DataGrid x:Name="planGrid" Margin="0"  FontSize="13.333"
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Grid.Row="1">
+                <a:Data.Items>
+                    <o:ObjectList Name="planList" WebClientInfo="{StaticResource dbclient}"								
+								Path="{m:Exp Str=$from T_CHECKPLAN where \{searchPanel.DataContext.Condition\} order by f_issued desc}"/>
+                </a:Data.Items>
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                    <sdk:DataGridTextColumn Header="计划名称" Width="300" Binding="{Binding f_name}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+            <Button Content="确认选择" Grid.Row="2" Width="80" HorizontalAlignment="Right" Height="25" Click="{m:Exp Str=child.ReturnValue\=planGrid.SelectedItem;child.Close()}" ></Button>
+        </Grid>
+
+    </Grid>
+</c:CustomChildWindow>

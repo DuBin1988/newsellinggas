@@ -1,0 +1,80 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:report="clr-namespace:Com.Aote.Report"
+        Title="MainWindow" Height="350" Width="525" >
+    <Window.Resources>
+        <CollectionViewSource x:Key="sysFonts" Source="{x:Static Member=Fonts.SystemFontFamilies}"></CollectionViewSource>
+        <!--<CollectionViewSource x:Key="sysFontstyle" Source="{x:Static Member=Fonts.SystemTypefaces}"></CollectionViewSource>-->
+    </Window.Resources>
+    <Grid>
+        <DockPanel>
+            <ToolBar DockPanel.Dock="Top">
+                <Button x:Name="ui_compose" Click="ui_compose_Click">合并</Button>
+                <Button x:Name="ui_decompose" Click="ui_decompose_Click">取消合并</Button>
+                <Button x:Name="ui_insertrow" Click="ui_insertrow_Click">前插一行</Button>
+                <Button x:Name="ui_deleterow" Click="ui_deleterow_Click">删除一行</Button>
+                <Button x:Name="ui_insertcolumn" Click="ui_insertcolumn_Click">前插一列</Button>
+                <Button x:Name="ui_setcenter" Click="ui_setcenter_Click">居中</Button>
+                <Button x:Name="ui_setleft" Click="ui_setleft_Click">左对齐</Button>
+                <Button x:Name="ui_setright" Click="ui_setright_Click">右对齐</Button>
+                <Button x:Name="ui_biaotou" Click="ui_biaotou_Click">标记表头</Button>
+                <Button x:Name="ui_biaotouc" Click="ui_head_Click">标记表头变化</Button>
+                <Button x:Name="ui_left" Click="ui_left_Click">标记左侧</Button>
+                <Button x:Name="ui_main" Click="ui_main_Click">标记主体</Button>
+                <Button x:Name="ui_bottom" Click="ui_bottom_Click">标记表底</Button>
+                <Button x:Name="ui_drop" Click="ui_drop_Click">取消标记</Button>
+                <Button x:Name="ui_save" Click="ui_save_Click">保存</Button>
+                <Button x:Name="ui_load" Click="ui_load_Click">加载</Button>
+                <ComboBox x:Name="ui_font"  SelectedItem="ui_font_Selected" Margin="0" Width="74" ItemsSource="{Binding Source={StaticResource sysFonts} }"></ComboBox>
+                <ComboBox x:Name="ui_fontsize" SelectedItem="ui_fontsize_Selected"  Margin="0" Width="74" ></ComboBox>
+            </ToolBar>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Visible">
+                    <report:Table x:Name="ui_report"  HorizontalAlignment="Left" Width="3000" Height="2000"/>
+                </ScrollViewer>
+               
+                <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+                <StackPanel Grid.Column="2" Margin="0,0,0,-0.001" Orientation="Vertical">
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=EditTextBox.Text, ElementName=ui_report, Mode=TwoWay}"/>
+                	<DockPanel Height="293.163">
+                		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                			<Button x:Name="ui_insertsql" Content="新增" Click="ui_insertsql_Click"/>
+                		</StackPanel>
+                		<ListBox x:Name="ui_sqllist">
+                			<ListBox.ItemTemplate>
+                				<DataTemplate>
+                					<Grid>
+                						<Grid.ColumnDefinitions>
+                							<ColumnDefinition Width="100"/>
+                							<ColumnDefinition Width="*"/>
+                						</Grid.ColumnDefinitions>
+                						<TextBox HorizontalAlignment="Stretch" Height="Auto" TextWrapping="Wrap" Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Stretch" Width="Auto"/>
+                						<TextBox Height="Auto" TextWrapping="Wrap" Text="{Binding Content, Mode=TwoWay}" VerticalAlignment="Stretch" Width="Auto" Grid.Column="1"/>
+                					</Grid>
+                				</DataTemplate>
+                			</ListBox.ItemTemplate>
+                		</ListBox>
+                	</DockPanel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="表头查询SQL："/>
+                            <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=HeadValue, ElementName=ui_report, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="左侧查询SQL："/>
+                            <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=LeftValue, ElementName=ui_report, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>

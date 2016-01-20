@@ -1,0 +1,278 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="Com.Aote.Pages.抄表计划" FontSize="13">
+
+	<Grid x:Name="LayoutRoot" >
+		
+		<m:ResourceLoad Margin="0">
+			 <!--列表信息-->
+		    <o:ObjectList Name="personslist2" Source="{m:Exp Str='left.SelectedItems.ToObjectList()=>SelectionChanged'}" WebClientInfo="{StaticResource dbclient}"></o:ObjectList>
+			
+			<o:GeneralObject Name="tempobj" EntityType="t_userfiles" >
+				
+			</o:GeneralObject>
+			
+			<o:GeneralObject Name="tobj" EntityType="t_mrinput" WebClientInfo="{StaticResource dbclient}">
+				<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=tempobj.f_userid}"/>
+				<o:PropertySetter PropertyName="lastinputgasnum" Value="{m:Exp Str=tempobj.lastinputgasnum}" />
+				<o:PropertySetter PropertyName="lastrecord" Value="{m:Exp Str=tempobj.lastrecord}" />
+				<o:PropertySetter PropertyName="oughtamount" Value="{m:Exp Str=tempobj.oughtamount}" />
+				<o:PropertySetter PropertyName="oughtfee" Value="{m:Exp Str=tempobj.oughtfee}" />
+				<o:PropertySetter PropertyName="f_mrperson" Value="{m:Exp Str=tempobj.f_mrperson}" />
+				<o:PropertySetter PropertyName="lastinputdate" Value="{m:Exp Str=tempobj.lastinputdate}" />
+				<o:PropertySetter PropertyName="f_department" Value="{m:Exp Str=tempobj.f_department}" />
+				<o:PropertySetter PropertyName="f_opertor" Value="{m:Exp Str=tempobj.f_opertor}" />
+				<o:PropertySetter PropertyName="f_date" Value="{m:Exp Str=tempobj.f_date}" />																							
+			</o:GeneralObject>
+		
+		</m:ResourceLoad>
+   	 <Grid >
+        <Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="1*"/>
+    	</Grid.ColumnDefinitions>
+		      
+        <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=main.DataContext.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
+            <Grid Background="{x:Null}" >
+        
+				<!--按钮-->
+		       <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="Auto" Margin="0,0,5,0" VerticalAlignment="Bottom" >
+                    <Button x:Name="save" Content=" 保 存 " Margin="5"
+					
+					Click="{m:Exp Str=main.DataContext.Save()}"/>
+                    
+                    <Button Content=" 打 印 " Margin="5" Click="{m:Exp Str=print.Print()}">
+                    </Button>
+                </toolkit:DockPanel>
+			
+			
+             <!--用户档案-->
+			
+					<Grid>	
+						<Grid.ColumnDefinitions>
+    						<ColumnDefinition Width="100*"/>
+							
+    						<ColumnDefinition Width="100*"/>
+    					</Grid.ColumnDefinitions>									
+                <sdk:TabControl Margin="0,0,5,37" Grid.RowSpan="1" Grid.Column="0">
+            		
+							<sdk:TabItem Header="用户档案">
+								<toolkit:DockPanel LastChildFill="True">
+									<toolkit:WrapPanel x:Name="personsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,0" Orientation="Horizontal"   >
+										<a:Data.Context>
+											<o:SearchObject/>        	
+										</a:Data.Context>
+										<TextBlock TextWrapping="Wrap" Text="小区名称："/>
+										<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_districtname}" a:ControlAttach.DefaultButton="searchbutton" Margin="0" >
+											<a:Data.Prop>
+												<o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this%'"/>               
+											</a:Data.Prop>
+										</TextBox>
+										<Button Content="  查  询  " x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="5,0,0,0"/>
+									</toolkit:WrapPanel>
+               
+									<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=left.ItemsSource.IsBusy}">
+										<!--DataGrid-->
+										<sdk:DataGrid x:Name="left" Margin="0,5,0,0"  AutoGenerateColumns="False"  
+											IsReadOnly="True"   >
+											<a:Data.Items>
+												<o:ObjectList x:Name="personslist" WebClientInfo="{StaticResource dbclient}"
+													Path="{m:Exp Str=$from t_userfiles where \{personsearch.DataContext.Condition\}}"
+													
+													IsOld="{m:Exp Str=main.DataContext.State\=\=$End$}"/>
+						
+											</a:Data.Items>
+					
+											<sdk:DataGrid.Columns>
+												<sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+												<sdk:DataGridTextColumn d:IsLocked="True" Header="状  态" Binding="{Binding f_substate}"/>
+												<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+												<sdk:DataGridTextColumn Header="小区地址" Binding="{Binding f_address}"/>
+												<sdk:DataGridTextColumn Header="用户/单位名称" Binding="{Binding f_username}"/>
+												<sdk:DataGridTextColumn Header="联系人" Binding="{Binding f_linkname}"/>
+												<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+												<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+												<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+												<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+												
+												<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_opertor}"/>
+												<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date}"/>
+											</sdk:DataGrid.Columns>
+										</sdk:DataGrid>
+									</toolkit:BusyIndicator>
+     			 
+								</toolkit:DockPanel>      		
+							</sdk:TabItem>    
+					       	
+						</sdk:TabControl>									
+						<sdk:TabControl Margin="0,0,5,37" Grid.RowSpan="1" Grid.Column="1">
+            		
+							<sdk:TabItem Header="抄表记录">
+								<toolkit:DockPanel LastChildFill="True" x:Name="main">
+            			 			<a:Data.Context>
+            			 			    <o:GeneralObject Name="persongo" EntityType="t_mrinput"  WebClientInfo="{StaticResource dbclient}"
+										Source="{m:Exp Str=left.SelectedItem}">
+											        		
+			 							</o:GeneralObject>			 		
+									</a:Data.Context>
+									<toolkit:WrapPanel x:Name="personsearch2"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,0" Orientation="Horizontal"   >
+                  		    	
+										<TextBlock Text="抄表本编号：" TextWrapping="Wrap"/>
+										<TextBox Text="{m:Bind Path=f_cbbid}" >
+											<a:Data.Prop>
+												<o:PropertySetter PropertyName="f_cbbid" NotNull="True"/>
+											</a:Data.Prop>
+										</TextBox>
+									</toolkit:WrapPanel>
+               																												
+									<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=nopeople.ItemsSource.IsBusy}">
+				
+										<sdk:DataGrid  x:Name="nopeople" Margin="0,5,0,0"  AutoGenerateColumns="False" ItemsSource="{m:Exp Str=personslist2}"  >
+											<a:Data.Items>
+												<o:ObjectList x:Name="personslist1"  TempObj="{m:Res Key=tempobj}" TempletObject="{m:Res Key=tobj}" SelectObject="{m:Exp Str=left.SelectedItems\=&gt;SelectionChanged!\=null:left.SelectedItems\,null}"/>
+											</a:Data.Items>
+                      <!-- <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+						<sdk:DataGridTextColumn Header="上次抄表底数" Binding="{Binding f_upbase}"/>
+						<sdk:DataGridTextColumn Header="本次抄表底数" Binding="{Binding f_currentbase}"/>
+						<sdk:DataGridTextColumn Header="应交气量" Binding="{Binding f_oughtamount}"/>
+						<sdk:DataGridTextColumn Header="应交金额" Binding="{Binding f_oughtfee}"/>
+						<sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_mrperson}"/>
+						<sdk:DataGridTextColumn Header="抄表日期" Binding="{Binding f_mrdate}"/>
+						<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_cboperator}"/>
+						<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_cbdate}"/>
+                    </sdk:DataGrid.Columns>-->
+											<sdk:DataGrid.Columns>
+											
+               			
+        								
+												<sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" IsReadOnly="True"/> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="用户编号"  MinWidth="0">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=f_userid}" TextWrapping="Wrap" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="f_userid"/>
+																</a:Data.Prop> 
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="上次抄表底数" MinWidth="0">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=f_gasmeteraccomodations}" TextWrapping="Wrap" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="f_gasmeteraccomodations"/>
+																</a:Data.Prop> 
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+						
+												<sdk:DataGridTemplateColumn Header="应交气量" >
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=oughtamount}" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="oughtamount" />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="应交金额">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=oughtfee}" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="oughtfee" />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="抄表员">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=f_mrperson}"  IsReadOnly="True">
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="f_mrperson" />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="抄表日期">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=lastinputdate}" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="lastinputdate"  />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+											
+												<sdk:DataGridTemplateColumn Header="操作人" IsReadOnly="True" >
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=f_opertor}" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="f_opertor" Default="{m:Exp Str=LoginUser.name}" />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+												<sdk:DataGridTemplateColumn Header="操作日期">
+													<sdk:DataGridTemplateColumn.CellTemplate>
+														<DataTemplate>
+															<TextBox Text="{m:Bind Path=f_date}" IsReadOnly="True" >
+																<a:Data.Prop>
+																	<o:PropertySetter PropertyName="f_date" Default="{m:Exp Str=SysTime.Now}"  />
+																</a:Data.Prop>
+															</TextBox> 
+														</DataTemplate>
+													</sdk:DataGridTemplateColumn.CellTemplate>
+												</sdk:DataGridTemplateColumn>
+											</sdk:DataGrid.Columns>
+										</sdk:DataGrid>
+									</toolkit:BusyIndicator>
+     			 
+								</toolkit:DockPanel>      		
+							</sdk:TabItem>    
+					       	
+						</sdk:TabControl>									
+				</Grid>		
+					
+				  
+		
+
+            </Grid>
+           
+        </toolkit:BusyIndicator>
+    </Grid>
+		<c:PrintObj x:Name="print" Area="{m:Res Key=nopeople }" Grid.ColumnSpan="4" />
+	</Grid>
+</UserControl>

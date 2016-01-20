@@ -1,0 +1,291 @@
+﻿<navigation:Page x:Class="Com.Aote.Pages.Frame" 
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+            xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+            xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+
+            xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+            xmlns:bind="clr-namespace:Com.Aote.Bindings;assembly=s2DLL"
+            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+            xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+            xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+            xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+            xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+            xmlns:ec="http://schemas.microsoft.com/expression/2010/controls" 
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="Frame Page">    
+
+    <Grid Background="{StaticResource LoginBgColorBrush1}">
+		<m:ResourceLoad>
+			<!--后台Hibernate配置在前台的反映-->
+	        <o:CustomTypes Name="CustomTypes" 
+			WebClientInfo="{StaticResource dbclient}" Path=""/>
+            
+			<!--时钟刷新器-->
+			<o:Timer Name="SecRefresh" Interval="1000"/>
+			
+			<!--当前登录用户-->
+	        <o:GeneralObject Name="LoginUser" 
+			IsInit="{m:Exp Str='this.State==$LoadError'}" 
+			Path="{m:Exp Str='$user/{this.ename}/{this.password}/营收系统'}"
+			LoadOnPathChanged="False" WebClientInfo="{StaticResource ldapaddress}">
+	            <o:PropertySetter PropertyName="ename" Type="string" NotNull="True"/>
+	            <o:PropertySetter PropertyName="password" Type="string" NotNull="True"/>
+	        </o:GeneralObject>
+			
+			<o:GeneralObject Name="Organization" 
+			Path="{m:Exp Str='$Organization/{this.name}/{this.number}/统一资源管理(网络)'}"
+			LoadOnPathChanged="False" WebClientInfo="{StaticResource ldapaddress}">
+	            <o:PropertySetter PropertyName="name" Type="string" NotNull="True"/>
+	            <o:PropertySetter PropertyName="number" Type="string" NotNull="True"/>
+	        </o:GeneralObject>
+
+            <!--当前登录用户用户的最小未用发票号-->
+            <o:GeneralObject Name="LoginUserfapiao" EntityType="t_gsxiangou" WebClientInfo="{StaticResource dbclient}"
+                   Path="{m:Exp Str=portObj.port\=\=null:$one/select new Map(f_invoicenum as fapiaohao) from t_fapiaoinfos  where id in(select min(id) from t_fapiaoinfos  where  f_sgoperator\=\'\{LoginUser.name\}\' and f_fapiaostatue\=\'未用\' )$\,$one/select new Map(f_invoicenum as fapiaohao) from t_fapiaoinfos  where id in(select min(id) from t_fapiaoinfos  where  f_sgoperator\=\'\{portObj.port\}\' and f_fapiaostatue\=\'未用\' ) }">
+            </o:GeneralObject>
+            
+            <!--服务器时间-->
+			<o:SystemTime Name="SysTime" WebClientInfo="{StaticResource ldapaddress}" Path="user/systime"/>
+			
+			<!--编号产生器-->
+			<o:SeriaNumber Name="Seria" Length="5"  Key="{m:Exp Str='${LoginUser.parent.name}{SysTime.Now.ToString($yyyymmdd$)}'}"/>
+			
+			<!--用户编号-->
+			<o:SeriaNumber Name="Seriab" Length="6" Key="{m:Exp Str='${LoginUser.f_fengongsinum}'}"/>
+			
+			<!--单位编号-->
+			<o:SeriaNumber Name="Seriadw" Length="4" Key="{m:Exp Str='${LoginUser.f_fengongsinum}'}"/>
+			
+			<!--报建编号-->
+			<o:SeriaNumber Name="Seriabj" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}M'}"/>
+			<!--报建编号工商-->
+			<o:SeriaNumber Name="Seriabjf" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}F'}"/>
+			
+			<!--民用合同编号-->
+			<o:SeriaNumber Name="Seriahtm" Length="5"  Key="{m:Exp Str='$A{SysTime.Now.ToString($yyyy$)}'}"/>
+			<!--非民用餐饮合同编号-->
+			<o:SeriaNumber Name="Seriahtfmc" Length="5"  Key="{m:Exp Str='$C{SysTime.Now.ToString($yyyy$)}'}"/>
+			<!--非民用锅炉合同编号-->
+			<o:SeriaNumber Name="Seriahtfmg" Length="5"  Key="{m:Exp Str='$G{SysTime.Now.ToString($yyyy$)}'}"/>
+            <!--非民用壁挂炉合同编号-->
+			<o:SeriaNumber Name="Seriahtfmh" Length="5"  Key="{m:Exp Str='$H{SysTime.Now.ToString($yyyy$)}'}"/>
+            <!--行政区-->
+            <o:ObjectList Name="arealist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='行政区' order by id"/>
+            <!--城市-->
+            <o:ObjectList Name="citylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='城市' order by id"/>
+            <!--归口单位-->
+            <o:ObjectList Name="guikoulist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='归口单位' order by id"/>
+            <!--网格编码-->
+            <o:ObjectList Name="gridlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网格编码' order by id"/>
+            <!--街道-->
+            <o:ObjectList Name="roadlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_road order by id}"/>
+            <!---用户等级-->
+            <o:ObjectList Name="yldjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户等级'"/>
+            <!--购买方式-->
+            <o:ObjectList Name="buystylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='购买方式'"/>
+         
+            <!--安装方式-->
+            <o:ObjectList Name="installstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='安装方式'"/>
+            <!--灶具安装方式-->
+            <o:ObjectList Name="kitcheninstallstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='灶具安装方式'"/>
+            <!--是否有效-->
+            <o:ObjectList Name="yesornolist"  WebClientInfo="{StaticResource dbclient}" Path=" from paramvalue where param.name = '是否'"/>
+            <!--剪切板对象-->
+            <o:ClipboardObj Name="Clipboard"/>
+           
+         
+
+            <!--所有单值-->
+			<o:ObjectList Name="single" WebClientInfo="{StaticResource dbclient}" 
+		  		EntityType="t_singlevalue" Path="from t_singlevalue"/>	
+			<!--所有参数-->
+			<o:ObjectList Name="params" WebClientInfo="{StaticResource dbclient}" EntityType="param"  
+			Path="select distinct p from param p left join fetch p.f_paramvalues v order by v.id"/>
+<!--抄表月份参数-->
+			<o:ObjectList Name="cbyflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'"/>
+			<o:ObjectList Name="cbyflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'" HasEmptyRow="True"/>
+			<!--门站参数-->
+			<o:ObjectList Name="menzhanflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'"/>
+			<o:ObjectList Name="menzhanflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'" HasEmptyRow="True"/>
+			<!--抄表员-->
+			<o:ObjectList Name="chaobiaoyuanlist" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
+			<o:ObjectList Name="chaobiaoyuanlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
+            
+			
+			<!--抄表录入员-->
+			<o:ObjectList Name="lrylist"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表录入员'" HasEmptyRow="True"/>
+			
+			<!--责任部门-->
+			<o:ObjectList Name="zerenbumenlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'"/>
+			<o:ObjectList Name="zerenbumenlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'" HasEmptyRow="True"/>
+		    <!--用户类型查询用-->
+			<o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
+			<o:ObjectList Name="usertypelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id" HasEmptyRow="True"/>
+ 
+
+            <!--表状态-->
+            <o:ObjectList Name="meterstatelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id"/>
+            <o:ObjectList Name="meterstatelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id" HasEmptyRow="True"/>
+  
+			<o:ObjectList Name="anzhuangweizhi" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'"/>
+			<o:ObjectList Name="anzhuangweizhinull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'" HasEmptyRow="True"/>
+		    <!--付款方式-->
+			<o:ObjectList Name="fukuanfangshilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<o:ObjectList Name="fukuanfangshilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<!--查询分公司参数-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<o:ObjectList Name="fgslistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<!--气表品牌-->
+			<o:ObjectList Name="qblist" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
+			<o:ObjectList Name="qblistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
+			<!--气价类型-->
+			<o:ObjectList Name="qjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
+			<o:ObjectList Name="qjlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
+			<!--用户状态查询用-->
+			<o:ObjectList Name="statelist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
+		    <o:ObjectList Name="statelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
+		    <!--气表类型-->
+			<o:ObjectList Name="qibiaoleixinglist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
+		    <o:ObjectList Name="qibiaoleixinglistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
+		    <!--用户性质-->
+			<o:ObjectList Name="yhxzlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
+            <o:ObjectList Name="yhxzlistnull" EntityType="paramvalue" HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
+           	<!--收费类型查询用-->
+			<o:ObjectList Name="payfeetypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
+		    <o:ObjectList Name="payfeetypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
+		   	<!--是否有效查询用-->
+			<o:ObjectList Name="youxiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+		    <o:ObjectList Name="youxiaolistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+		    <!--网点列表对象-->
+			<!--o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/-->
+			<o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
+			<o:ObjectList Name="wangdianlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
+			<!--操作员列表对象-->
+			<!--o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用' order by id"/-->
+			<o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
+			<o:ObjectList Name="czylistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
+			<!--公司类型列表对象-->
+			<o:ObjectList Name="gongsitypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<o:ObjectList Name="gongsitypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<!--抄表状态-->
+			<o:ObjectList Name="chaobiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
+			<o:ObjectList Name="chaobiaonull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
+			<!--是否交费-->
+			<o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
+			<o:ObjectList Name="jiaofeilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
+			<!--付款方式-->
+			<o:ObjectList Name="paymentlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型' order by id"/>
+			
+			<!--补气类型-->
+			<o:ObjectList Name="watchtype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
+		    <o:ObjectList Name="watchtypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
+		    <!--换表操作类型-->
+		    <o:ObjectList Name="huanbiaotype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
+		    <o:ObjectList Name="huanbiaotypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
+		    
+			
+			
+			<!--客服系统来电报修编号-->
+			<o:SeriaNumber Name="Seriabx" Length="4"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyyMMdd$)}'}"/>
+			<!--ip与语音通道号-->
+			<o:GeneralObject Name="IpTongDao" EntityType="iptongdao" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from iptongdao where loginip\=\'\{LoginUser.loginip\}\'}" 
+                             >
+			</o:GeneralObject>	
+			
+			<o:Timer Name="Timer" Interval="60000"/>
+			 <!--o:Timer Name="SecRefresh" Interval="1000"/-->
+			    <o:Timer Name="zjTimer" Interval="60000"/>
+			 
+			 
+            <!--来电总数-->
+            <o:ObjectList Name="ldcount" WebClientInfo="{StaticResource dbclient}"
+					Path="{m:Exp Str=$from t_comingrecord where islink\=\'yes\' and comingtime like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
+					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
+            
+            <!--在线处理-->
+            <o:ObjectList Name="zxcount" WebClientInfo="{StaticResource dbclient}"
+					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'在线处理\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
+					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
+			
+			<!--上门维修-->
+            <o:ObjectList Name="smwxcount" WebClientInfo="{StaticResource dbclient}"
+					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'上门维修\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
+					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
+			
+			<!--抢险-->
+            <o:ObjectList Name="qxcount" WebClientInfo="{StaticResource dbclient}"
+					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'抢险\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
+					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
+
+            
+			 
+            
+			
+
+
+            <!--根据角色配置使用电话,多种角色使用逗号分隔-->
+            <o:Phone Name="Phone" LineNum="{m:Exp Str=IpTongDao.tongdao}" LoginRoles="{m:Exp Str=LoginUser.operpage}" GongHao="{m:Exp Str=LoginUser.gonghao}"  TelServiceUrl="http://192.168.200.251:8000" RoleNames="话务员"  IsInit="{m:Exp Str='IpTongDao.tongdao!=null'}" WebClientInfo="{StaticResource dbclient}"   IsRecordDB="True" >
+                <o:PropertySetter PropertyName="0" Type="string" Value="{m:Exp Str=$空闲}"/>
+                <o:PropertySetter PropertyName="1" Type="string" Value="{m:Exp Str=$没有使用}"/>
+                <o:PropertySetter PropertyName="2" Type="string" Value="{m:Exp Str=$没有使用}"/>
+                <o:PropertySetter PropertyName="3" Type="string" Value="{m:Exp Str=$没有使用}"/>
+                <o:PropertySetter PropertyName="4" Type="string" Value="{m:Exp Str=$查找内线}"/>
+                <o:PropertySetter PropertyName="5" Type="string" Value="{m:Exp Str=$等待连接}"/>
+                <o:PropertySetter PropertyName="6" Type="string" Value="{m:Exp Str=$正在振铃}"/>
+                <o:PropertySetter PropertyName="7" Type="string" Value="{m:Exp Str=$没有使用}"/>
+                <o:PropertySetter PropertyName="8" Type="string" Value="{m:Exp Str=$接通}"/>
+                <o:PropertySetter PropertyName="9" Type="string" Value="{m:Exp Str=$等待挂机}"/>
+                <o:PropertySetter PropertyName="10" Type="string" Value="{m:Exp Str=$内线摘机}"/>
+                <o:PropertySetter PropertyName="11" Type="string" Value="{m:Exp Str=$忙碌}"/>
+                <o:PropertySetter PropertyName="12" Type="string" Value="{m:Exp Str=$没有使用}"/>
+                <o:PropertySetter PropertyName="13" Type="string" Value="{m:Exp Str=$正在记录}"/>
+                <o:PropertySetter PropertyName="14" Type="string" Value="{m:Exp Str=$无法连接到语音服务器}"/>
+            </o:Phone>
+
+
+            <!--管线建设编号-->
+            <o:SeriaNumber Name="Seriagxjs" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}X'}"/>
+            <!--民用合同编号多户-->
+            <o:SeriaNumber Name="SeriahtmMany" Length="5"  Key="{m:Exp Str='$A{SysTime.Now.ToString($yyyy$)}'}"/>
+            <!--非民用餐饮锅炉合同编号CG-->
+            <o:SeriaNumber Name="Seriahtfmcg" Length="5"  Key="{m:Exp Str='$CG{SysTime.Now.ToString($yyyy$)}'}"/>
+            <!--非民用餐饮壁挂炉合同编号CH-->
+            <o:SeriaNumber Name="Seriahtfmch" Length="5"  Key="{m:Exp Str='$CH{SysTime.Now.ToString($yyyy$)}'}"/>
+            <!--非民用锅炉壁挂炉合同编号GH-->
+            <o:SeriaNumber Name="Seriahtfmgh" Length="5"  Key="{m:Exp Str='$GH{SysTime.Now.ToString($yyyy$)}'}"/>
+            <o:GeneralObject Name="pkfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'非民用排空费\'$}"  
+		  ></o:GeneralObject>
+            <o:GeneralObject Name="mygcclfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'民用工程材料费\'$}"  
+		  ></o:GeneralObject>
+            <o:GeneralObject Name="myzbffobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'民用自闭阀费\'$}"  
+		  ></o:GeneralObject>
+            <o:GeneralObject Name="mypkffobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'民用排空费\'$}"  
+		  ></o:GeneralObject>
+            <o:GeneralObject Name="mybjqffobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'民用报警器费\'$}"  
+		  ></o:GeneralObject>
+            <o:ObjectList Name="devicename" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='设备名称'"/>
+            
+            
+           <!--站点配置对象-->
+            <o:FileConfigObj Name="portObj" FilePath="c:\\port.txt" IsLoad="True"     ></o:FileConfigObj>
+        </m:ResourceLoad>
+
+        <sdk:Frame Name="MainFrame" Source=
+		"{m:Exp Str='CustomTypes.State==$LoadError$:$/ErrorPage.xaml$,CustomTypes.State==$Loaded$ and LoginUser.State==$Loaded$ :$/MainPage.xaml$,$/Login.xaml$'}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        </sdk:Frame>
+
+    </Grid>
+
+</navigation:Page>

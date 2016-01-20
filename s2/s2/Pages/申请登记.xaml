@@ -1,0 +1,415 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="Com.Aote.Pages.申请登记"
+	>
+
+	<Grid x:Name="LayoutRoot" >
+		<m:ResourceLoad Margin="0,0,-101,0">
+	        <!--用户信息-->
+		    <o:ObjectList Name="userlist" EntityType="t_applycustomer" HasEmptyRow="True"></o:ObjectList>
+			<!--批量删除语句-->
+	        <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=DeleteImage}" MethodName="InvokeToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=DeleteApplycustomer}" MethodName="InvokeToJson"/>
+			    <b:BatchInfo Source="{m:Exp Str=DeleteApply}" MethodName="InvokeToJson"/>
+			</b:BatchExcuteAction>
+			<b:HQLAction Name="DeleteApply"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_apply where id in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>
+			<b:HQLAction Name="DeleteImage"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_applyimage where applyid in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>
+			<b:HQLAction Name="DeleteApplycustomer"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_applycustomer where applyid in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>
+			
+			
+	        <!--图片信息-->
+		    <o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True"></o:ObjectList>			
+	  <!--清除列表中的垃圾数据-->
+        <b:HQLAction Name="DeleteDirty" 
+		HQL="{m:Exp Str='userlist.Dirty.Count!=0:$delete from t_applycustomer where id in ({userlist.Dirty[True].ToString(id)})$,null'}">
+		</b:HQLAction>
+		<!--保存，保存时要删除列表里的垃圾数据-->
+		<b:BatchExcuteAction Name="BatchSave"  WebClientInfo="{StaticResource dbclient}">
+			<b:BatchInfo Source="{m:Exp Str=DeleteDirty}" MethodName="InvokeToJson"></b:BatchInfo>
+			<b:BatchInfo Source="{m:Exp Str=main.DataContext}" MethodName="SaveToJson"></b:BatchInfo>
+		</b:BatchExcuteAction>
+		<!--提交-->
+        <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+		HQL="{m:Exp Str=$update t_apply set f_state\=\'报建登记核对\'\,f_substate\=null where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
+			<!--提交语句
+	        <b:HQLAction Name="OkAction"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$update t_apply set f_state=\'提交\' where id in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>-->
+		</m:ResourceLoad>
+    <StackPanel Orientation="Horizontal">
+       
+        
+            <StackPanel Width="Auto" MaxWidth="310">
+                <StackPanel x:Name="personsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,5" Orientation="Horizontal" >
+                   <a:Data.Context>
+            		  	<o:SearchObject  ></o:SearchObject>        	
+				   </a:Data.Context>
+					<TextBlock TextWrapping="Wrap" Text="姓 名：" Margin="3,0,0,0"/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0">
+                      <a:Data.Prop>
+                      	   <o:PropertySetter PropertyName="f_username" Operator="apply.f_username like 'this%'"/>               
+					  </a:Data.Prop>
+					</TextBox>
+                    <Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="50,0,0,0"/>
+                </StackPanel>
+			<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}">
+                <sdk:DataGrid x:Name="persons" Margin="0"  AutoGenerateColumns="False"  
+				         SelectedItem="{m:Exp Str='yijing.SelectedItem!=null:null,persons.SelectedItem'}"  MaxHeight="300" IsReadOnly="True" >
+                	<a:Data.Items>
+                		<o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applycustomer left join fetch apply.f_applyimage where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_state \=\'报建登记\'}"
+					         IsOld="{m:Exp Str='main.DataContext.State==$End$ or SubmitAction.State\=\=$End$ or DeleteAction.State==$End$ or BatchSave.State==$End$'}">
+                		</o:ObjectList>
+					</a:Data.Items>
+                       <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+						<sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="姓名" Binding="{Binding f_username}"/>
+						<sdk:DataGridTextColumn Header="编号" Binding="{Binding f_code}"/>
+                        <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+                        <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+						<sdk:DataGridTextColumn Header="申请户数" Binding="{Binding f_address}"/>
+						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
+                    </sdk:DataGrid.Columns>
+                </sdk:DataGrid>
+                  </toolkit:BusyIndicator>
+                <!--提交按钮-->
+				<toolkit:DockPanel >
+					 <TextBlock Height="23" TextWrapping="Wrap" Text="{m:Exp Str='$共{persons.ItemsSource.Count}项'}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
+				     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					 	<Button Content="提交核对" Click="{m:Exp Str=submittip.Show()}"
+                        	IsEnabled="{m:Exp Str='persons.SelectedItems.Count=>SelectionChanged!=0'}" Height="22" Margin="5,5,0,0" />
+					 	<Button Content="删 除" Margin="5,5,0,0" Click="{m:Exp Str=deletettip.Show()}"
+                       	 IsEnabled="{m:Exp Str='persons.SelectedItems.Count=>SelectionChanged!=0'}"  >
+                    	</Button>
+					</StackPanel>
+				
+                 </toolkit:DockPanel>
+				 <toolkit:DockPanel x:Name="yijingchaxue">
+				 	 <a:Data.Context>
+            		  	<o:SearchObject  ></o:SearchObject>        	
+				   </a:Data.Context>
+					<TextBlock TextWrapping="Wrap" Text="姓 名：" Margin="3,0,0,0"/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0">
+                      <a:Data.Prop>
+                      	   <o:PropertySetter PropertyName="f_username" Operator="apply.f_username like 'this%'"/>               
+					  </a:Data.Prop>
+					</TextBox>
+                    <Button Content="查 询"  Click="{m:Exp Str=yijingchaxue.DataContext.Search()}" Width="50"/>
+				 </toolkit:DockPanel>
+				 <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=yijing.ItemsSource.IsBusy}">
+				  <sdk:DataGrid x:Name="yijing" Margin="0"  AutoGenerateColumns="False"    
+				         SelectedItem="{m:Exp Str='persons.SelectedItem!=null:null,yijing.SelectedItem'}"  MaxHeight="200" IsReadOnly="True" >
+                	<a:Data.Items>
+                		<o:ObjectList Name="yijinglist" WebClientInfo="{StaticResource dbclient}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applycustomer left join fetch apply.f_applyimage where \{yijingchaxue.DataContext.Condition\} and f_usertype \=\'民用\' and f_state \!\=\'报建登记\'}"
+					         IsOld="{m:Exp Str='main.DataContext.State==$End$ or SubmitAction.State\=\=$End$ or DeleteAction.State==$End$ or BatchSave.State==$End$'}">
+                		</o:ObjectList>
+					</a:Data.Items>
+                       <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+						<sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="姓名" Binding="{Binding f_username}"/>
+						<sdk:DataGridTextColumn Header="编号" Binding="{Binding f_code}"/>
+                        <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+                        <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+						<sdk:DataGridTextColumn Header="申请户数" Binding="{Binding f_address}"/>
+						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
+                    </sdk:DataGrid.Columns>
+                </sdk:DataGrid>
+				</toolkit:BusyIndicator>
+		    </StackPanel>
+		
+      
+        <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=main.DataContext.IsBusy}" Margin="5,0,0,0" MaxWidth="919">
+            <toolkit:DockPanel Background="{x:Null}" x:Name="main" Margin="0,0,84,0" >
+            	<a:Data.Context>
+            		<o:GeneralObject  Name="persongo" WebClientInfo="{StaticResource dbclient}" 
+		EntityType="t_apply" 
+		Source="{m:Exp Str='persons.SelectedItem !=null:persons.SelectedItem,yijing.SelectedItem !=null:yijing.SelectedItem,null'}"
+		
+		IsInit="{m:Exp Str='this.State==$End or BatchSave.State==$End$'}">
+            			<o:PropertySetter PropertyName="f_state" Default="报建登记"></o:PropertySetter>
+            			<o:PropertySetter  PropertyName="f_substate" Default="完成"></o:PropertySetter>
+						<o:PropertySetter PropertyName="f_issurvey" Default="{m:Exp Str=False}"></o:PropertySetter>
+						<o:PropertySetter PropertyName="f_isdesigners" Default="{m:Exp Str=True}"></o:PropertySetter>
+						<o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist}"/>      		  	
+						<o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist}"/>
+					</o:GeneralObject>
+				</a:Data.Context>
+                <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right" >
+                    <Button x:Name="save" Content="保 存" Margin="5" 
+					IsEnabled="{m:Exp Str='(data.IsModified or userlist.IsModified) and !data.HasErrors and !userlist.HasErrors'}"
+					Click="{m:Exp Str=userlist.MakeDirty();BatchSave.Invoke()}">
+                    </Button>
+                    <Button Content="撤 销" Margin="5" Click="{m:Exp Str=main.DataContext.New()}">
+                    </Button>
+                   
+					<Button Content="导入Excel数据"  Click="{m:Exp Str=userlist.ExcelString\=Clipboard.Text}" HorizontalAlignment="Left" Height="22"/>
+                </toolkit:DockPanel>
+               <StackPanel>
+               <sdk:TabControl  Margin="0,0,0,0" VerticalAlignment="Top" >
+             <!--民用主操作区-->
+        			<sdk:TabItem Header="主要内容">
+        			<Grid  VerticalAlignment="Top" >
+               	<Grid.RowDefinitions>
+               		<RowDefinition Height="25"/>
+               		<RowDefinition Height="25"/>
+               		<RowDefinition Height="25"/>
+               		<RowDefinition Height="25"/>
+               		<RowDefinition Height="25"/>
+               		<RowDefinition Height="25"/>
+               	</Grid.RowDefinitions>
+               	<Grid.ColumnDefinitions>
+               		<ColumnDefinition Width="60"/>
+               		<ColumnDefinition Width="Auto" MinWidth="171"/>
+               		<ColumnDefinition Width="80"/>
+               		<ColumnDefinition Width="0.35*"/>
+               		<ColumnDefinition Width="80"/>
+               		<ColumnDefinition Width="0.35*"/>
+               	</Grid.ColumnDefinitions>
+                  <!---->
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="姓 名：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Height="22"/>
+               	<TextBox Text="{m:Bind Path=f_username}" Grid.Column="1" Margin="0" Height="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_username" NotNull="True" />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.538,0.364" Grid.Column="4" Height="22"/>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="操作日期：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="3" Height="22"/>
+               	<sdk:DatePicker  SelectedDateFormat="long"  IsEnabled="False" SelectedDate="{m:Bind Path=f_date}"     Grid.Column="1" Margin="0" Height="22" Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_date"
+               				Default="{m:Exp Str=SysTime.Today}"/>
+               		</a:Data.Prop>		 
+               	</sdk:DatePicker>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="编 号：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" Height="22"/>
+               	<TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="3" Margin="0" Height="22" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_code" 
+               				Default="{m:Exp Str=$\{SysTime.Now.ToString($yyyy$)\}M\{Seriabj.Value\}}"/>
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock TextWrapping="Wrap" Text="地 址：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="1" Height="22"/>
+               	<TextBox Text="{m:Bind Path=f_phone}" Grid.Column="5" Margin="0"  Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" Grid.ColumnSpan="1" Height="22">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_phone" />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBox Text="{m:Bind Path=f_address}" Grid.Column="1" Margin="0" Height="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_address" NotNull="True" />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBox IsReadOnly="True" Text="{m:Bind Path=f_usertype}"  Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="22">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_usertype" NotNull="True" Default="民用"/>
+               		</a:Data.Prop>               
+               	</TextBox>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="片区选择：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" Height="22" Grid.Row="1"/>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" Height="22" Grid.Row="1"/>
+               	<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_area}"  Grid.Column="5" Margin="0" Grid.Row="1" Height="22">
+               		<a:Data.Items>
+               			<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
+               		</a:Data.Items>
+               	</ComboBox>
+               	<TextBlock TextWrapping="Wrap" Text="申请户数：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="2" Height="22"/>
+               	<TextBox Text="{m:Bind Path=f_applycount}" Grid.Column="1" Margin="0" Height="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="2">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_applycount"  />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock TextWrapping="Wrap" Text="热水器台数：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="2" Height="22" Grid.Column="2"/>
+               	<TextBox Text="{m:Bind Path=f_geyser}" Grid.Column="3" Margin="0" Height="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="2">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_geyser"  />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock TextWrapping="Wrap" Text="壁挂炉台数：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="2" Height="22" Grid.Column="4"/>
+               	<TextBox Text="{m:Bind Path=f_boiler}" Grid.Column="5" Margin="0" Height="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="2">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_boiler"  />
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="部 门：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="4" Height="22" Grid.Column="2"/>
+               	<TextBox Text="{m:Bind Path=f_department}" IsReadOnly="True" Grid.Column="3" Margin="0" Height="22" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_department" NotNull="True" 
+               				Default="{m:Exp Str=LoginUser.f_parentname}"/>
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock Margin="0" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="4" Grid.Column="4" Height="22"/>
+               	<TextBox Text="{m:Bind Path=f_opertor}" IsReadOnly="True" Grid.Column="5" Margin="0" Height="22" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_opertor" NotNull="True" 
+               				Default="{m:Exp Str=LoginUser.name}"/>
+               		</a:Data.Prop>
+               	</TextBox>
+               	<TextBlock Margin="0" Text="操作时间：" TextWrapping="Wrap" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="4" Height="22"></TextBlock>
+               	<toolkit:TimePicker IsEnabled="False"  Value="{m:Bind Path=f_datetime}"  Grid.Column="1" Margin="0" Height="22" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto"  IsDropDownOpen="False">
+               		<a:Data.Prop>
+               			<o:PropertySetter PropertyName="f_datetime"
+               				Default="{m:Exp Str=SysTime.Now}"/>
+               		</a:Data.Prop>		
+               	</toolkit:TimePicker>
+               	<TextBlock Grid.Column="4" Margin="0" Grid.Row="3" TextWrapping="Wrap" Text="房屋类型：" Height="22" TextAlignment="Right"/>
+               	<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_usertypepro}" Grid.Column="5" Margin="0" Grid.Row="3" Height="22">
+               		<a:Data.Items>
+               			<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='房屋类型'"/>
+               		</a:Data.Items>
+               	</ComboBox>
+               	<TextBlock Grid.Column="2" Margin="0" Grid.Row="3" TextWrapping="Wrap" Text="用气性质：" Height="22" TextAlignment="Right"/>
+               	<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_gastype}" Grid.Column="3" Margin="0" Grid.Row="3" Height="22">
+               		<a:Data.Items>
+               			<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用气性质'"/>
+               		</a:Data.Items>
+               	</ComboBox>
+				</Grid>
+					</sdk:TabItem>
+					<sdk:TabItem Header="用户花名册" HorizontalAlignment="Right" Width="Auto" >
+						<toolkit:DockPanel>
+					   <Button Content="移除" VerticalAlignment="Top" Visibility="Collapsed"></Button>  
+					<sdk:DataGrid AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userlist}">
+					 <sdk:DataGrid.Columns>
+					   <sdk:DataGridTemplateColumn>
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<Button Content="X" 
+									Visibility="{m:Exp Str='data==data.List.EmptyRow:$Collapsed$,$Visible$'}" 
+									Click="{m:Exp Str=data.Remove()}"></Button>	
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+					  <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox  Style="{StaticResource TextBoxDatagridStyle}" Text="{m:Exp Str='data==data.List.EmptyRow:$*$,data.Index'}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+                       <sdk:DataGridTemplateColumn Header="姓名">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+                         <sdk:DataGridTemplateColumn Header="小区">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+						
+						 <sdk:DataGridTemplateColumn Header="证件号码">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+						
+						 <sdk:DataGridTemplateColumn Header="门牌号">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+						 <sdk:DataGridTemplateColumn Header="地址">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+						 <sdk:DataGridTemplateColumn Header="电话">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+						 <sdk:DataGridTemplateColumn Header="备注">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{m:Bind Path=f_descript}" Style="{StaticResource TextBoxDatagridStyle}">
+									</TextBox> 
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+                        <!--<sdk:DataGridTextColumn Header="名称" Binding="{Binding f_username}"/>
+                        <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_district}"/>
+                        <sdk:DataGridTextColumn Header="证件号码" Binding="{Binding f_code}"/>
+						<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_doorplate}"/>
+						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+						<sdk:DataGridTextColumn Header="备注" Binding="{Binding f_descript}"/>-->
+                    </sdk:DataGrid.Columns>
+					   </sdk:DataGrid>
+					  
+				    </toolkit:DockPanel>
+					</sdk:TabItem>
+					<sdk:TabItem Header=" 图 片 ">
+						<ListBox ItemsSource="{m:Exp Str=imagelist}"  Margin="0" MinHeight="200" MinWidth="200">
+				    	<ListBox.ItemTemplate>
+									<DataTemplate>
+				    					<StackPanel>
+											<Image Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+										<StackPanel Orientation="Horizontal">	
+        								<c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+										<Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+            							<Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+										</StackPanel>	
+										</StackPanel>
+				    				</DataTemplate>
+						</ListBox.ItemTemplate>
+        		<ListBox.ItemsPanel>
+        			<ItemsPanelTemplate>
+        				<toolkit:WrapPanel Width="200"/>
+        			</ItemsPanelTemplate>
+        		</ListBox.ItemsPanel>
+				    </ListBox>
+					</sdk:TabItem>
+				</sdk:TabControl>
+               	
+               
+			   </StackPanel>			
+            </toolkit:DockPanel>
+        </toolkit:BusyIndicator>
+    </StackPanel>
+	<c:MessageTipObj  Name="submittip" Tip="您确认要提交选择的项吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />
+	<c:MessageTipObj  Name="deletettip" Tip="您确认要删除此选择项吗？" OK="{m:Exp Str=DeleteAction.Invoke()}" />
+	</Grid>
+</UserControl>

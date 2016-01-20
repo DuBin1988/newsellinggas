@@ -1,0 +1,113 @@
+﻿<UserControl
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	xmlns:note="clr-namespace:s2.Program.Note"
+	mc:Ignorable="d"
+	x:Class="s2.电话记录查询"
+	 FontSize="13" Width="995" Height="611">
+
+	<Grid x:Name="LayoutRoot" Height="Auto" Width="Auto" >
+		  	 <m:ResourceLoad Margin="0">
+		  	 	<o:PagedObjectList Name="telslist" WebClientInfo="{StaticResource dbclient}"
+				   IsOld="{m:Exp Str=this.State\=\=$End$}"
+												Path="{m:Exp Str=$from t_comingrecord where \{telrecordsearch.DataContext.Condition\}  order by comingtime desc}"
+												PageIndex="{m:Exp Str=pager1.PageIndex}" PageSize="{m:Exp Str=pager1.PageSize}"  SumNames="n" />
+				
+				
+		    <o:UtilAction Name="openrecord" Js="window.open(&quot;playwav.html?recordfile=#recordfile#&quot;,&quot;_blank&quot;,&quot;toolbar=no,menubar=no,location=no,scrollbars=no,top=400,left=300,width=260,height=80&quot;)">
+                <o:PropertySetter PropertyName="recordfile" Value="{m:Exp Str=tels.SelectedItem.recordfile}"/>
+            </o:UtilAction>
+		</m:ResourceLoad>
+			<toolkit:DockPanel LastChildFill="True">
+			<Grid Height="Auto" Width="Auto"   Grid.Row="1" Margin="0">
+				
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+				
+					<sdk:TabControl Margin="0,0,8,8" Height="Auto" VerticalAlignment="Stretch" Grid.Row="0" Width="Auto" d:LayoutOverrides="GridBox">    
+						<sdk:TabItem Header="来电记录查询" HorizontalAlignment="Stretch" Width="Auto" Margin="0">
+							<toolkit:DockPanel LastChildFill="True" Height="Auto" Margin="0" Width="Auto">
+									<toolkit:WrapPanel x:Name="telrecordsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,0" Orientation="Horizontal"   >
+									<a:Data.Context>
+										<o:SearchObject/>        	
+									</a:Data.Context>
+									<TextBlock TextWrapping="Wrap" Text="来电号码："/>
+									<TextBox TextWrapping="Wrap" Text="{m:Bind Path=callnumber}" a:ControlAttach.DefaultButton="searchbutton" Margin="0" Height="25" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="callnumber" Operator="callnumber = 'this'"/>               
+										</a:Data.Prop>
+									</TextBox>
+									
+									<TextBlock TextWrapping="Wrap" Text="工号："/>
+									<TextBox TextWrapping="Wrap" Text="{m:Bind Path=gonghao}" a:ControlAttach.DefaultButton="searchbutton" Margin="0" Height="25" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="gonghao" Operator="gonghao = 'this'"/>               
+										</a:Data.Prop>
+									</TextBox>
+									
+									<Button Content="  查  询  " x:Name="searchbutton" Click="{m:Exp Str=telrecordsearch.DataContext.Search()}" Margin="5,0,0,0"/>
+								</toolkit:WrapPanel>
+                            
+								<toolkit:BusyIndicator BusyContent="正在查询，请稍等"  IsBusy="{m:Exp Str=tels.ItemsSource.IsBusy}" Margin="0,2,0,-2">
+				
+									<sdk:DataGrid x:Name="tels" Margin="0"   AutoGenerateColumns="False"   ItemsSource="{m:Exp Str=telslist}"
+										IsReadOnly="True" >
+										 
+									<sdk:DataGrid.Columns>
+										 	<sdk:DataGridTextColumn Header="来电时间" Binding="{Binding comingtime}"/>
+											<sdk:DataGridTextColumn Header="来电号码" Binding="{Binding callnumber}"/>
+										 	<sdk:DataGridTemplateColumn Header="是否接通" >
+            						         <sdk:DataGridTemplateColumn.CellTemplate>
+            						    	  <DataTemplate>
+            								  <TextBlock   Text="{m:Exp Str='data.islink \=\= $yes$:$接通$,$未接通$'}"  Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>
+            							      </DataTemplate>
+            						           </sdk:DataGridTemplateColumn.CellTemplate>
+            			                       </sdk:DataGridTemplateColumn>
+											
+											
+											<sdk:DataGridTextColumn Header="接听时间" Binding="{Binding rectime}"/>
+											<sdk:DataGridTextColumn Header="挂机时间" Binding="{Binding handuptime}"/>
+											<sdk:DataGridTextColumn Header="工号" Binding="{Binding gonghao}"/>
+											
+											<sdk:DataGridTemplateColumn Header="录音" >
+            						         <sdk:DataGridTemplateColumn.CellTemplate>
+            						    	  <DataTemplate>
+            								  <Button Content="收听录音" IsEnabled="{m:Exp Str='data.recordfile!=null'}" Click="{m:Exp Str=openrecord.DoJs()}" Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>
+            							      </DataTemplate>
+            						           </sdk:DataGridTemplateColumn.CellTemplate>
+            			                       </sdk:DataGridTemplateColumn>
+											 
+										 
+											 
+											 
+										
+										</sdk:DataGrid.Columns>
+									</sdk:DataGrid>
+											
+								</toolkit:BusyIndicator>
+     			 
+							</toolkit:DockPanel>  
+					  		
+						</sdk:TabItem>        	
+					</sdk:TabControl>
+					<sdk:DataPager x:Name="pager1" Source="{Binding Path=ItemsSource.Count,ElementName=tels,Converter={StaticResource DataPagerConverter}}" Margin="0,0,9,-16" PageSize="18" Height="24" VerticalAlignment="Bottom"/>
+					<TextBlock HorizontalAlignment="Left" Height="23" Margin="8,0,0,-16" TextWrapping="Wrap" Text="{m:Exp Str='$共{tels.ItemsSource.Count}项'}" VerticalAlignment="Bottom" Width="121"/>
+				
+				
+				</Grid>
+		</toolkit:DockPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,15 @@
+需求来源：黄河燃气提出一台机器更换不同操作员时发票号要连续，考虑发票分配到机器，
+
+一，思路
+  前台业务电脑上建立配置文件port, 登陆时加载，再前台中保存站点对象，再业务操作时调用，以发票为例：再获取发票号时根据站点号获取
+ 
+二,  修改
+ 1 c 盘根目录建立配置文件 port.txt
+   文件内容: port=2248
+ 2  restv2添加配置文件类 FileConfigObj
+ 
+3 frame 添加 端口对象     <!--站点配置对象-->
+            <o:FileConfigObj Name="portObj" FilePath="c:\\port.txt" IsLoad="True"     ></o:FileConfigObj>
+  
+ 4 其他地方引用  Text="{m:Exp Str=portObj.port}"
+ 注意：再浏览器下无法读取文件，需要再使用时候判断portObj属性不为空

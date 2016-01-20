@@ -1,0 +1,311 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:b1="clr-namespace:Com.Aote.Behaviors"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.民用抄表核查下账">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--批量删除语句-->
+           
+            <!--用户类型查询用-->
+			<o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用'"/>
+			
+
+            <o:ExcelObj Name="excel" Bind="Index,f_handdate,f_userid,f_username,f_cardid,f_gaswatchbrand,f_metertype,f_address,f_districtname,f_apartment,f_phone,f_cumulativepurchase,f_metergasnums,f_dateofopening,f_finallybought,f_finabuygasdate,f_result,f_jichagas" Source="{m:Exp Str=daninfos}"/>
+
+
+            <!--分公司列表对象 HasEmpty="True"-->
+            <o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id">
+            </o:ObjectList>
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+          
+            <!--稽查信息列表-->
+            <o:PagedObjectList Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+					MultiPath="{m:Exp Str=$from t_handplan hp  where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\' and hp.f_state\=\'已抄表\' and f_xiazhang\=\'否\'}"
+					Path="{m:Exp Str=$from t_handplan hp left join fetch hp.users where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\' and hp.f_state\=\'已抄表\' and f_xiazhang\=\'否\'}" 
+					PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" 	 SumNames=","
+			 />
+			 
+			 <!--保存对象 -->
+			
+			
+			<!--需要产生缴费记录的抄表列表-->
+			<o:PagedObjectList Name="handplanlist" WebClientInfo="{StaticResource dbclient}"
+			MultiPath="{m:Exp Str=$from t_handplan hp\,t_userfiles u where \{daninfosearch.DataContext.Condition\} and hp.f_userid\=u.f_userid and hp.f_operator\=\'\{LoginUser.name\}\' and hp.f_state\=\'已抄表\' and hp.f_xiazhang\=\'否\' and hp.f_bczhye!\=hp.f_zhye}"
+			Path="{m:Exp Str=$from t_handplan hp left join fetch hp.users where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\' and hp.f_state\=\'已抄表\' and hp.f_xiazhang\=\'否\' and hp.f_bczhye!\=hp.f_zhye}" 
+			PageIndex="-1" PageSize="20" SumNames=","
+			/>
+			
+			<!--批量转换保存-->
+			<!--b1:BatchTransformAction Name="trans" SourceObject="{m:Exp Str='handplanlist=>DataLoaded!=null:handplanlist,null'}" TargetObject="{m:Exp Str=sellgaslist}"/-->
+			<b:PageAction Name="trans" SourceObject="{m:Exp Str=jichalist}" Action="{m:Exp Str=SaveAction}"/>
+        	
+			
+			<!--重新转化成抄表列表，进行更新-->
+			<o:PagedObjectList Name="handplanlist2" WebClientInfo="{StaticResource dbclient}"
+									MultiPath="{m:Exp Str=$from t_handplan hp where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\'  and hp.f_xiazhang\=\'否\'}"
+									Path="{m:Exp Str=$from t_handplan hp left join fetch hp.users where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\' and hp.f_xiazhang\=\'否\'}" 
+									PageIndex="-1" PageSize="20" SumNames=","
+									/>
+			<o:ObjectList Name="sellgaslist2" WebClientInfo="{StaticResource dbclient}"
+			SelectObject="{m:Exp Str='jichalist[True].ToObjectList()'}" 
+			TempObj="{m:Res Key=sourceObj2}" TempletObject="{m:Res Key=toObj2}"  
+			/>
+			<o:GeneralObject Name="sourceObj2" EntityType="t_handplan" />
+			<o:GeneralObject Name="toObj2" EntityType="t_handplan" WebClientInfo="{StaticResource dbclient}">
+				<o:PropertySetter PropertyName="id" Value="{m:Exp Str=sourceObj2.id}" />
+				<o:PropertySetter PropertyName="f_handdate" Value="{m:Exp Str=sourceObj2.f_handdate}" />
+				<o:PropertySetter PropertyName="f_state" Value="{m:Exp Str=sourceObj2.f_gaspricetype\=\=$内部气价$ |or| sourceObj2.f_gaspricetype\=\=$免费$ |or| sourceObj2.f_zhye!\=sourceObj2.f_bczhye:$完成$\,$记账$}"/>
+				<o:PropertySetter PropertyName="shifoujiaofei" Value="{m:Exp Str=sourceObj2.f_gaspricetype\=\=$内部气价$ |or| sourceObj2.f_gaspricetype\=\=$免费$ |or| sourceObj2.f_zhye!\=sourceObj2.f_bczhye:$是$\,$否$}"/>
+				<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=sourceObj2.f_userid}" />
+				<o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=sourceObj2.f_username}" />
+				<o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=sourceObj2.f_cardid}" />
+				<o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=sourceObj2.f_address}" />
+				<o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=sourceObj2.f_districtname}" />
+				<o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=sourceObj2.f_usertype}" />
+				<o:PropertySetter PropertyName="f_gasproperties" Value="{m:Exp Str=sourceObj2.f_gasproperties}" />
+				<o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=sourceObj2.f_gaspricetype}" />
+				<o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=sourceObj2.f_gasprice}" />
+				<o:PropertySetter PropertyName="f_phone" Value="{m:Exp Str=sourceObj2.f_phone}" />
+				<o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=sourceObj2.f_gaswatchbrand}" />
+				<o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=sourceObj2.f_metertype}" />
+				<o:PropertySetter PropertyName="f_gasmetermanufacturers" Value="{m:Exp Str=sourceObj2.f_gasmetermanufacturers}" />
+				<o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=sourceObj2.f_aliasname}" />
+				<o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=sourceObj2.f_gasmeterstyle}" />
+				<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=sourceObj2.f_filiale}" />
+				<o:PropertySetter PropertyName="oughtamount" Value="{m:Exp Str=sourceObj2.oughtamount}" />
+				<o:PropertySetter PropertyName="oughtfee" Value="{m:Exp Str=sourceObj2.oughtfee}" />
+				<o:PropertySetter PropertyName="lastrecord" Value="{m:Exp Str=sourceObj2.lastrecord}" />
+				<o:PropertySetter PropertyName="lastinputgasnum" Value="{m:Exp Str=sourceObj2.lastinputgasnum}" />
+				<o:PropertySetter PropertyName="lastinputdate" Value="{m:Exp Str=sourceObj2.lastinputdate}" />
+				<o:PropertySetter PropertyName="f_inputtor" Value="{m:Exp Str=sourceObj2.f_inputtor}" />
+				<o:PropertySetter PropertyName="f_zhye" Value="{m:Exp Str=sourceObj2.f_zhye}" />
+				<o:PropertySetter PropertyName="f_bczhye" Value="{m:Exp Str=sourceObj2.f_bczhye}" />
+				<o:PropertySetter PropertyName="f_network" Value="{m:Exp Str=sourceObj2.f_network}" />
+				<o:PropertySetter PropertyName="f_operator" Value="{m:Exp Str=sourceObj2.f_operator}" />
+				<o:PropertySetter PropertyName="f_inputdate" Value="{m:Exp Str=sourceObj2.f_inputdate}" />
+				<o:PropertySetter PropertyName="f_endjfdate" Value="{m:Exp Str=jiezhi.DataContext.f_jiezhidate}" />
+				<o:PropertySetter PropertyName="parentid" Value="{m:Exp Str=sourceObj2.parentid}" />
+				<o:PropertySetter PropertyName="users" Value="{m:Exp Str=sourceObj2.users}" />
+				<o:PropertySetter PropertyName="mark" Value="{m:Exp Str=sourceObj2.f_userid}" />
+				<o:PropertySetter PropertyName="f_xiazhang" NoDependValue="是" Default="是"/>
+				<o:PropertySetter PropertyName="linjienqj" Value="{m:Exp Str=sourceObj2.linjienqj}" />
+				<o:PropertySetter PropertyName="ljnyqje" Value="{m:Exp Str=sourceObj2.ljnyqje}" />
+				<o:PropertySetter PropertyName="linjiewqj" Value="{m:Exp Str=sourceObj2.linjiewqj}" />
+				<o:PropertySetter PropertyName="ljwyqje" Value="{m:Exp Str=sourceObj2.ljwyqje}" />
+				<o:PropertySetter PropertyName="users" Value="{m:Exp Str=sourceObj2.users}" />
+				<o:PropertySetter PropertyName="users.lastinputgasnum" NoDependValue="{m:Exp Str=sourceObj2.lastrecord}"/>
+				<o:PropertySetter PropertyName="users.f_zhye" NoDependValue="{m:Exp Str=sourceObj2.f_bczhye}"/>
+				<o:PropertySetter PropertyName="linjienqj" Value="{m:Exp Str=sourceObj2.linjienqj}" />
+				<o:PropertySetter PropertyName="ljnyqje" Value="{m:Exp Str=sourceObj2.ljnyqje}" />
+				<o:PropertySetter PropertyName="linjiewqj" Value="{m:Exp Str=sourceObj2.linjiewqj}" />
+				<o:PropertySetter PropertyName="ljwyqje" Value="{m:Exp Str=sourceObj2.ljwyqje}" />
+				<o:PropertySetter PropertyName="scinputdate" Value="{m:Exp Str=sourceObj2.scinputdate}" />
+			</o:GeneralObject>
+			
+			<!--开始下账-->
+			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+				 <b:BatchInfo Source="{m:Exp Str=sellgaslist2}" MethodName="SaveToJson"/>
+				 <!--b:BatchInfo Source="{m:Exp Str=sellgaslist}" MethodName="SaveToJson"/-->
+			</b:BatchExcuteAction>
+
+			<!--更新是否下账标示
+			<b:BatchExcuteAction Name="updateHql" CanSave="{m:Exp Str=trans2.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
+				 <b:BatchInfo Source="{m:Exp Str=updatexiazhang}" MethodName="InvokeToJson"/>
+			</b:BatchExcuteAction>
+			<b:HQLAction Name="updatexiazhang"  WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$update t_handplan hp set hp.f_xiazhang\=\'是\'  where \{daninfosearch.DataContext.Condition\} and hp.f_operator\=\'\{LoginUser.name\}\'  and hp.f_xiazhang\=\'否\'}"/> 
+			-->
+			<!--批量转换保存-->
+			<!--b1:BatchTransformAction Name="trans2" CanInvoke="{m:Exp Str=trans.State\=\=$End$}" SourceObject="{m:Exp Str='handplanlist2=>DataLoaded!=null:handplanlist2,null'}" TargetObject="{m:Exp Str=sellgaslist2}"/-->
+        
+		
+		</m:ResourceLoad>
+        <Grid>
+            <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=trans.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="100.5"/>
+                            <ColumnDefinition Width="104.167"/>
+                            <ColumnDefinition Width="103.333"/>
+                            <ColumnDefinition Width="172"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+						<!--Button Content=" 保存 " x:Name="saveButton" IsEnabled="{m:Exp Str='jichalist.Count>0 and !jichalist.HasErrors'}" Click="{m:Exp Str=SaveAction.Invoke()}"  Grid.Column="6"  Margin="85,0,0,0" FontSize="14"  Grid.RowSpan="2" Width="80" HorizontalAlignment="Left"  /-->
+								
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="6" IsEnabled="{m:Exp Str='daninfosearch.DataContext.f_usertype \!\=null'}" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="-21,0,0,0" FontSize="14" Width="80" Grid.RowSpan="3" RenderTransformOrigin="1.838,0.667" HorizontalAlignment="Left" d:LayoutOverrides="Width"  />
+                        
+                        <TextBlock TextWrapping="Wrap" Text="用气量大于："  Margin="12,1,0,2" Height="25" TextAlignment="Right" Grid.Column="2" HorizontalAlignment="Left" Width="91" />
+						<TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_dayu}" Width="101" Margin="0,2,-0.5,1" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" HorizontalAlignment="Right" d:LayoutOverrides="HorizontalMargin" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_dayu"  Operator="hp.oughtamount>='this'"/>          
+									</a:Data.Prop>
+								</TextBox>
+						<TextBlock TextWrapping="Wrap" Text="用气量小于："  Margin="8.5,0,0,3" Height="25" TextAlignment="Right" Grid.Column="4" HorizontalAlignment="Left" Width="104" />
+						<TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="4" Text="{m:Bind Path=f_xiaoyu}" Width="104" Margin="0,1,-50.5,2" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" HorizontalAlignment="Right" d:LayoutOverrides="HorizontalMargin" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_xiaoyu"  Operator="hp.oughtamount ^='this'"/>          
+							</a:Data.Prop>
+						</TextBox>
+						<TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="-1,3,0,0" Height="25" TextAlignment="Right" />
+						<ComboBox  x:Name="usertype"  SelectedValue="{m:Bind Path=f_usertype}" ItemsSource="{m:Exp Str=usertypelist}"    DisplayMemberPath="name" SelectedValuePath="name"  Grid.Row="0" Grid.Column="1"   Width="101" Margin="0,2,-0.5,1" Height="25" Grid.ColumnSpan="1"   HorizontalAlignment="Right" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_usertype"  Operator="hp.f_usertype ='this'" NotNull="True"/>          
+							</a:Data.Prop>
+						</ComboBox >
+						
+                        <!--Button Content=" 打印稽查列表" IsEnabled="{m:Exp Str='jichalist.Count!=null or jichalist.Count!=0'}"  Grid.Column="6" Click="{m:Exp Str=print.Print()}" Margin="91,-2,0,-2" FontSize="14"  Grid.RowSpan="2" Width="120" HorizontalAlignment="Left" d:LayoutOverrides="Width"  />
+								<c:PrintPageObj x:Name="print" Area="{m:Res Key=jichaprint}" List="{m:Exp Str=jichalist}" PageRow="26" VerticalAlignment="Bottom" HorizontalAlignment="Left" /-->
+
+                    </Grid>
+                    <toolkit:DockPanel Name="jiezhi"  Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                         <a:Data.Context>
+                            <o:GeneralObject />
+                        </a:Data.Context>
+						<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+						<StackPanel Orientation="Horizontal" toolkit:DockPanel.Dock="Right">
+                        <TextBlock TextWrapping="Wrap" Margin="0,2,0,1" Height="25" TextAlignment="Right"><Run Text="交费截止日期"/><Run Text=" "/><Run Text="："/></TextBlock>
+						<sdk:DatePicker  Name="tj4" SelectedDate="{m:Bind Path=f_jiezhidate}"  Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,2" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_jiezhidate" Value="{m:Exp Str=usertype.SelectedItem.name\=\=$民用$:SysTime.AppointedDate(SysTime.Today.AddMonths(1).Year\,SysTime.Today.AddMonths(1).Month\,20)\,
+																								usertype.SelectedItem.name\=\=$非民用$:SysTime.AppointedDate(SysTime.Today.Year\,SysTime.Today.Month\,SysTime.Today.DayOfMonth(SysTime.Today.Year\,SysTime.Today.Month))\,SysTime.Today}" />
+							</a:Data.Prop>
+						</sdk:DatePicker>
+						<toolkit:BusyIndicator BusyContent="稍等,正在处理..." IsBusy="{m:Exp Str=trans.IsBusy}">
+						<Button x:Name="xiaButton" Content="    下  账    " 
+						IsEnabled="{m:Exp Str=jiezhi.DataContext.f_jiezhidate!\=null and jichalist.Count>0}" 
+						Click="{m:Exp Str=trans.Invoke()}" Margin="0"  Background="white "
+						/>
+						</toolkit:BusyIndicator>
+						</StackPanel>
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+
+                    <sdk:DataGrid x:Name="daninfos"  toolkit:DockPanel.Dock="Top"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" ItemsSource="{m:Exp Str=jichalist}">
+                        <sdk:DataGrid.Columns>
+                        	        <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}" d:IsLocked="True" />
+									<sdk:DataGridTextColumn  Header="计划月份" Binding="{Binding f_handdate,StringFormat=yyyy-MM}" />
+									<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" />
+									<sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}" />
+									<sdk:DataGridTextColumn  Header="用户类型" Binding="{Binding f_usertype}" />
+								    <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+									<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
+									<!--sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+									<sdk:DataGridTextColumn Header="气表编号" Binding="{Binding f_meternumber}"/>
+									<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/-->
+									<sdk:DataGridTemplateColumn Header="上次底数" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox IsReadOnly="True" TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=lastinputgasnum}">
+													</TextBox>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									
+									<sdk:DataGridTemplateColumn Header="本次底数" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox IsReadOnly="True" TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=lastrecord}"/> 
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									
+									<sdk:DataGridTemplateColumn Header="用气量" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=oughtamount}" IsReadOnly="True"> 
+														 </TextBox>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									
+									<sdk:DataGridTemplateColumn Header="应交金额" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox IsReadOnly="True" TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=oughtfee}">
+													</TextBox>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="上次账户余额" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBlock TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=f_zhye}">
+													</TextBlock>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="本次结算余额" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBlock TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=f_bczhye}">
+														
+													</TextBlock>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="抄表日期" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													 <sdk:DatePicker IsEnabled="False"  SelectedDate="{m:Bind Path=lastinputdate}" Grid.Row="0" Grid.Column="1" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+							                            
+							                        </sdk:DatePicker>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="抄表员" >
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox IsReadOnly="True" TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=f_inputtor}">
+														
+													</TextBox>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+								</sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                   </toolkit:DockPanel>
+            </toolkit:BusyIndicator>
+        </Grid>
+
+        <c:MessageTipObj  Name="deletettip" Tip="您确认要删除此选择项吗？" OK="{m:Exp Str=DeleteAction.Invoke()}" />
+        <!--/sdk:TabItem>
+		</sdk:TabControl-->
+    </Grid>
+</UserControl>

@@ -1,0 +1,188 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="s2.其他报表上传"
+	d:DesignWidth="640" d:DesignHeight="480">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0">
+			<!--上传对象-->
+			<o:ObjectList Name="otheruploadlist"   EntityType="t_upload" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"></o:ObjectList>
+			<!--报表文件类型-->
+				<o:ObjectList Name="loadlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='报表文件类型' order by id"/>
+			<!--保存对象-->
+				<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+					<b:BatchInfo Source="{m:Exp Str=otheruploadlist}" MethodName="Save"/>
+				</b:BatchExcuteAction>
+		</m:ResourceLoad>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="5*"/>
+			<ColumnDefinition Width="5*"/>
+		</Grid.ColumnDefinitions>
+		<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=uplists.ItemsSource.IsBusy}">
+		 <toolkit:DockPanel>
+                <!--信息列表按钮-->
+            	<toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" Margin="0" Height="38">
+                    <!--信息列表翻页-->
+            		<TextBlock  TextWrapping="Wrap" Text="{m:Exp Str=$共\{uplists.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,15"/>
+            	</toolkit:DockPanel>
+				<toolkit:DockPanel x:Name="uplistsearch" toolkit:DockPanel.Dock="Top" Margin="0"  VerticalAlignment="Top" Background="#FFCFEFFF" Width="Auto">
+					<a:Data.Context>
+						<o:SearchObject/>
+					</a:Data.Context>
+							<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="50*"/>
+								<ColumnDefinition Width="50*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="28"/>
+								<RowDefinition Height="28"/>
+							</Grid.RowDefinitions>
+					<TextBlock Visibility="Collapsed" TextWrapping="Wrap" Text="上传人：" Margin="5,0,0,0"/>
+					<TextBox Visibility="Collapsed" TextWrapping="Wrap" Text="{m:Bind Path=f_uploader}" IsReadOnly="True" a:ControlAttach.DefaultButton="searchbutton">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_uploader" Default="{m:Exp Str=LoginUser.name}" Operator="f_uploader='this'"/>       
+            			</a:Data.Prop>
+            		</TextBox>
+									
+            		<TextBlock TextWrapping="Wrap" Text="上传日期：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
+            		<sdk:DatePicker SelectedDate="{m:Bind Path=f_date}"  Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_date"  
+											Operator=" (f_date, StringFormat=yyyy-MM-dd) = CONVERT(varchar(100), CAST('this' as date),23) "/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								
+					<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="文 件 名：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
+            		<TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=filename}" a:ControlAttach.DefaultButton="searchbutton" Height="25">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="filename" Operator="filename like '%this%'"/>               
+            			</a:Data.Prop>
+            		</TextBox>
+					<Button Content="查 询" x:Name="searchbutton" Grid.Column="2" Grid.Row="1" Click="{m:Exp Str=uplistsearch.DataContext.Search()}" HorizontalAlignment="Right" Width="50" Margin="0,-5,0,0"/>
+			</Grid>
+				</toolkit:DockPanel>
+				<sdk:DataGrid x:Name="uplists" Margin="0,0,0,42" 
+            		AutoGenerateColumns="False" Width="Auto" IsReadOnly="True">
+					<a:Data.Items>
+            			<o:PagedObjectList x:Name="infoslist" WebClientInfo="{StaticResource dbclient}"
+            				Path="{m:Exp Str=$from t_upload where \{uplistsearch.DataContext.Condition\}}"
+            				IsOld="{m:Exp Str='otheruploadlist.State\=\=$End$'}"
+							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_size"/>
+            		</a:Data.Items>
+					<sdk:DataGrid.Columns>
+            			<sdk:DataGridTextColumn Header="序    号" Binding="{Binding Index}"/>
+						<sdk:DataGridTemplateColumn Width="Auto" Header="文件名">
+							<sdk:DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<HyperlinkButton x:Name="annex" Foreground="Black"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+									</StackPanel>
+								</DataTemplate>
+							</sdk:DataGridTemplateColumn.CellTemplate>
+						</sdk:DataGridTemplateColumn>
+            			<sdk:DataGridTextColumn Header="上传人" Binding="{Binding f_uploader}"/>
+            			<sdk:DataGridTextColumn Header="报表类型" Binding="{Binding f_filetypes}"/>
+            			<sdk:DataGridTextColumn Header="上传日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+            		</sdk:DataGrid.Columns>
+				</sdk:DataGrid>	
+		</toolkit:DockPanel>		
+		</toolkit:BusyIndicator>
+		<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=uplists.ItemsSource.IsBusy}" Grid.Column="1">
+			<Grid Margin="0,0,0,46">
+				<a:Data.Context>
+					<o:SearchObject Name="fileup">
+						<o:PropertySetter PropertyName="filename" Default="otheruploadlist" IsInited="True"/>
+					</o:SearchObject>
+				</a:Data.Context>
+			<Grid.Background>
+				<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+								<GradientStop Color="#FFF2F8FF" Offset="0"/>
+								<GradientStop Color="#FFDDF2FD" Offset="1"/>
+							</LinearGradientBrush>
+			</Grid.Background>	
+				<ListBox ItemsSource="{m:Exp Str=otheruploadlist}" x:Name="main"  Margin="0,0,0,-8" MinHeight="200" MinWidth="200">
+            				<ListBox.ItemTemplate>
+            					<DataTemplate>
+            						<StackPanel>
+            							<StackPanel Orientation="Horizontal">	
+            								<c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding f_filename, Mode=TwoWay}" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+            								<HyperlinkButton x:Name="annex" Foreground="Black" IsEnabled="{m:Exp Str=!FileLoad.IsBusy}"  Content="{Binding f_filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+											<TextBlock Width="20" />
+											<Button Content="上传文件" IsEnabled="{m:Exp Str=!FileLoad.IsBusy}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+            								<Button Content="X" IsEnabled="{m:Exp Str=!FileLoad.IsBusy}"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            									Click="{m:Exp Str=data.Remove()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+            							</StackPanel>
+											<StackPanel Orientation="Horizontal" Margin="0,2,0,2">	
+											<TextBlock FontSize="12" Text="文 件 名:  "/>
+											<TextBox Text="{m:Bind Path=filename}"  Grid.Column="5" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" Width="100" Height="25" VerticalAlignment="Stretch" >
+												<a:Data.Prop>
+													<o:PropertySetter PropertyName="filename" 
+														Value="{m:Exp Str=FileLoad.FileName}"/>
+												</a:Data.Prop>
+											</TextBox>
+										</StackPanel>
+										<StackPanel Orientation="Horizontal" Margin="0,2,0,2">	
+											<TextBlock FontSize="12" Text="报表类型: "/>
+											<ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=loadlist}" SelectedValue="{m:Bind Path=f_filetypes}"  Grid.Column="3" Margin="0" Grid.Row="10" HorizontalAlignment="Stretch" Width="100" Height="25" > 
+												<a:Data.Prop>
+													<o:PropertySetter  PropertyName="f_filetypes"
+														Default="{m:Exp Str='loadlist.Count > 0 :loadlist.First().name,null'}" />
+												</a:Data.Prop>
+											</ComboBox>
+										</StackPanel>
+										<StackPanel Orientation="Horizontal" Margin="0,2,0,2">	
+											<TextBlock FontSize="12" Text="上 传 人:  "/>
+											<TextBox Text="{m:Bind Path=f_uploader}" Grid.Column="5" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" Height="25" Width="100" VerticalAlignment="Stretch" >
+												<a:Data.Prop>
+													<o:PropertySetter PropertyName="f_uploader" 
+														Default="{m:Exp Str=LoginUser.name}"/>
+												</a:Data.Prop>
+											</TextBox>
+										</StackPanel>
+										<StackPanel Orientation="Horizontal" Margin="0,2,0,2">	
+											<TextBlock FontSize="12" Text="上传日期: "/>
+											<TextBox Text="{Binding f_date}" IsReadOnly="True" Width="100">
+												<a:Data.Prop>
+				            						<o:PropertySetter PropertyName="f_date"
+				            							Default="{m:Exp Str=SysTime.Now.ToString($yyyy-MM-dd$)}"/>
+				            					</a:Data.Prop>
+											</TextBox>
+										</StackPanel>
+										<!--上次进度条-->	
+										<TextBlock FontSize="12" Text="{m:Exp Str='FileLoad.State \=\=$StartLoad$:$上传中...$,$$'}" Width="472" x:Name="Label" Margin="0, 0, 0, 10"/>
+										<ProgressBar  Visibility="{m:Exp Str='FileLoad.State \=\=$StartLoad$:$Visible$,$Collapsed$'}" IsIndeterminate="True" Height="20"/>
+																			
+            						</StackPanel>
+            					</DataTemplate>
+            				</ListBox.ItemTemplate>
+            			</ListBox>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
+			            	<Button x:Name="Save" Content="  保  存  " Margin="5" 
+							IsEnabled="{m:Exp Str=!otheruploadlist.DataContext.HasErrors}"
+			            	Click="{m:Exp Str=otheruploadlist.Save();otheruploadlist.New()}" Width="50"/>
+			            </StackPanel>
+					</Grid>
+			</toolkit:BusyIndicator>
+			<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=uplists,Converter={StaticResource DataPagerConverter}}"  Margin="1,0,0,48" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+
+		</Grid>
+	</Grid>
+</UserControl>

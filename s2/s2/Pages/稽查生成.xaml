@@ -1,0 +1,228 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+	xmlns:b1="clr-namespace:Com.Aote.Behaviors"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.稽查生成">
+
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--大于小于-->
+            <o:ObjectList Name="dxlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='大于小于'"/>
+
+            <!--分公司列表对象-->
+            <o:ObjectList Name="fgslist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+            <!--用户类型查询用-->
+            <o:ObjectList Name="usertypelist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
+            <!--气表类型-->
+            <o:ObjectList Name="metertypelist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型' order by id"/>
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+            <!--气表品牌-->
+            <o:ObjectList Name="qblist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表品牌'"/>
+            <!--气价类型-->
+            <o:ObjectList Name="qjlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气价类型'"/>
+
+        </m:ResourceLoad>
+        <!--sdk:TabControl Margin="0" >
+					
+			<sdk:TabItem Header="民用档案" Height="Auto" Width="Auto" Margin="0,2,0,0"DataContext="{m:Res Key=jicha}"-->
+        <c:MessageTipObj Tip="{m:Exp Str=$导出完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0*"/>
+            </Grid.ColumnDefinitions>
+
+            <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy |or| toExcel.IsBusy |or| downLoad.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid x:Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="118"/>
+                            <ColumnDefinition Width="133"/>
+                            <ColumnDefinition Width="86"/>
+                            <ColumnDefinition Width="131"/>
+                            <ColumnDefinition Width="102"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="4" Grid.Column="5" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="2,1,0,0" FontSize="14" HorizontalAlignment="Left" Width="60"  />
+                        <Button Content="导出Excel"  IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count>0}" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Row="4" Grid.Column="5" FontSize="14" HorizontalAlignment="Left" Width="70" Background="white " Margin="65,0,0,0"/>
+                        <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
+   							 Completed="{m:Exp Str=downLoad.Down()}"
+   							         Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户名称|f_address:地址|f_usertype:用户类型|f_gasmeterstyle:气表类型|gas:购气量|f_filiale:所属部门$}"/>
+                        <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" />
+                        <Button Content=" 置  空"  Grid.Row="4" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate\=null;daninfosearch.DataContext.f_districtname\=null;daninfosearch.DataContext.f_gouqicishufuhao\=null;daninfosearch.DataContext.f_gouqicishu\=null;daninfosearch.DataContext.f_deliverydate\=null;daninfosearch.DataContext.f_deliverydate2\=null;tj5.SelectedValue\=null;fgs.SelectedValue\=null;tj6.SelectedValue\=null;tja.SelectedValue\=null;tja1.SelectedValue\=null}" Margin="0,0,25,0" FontSize="14" HorizontalAlignment="Right" Width="60"  />
+                        <TextBlock TextWrapping="Wrap" Text="气表品牌："  Margin="6,3,6,0" Height="25" TextAlignment="Right" Grid.Column="4" />
+                        <ComboBox Name="tj5" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="5" ItemsSource="{m:Exp Str=qblist}"  Margin="0,1,0,2" SelectedValuePath="name"  Height="25">
+                           <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+						    <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gaswatchbrand"  Operator="u.f_gaswatchbrand = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="气价类型：" Grid.Column="2"  Margin="-26,2,0,1" Height="25" TextAlignment="Right" />
+                        <ComboBox Name="tj6" SelectedValue="{m:Bind Path=f_gaspricetype}" Grid.Column="3" ItemsSource="{m:Exp Str=qjlist}"  Margin="0,1,0,2"  SelectedValuePath="name"  Height="25">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+							
+							<a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gaspricetype"  Operator="u.f_gaspricetype like 'this%'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="16,3,0,0" Height="25" TextAlignment="Right" Grid.Row="1" />
+                        <ComboBox x:Name="tja"  SelectedValue="{m:Bind Path=f_usertype}" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.Column="1">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_usertype"  Operator="u.f_usertype = 'this'" />
+                            </a:Data.Prop>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="气表类型：" Grid.Row="1" Grid.Column="2"  Margin="0,0,0,3" Height="25" TextAlignment="Right" />
+                        <ComboBox x:Name="tja1"  SelectedValue="{m:Bind Path=f_gasmeterstyle}" Grid.Column="3" ItemsSource="{m:Exp Str=metertypelist}"  Margin="0,27,0,4"  SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gasmeterstyle"  Operator="u.f_gasmeterstyle = 'this'" />
+                            </a:Data.Prop>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="所属部门：" Grid.Row="1" Grid.Column="4"  Margin="0,0,0,3" Height="25" TextAlignment="Right" />
+                        <ComboBox x:Name="fgs"  SelectedValue="{m:Bind Path=f_filiale}" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,27,0,4"  SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_filiale"  Operator="u.f_filiale = 'this'" />
+                            </a:Data.Prop>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="购气量："  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="2" Grid.Column="4" />
+                        <ComboBox x:Name="ui_f_cishufuhao" SelectedValue="{m:Bind Path=f_gouqicishufuhao}" Grid.Column="5" ItemsSource="{m:Exp Str=dxlist}"  Margin="0,1,55,2"  SelectedValuePath="name"  Height="25" Grid.Row="2">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+							<a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gouqicishufuhao" Operator="1=1" NotNull="True"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBox x:Name="ui_f_gouqicishu" TextWrapping="Wrap" Grid.Row="2" Grid.Column="5" Text="{m:Bind Path=f_gouqicishu}" Width="51" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" HorizontalAlignment="Right" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gouqicishu" Operator="1=1" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="8,2,0,1" Height="25" TextAlignment="Right"/>
+                        <TextBox x:Name="yueshu_Copy" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,1,0,2" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_districtname"  Operator="u.f_districtname like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="购气日期从："  Margin="0,1,0,2" Height="25" TextAlignment="Right" Grid.Row="2" />
+                        <sdk:DatePicker x:Name="ui_startDate" SelectedDate="{m:Bind Path=f_deliverydate}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_deliverydate" Operator="1=1" NotNull="True"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="2"/>
+                        <sdk:DatePicker x:Name="ui_endDate" SelectedDate="{m:Bind Path=f_deliverydate2}" Grid.Row="2" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_deliverydate2" Operator="1=1" NotNull="True"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="建档日期从："  Margin="0,1,0,2" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="6"/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate}" Grid.Row="0" Grid.Column="7" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate" Operator="f_yytdate >= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="6" Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="1"/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="1" Grid.Column="7" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate1" Operator="f_yytdate ^= substring('this',1,10)+' 23:59:59'"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                    </Grid>
+
+                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="30" toolkit:DockPanel.Dock="Top" Height="24"   />
+                        <TextBlock x:Name="daninfoscount" TextWrapping="Wrap" Margin="0,0,5,0" Text="{m:Exp Str=$\{daninfos.ItemsSource.Count\}}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+                    <sdk:DataGrid x:Name="daninfos"  Margin="0,0,0,3"   IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}">
+                        <a:Data.Items>
+                            <o:PagedList Name="daninfoslist" WebClientInfo="{StaticResource dbclient}" 
+                                         LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
+                                          Names="f_userid,f_username,f_address,f_usertype,f_gasmeterstyle,gas,f_filiale"
+                                SumHQL="{m:Exp Str=$select u.f_userid\,u.f_username\,u.f_address\,u.f_usertype\, u.f_gasmeterstyle\,s.gas\,u.f_filiale  
+                                        from t_userfiles u left join ( select f_userid\, sum(f_pregas) gas  
+                                        from t_sellinggas where f_payfeevalid\=\'有效\' and f_deliverydate &gt;\=\'\{daninfosearch.DataContext.f_deliverydate\}\' and f_deliverydate &lt;\=\'\{daninfosearch.DataContext.f_deliverydate2\}\' group by f_userid ) s on u.f_userid\=s.f_userid 
+                                        where s.gas \{daninfosearch.DataContext.f_gouqicishufuhao\=\=$大于$\:$&gt;$\,$&lt;$\} \{daninfosearch.DataContext.f_gouqicishu\} and \{daninfosearch.DataContext.Condition\} }"
+                                HQL="{m:Exp Str=$select u.f_userid\,u.f_username\,u.f_address\,u.f_usertype\,u.f_gasmeterstyle\,s.gas\,u.f_filiale
+                                        from t_userfiles u left join ( select f_userid\, sum(f_pregas) gas 
+                                        from t_sellinggas where f_payfeevalid\=\'有效\' and f_deliverydate &gt;\=\'\{daninfosearch.DataContext.f_deliverydate\}\' and f_deliverydate &lt;\=\'\{daninfosearch.DataContext.f_deliverydate2\}\' group by f_userid ) s on u.f_userid\=s.f_userid 
+                                        where s.gas \{daninfosearch.DataContext.f_gouqicishufuhao\=\=$大于$\:$&gt;$\,$&lt;$\} \{daninfosearch.DataContext.f_gouqicishu\} and \{daninfosearch.DataContext.Condition\} order by u.f_userid }"
+                                Path="sql"
+                                PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" 
+                                         SumNames=","/>
+
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+                            <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="气表类型" Binding="{Binding f_gasmeterstyle}"/>
+                            <sdk:DataGridTextColumn Header="购气量" Binding="{Binding gas}"/>
+                            <sdk:DataGridTextColumn Header="所属部门" Binding="{Binding f_filiale}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>
+            </toolkit:BusyIndicator>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,142 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="16"
+	x:Class="Com.Aote.Pages.安检计划生成">
+
+	<Grid x:Name="LayoutRoot">
+	<m:ResourceLoad Margin="0,0,-101,0">
+		<!--安检计划编辑对象-->
+		<o:GeneralObject Name="ybuserfilego" WebClientInfo="{StaticResource dbclient}" 
+			EntityType="T_CHECKPLAN"
+			IsInit="{m:Exp Str=this.State\=\=$End$ or SaveAction.State\=\=$End$}"  />
+		
+		<!--查询出的地址列表-->
+		<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+			Path="{m:Exp Str=$from t_gasaddress where \{userfilesearch.DataContext.Condition\}$}"
+			PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+
+		<!--用SQL语句生成安检单-->
+		<b:HQLAction Name="MakeCheck" Type="sql"
+			HQL="{m:Exp Str=$
+			insert into T_IC_SAFECHECK_PAPER(id\, checkplanid \, UNIT_NAME \, ROAD \, CUS_DOM \, CUS_DY \, CUS_FLOOR \, CUS_ROOM)
+			select order by id ()\, \'\{ybuserfilego.id\}\'\, f_districtname \,f_road \, f_cusDom \, f_cusDy \, f_cusFloor \, f_apartment from t_gasaddress
+			where \{userfilesearch.DataContext.Condition\}}"
+		/>
+
+		<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+			<b:BatchInfo Source="{m:Exp Str=ybuserfile.DataContext}" MethodName="SaveToJson"/>
+			<b:BatchInfo Source="{m:Exp Str=MakeCheck}" MethodName="InvokeToJson"/>
+		</b:BatchExcuteAction>
+				
+	</m:ResourceLoad>
+		<Grid >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="5.5*"/>
+				<ColumnDefinition Width="4.5*"/>
+			</Grid.ColumnDefinitions>
+								
+			<c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" Grid.Column="1" >
+				<toolkit:DockPanel >
+					<!--提交按钮-->
+					<toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,10" Height="33" Width="717">
+						<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$户数合计:\{userfiles.ItemsSource[True].Sum(f_userNum)\}}" Width="258" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Stretch" Margin="100,2,0,3" FontSize="13.333" RenderTransformOrigin="0.5,0.5" Height="Auto">
+							<TextBlock.RenderTransform>
+								<CompositeTransform ScaleY="1"/>
+							</TextBlock.RenderTransform>
+						</TextBlock>
+						<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="258" HorizontalAlignment="Right" Foreground="#FF140000" VerticalAlignment="Stretch" Margin="100,0,0,2" FontSize="13.333" RenderTransformOrigin="0.5,0.5" Height="Auto">
+							<TextBlock.RenderTransform>
+								<CompositeTransform ScaleY="1"/>
+							</TextBlock.RenderTransform>
+						</TextBlock>
+					</toolkit:DockPanel>
+					<toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
+							
+						<a:Data.Context>
+							<o:SearchObject />        	
+						</a:Data.Context>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="28"/>
+								<RowDefinition Height="28"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="50*"/>
+								<ColumnDefinition Width="50*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>          
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区地址：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+							<TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>          
+								</a:Data.Prop>
+							</TextBox>
+							<Button Content="查  询" x:Name="searchbutton" Grid.Row="1" Grid.Column="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="8,0,0,2" HorizontalAlignment="Left" Width="70"  FontSize="13.333" d:LayoutOverrides="Height"/>
+						</Grid>
+					</toolkit:DockPanel>
+					<sdk:DataGrid x:Name="userfiles" Margin="0,-5,0,25"  FontSize="13.333"
+						ItemsSource="{m:Exp Str=userfileslist}"
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+						<sdk:DataGrid.Columns>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+							<sdk:DataGridTextColumn Header="街    道" Binding="{Binding f_road}"/>
+						
+							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+							<sdk:DataGridTextColumn Header="楼    号" Binding="{Binding f_cusDom}"/>
+							
+							<sdk:DataGridTextColumn Header="单    元" Binding="{Binding f_cusDy}"/>
+							<sdk:DataGridTextColumn Header="楼    层" Binding="{Binding f_cusFloor}"/>
+							<sdk:DataGridTextColumn Header="房    号" Binding="{Binding f_apartment}"/>
+						</sdk:DataGrid.Columns>
+					</sdk:DataGrid>
+					<!--提交按钮-->
+				</toolkit:DockPanel>
+			</c:BusyIndicatorEx>
+			<c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=ybuserfile.DataContext.IsBusy or SaveAction.IsBusy}" Margin="0,0,3,0"  >
+				<toolkit:DockPanel HorizontalAlignment="Stretch" Height="Auto" LastChildFill="False" VerticalAlignment="Stretch" Width="Auto" >
+					<Grid x:Name="ybuserfile" DataContext="{m:Exp Str=ybuserfilego}" Margin="0" HorizontalAlignment="Stretch" Height="Auto" Width="Auto" Background="#FFCFEFFF" toolkit:DockPanel.Dock="Top">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="85"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="名称：" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+						
+						<TextBox Text="{m:Bind Path=f_name}" IsReadOnly="False" Grid.Column="1" Margin="1,1,0,4"  Grid.Row="0" TextWrapping="Wrap"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="25" FontSize="13.333" Grid.ColumnSpan="3" >
+							
+						</TextBox>	
+					</Grid>
+					<StackPanel Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
+						<Button   Content="新建"  FontSize="14"
+							Click="{m:Exp Str=ybuserfile.DataContext.New()}"   Width="70" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Top" />
+						<Button x:Name="save" Content="保  存"  FontSize="14" IsEnabled="{m:Exp Str=!ybuserfile.DataContext.HasErrors}"
+							Click="{m:Exp Str=ybuserfilego.MakeID();SaveAction.Invoke()}" Width="70" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Margin="50,0,0,0" />
+					</StackPanel>
+				</toolkit:DockPanel>
+			</c:BusyIndicatorEx>
+			<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="0,0,0,43" PageSize="20" Height="24" VerticalAlignment="Bottom" Grid.Column="1" FontSize="13.333"/>
+		</Grid>
+	</Grid>
+</UserControl>

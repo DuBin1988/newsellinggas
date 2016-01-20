@@ -1,0 +1,277 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.非民用抄表单查看打印">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--批量删除语句-->
+            <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
+                <!--b:BatchInfo Source="{m:Exp Str=Deletejichalist}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=Deletejicha}" MethodName="InvokeToJson"/-->
+            </b:BatchExcuteAction>
+            <!--删除稽查主表>
+            <b:HQLAction Name="Deletejicha"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_inspect where id in ({jichatj.SelectedItems.ToString(id)=>SelectionChanged})'}">
+            </b:HQLAction-->
+            <!--删除稽查信息列表>
+            <b:HQLAction Name="Deletejichalist"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_inspectdetail where parentid in ({jichatj.SelectedItems.ToString(id)=>SelectionChanged})'}">
+            </b:HQLAction-->
+
+            <o:ExcelObj Name="excel" Bind="Index,f_userid,f_username,f_usertype,lastinputgasnum,f_gaswatchbrand,f_metertype,f_address,f_districtname,f_apartment,f_phone,f_cumulativepurchase,f_metergasnums,f_dateofopening,lastinputdate" Source="{m:Exp Str=daninfos}"/>
+
+
+            <!--分公司列表对象 HasEmpty="True"-->
+            <o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id">
+            </o:ObjectList>
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+            <!--稽查条件>
+            <o:ObjectList Name="jicha" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=$from t_handpapercondfmy where \{daninfosearch.DataContext.Condition\}}" 
+									IsOld="{m:Exp Str=DeleteAction.State\=\=$End$}"/-->
+            <!--稽查信息列表>
+            <o:PagedObjectList Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+				MultiPath="{m:Exp Str=$from t_handplan where \{daninfosearch2.DataContext.Condition\} and parentid\=\'\{jichatj.SelectedItem.id\}\' and f_state\=\'未抄表\' and f_usertype\=\'非民用\'}" 
+									Path="{m:Exp Str=$from t_handplan where \{daninfosearch2.DataContext.Condition\} and parentid\=\'\{jichatj.SelectedItem.id\}\' and f_state\=\'未抄表\' and f_usertype\=\'非民用\'  order by  f_userid\,f_districtname\,f_apartment}" 
+									IsOld="{m:Exp Str=DeleteAction.State\=\=$End$}" 
+								PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" 	 SumNames="id"
+			 /-->
+			<!--稽查信息列表-->
+            <o:PagedObjectList Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+				MultiPath="{m:Exp Str=$from t_handplan where \{daninfosearch2.DataContext.Condition\}  and f_state\=\'未抄表\' and f_usertype\=\'非民用\'}" 
+									Path="{m:Exp Str=$from t_handplan where \{daninfosearch2.DataContext.Condition\}  and f_state\=\'未抄表\' and f_usertype\=\'非民用\'  order by  f_userid\,f_districtname\,f_apartment}" 
+									
+								PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" 	 SumNames="id"
+			 />
+			<!--稽查信息列表daninfos.SelectedItem!\=null:-->
+            <o:PagedObjectList Name="printlist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=$from t_handplan where \{daninfosearch2.DataContext.Condition\} and f_state\=\'未抄表\' and f_usertype\=\'非民用\' }" 
+									 
+								PageIndex="0" PageSize="1" 	 SumNames="id"
+			 />
+		<!--稽查信息列表>
+            <o:PagedObjectList Name="printlist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=daninfos.SelectedItem!\=null:$from t_handplan where parentid\=\'\{jichatj.SelectedItem.id\}\' and f_state\=\'未抄表\' and f_usertype\=\'非民用\' and id in (\{daninfos\.SelectedItems\.ToString(id)\=>SelectionChanged\})$\,$from t_handplan where parentid\=\'\{jichatj.SelectedItem.id\}\' and f_state\=\'未抄表\' and f_usertype\=\'非民用\'}" 
+									IsOld="{m:Exp Str=DeleteAction.State\=\=$End$}" 
+								PageIndex="0" PageSize="1" 	 SumNames="id"
+			 /-->
+			 
+			
+        </m:ResourceLoad>
+        <Grid>
+            <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=excel.IsBusy  or jichalist.IsBusy}">
+                <toolkit:DockPanel>
+                    <!--Grid Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="0.593*"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+						
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="8" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="15,0,85,0" FontSize="14" Width="80"  />
+                        <sdk:DatePicker   SelectedDate="{m:Bind Path=f_querydate}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_querydate"  
+											Operator="f_querydate = substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="生成日期："  Margin="0" Height="25" TextAlignment="Right" Grid.Column="2" />
+                        <TextBlock TextWrapping="Wrap" Text="计划月份从："  Margin="0" Height="25" TextAlignment="Right" Grid.Column="4" />
+                        <sdk:DatePicker   SelectedDate="{m:Bind Path=f_begin}" Grid.Row="0" Grid.Column="5" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_begin"  
+											Operator="f_handdate &gt;= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到："  Margin="0,2,31,1" Height="25" TextAlignment="Right" Grid.Column="6" />
+                        <sdk:DatePicker   SelectedDate="{m:Bind Path=f_end}" Grid.Row="0" Grid.Column="7" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1.5" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                        	<a:Data.Prop>
+                        		<o:PropertySetter PropertyName="f_end"  
+                        			Operator="f_handdate ^= substring('this',1,10)"/>
+                        	</a:Data.Prop>
+                        </sdk:DatePicker>
+						</Grid-->
+						<!--Button Content=" 打印稽查列表" IsEnabled="{m:Exp Str='jichalist.Count!=null or jichalist.Count!=0'}"  Grid.Column="6" Click="{m:Exp Str=print.Print()}" Margin="91,-2,0,-2" FontSize="14"  Grid.RowSpan="2" Width="120" HorizontalAlignment="Left" d:LayoutOverrides="Width"  />
+								<c:PrintPageObj x:Name="print" Area="{m:Res Key=jichaprint}" List="{m:Exp Str=jichalist}" PageRow="26" VerticalAlignment="Bottom" HorizontalAlignment="Left" /-->
+
+                    
+					<Grid Name="daninfosearch2" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="0.593*"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+						
+                        <Button Content=" 查  询" x:Name="dansearchbutton2" Grid.Column="7" IsEnabled="{m:Exp Str=!daninfosearch2.DataContext.HasErrors}" Click="{m:Exp Str=daninfosearch2.DataContext.Search()}" Margin="2,1,68,0" FontSize="14" Width="80" Grid.RowSpan="2"  />
+						<TextBlock TextWrapping="Wrap" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Column="2"><Run Text="用户编号从"/><Run Text=" "/><Run Text="："/></TextBlock>
+								<TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_begin}" Width="Auto" Margin="0,2,58,1" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_begin" Operator="f_userid >= 'this'"/>          
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock TextWrapping="Wrap" Margin="0,2,22,1" Height="25" TextAlignment="Right" Grid.Column="3" HorizontalAlignment="Right" Width="38"><Run Text="到"/><Run Text=" "/><Run Text="："/></TextBlock>
+								<TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="4" Text="{m:Bind Path=f_end}" Width="Auto" Margin="-20,2,28,1" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_end" Operator="f_userid ^= 'this'"/>          
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock TextWrapping="Wrap" Margin="3,2,57,1" Height="25" TextAlignment="Right" Grid.Column="5"><Run Text="抄表员"/><Run Text=" "/><Run Text="："/></TextBlock>
+								<TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="6" Text="{m:Bind Path=f_inputtor}" Width="Auto" Margin="-57,2,7,1" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_inputtor" Operator="f_inputtor = 'this'"/>          
+									</a:Data.Prop>
+								</TextBox>
+								<sdk:DatePicker   SelectedDate="{m:Bind Path=f_handdate}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="121" Margin="21,1,0,2" Height="25" HorizontalAlignment="Left" Grid.ColumnSpan="1" VerticalAlignment="Stretch" DisplayDate="2013-06-01" >
+									<a:Data.Prop>
+                            	<!--Operator="hp.f_handdate = substring('this',1,10)"-->
+										<o:PropertySetter PropertyName="f_handdate" NotNull="True"   
+											Operator="YEAR(f_handdate)=substring('this',1,4) and MONTH(f_handdate)=substring('this',6,2)"/> 
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<TextBlock TextWrapping="Wrap" Text="抄表计划月份："  Margin="0,1.5,-21,1.5" Height="25" TextAlignment="Right" />
+					</Grid>
+
+                    <!--sdk:DataGrid x:Name="jichatj"  Margin="0,1,0,2" toolkit:DockPanel.Dock="Top"  IsReadOnly="True" MaxHeight="150" 
+								AutoGenerateColumns="False" Background="{x:Null}" ItemsSource="{m:Exp Str=jicha}" Grid.Row="2">
+
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_inputtor}"/>
+                            <sdk:DataGridTextColumn  Header="生成日期" Binding="{Binding f_querydate,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operator}"/>
+						</sdk:DataGrid.Columns>
+                    </sdk:DataGrid-->
+                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+						<Button Content="    打    印    " IsEnabled="{m:Exp Str='jichalist.Count>0'}"  Click="{m:Exp Str=print.PrintD()}"
+				     		 Margin="0" toolkit:DockPanel.Dock="Right" Background="white "/>
+                        <Button Content="    导出Excel    " Click="{m:Exp Str=excel.Export()}"
+				     		 Margin="0" toolkit:DockPanel.Dock="Right" Background="white "/>
+
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="561" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+
+                    <sdk:DataGrid x:Name="daninfos"  toolkit:DockPanel.Dock="Top"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" ItemsSource="{m:Exp Str=jichalist}">
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn  Header="计划月份" Binding="{Binding f_handdate,StringFormat=yyyy-MM}"/>
+									<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+									<sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
+									<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+									<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
+									<sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
+									<sdk:DataGridTextColumn Header="气表编号" Binding="{Binding f_meternumber}"/>
+									<sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/>
+									<sdk:DataGridTextColumn  Header="上次表底数" Binding="{Binding lastinputgasnum}"/>
+									<sdk:DataGridTextColumn  Header="本次表底数" Binding="{Binding lastrecord}"/>
+									<!--sdk:DataGridTextColumn Header="总购气量" Binding="{Binding f_cumulativepurchase}"/>
+									<sdk:DataGridTextColumn Header="当前表购气量" Binding="{Binding f_metergasnums}"/-->
+									<sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_inputtor}"/>
+									<sdk:DataGridTextColumn Header="责任部门" Binding="{Binding f_zerenbumen}"/>
+									<sdk:DataGridTextColumn Header="上次抄表日期" Binding="{Binding scinputdate,StringFormat=yyyy-MM-dd}"/>
+									
+								</sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                   </toolkit:DockPanel>
+            </toolkit:BusyIndicator>
+        </Grid>
+		<c:MessageTipObj  Name="deletettip" Tip="您确认要删除此选择项吗？" OK="{m:Exp Str=DeleteAction.Invoke()}" />
+        <Grid x:Name="handprint"  Background="White" Height="420" HorizontalAlignment="Left" Width="1125"  VerticalAlignment="Stretch" Margin="-1989,-111,0,-190"  Grid.Row="0" d:LayoutOverrides="HorizontalAlignment, Height"  Grid.RowSpan="1">
+        	<a:Data.Context>
+        		<o:GeneralObject  x:Name="fkprint" WebClientInfo="{StaticResource dbclient}" EntityType="t_handplan" />
+        	</a:Data.Context>
+        	<Grid.RowDefinitions >
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+        		<RowDefinition Height="30"/>
+     
+        		
+        	</Grid.RowDefinitions>
+        	<Grid.ColumnDefinitions>
+        		<ColumnDefinition Width="112"/>
+        		<ColumnDefinition Width="0.142*"/>
+        		<ColumnDefinition Width="0.045*"/>
+        		<ColumnDefinition Width="0.11*"/>
+        		<ColumnDefinition Width="0.205*"/>
+        		<ColumnDefinition Width="0.498*"/>
+        	</Grid.ColumnDefinitions>
+        	<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}"  Grid.Column="4" FontSize="18" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" Width="68" Height="26" VerticalAlignment="Bottom" Margin="51,0,0,-13" d:LayoutOverrides="VerticalAlignment"/>
+        	<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}"  Grid.Column="4" FontSize="18" Margin="0,0,35,-12" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" d:LayoutOverrides="VerticalAlignment"/>
+        	<TextBlock Text="{m:Bind Path=f_gasprice}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+        	<TextBlock  Text="{m:Bind Path=f_username}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+			<TextBlock Text="{m:Bind Path=f_userid}" Grid.Column="1"  FontSize="18" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="-52,0,5,-13" Grid.Row="4"  Width="Auto" Height="29" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Padding="0,2,0,0" Grid.RowSpan="1"/>
+			<TextBlock Text="{m:Bind Path=lastinputgasnum}" Grid.Column="0" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+        	<TextBlock Text="{m:Bind Path=f_meternumber}"  Grid.Column="5" FontSize="18" HorizontalAlignment="Left" Margin="-78,0,0,5" Grid.Row="6" TextWrapping="Wrap" Width="276" Height="30" VerticalAlignment="Bottom" Grid.RowSpan="1"/>
+        	<TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+			<sdk:Label Content="气表编号：" FontSize="18" Grid.Row="6"  Grid.Column="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,-5,79,5" Width="123"/>
+		
+        </Grid>
+        <!--/sdk:TabItem>
+		</sdk:TabControl-->
+		<c:PrintPageObj x:Name="print" DataArea="{m:Res Key=handprint}" List="{m:Exp Str=printlist}" PageRow="1" />
+        
+    </Grid>
+</UserControl>

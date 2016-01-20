@@ -1,0 +1,12 @@
+对安检有隐患、无人、拒检买气时登陆用户的权限控制。
+1.在资源服务中新建角色“验证员”。
+2.在界面上定义yanzheng对象。
+<o:ObjectList  Name="yanzheng"    WebClientInfo="{StaticResource dbclient}"Path="{m:Exp Str=$sql/select t\.name\,t.ENAME from T_USER t\, (select ID from T_ROLE where name\=\'验证员\') r where CHARINDEX(r\.ID\, t\.roles\, 0)\>0 and t\.ENAME\=\'\{GaoguanliUser.ename\}\' and t\.password\=\'\{GaoguanliUser.password\}\'}" >
+</o:ObjectList>
+sql含义是先在t_role查出验证员的ID，在t_user中查找哪个用户的roles字段是否包含验证员ID，如果包含则有权限，如果不包含则没有权限。同时与登陆窗口的用户名、密码分别相同的时候则登陆成功。
+注：GaoguanliUser在阿拉善收费的售气验证页面查找。
+3.在<TextBlock Visibility="{m:Exp Str='(yanzheng.State \=\= $Loaded$ and yanzheng.Count\=\=0) or GaoguanliUser.State\=\=$LoadError$:$Visible$\,$Collapsed$'}"><Run Text="用户名密码错误，请重新输入"/></TextBlock>
+添加条件(yanzheng.State \=\= $Loaded$ and yanzheng.Count\=\=0)与原条件or的关系。
+4.登陆后隐藏第一页的控件、显示第二页的控件，在判断显示第二页的控件处添加条件(yanzheng.State \=\= $Loaded$ and yanzheng.Count>0)与原条件and的关系。
+<Grid x:Name="xglimitgas" Visibility="{m:Exp Str='(yanzheng.State \=\= $Loaded$ and yanzheng.Count>0) and GaoguanliUser.State==$Loaded$:$Visible$,$Collapsed$'}">
+修改限购的权限控制参考安检有隐患、无人、拒检买气时权限控制

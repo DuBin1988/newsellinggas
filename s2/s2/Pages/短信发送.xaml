@@ -1,0 +1,187 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.短信发送">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<!--用户类型参数-->
+				<o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
+		
+			<!--生成民用短信内容-->
+			<b:HQLAction Name="InsertMinyong" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+			HQL="{m:Exp Str=$
+			insert into t_sms(f_username\,f_usertype\,h.f_districtname\,f_createdate\, f_phone\,f_content\,f_state) 
+			select h.f_username\,\'民用\'\,h.f_districtname\,GETDATE() \, h.f_phone\, \'尊敬的\' + h.f_username + \'：您本次表码\' + convert(varchar(200)\,h.lastrecord) + 
+			\'，气量\' + convert(varchar(200)\,h.oughtamount) + \'，气费\' + convert(varchar(200)\,h.oughtfee) + \'元，本次余额\' 
+			+ convert(varchar(200)\,h.f_zhye-isnull(SUM(h2.oughtfee)\,0)) + \'，请及时缴费。详电2993016\'\, \'未发\' 
+			from t_handplan h join
+			(select f_userid\, MAX(id) id from t_handplan where f_sms is null and f_usertype\=\'民用\' group by f_userid) s on s.id\=h.id 
+			left join t_handplan h2 on h.f_userid\=h2.f_userid and h2.shifoujiaofei\=\'否\' and h2.f_state\=\'已抄表\'
+			where  h.shifoujiaofei\=\'否\' and h.f_state\=\'已抄表\'
+			group by h.f_username\,h.f_districtname\,h.lastrecord\,h.oughtamount\,h.oughtfee\,h.f_zhye\,h.f_phone
+			}"/>
+			<!--生成非民用短信内容-->
+			<b:HQLAction Name="InsertGongye" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+			HQL="{m:Exp Str=$
+			insert into t_sms(f_username\,f_usertype\,h.f_districtname\,f_createdate\,f_phone\,f_content\,f_state) 
+			select uf.f_unitname\,\'非民用\'\,\'\'\,GETDATE()\,uf.f_phone\, 
+			\'尊敬的\' + uf.f_unitname + \'，您本次天然气气费金额为\' + convert(varchar(200)\,SUM(h.oughtfee)) + 
+			\'元，请于三天之内缴清，以免停气给您带来不便。详电2528088\'\, \'未发\'
+			from (select distinct f_username from t_handplan where f_sms is null and f_usertype\=\'非民用\') u
+			left join t_unit uf on u.f_username\=uf.f_unitname
+			left join t_handplan h on u.f_username\=h.f_username
+			where h.shifoujiaofei\=\'否\' and h.f_state\=\'已抄表\'
+			group by uf.f_unitname\, uf.f_phone			
+			}"/>
+			<!--更新所有抄表记录为已产生-->
+			<b:HQLAction Name="UpdateHandplan" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+			HQL="{m:Exp Str=$update t_handplan set f_sms\=\'是\'	
+			}"/>
+			
+			<!--生成短信发送记录-->
+			<b:BatchExcuteAction Name="CreateSMS" CanSave="{m:Exp Str=create\=>Click!\=null}" WebClientInfo="{StaticResource dbclient}">
+				<!--插入民用记录-->
+				<b:BatchInfo Source="{m:Exp Str=InsertMinyong}" MethodName="InvokeToJson"/>
+				<!--插入非民用记录-->
+				<b:BatchInfo Source="{m:Exp Str=InsertGongye}" MethodName="InvokeToJson"/>
+				<!--更新为已产生-->
+				<b:BatchInfo Source="{m:Exp Str=UpdateHandplan}" MethodName="InvokeToJson"/>
+			</b:BatchExcuteAction>
+			
+			<!--短信发送列表-->
+			<o:PagedObjectList Name="daninfoslist" EntityType="t_sms" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=$from t_sms where \{daninfosearch.DataContext.Condition\}$}"
+				PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="id"/>
+			<!--保存短信修改结果-->
+			<b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=save\=>Click!\=null}" WebClientInfo="{StaticResource dbclient}">
+				<!--保存列表里的所有记录-->
+				<b:BatchInfo Source="{m:Exp Str=daninfoslist}" MethodName="SaveToJson"/>
+			</b:BatchExcuteAction>
+		</m:ResourceLoad>		
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*"/>
+						<ColumnDefinition Width="0*"/>
+					</Grid.ColumnDefinitions>
+					<c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+						<toolkit:DockPanel>
+						<StackPanel x:Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" Orientation="Horizontal" >
+								<a:Data.Context>
+									<o:SearchObject />        	
+								</a:Data.Context>
+								
+									<TextBlock TextWrapping="Wrap" Text="发送状态：" Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" VerticalAlignment="Center" />
+									<ComboBox ItemsSource="{m:Exp Str=params[data.name\=\=$短信状态$].First().f_paramvalues}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_state}" Name="tj1" Grid.Column="1"  Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" d:LayoutOverrides="Height" >
+					  					<a:Data.Prop>
+					  						<o:PropertySetter PropertyName="f_state"  Operator="f_state='this'"/>          
+					  					</a:Data.Prop>
+									</ComboBox>
+										<TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" VerticalAlignment="Center" />
+								<TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="100" Margin="5,0,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
+								</a:Data.Prop>
+								
+							</TextBox>
+							<TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
+								<ComboBox x:Name="tja"  SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="1" Grid.Column="5" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+											<TextBlock TextWrapping="Wrap" Text="小区：" Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" VerticalAlignment="Center" />
+								<TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="100" Margin="5,0,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like '%this%'"/>          
+								</a:Data.Prop>
+								
+							</TextBox>
+							<TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right" Text="发送日期 从："/>
+								<sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_senddate1}" Grid.Row="3" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_senddate1"   
+											Operator="f_createdate >= substring('this',1,10)"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+										<TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="3" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+						
+								<sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_senddate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_senddate2"    
+											Operator="f_senddate ^= substring('this',1,10) + ' 23:59:59'"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+						
+							 
+						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="7" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Width="60" Height="25"  />
+						<Button Content=" 生  成" x:Name="create" Grid.Row="3" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Height="25"  />
+						<c:BusyIndicatorEx BusyContent="正在发送短信..." IsBusy="{m:Exp Str=sendsms.IsBusy}">
+						<Button Content=" 发  送" x:Name="send" Grid.Row="3" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Height="25"  />
+						</c:BusyIndicatorEx>
+						<Button Content=" 保  存" x:Name="save" Grid.Row="3" Grid.Column="6" Margin="0" FontSize="14" Height="25"  />
+						
+						</StackPanel>
+					
+							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+								<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+								<TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+							</toolkit:DockPanel>
+					
+							<sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3" ItemsSource="{m:Exp Str=daninfoslist}"  IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+								<sdk:DataGrid.Columns>
+								    <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+									  <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+									  	  <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_districtname}"/>
+								
+										  <sdk:DataGridTextColumn Header="生成日期" Binding="{Binding f_createdate, StringFormat=yyyy-MM-dd}"/>
+								
+									<sdk:DataGridTemplateColumn Header="电话号码">
+										<sdk:DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<TextBox Text="{m:Bind Path=f_phone}"></TextBox>
+											</DataTemplate>
+										</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="短信内容">
+										<sdk:DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<TextBox Text="{m:Bind Path=f_content}"></TextBox>
+											</DataTemplate>
+										</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="状态">
+										<sdk:DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<TextBox Text="{m:Bind Path=f_state}"></TextBox>
+											</DataTemplate>
+										</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTextColumn Header="错误" Binding="{Binding f_error}"/>
+										  <sdk:DataGridTextColumn Header="发送日期" Binding="{Binding f_senddate, StringFormat=yyyy-MM-dd}"/>
+									   			  <sdk:DataGridTextColumn Header="发送时间" Binding="{Binding f_sendtime, StringFormat=hh:mm:ss}"/>
+							
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+					
+						</toolkit:DockPanel>
+					</c:BusyIndicatorEx>
+				</Grid>
+	<c:UrlInvoke Name="sendsms" Url="{m:Exp Str=$\{serveraddress.BaseAddress\}/sms/send}" CanSave="{m:Exp Str=send\=>Click!\=null}"></c:UrlInvoke>
+	</Grid>
+</UserControl>

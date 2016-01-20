@@ -1,0 +1,118 @@
+﻿<c:CustomChildWindow	
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d"	
+	x:Class="s2.修改限购"
+	Title="修改限购"
+	Width="400" Height="300">
+	<Grid x:Name="LayoutRoot">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		
+			<Grid  x:Name="apply" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+		<a:Data.Context>
+			<o:GeneralObject  x:Name="applygo" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_xiangoujilu"         	/>
+		</a:Data.Context>
+		<toolkit:DockPanel  >
+			<Grid x:Name="userfile"  Margin="0,0,8,17" toolkit:DockPanel.Dock="Top"  HorizontalAlignment="Stretch"  >
+				<Grid.Background>
+					<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+						<GradientStop Color="#FFF2F8FF" Offset="0"/>
+						<GradientStop Color="#FFDDF2FD" Offset="1"/>
+					</LinearGradientBrush>
+				</Grid.Background>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="130"/>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="110"/>
+					<ColumnDefinition Width="1*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="24"/>
+					<RowDefinition Height="35"/>
+					<RowDefinition Height="60"/>
+					<RowDefinition Height="35"/>
+					
+					<RowDefinition Height="35"/>
+					
+				</Grid.RowDefinitions>
+				<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="限购气量修改：" HorizontalAlignment="Right" Margin="0,6"/>
+				<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="类    型：" HorizontalAlignment="Right" Margin="0,6" Grid.Column="2"/>
+				<TextBox Text="{m:Bind Path=f_limitbuygas}" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap"  Grid.ColumnSpan="1" Margin="0,6" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_limitbuygas"/>
+					</a:Data.Prop>
+				</TextBox>
+				<TextBox Text="{m:Bind Path=f_gasproperties}" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap"  Grid.ColumnSpan="1" Margin="0,6" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_gasproperties"/>
+					</a:Data.Prop>
+				</TextBox>
+				<TextBlock Grid.Row="2" TextWrapping="Wrap" Text="修改原因：" HorizontalAlignment="Right" Margin="0,6"/>
+				<TextBox Text="{m:Bind Path=f_mnate}" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Margin="0,2" VerticalAlignment="Stretch" Grid.ColumnSpan="3">
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_mnate"/>
+					</a:Data.Prop>
+				</TextBox>
+				<TextBlock Grid.Row="3" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" Margin="0,6"/>
+				<TextBlock Grid.Column="2" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" Text="操作员：" d:LayoutOverrides="Width" HorizontalAlignment="Right"/>
+				<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="3" Margin="0,6" Grid.Row="3" TextWrapping="Wrap"  d:LayoutOverrides="Height" IsReadOnly="True">
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_operator"
+							Default="{m:Exp Str=LoginUser.name}"/>
+					</a:Data.Prop>
+				</TextBox>
+				<sdk:DatePicker Grid.Column="1" Margin="0,6" Grid.Row="3"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False">
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_date"
+							Default="{m:Exp Str=SysTime.Today}"/>
+					</a:Data.Prop>
+				</sdk:DatePicker>
+				<StackPanel Grid.ColumnSpan="4" Margin="0" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
+					<TextBlock HorizontalAlignment="Left" Margin="8,6,0,6" TextWrapping="Wrap" Text="民用上限" />
+					<TextBox Text="{m:Bind Path=myxgmax}" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Margin="0,6" VerticalAlignment="Stretch" Grid.ColumnSpan="3">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="myxgmax"/>
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock HorizontalAlignment="Left" Margin="8,6,0,6" TextWrapping="Wrap" Text="非民用上限" />
+					<TextBox Text="{m:Bind Path=gyxgmax}" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Margin="0,6" VerticalAlignment="Stretch" Grid.ColumnSpan="3">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="gyxgmax"/>
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock HorizontalAlignment="Left"  Margin="8,6,0,6" TextWrapping="Wrap" Text="混合型上限" />
+					<TextBox Text="{m:Bind Path=hemax}" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Margin="0,6" VerticalAlignment="Stretch" Grid.ColumnSpan="3">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="hemax"/>
+						</a:Data.Prop>
+					</TextBox>
+				</StackPanel>
+				
+			</Grid>
+			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal"  toolkit:DockPanel.Dock="Bottom">
+				<Button x:Name="save" Content="保  存" Margin="5" 
+					IsEnabled="{m:Exp Str=apply.DataContext.IsModified and !apply.DataContext.HasErrors}"
+					Click="{m:Exp Str=apply.DataContext.Save()}" Width="60"/>
+				<Button Content="撤  销" Margin="5" Click="{m:Exp Str=apply.DataContext.New()}" Width="60"/>
+			</StackPanel></toolkit:DockPanel>
+		
+	    </Grid>
+	</Grid>
+</c:CustomChildWindow>

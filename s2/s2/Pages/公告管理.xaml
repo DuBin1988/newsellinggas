@@ -1,0 +1,179 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    xmlns:Com_Aote_Controls="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    x:Class="Com.Aote.Pages.公告管理" FontSize="13"
+    mc:Ignorable="d" >
+	  <Grid x:Name="LayoutRoot">
+	<m:ResourceLoad Margin="0,0,-12,0">
+	 	
+		    <b:HQLAction Name="DeleteActionInfo"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from t_gonggao where id \=\'\{pipelines.SelectedItem.id\}\'}">
+			</b:HQLAction>
+		
+    <!--总公司名称-->
+		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   />
+
+
+            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=gonggao}" MethodName="SaveToJson"/>
+			 </b:BatchExcuteAction>
+			 
+			  <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=DeleteActionInfo}" MethodName="InvokeToJson"/>
+			 </b:BatchExcuteAction>
+			  
+			 
+			 
+			 <o:GeneralObject Name="gonggao" EntityType="t_gonggao" WebClientInfo="{StaticResource dbclient}"
+         	 IsInit="{m:Exp Str=SaveAction.State\=\=$End$ |or| DeleteAction.State\=\=$End$}"
+			 Source="{m:Exp Str=pipelines.SelectedItem}">
+			 </o:GeneralObject>
+			
+			
+		 	  <o:ObjectList Name="annexlist" EntityType="t_applyannex" HasEmptyRow="True"></o:ObjectList>
+	
+		  
+	
+	</m:ResourceLoad>
+	<c:BusyIndicatorEx BusyContent="该用户已停用，不能操作" IsBusy="{m:Exp Str=pipeline.DataContext.f_userstate\=\=$停用$:$True$\,$False$}" Grid.Column="1" Margin="8,0,0,0">
+	<Grid >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="3*"/>
+			<ColumnDefinition Width="7*"/>
+		</Grid.ColumnDefinitions>
+        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
+            <toolkit:DockPanel >
+                <!--信息列表按钮-->
+            	<toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" Margin="0" Height="25" Background="#94a8cd">
+                    <!--信息列表翻页-->
+            		<TextBlock  TextWrapping="Wrap" Text="{m:Exp Str=$共\{pipelines.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+            	<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=pipelines}"   Margin="1,0,0,0" PageSize="22" Height="24" VerticalAlignment="Bottom"/>
+				</toolkit:DockPanel>
+            	<toolkit:DockPanel x:Name="pipelinesearch" toolkit:DockPanel.Dock="Top" Background="#FFDBE4F3" >
+            		<a:Data.Context>
+            			<o:SearchObject  />        	
+            		</a:Data.Context>
+						<Grid>
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="50*"/>
+								<ColumnDefinition Width="50*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock TextWrapping="Wrap" Text="标题：" Margin="5,0,0,0" VerticalAlignment="Center" TextAlignment="Right"/>
+            		<TextBox TextWrapping="Wrap"  Height="25" Text="{m:Bind Path=title}" a:ControlAttach.DefaultButton="searchbutton" Grid.Column="1" Margin="0" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="title" Operator="title like '%this%'"/>               
+            			</a:Data.Prop>
+            		</TextBox>
+            		<Button Content="查询" x:Name="searchbutton" Click="{m:Exp Str=pipelinesearch.DataContext.Search()}" Margin="0" Grid.Column="2" Width="70"  Height="30" />
+            	  </Grid>
+				</toolkit:DockPanel>
+            	<sdk:DataGrid x:Name="pipelines" Margin="0,-22,0,0"  
+            		AutoGenerateColumns="False"  IsReadOnly="True">
+            		<a:Data.Items>
+            			<o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
+						MultiPath="{m:Exp Str=$from t_gonggao  where \{pipelinesearch.DataContext.Condition\}$}"
+            				Path="{m:Exp Str=$from t_gonggao  where \{pipelinesearch.DataContext.Condition\} order by f_cdate  desc$}"
+							IsOld="{m:Exp Str=DeleteAction.State\=\=$End$ or SaveAction.State\=\=$End$}"
+							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+            		</a:Data.Items>
+					
+            		<sdk:DataGrid.Columns>
+            			<sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+            			<sdk:DataGridTextColumn d:IsLocked="True" Header="标题" Binding="{Binding title}"/>
+            			<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_coperator}"/>
+            			<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_cdate, StringFormat=yyyy-MM-dd}"/>
+            			
+            		</sdk:DataGrid.Columns>
+            	</sdk:DataGrid>
+				<!--信息列表-->
+                
+                 <!--信息列表按钮-->
+			</toolkit:DockPanel>
+        </c:BusyIndicatorEx>
+		<!--操作区按钮-->
+        <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+            <Grid  x:Name="pipeline" DataContext="{m:Exp Str=gonggao}" >
+             
+						
+                 
+            	<Grid Margin="0,0,0,0" Background="#FFDBE4F3">
+            		<Grid.ColumnDefinitions>
+            			<ColumnDefinition Width="110"/>
+            			<ColumnDefinition Width="1*"/>
+            			<ColumnDefinition Width="110"/>
+            			<ColumnDefinition Width="1*"/>
+            			<ColumnDefinition Width="110"/>
+            			<ColumnDefinition Width="1*"/>
+            		</Grid.ColumnDefinitions>
+            		<Grid.RowDefinitions>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="45" />
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            			<RowDefinition Height="35"/>
+            		</Grid.RowDefinitions>
+            		<TextBlock TextWrapping="Wrap" Text="标题：" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0"/>
+            		<TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="内容：" HorizontalAlignment="Right" FontSize="13" />
+            		<TextBlock Grid.Column="0" Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操 作 人：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            		<TextBlock Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" Grid.Column="2" d:LayoutOverrides="Height, GridBox"/>
+            		<TextBox Text="{m:Bind Path=title}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="5" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="title"   />
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBox Text="{m:Bind Path=comtext}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.RowSpan="5" Height="Auto">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="comtext" />
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBox Text="{m:Bind Path=f_coperator}" Grid.Column="1" Margin="0,6" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_coperator" Default="{m:Exp Str=LoginUser.name}" />
+            			</a:Data.Prop>
+            		</TextBox>
+            		<sdk:DatePicker SelectedDate="{m:Bind Path=f_cdate}" Grid.Column="3" Margin="0,6" Grid.Row="7" d:LayoutOverrides="Height, GridBox" VerticalAlignment="Stretch" IsEnabled="False">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_cdate"
+            					Default="{m:Exp Str=SysTime.Now}"/>
+            			</a:Data.Prop>
+            		</sdk:DatePicker>
+							
+						
+            		<Button x:Name="save" Content="保存" Margin="0" Grid.Row="9" Grid.Column="4" 
+            			Click="{m:Exp Str=SaveAction.Invoke()}" Height="30" HorizontalAlignment="center" Width="70" FontSize="13.333"  />
+            		<Button Content="新建"  Click="{m:Exp Str=pipeline.DataContext.New()}"  HorizontalAlignment="left" Width="70" Height="30" Grid.Row="9" Grid.Column="5" />
+                    <Button Content="删除" IsEnabled="{m:Exp Str=gonggao.id !\=null}"  Click="{m:Exp Str=DeleteAction.Invoke()}" Height="30" HorizontalAlignment="right" Width="70" Grid.Row="9"  Grid.Column="5"   Margin="0,0,30,0"/>
+				</Grid>
+            </Grid>
+        </c:BusyIndicatorEx>
+		
+    </Grid>
+	</c:BusyIndicatorEx>
+  </Grid>
+  
+</UserControl>

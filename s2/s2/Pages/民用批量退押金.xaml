@@ -1,0 +1,247 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.民用批量退押金" d:DesignWidth="1024" d:DesignHeight="768">
+
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+
+            <!--更新结余-->
+            <b:HQLAction Name="UpdateUser" WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$update t_userfiles set f_zhye \= f_zhye+\{selstate.f_tuiyajin\}\ where f_districtname \= \'\{daninfosearch.DataContext.f_districtname\}\'}"/>
+            <!--更新结余-->
+            <b:HQLAction Name="Updateyajin" WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$update t_userfiles set f_yajin \= \'押金已退\' where f_districtname \= \'\{daninfosearch.DataContext.f_districtname\}\'}"/>
+
+
+
+
+            <o:ObjectList  Name="dangans"  
+									   WebClientInfo="{StaticResource dbclient}"  TempObj="{m:Res Key=tempobj}" 
+									  SelectObject="{m:Exp Str='pipelineslist[True].ToObjectList()'}" 
+									   TempletObject="{m:Res Key=userfilego}"/>
+
+            <o:GeneralObject Name="tempobj" EntityType="t_yajin"></o:GeneralObject>
+            <o:GeneralObject Name="userfilego" NotEmpty="True" EntityType="t_yajin" WebClientInfo="{StaticResource dbclient}" >
+                <!--用户编号-->
+                <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=tempobj.f_userid}"/>
+                <!--卡号-->
+                <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=tempobj.f_cardid}"/>
+                <!--气表类型-->
+                <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=tempobj.f_gasmeterstyle}"/>
+                <!--气表型号-->
+                <o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=tempobj.f_metertype}"/>
+                <!--用户类型-->
+                <o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=tempobj.f_usertype}"/>
+                <!--用户/单位名称-->
+                <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=tempobj.f_username}"/>
+                <!--气表品牌-->
+                <o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=tempobj.f_gaswatchbrand}"/>
+
+                <!--气价类型-->
+                <o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=tempobj.f_gaspricetype}"/>
+                <!--地　　址-->
+                <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=tempobj.f_address}"/>
+                <!--小区名称-->
+                <o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=tempobj.f_districtname}"/>
+                <!--用气性质-->
+                <o:PropertySetter PropertyName="f_gasproperties" Value="{m:Exp Str=tempobj.f_gasproperties}"/>
+                <!--气　　价-->
+                <o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=tempobj.f_gasprice}"/>
+                <!--原有结余-->
+                <o:PropertySetter PropertyName="f_zhye" Value="{m:Exp Str=tempobj.f_zhye}"/>
+                <!--现有结余-->
+                <o:PropertySetter PropertyName="f_xyzhye" Value="{m:Exp Str=tempobj.f_xyzhye}"/>
+                <!--退押金-->
+                <o:PropertySetter PropertyName="f_tuiyajin" Value="{m:Exp Str=selstate.f_tuiyajin}"/>
+                <!--网点-->
+                <o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=LoginUser.f_parentname}"  Default="{m:Exp Str=LoginUser.f_parentname}"/>
+                <!--操作员-->
+                <o:PropertySetter PropertyName="f_sgoperator" Value="{m:Exp Str=LoginUser.name}"  Default="{m:Exp Str=LoginUser.name}"/>
+                <!--操作时间-->
+                <o:PropertySetter PropertyName="f_deliverydate" Value="{m:Exp Str=SysTime.Today}" Default="{m:Exp Str=SysTime.Today}"/>
+                <!--分 公 司-->
+                <o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=LoginUser.f_fengongsi}" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+
+            </o:GeneralObject>
+
+            <b:BatchExcuteAction Name="SaveAction"  WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=Updateyajin}" MethodName="InvokeToJson"/>
+                <!--更新结余-->
+                <b:BatchInfo Source="{m:Exp Str=UpdateUser}" MethodName="InvokeToJson"/>
+                <!--保存押金记录-->
+                <b:BatchInfo Source="{m:Exp Str=dangans}" MethodName="SaveToJson"/>
+
+            </b:BatchExcuteAction>
+
+
+            <o:GeneralObject Name="selstate"  EntityType="t_yajin"  WebClientInfo="{StaticResource dbclient}"/>
+
+
+
+
+        </m:ResourceLoad>
+        <Grid>
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" Grid.ColumnSpan="1" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+                
+                <toolkit:DockPanel>
+                    <StackPanel Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" Orientation="Horizontal" Height="40" >
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <!--test-->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock TextWrapping="Wrap" Text="小区名称："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <!-- <TextBlock TextWrapping="Wrap" Text="地址："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="2" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_address}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_address" Operator="f_address like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="用户编号："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="4" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="5" Text="{m:Bind Path=f_userid}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userid" Operator="f_userid = 'this'"/>
+                                </a:Data.Prop>
+                            </TextBox>-->
+                            
+                            
+                            
+                            
+                            
+                            <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="6" IsEnabled="{m:Exp Str=!daninfosearch.DataContext.HasErrors}" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" FontSize="14" HorizontalAlignment="Left" Grid.Row="0" Margin="0,-1,0,1"  />
+
+                            <!--<TextBlock TextWrapping="Wrap" Text="地址："  Margin="0,1.5" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="2" />
+                            <TextBox   TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_address}" Width="160" Margin="0,1.5" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_address"   Operator="f_address like  '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="5,0,0,0" Height="25" TextAlignment="Right" Grid.Column="0" Grid.Row="1"/>
+                            <ComboBox   SelectedValue="{m:Bind Path=f_usertype}" Grid.Column="1" Grid.Row="1" ItemsSource="{m:Exp Str=usertypelistnull}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'" />
+                                </a:Data.Prop>
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Height="20" Text="{Binding name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="用户编号："  Margin="5,0,0,0" Height="25" TextAlignment="Right" Grid.Column="2" Grid.Row="1" />
+                            <TextBox  TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="160" Margin="0" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Grid.Row="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                                </a:Data.Prop>
+                            </TextBox>-->
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Background="#FFC3E4FD" Orientation="Horizontal"  toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="操作员：" Margin="0,0,0,-2" />
+                        <TextBox  Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.name}" IsReadOnly="True" Margin="0,0,0,-2" RenderTransformOrigin="6.242,0.893" />
+                        <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="网  点：" Margin="0,0,0,-2" VerticalContentAlignment="Stretch" />
+                        <TextBox  Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.f_parentname}" IsReadOnly="True" Margin="0,0,0,-2"/>
+
+                        <StackPanel  DataContext="{m:Exp Str=selstate}" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock TextWrapping="Wrap" Text="退押金金额："  Margin="300,0,0,20" Height="25" TextAlignment="Right"  />
+                            <TextBox  TextWrapping="Wrap" Text="{m:Bind Path=f_tuiyajin}" Width="160" Margin="0,0,0,20" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_tuiyajin" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <Button Content=" 保  存"   Click="{m:Exp Str=SaveAction.Invoke();selstate.f_tuiyajin\=null}" FontSize="14" HorizontalAlignment="Left" Margin="0,0,0,20"   />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0" PageSize="40" d:LayoutOverrides="Width" toolkit:DockPanel.Dock="Top"   />
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="868" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>-->
+
+                    <c:CustomDataGrid x:Name="daninfos"    toolkit:DockPanel.Dock="Top"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" Height="710" >
+                        <!--
+        					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","-->
+                        <a:Data.Items>
+                            <o:ObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"  EntityType="t_userfiles"
+        					Path="{m:Exp Str=$from t_userfiles where \{daninfosearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_gasmeterstyle\=\'机表\' and f_yajin is null and f_yytdate ^ \'2014-09-17\'}"
+        					IsOld="{m:Exp Str= SaveAction.State\=\=$End$}"/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}" d:IsLocked="True" Width="80"/>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" d:IsLocked="True" Width="80"/>
+                            <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True" Width="80"/>
+                            <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}" d:IsLocked="True" Width="160"/>
+                            <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_districtname}" d:IsLocked="True" Width="*"/>
+                            <sdk:DataGridTextColumn Header="原有结余" Binding="{Binding f_zhye}" Width="80"/>
+                            <sdk:DataGridTemplateColumn Header="退押金金额">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_tuiyajin}"  IsReadOnly="True">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_tuiyajin"  Default="{m:Exp Str=selstate.f_tuiyajin}"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <!----><sdk:DataGridTemplateColumn Header="退还押金后结余">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_xyzhye}"  IsReadOnly="True">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_xyzhye" NoDependValue="{m:Exp Str=selstate.f_tuiyajin+data.f_zhye}"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                        </sdk:DataGrid.Columns>
+                    </c:CustomDataGrid>
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+        </Grid>
+    </Grid>
+</UserControl>

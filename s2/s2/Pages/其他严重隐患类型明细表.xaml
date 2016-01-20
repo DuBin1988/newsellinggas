@@ -1,0 +1,169 @@
+﻿<UserControl x:Class="s2.Pages.其他严重隐患类型明细表" FontSize="13"
+    mc:Ignorable="d" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:v="clr-namespace:s2.Pages"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit">
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad x:Name="pageResource">
+            <o:ChildWindowObj Name="planDialog" CWName="/Pages/获取计划" />
+            <o:ObjectList Name="yinhuanlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='更改用途'"/>
+         </m:ResourceLoad>
+            <c:BusyIndicatorEx BusyContent="正在提取数据，请稍等" IsBusy="{m:Exp Str=paperGrid.ItemsSource.IsBusy}">
+                <toolkit:DockPanel LastChildFill="True">
+                    <Grid Background="#FFDBE4F3" toolkit:DockPanel.Dock="Top"  Name="criteriaPanel">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject>
+                                <o:PropertySetter PropertyName="CHECKPLAN_ID"  Operator="CHECKPLAN_ID = 'this'" Value="{m:Exp Str=planDialog.Result.id}"/>
+                            </o:SearchObject>
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Text="安检计划：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True" Text="{m:Bind Path=CHECKPLAN_NAME}" Width="100" Margin="0" Height="25"  Grid.Row="0" Grid.Column="1">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="CHECKPLAN_NAME" Operator="1=1" Value="{m:Exp Str=planDialog.Result.f_name}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="开始日期：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" />
+                    <sdk:DatePicker  Name="StartDate" SelectedDate="{m:Bind Path=f_startdate}" Margin="0"  Height="25" Grid.Row="0" Grid.Column="4" VerticalAlignment="Stretch" Grid.ColumnSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_startdate" Value="{m:Exp Str=SysTime.MonthsBeforeToday(1)}"
+								Operator=" 1=1"/>
+                        </a:Data.Prop>
+                    </sdk:DatePicker>
+                    <TextBlock TextWrapping="Wrap" Text="结束日期：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="6" HorizontalAlignment="Right" />
+                    <sdk:DatePicker Name="EndDate" SelectedDate="{m:Bind Path=f_enddate}" Margin="0"  Height="25" Grid.Row="0" Grid.Column="7" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_enddate" Value="{m:Exp Str=SysTime.Today}"
+								Operator=" 1=1"/>
+                        </a:Data.Prop>
+                    </sdk:DatePicker>
+                    <TextBlock TextWrapping="Wrap" Text="街道：" Margin="0,3,0,5" FontSize="13.333"  Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=ROAD}" Width="100" Margin="0,0,0,3" Height="25" Grid.Row="1" Grid.Column="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="ROAD"  Operator="ROAD like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="小区：" Margin="0,3,0,5" FontSize="13.333"  Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=UNIT_NAME}" Width="100" Margin="0,0,0,3" Height="25" Grid.Row="1" Grid.Column="3" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="UNIT_NAME"  Operator="UNIT_NAME like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <Button Content="选取计划" Click="{m:Exp Str=planDialog.IsOpen\=True}"  Height="30"  Grid.Row="0" Grid.Column="2" Margin="5,0" />
+                        <TextBlock TextWrapping="Wrap" Text="楼号：" Margin="0,3,0,5" FontSize="13.333"  Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=CUS_DOM}" Width="100" Margin="0,0,0,3" Height="25" Grid.Row="1" Grid.Column="5" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="CUS_DOM"  Operator="CUS_DOM like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="单元：" Margin="0,5,0,3" FontSize="13.333"  Grid.Row="1" Grid.Column="6" HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=CUS_DY}" Width="100" Margin="0,2,0,1" Height="25"  Grid.Row="1" Grid.Column="7" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="CUS_DY"  Operator="CUS_DY like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="楼层：" Margin="0,4" FontSize="13.333"  Grid.Row="1" Grid.Column="8"  HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=CUS_FLOOR}" Width="100" Margin="0,2,0,1" Height="25"  Grid.Row="1" Grid.Column="9">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="CUS_FLOOR"  Operator="CUS_FLOOR like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="房号：" Margin="0,5,0,1" FontSize="13.333"  Grid.Row="1" Grid.Column="10"  HorizontalAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=CUS_ROOM}" Width="100" Margin="0,2,0,-1" Height="25"  Grid.Row="1" Grid.Column="11">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="CUS_ROOM"  Operator="CUS_ROOM like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="更改用途：" Margin="0,4" Grid.Column="9" Grid.Row="0" HorizontalAlignment="Right"/>
+                        <ComboBox x:Name="cmbPrecaution" SelectedValue="{m:Bind Path=f_precaution_otheruse}" Grid.Row="0" Grid.Column="10" Grid.ColumnSpan="2" Margin="0" Height="25" SelectedIndex="0" ItemsSource="{m:Exp Str=yinhuanlist}"  DisplayMemberPath="name" SelectedValuePath="name">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_precaution_otheruse"  Operator="f_precaution_otheruse = 'this'"/>
+                        </a:Data.Prop>
+                        </ComboBox>
+                    <CheckBox  IsEnabled="True" Content="热水器直排或烟道未排出室外" Grid.ColumnSpan="3" IsChecked="{m:Bind Path=f_heater_trapped}" Grid.Row="2"  Grid.Column="0" HorizontalAlignment="Center"  Margin="0,5,0,0">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_heater_trapped"  Operator="f_heater_trapped = CASE WHEN 'True' = 'this' THEN '1' ELSE '0' END"/>
+                        </a:Data.Prop>
+                    </CheckBox>
+                    <CheckBox  IsEnabled="True" Content="壁挂锅炉直排或烟道未排出室外" Grid.ColumnSpan="3" IsChecked="{m:Bind Path=f_furnace_trapped}" Grid.Row="2"  Grid.Column="3" HorizontalAlignment="Center"  Margin="0,5,0,0">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_furnace_trapped"  Operator="f_furnace_trapped = CASE WHEN 'True' = 'this' THEN '1' ELSE '0' END"/>
+                        </a:Data.Prop>
+                    </CheckBox>
+                    <CheckBox  IsEnabled="True" Content="开放式或密闭式厨房" Grid.ColumnSpan="3" IsChecked="{m:Bind Path=f_precaution_kitchen}" Grid.Row="2"  Grid.Column="6" HorizontalAlignment="Center"  Margin="0,5,0,0">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_precaution_kitchen"  Operator="f_precaution_kitchen = CASE WHEN 'True' = 'this' THEN '1' ELSE '0' END"/>
+                        </a:Data.Prop>
+                    </CheckBox>
+                    <CheckBox  IsEnabled="True" Content="多种火源" Grid.ColumnSpan="3" IsChecked="{m:Bind Path=f_precaution_multisource}" Grid.Row="2"  Grid.Column="9" HorizontalAlignment="Center"  Margin="0,5,0,0">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_precaution_multisource"  Operator="f_precaution_multisource = CASE WHEN 'True' = 'this' THEN '1' ELSE '0' END"/>
+                        </a:Data.Prop>
+                    </CheckBox>
+                    <Button x:Name="btnSearch" Content="查 询" IsEnabled="{m:Exp Str=!criteriaPanel.DataContext.HasErrors}" Height="30" Width="70"  Grid.Column="12"  Grid.Row="2" Click="btnSearch_Click" HorizontalAlignment="Left"/>
+                    	<Button Content="导 出" x:Name="outputbutton" Click="{m:Exp Str=toExcel.ToExcel()}"  Margin="0" RenderTransformOrigin="0.5,-0.48" Grid.Row="2" Grid.Column="13" HorizontalAlignment="Right" Width="70" Height="30"/>
+					</Grid>
+                    <sdk:DataGrid x:Name="paperGrid" Margin="0"  AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True">
+                        <a:Data.Items>
+                            <o:PagedList x:Name="checkerList" WebClientInfo="{StaticResource dbclient}"  EntityType="t_singlevalue"
+                                PageIndex="0" PageSize="10000000" SumNames=","/>
+                        </a:Data.Items>
+						<sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="序    号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="隐    患" Binding="{Binding precaution}"/>
+                            <sdk:DataGridTextColumn Header="街    道" Binding="{Binding road}"/>
+                            <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding unit_name}"/>
+                            <sdk:DataGridTextColumn Header="楼    号" Binding="{Binding cus_dom}"/>
+                            <sdk:DataGridTextColumn Header="单    元" Binding="{Binding cus_dy}"/>
+                            <sdk:DataGridTextColumn Header="楼    层" Binding="{Binding cus_floor}"/>
+                            <sdk:DataGridTextColumn Header="房    号" Binding="{Binding cus_room}"/>
+                            <sdk:DataGridTextColumn Header="客户姓名" Binding="{Binding user_name}"/>
+                            <sdk:DataGridTextColumn Header="客户电话" Binding="{Binding telphone}"/>
+                            <sdk:DataGridTextColumn Header="安检日期" Binding="{Binding departure_time}"/>
+                            <sdk:DataGridTextColumn Header="是否下发整改单" Binding="{Binding precaution_notified}" />
+                    </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel >
+            </c:BusyIndicatorEx>
+       		<!--c:Excel x:Name="toExcel"
+   			Completed="{m:Exp Str=downLoad.Down()}"/>
+ 			<c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}"></c:DownLoad-->
+			<c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{checkerList.HQL\}\}}" 
+   			Completed="{m:Exp Str=downLoad.Down()}"
+	   		Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{paperGrid.ItemsSource.Count\}/precaution:隐患|unit_name:小区名称|cus_dom:楼号|cus_dy:单元|cus_floor:楼层|cus_room:房号|user_name:客户姓名|telphone:客户电话|departure_time:安检日期|precaution_notified:是否下发隐患告知书$}"/>
+        <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}"  Filter="(*.xls)|*.xls"></c:DownLoad>
+	    </Grid>
+</UserControl>

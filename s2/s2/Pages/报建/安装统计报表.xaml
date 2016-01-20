@@ -1,0 +1,171 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="Com.Aote.Pages.安装统计报表" FontSize="13">
+	<Grid x:Name="LayoutRoot">
+	<m:ResourceLoad Margin="0,0,-12,0" Grid.ColumnSpan="3" d:LayoutOverrides="GridBox">
+	
+		 <!--民用已安装户数-->
+			<o:ObjectList  Name="myyzlist" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_apply"  
+				Path="{m:Exp Str=$select new Map(f_gastype as f_gastype\,sum(f_applycount) as count) from t_apply where \{searchbutton.DataContext.Condition\} and (f_gastype\=\'民用单户\'  or f_gastype\=\'民用多户\' )  and f_finishdate is not null  and f_state\!\=\'导数据\' and f_state\!\=\'终止报建\' and f_state\!\=\'民用导数据\' and f_state\!\=\'民用转商用\' group by f_gastype}"
+				/>
+		<!--民用未安装户数-->
+			<o:ObjectList  Name="mywzlist" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_apply"  
+				Path="{m:Exp Str=$select new Map(f_gastype as f_gastype\,sum(f_applycount) as count) from t_apply where \{searchbutton.DataContext.Condition\} and (f_gastype\=\'民用单户\'  or f_gastype\=\'民用多户\' )  and f_finishdate is  null  and f_state\!\=\'导数据\' and f_state\!\=\'终止报建\' and f_state\!\=\'民用导数据\' and f_state\!\=\'民用转商用\' group by f_gastype}"
+				/>
+				
+				<!--非民用已安装户数-->
+			<o:ObjectList  Name="fmyyzlist" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_apply"  
+				Path="{m:Exp Str=$select new Map(f_gastype as f_gastype\,sum(f_applycount) as count) from t_apply where \{searchbutton.DataContext.Condition\} and (f_gastype !\=\'民用单户\'  and f_gastype!\=\'民用多户\' )  and f_finishdate is not null  and f_state\!\=\'导数据\' and f_state\!\=\'终止报建\' and f_state\!\=\'民用导数据\' and f_state\!\=\'民用转商用\' group by f_gastype}"
+				/>
+				
+					<!--非民用未安装户数-->
+			<o:ObjectList  Name="fmywzlist" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_apply"  
+				Path="{m:Exp Str=$select new Map(f_gastype as f_gastype\,sum(f_applycount) as count) from t_apply where \{searchbutton.DataContext.Condition\} and (f_gastype !\=\'民用单户\'  and f_gastype!\=\'民用多户\' )  and f_finishdate is  null  and f_state\!\=\'导数据\' and f_state\!\=\'终止报建\' and f_state\!\=\'民用导数据\' and f_state\!\=\'民用转商用\' group by f_gastype}"
+				/>
+				
+				
+	
+	</m:ResourceLoad>
+  		<toolkit:DockPanel >
+			<toolkit:DockPanel x:Name="infosearch"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="报建开始日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedate}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedate" 
+								Operator=" f_date >= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="报建结束日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddate}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddate" 
+								Operator=" f_date ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>		
+					<TextBlock TextWrapping="Wrap" Text="竣工开始日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedate1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedate1" 
+								Operator=" f_finishdate >= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="竣工结束日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddate1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddate1" 
+								Operator=" f_finishdate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+		</StackPanel> 
+						
+						
+				<Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=infosearch.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />
+				<Button Content="置  空" x:Name="zhikong" Click="{m:Exp Str=infosearch.DataContext.f_startedate\=null;infosearch.DataContext.f_enddate\=null;infosearch.DataContext.f_startedate1\=null;infosearch.DataContext.f_enddate1\=null}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />
+			</toolkit:DockPanel>
+			<Grid Margin="0" Background="White">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="80"/>
+					<ColumnDefinition Width="200"/>
+					<ColumnDefinition Width="200"/>
+					<ColumnDefinition Width="200"/>
+					<ColumnDefinition Width="Auto" MinWidth="200"/>
+					<ColumnDefinition Width="100"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="10"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+				</Grid.RowDefinitions>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="Auto" VerticalAlignment="Top" Grid.Row="1" Grid.RowSpan="9" Grid.Column="0"/>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="182" VerticalAlignment="Top" Grid.Row="1" Grid.RowSpan="6" Grid.Column="2"/>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0,1,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="147" VerticalAlignment="Top" Grid.Row="2" Grid.RowSpan="5" Grid.Column="3"/>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0,1,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="151" VerticalAlignment="Top" Grid.Row="2" Grid.RowSpan="5" Grid.Column="4"/>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="181" VerticalAlignment="Top" Grid.Row="1" Grid.RowSpan="6" Grid.Column="5"/>
+				<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="181" VerticalAlignment="Top" Grid.Row="1" Grid.RowSpan="6" Grid.Column="1"/>
+				<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="0" Grid.ColumnSpan="5" Grid.Row="1" Grid.Column="0" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="0" Grid.ColumnSpan="5" Grid.Row="2" Grid.Column="0" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="1,0,-1,0" Grid.ColumnSpan="5" Grid.Row="5" Grid.Column="0" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="0" Grid.ColumnSpan="5" Grid.Row="3" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="-4,0,0,0" Grid.ColumnSpan="5" Grid.Row="7" d:LayoutOverrides="VerticalAlignment"/>
+				<TextBlock Margin="0,2,-1,3" TextWrapping="Wrap" Text="非民用" Height="25" TextAlignment="Center" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3"/>
+				<TextBlock Margin="0,2,0,3" TextWrapping="Wrap" Text="民用" Height="25" TextAlignment="Center" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1"/>
+				<TextBlock Margin="1,1,-1,4" TextWrapping="Wrap" Text="类型" Height="25" TextAlignment="Center" Grid.Row="2"/>
+				<Path Grid.Column="1" Data="M177,42" Fill="#FF101012" HorizontalAlignment="Left" Height="0" Margin="97,2,0,0" Grid.Row="2" Stretch="Fill" Stroke="Black" UseLayoutRounding="False" VerticalAlignment="Top" Width="0"/>
+				<Path
+					Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="98,0,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="151" VerticalAlignment="Top" Grid.Row="2" Grid.RowSpan="5" Grid.Column="1"/>
+				<TextBlock Margin="1,3,0,2" TextWrapping="Wrap" Text="单户" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="98"/>
+				<TextBlock Margin="99,3,0,2" TextWrapping="Wrap" Text="多户" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="1"/>
+				<Path
+					Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="98,2,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="149" VerticalAlignment="Top" Grid.Row="2" Grid.RowSpan="5" Grid.Column="2"/>
+				<Path
+					Data="M72,0 L72,276.02899" HorizontalAlignment="Right" Margin="0,0,99,-1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="150" VerticalAlignment="Bottom" Grid.Row="2" Grid.RowSpan="5" Grid.Column="3"/>
+				<Path
+					Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="93,2,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="148" VerticalAlignment="Top" Grid.Row="2" Grid.RowSpan="5" Grid.Column="4"/>
+				<TextBlock Margin="1,3,0,2" TextWrapping="Wrap" Text="餐饮" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Width="93"/>
+				<TextBlock Margin="98,4,4,1" TextWrapping="Wrap" Text="锅炉" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="2"/>
+				<TextBlock Margin="1,5,0,0" TextWrapping="Wrap" Text="壁挂锅炉" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Width="98"/>
+				<TextBlock Margin="0,5,2,0" TextWrapping="Wrap" Text="餐饮壁挂锅炉" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" Width="98"/>
+				<TextBlock Margin="-2,5,0,0" TextWrapping="Wrap" Text="餐饮锅炉" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Left" Width="98"/>
+				<TextBlock Margin="98,5,4,0" TextWrapping="Wrap" Text="锅炉壁挂炉" Height="25" TextAlignment="Center" Grid.Row="2" Grid.Column="4"/>
+				<TextBlock Margin="0,-12,0,0" TextWrapping="Wrap" Text="已安装" Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="0,-11,0,0" TextWrapping="Wrap" Text="未安装" Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="1,-12,0,0" TextWrapping="Wrap" Text="{m:Exp Str=myyzlist[data.f_gastype\=\=$民用单户$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" d:LayoutOverrides="Height" Grid.Column="1" HorizontalAlignment="Left" Width="98"/>
+				<TextBlock Margin="99,-12,3,0" TextWrapping="Wrap" Text="{m:Exp Str=myyzlist[data.f_gastype\=\=$民用多户$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="1" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="1,-12,0,0" TextWrapping="Wrap" Text="{m:Exp Str=mywzlist[data.f_gastype\=\=$民用单户$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="1" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="99,-11,3,0" TextWrapping="Wrap" Text="{m:Exp Str=mywzlist[data.f_gastype\=\=$民用多户$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="1" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-1,-12,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用餐饮$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="2" d:LayoutOverrides="Height" HorizontalAlignment="Left" Width="98"/>
+				<TextBlock Margin="0,-12,1,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用锅炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="2" HorizontalAlignment="Right" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-1,-12,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="3" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="0,-12,2,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用餐饮壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="3" HorizontalAlignment="Right" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-2,-12,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用餐饮锅炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="4" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="98,-12,4,0" TextWrapping="Wrap" Text="{m:Exp Str=fmyyzlist[data.f_gastype\=\=$非民用锅炉壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Grid.Column="4" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-1,-11,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用餐饮$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="2" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="0,-11,1,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用锅炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="2" HorizontalAlignment="Right" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-1,-11,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="3" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="0,-11,2,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用餐饮壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="3" HorizontalAlignment="Right" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="-2,-11,0,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用餐饮锅炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="4" HorizontalAlignment="Left" Width="98" d:LayoutOverrides="Height"/>
+				<TextBlock Margin="98,-11,4,0" TextWrapping="Wrap" Text="{m:Exp Str=fmywzlist[data.f_gastype\=\=$非民用锅炉壁挂炉$].First().count}"  Height="25" TextAlignment="Center" Grid.Row="6" VerticalAlignment="Top" Grid.Column="4" d:LayoutOverrides="Height"/>
+				 
+			</Grid>						
+		</toolkit:DockPanel>
+  		<Path Data="M-90,296" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="0" Margin="-90,0,0,51" Stretch="Fill" Stroke="Black" UseLayoutRounding="False" VerticalAlignment="Bottom" Width="0"/>
+  		<Path Data="M175,78" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="0" Margin="175,78,0,0" Stretch="Fill" Stroke="Black" UseLayoutRounding="False" VerticalAlignment="Top" Width="0"/>
+   	</Grid>
+	
+</UserControl>

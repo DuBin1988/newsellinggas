@@ -1,0 +1,319 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.稽查结果录入">
+
+	<Grid x:Name="LayoutRoot">
+	<m:ResourceLoad Margin="0,0,-101,0">
+		<!--稽查表坏处理结果-->
+			<o:ObjectList Name="badwatchresult" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='稽查表坏处理结果'"/>
+		<!--稽查结果选项-->
+			<o:ObjectList Name="jichaxxlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='稽查结果选项'"/>
+		<!--总公司名称-->
+		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   />
+		<!--稽查对象-->
+        	<o:GeneralObject Name="jicha" EntityType="t_inspectdetail" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from t_inspectdetail where id\=\'\{jichas.SelectedItem.id\}\'}" 
+			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
+			</o:GeneralObject>
+		<!--用户对象-->
+        	<o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from t_userfiles where f_userid\=\'\{jichas.SelectedItem.f_userid\}\'}" 
+			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
+			</o:GeneralObject>
+		<!--保存对象 -->	
+			<b:BatchExcuteAction Name="SaveAction"  WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=jichainfo.DataContext}" MethodName="SaveToJson"/>
+			</b:BatchExcuteAction>
+		
+	</m:ResourceLoad>
+    <Grid >
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="0.3*"/>
+			<ColumnDefinition Width="0.7*"/>		
+		</Grid.ColumnDefinitions>
+
+        <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=jichainfo.DataContext.IsBusy or userfiles.IsBusy or jicha.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
+    		<Grid Background="{x:Null}" x:Name="jichainfo" DataContext="{m:Exp Str=jicha}" >
+    			<toolkit:DockPanel>
+    				<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Center" >
+    					
+						<Button x:Name="save" Content="确  定" Margin="5" 
+    						IsEnabled="{m:Exp Str=jichainfo.DataContext.IsModified and !jichainfo.DataContext.HasErrors}"
+    						Click="{m:Exp Str=userfiles.f_result\=jicha.f_result;SaveAction.Invoke()}" Width="50"/>
+    					<Button Content="撤  销" Margin="5" Click="{m:Exp Str=jichainfo.DataContext.New()}" Width="50"/>
+    				</toolkit:DockPanel>
+    				<Grid toolkit:DockPanel.Dock="Top" Margin="0"  >
+    					<Grid.Background>
+    						<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+    							<GradientStop Color="#FFF2F8FF" Offset="0"/>
+    							<GradientStop Color="#FFDDF2FD" Offset="1"/>
+    						</LinearGradientBrush>
+    					</Grid.Background>
+    					<Grid.RowDefinitions>
+    						<RowDefinition Height="30"/>
+    						<RowDefinition Height="30"/>
+    						<RowDefinition Height="30"/>
+    						<RowDefinition Height="30"/>
+    						<RowDefinition Height="30"/>
+    						<RowDefinition Height="50"/>
+    						<RowDefinition Height="1"/>
+							<RowDefinition Height="30"/>
+							<RowDefinition Height="30"/>
+							<RowDefinition Height="30"/>
+							<RowDefinition Height="30"/>
+    					</Grid.RowDefinitions>
+    					<Grid.ColumnDefinitions>
+    						<ColumnDefinition Width="100"/>
+    						<ColumnDefinition Width="1*"/>
+    						<ColumnDefinition Width="130"/>
+    						<ColumnDefinition Width="1*"/>
+    						<ColumnDefinition Width="110"/>
+    						<ColumnDefinition Width="1.333*"/>
+    					</Grid.ColumnDefinitions>
+						<TextBlock Text="小区名称：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_districtname}" Grid.Column="3" Margin="0" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=jicha.f_districtname}"/>
+									</a:Data.Prop>
+								</TextBox>	
+								<TextBlock Text="门 牌 号：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Grid.Row="1" Height="25"/>
+						<TextBox Text="{m:Bind Path=f_apartment}"  Grid.Column="5" Margin="0" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_apartment" Value="{m:Exp Str=jicha.f_apartment}"/>
+									</a:Data.Prop>
+								</TextBox>	
+						<TextBlock Grid.Column="0" Margin="0" TextWrapping="Wrap" Text="用户编号：" TextAlignment="Right" Height="25"/>
+    					<TextBlock Text="用户姓名：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2" Height="25"/>
+    					
+    					<TextBlock Grid.Column="0" Grid.Row="2" Margin="0" TextWrapping="Wrap" Text="气表品牌：" TextAlignment="Right" Height="25"/>
+    					<TextBlock Grid.Column="2" Grid.Row="2" Margin="0" TextWrapping="Wrap" Text="气表型号：" TextAlignment="Right" Height="25"/>
+    					<TextBlock Text="用户类型：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+    					<TextBlock Margin="0" TextWrapping="Wrap" Text="卡　　号：" TextAlignment="Right" Grid.Column="4" Height="25"/>
+    					<TextBlock Margin="0" TextWrapping="Wrap" Text="稽查结果：" TextAlignment="Right" Grid.Row="3" Height="25"/>
+    					<TextBlock Margin="0" TextWrapping="Wrap" Text="情况说明：" TextAlignment="Right" Grid.Column="0" Grid.Row="5" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Height="25" >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=jicha.f_userid}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsEnabled="True" Height="25"  >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=jicha.f_username}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+						<TextBlock Text="地　　址：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="1"/>
+    					<TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="1" Margin="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=jicha.f_address}" />
+									</a:Data.Prop>
+								</TextBox>
+
+    					<TextBox Text="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=jicha.f_gaswatchbrand}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=jicha.f_metertype}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+
+    					
+    					<TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0" Grid.Row="2" IsReadOnly="True" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=jicha.f_usertype}" />
+    						</a:Data.Prop>	
+    					</TextBox>
+    					<TextBox Text="{m:Bind Path=f_cardid}" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="0" TextWrapping="Wrap" IsEnabled="True" Height="25" VerticalAlignment="Stretch"  >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=jicha.f_cardid}" />
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBox Text="{m:Bind Path=f_explain}" Grid.Column="1" Margin="0,1" Grid.Row="5" TextWrapping="Wrap" Grid.ColumnSpan="5">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_explain" />
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBlock Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="网点：" TextAlignment="Right" Height="25" />
+    					<TextBox Text="{m:Bind Path=f_network}" Grid.Column="1" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_network" NotNull="True" 
+    								Default="{m:Exp Str=LoginUser.f_parentname}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBlock Grid.Column="2" Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="操  作 人："  TextAlignment="Right" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="3" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_operator" NotNull="True"  
+    								Default="{m:Exp Str=LoginUser.name}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBlock Grid.Column="4" Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="日期：" TextAlignment="Right" Height="25"/>
+    					<sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Grid.Column="5" Margin="0" Grid.Row="7"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_date" NotNull="True" 
+    								Default="{m:Exp Str=SysTime.Today}"/>
+    						</a:Data.Prop>
+    					</sdk:DatePicker>
+    					
+    					
+    					
+    					<TextBlock Margin="0" Grid.Row="8" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" HorizontalAlignment="Right" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="2" >
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=jicha.f_filiale}"
+    								/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBlock Text="分公司编号：" Visibility="Collapsed" Margin="0,4" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="8" HorizontalAlignment="Right" Height="27" Grid.Column="4" />
+    					<TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed"  Grid.Column="5" Margin="0,4" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" d:LayoutOverrides="Width">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_fengongsinum" 
+    								Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_result}"  ItemsSource="{m:Exp Str=jichaxxlist}" Grid.Column="1" Margin="0" Grid.Row="3" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Grid.ColumnSpan="1" > 
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_result" NotNull="True"
+    								/>
+    						</a:Data.Prop>
+							<!--a:Data.Items>
+    							<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='证件类型'"/>
+    						</a:Data.Items-->
+    					</ComboBox>
+    					<TextBlock Grid.Column="2" Grid.Row="3" Margin="0" TextWrapping="Wrap" Text="稽查气量：" TextAlignment="Right" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_jichagas}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" IsReadOnly="False" VerticalAlignment="Stretch">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_jichagas" NotNull="True"/>
+    						</a:Data.Prop>
+    					</TextBox>
+    					<TextBlock Margin="0" TextWrapping="Wrap" Text="表坏处理结果：" TextAlignment="Right" Grid.Row="4" Height="25"/>
+    					<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_badwatchresult}"  ItemsSource="{m:Exp Str=badwatchresult}" Grid.Column="1" Margin="0" Grid.Row="4" HorizontalAlignment="Stretch" Width="Auto" Height="25" Grid.RowSpan="1" Grid.ColumnSpan="1" > 
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_badwatchresult" 
+    								/>
+    						</a:Data.Prop>
+    						<!--a:Data.Items>
+    							<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='证件类型'"/>
+    						</a:Data.Items-->
+    					</ComboBox>
+    					<TextBlock Grid.Column="2" Grid.Row="4" Margin="0" TextWrapping="Wrap" Text="追回气量：" TextAlignment="Right" Height="25"/>
+    					<TextBox Text="{m:Bind Path=f_zhuihuigas}" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" Height="25" IsReadOnly="False" VerticalAlignment="Stretch">
+    						<a:Data.Prop>
+    							<o:PropertySetter PropertyName="f_zhuihuigas" />
+    						</a:Data.Prop>
+    					</TextBox>
+    				</Grid>
+    			</toolkit:DockPanel>
+    		</Grid>
+    	</toolkit:BusyIndicator>
+		<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=jichas.ItemsSource.IsBusy}" >
+    		<toolkit:DockPanel>
+    			<toolkit:DockPanel toolkit:DockPanel.Dock="Top" >
+    				<toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0" Height="27"  >
+    					<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{jichas.ItemsSource.Count\}项}" Width="Auto" Height="27" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
+    					<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=jichas,Converter={StaticResource DataPagerConverter}}"  Margin="0" PageSize="18" Height="24" VerticalAlignment="Bottom"/>
+					</toolkit:DockPanel>
+					
+    				<Grid x:Name="usersearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"    >
+    					
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="1"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="0.708*"/>
+								<ColumnDefinition Width="0.292*"/>
+							</Grid.ColumnDefinitions>
+    					<a:Data.Context>
+    						<o:SearchObject />        	
+    					</a:Data.Context>
+    				
+    						<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0" Height="25" TextAlignment="Right" />
+    						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" >
+    							<a:Data.Prop>
+    								<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+    							</a:Data.Prop>
+    						</TextBox>
+    					
+    					
+    						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="卡　　号：" Margin="0" Height="25" TextAlignment="Right"/>
+    						<TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_cardid}" Width="Auto" Margin="0,2,0,1" Height="25" >
+    							<a:Data.Prop>
+    								<o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid like '%this%'"/>          
+    							</a:Data.Prop>
+    						</TextBox>
+    						<Button Content="查  询" Grid.Row="4" Grid.Column="2" x:Name="dasearchbutton" Click="{m:Exp Str=usersearch.DataContext.Search()}" Margin="9,-1,0,-4" d:LayoutOverrides="Height" HorizontalAlignment="Left" Width="50"/>
+    				
+    					
+    						<TextBlock TextWrapping="Wrap" Grid.Row="2" Text="用户姓名：" Margin="0" Height="25" TextAlignment="Right"/>
+    						<TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" >
+    							<a:Data.Prop>
+    								<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
+    							</a:Data.Prop>
+    						</TextBox>
+    						<TextBlock TextWrapping="Wrap" Grid.Row="3" Text="地　　址：" Margin="0" Height="25" TextAlignment="Right"/>
+    						<TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
+    							<a:Data.Prop>
+    								<o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>          
+    							</a:Data.Prop>
+    						</TextBox>
+    						<TextBlock TextWrapping="Wrap" Grid.Row="4" Text="小　　区：" Margin="0" Height="25" TextAlignment="Right"/>
+    						<TextBox TextWrapping="Wrap" Grid.Row="4" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
+    							<a:Data.Prop>
+    								<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like '%this%'"/>          
+    							</a:Data.Prop>
+    						</TextBox>
+    					
+    				</Grid>
+    				<sdk:DataGrid x:Name="jichas" Margin="0"  IsReadOnly="True"
+    					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+    					<a:Data.Items>
+    						<o:PagedObjectList x:Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+    							Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_inspectdetail where \{usersearch.DataContext.Condition\} and f_result\=null$\,LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_inspectdetail where \{usersearch.DataContext.Condition\} and f_result\=null and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+    							IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+    					</a:Data.Items>
+    					<sdk:DataGrid.Columns>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+    						<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="姓名/单位" Binding="{Binding f_username}"/>
+							<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
+							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+							<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
+							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+                            <sdk:DataGridTextColumn Header="稽查结果" Binding="{Binding f_result}"/>
+    						
+
+    					</sdk:DataGrid.Columns>
+    				</sdk:DataGrid>
+					
+    			</toolkit:DockPanel>	 		
+			</toolkit:DockPanel>
+		</toolkit:BusyIndicator>
+    	</Grid>
+		 
+	</Grid>
+</UserControl>

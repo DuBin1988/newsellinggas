@@ -1,0 +1,27 @@
+﻿<navigation:Page x:Class="Com.Aote.Pages.ErrorPage" 
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+            xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+            xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+            xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+            xmlns:t="clr-namespace:Com.Aote.Triggers;assembly=s2DLL"
+            xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+            xmlns:bind="clr-namespace:Com.Aote.Bindings;assembly=s2DLL"
+            xmlns:conf="clr-namespace:Com.Aote.Configs"
+            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+            xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+            xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+            xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+            xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+            xmlns:ec="http://schemas.microsoft.com/expression/2010/controls" 
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="ErrorPage Page">
+    <StackPanel x:Name="LayoutRoot">
+        <TextBlock>从服务器获取关键数据出错，请退出系统重新登录。如果照样出错，请联系管理员</TextBlock>
+        <TextBlock Text="{m:Exp Str='${CustomTypes.Name} / {CustomTypes.Error}'}"></TextBlock>
+    </StackPanel>
+</navigation:Page>

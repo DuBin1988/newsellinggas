@@ -1,0 +1,158 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.发票分配删除">
+
+	<Grid x:Name="LayoutRoot">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="0*"/>
+		</Grid.RowDefinitions>
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<!--批量删除语句-->
+	        <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=Deletefapiaolist}" MethodName="InvokeToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=Deletefenpei}" MethodName="InvokeToJson"/>
+			</b:BatchExcuteAction>
+			<!--删除分配主表-->
+			<b:HQLAction Name="Deletefenpei"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_invoicedistribution where id in ({fenpeitj.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>
+			<!--删除发票信息列表-->
+			<b:HQLAction Name="Deletefapiaolist"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str='$delete from t_fapiaoinfos where parentid in ({fenpeitj.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			</b:HQLAction>
+			
+			<!--o:ExcelObj Name="excel" Bind="Index,f_invoicenum,f_sgoperator,f_operator,f_date" Source="{m:Exp Str=daninfos}"/-->
+			
+			
+			<!--分公司列表对象 HasEmpty="True"-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id">
+			</o:ObjectList>
+			<!--总公司名称-->
+		    <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+			<!--发票分配条件-->
+            <o:ObjectList Name="fapiaofenpei" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_invoicedistribution where \{daninfosearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_invoicedistribution where  \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abcd$}" 
+							IsOld="{m:Exp Str=DeleteAction.State\=\=$End$}"		
+                          />
+            <!--发票信息列表-->
+            <o:PagedObjectList Name="fapiaolist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value and fenpeitj.SelectedItem!\=null:$from t_fapiaoinfos where parentid\=\{fenpeitj.SelectedItem.id\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value and fenpeitj.SelectedItem!\=null:$from t_fapiaoinfos where parentid\=\{fenpeitj.SelectedItem.id\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,null}" 
+								PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="id" IsOld="{m:Exp Str=DeleteAction.State\=\=$End$}"		
+			 />
+        </m:ResourceLoad>
+		<!--sdk:TabControl Margin="0" >
+					
+			<sdk:TabItem Header="民用档案" Height="Auto" Width="Auto" Margin="0,2,0,0"DataContext="{m:Res Key=jicha}"-->
+				<Grid>
+					<!--Grid.ColumnDefinitions>
+						<ColumnDefinition Width="10*"/>
+						<ColumnDefinition Width="0*"/>
+					</Grid.ColumnDefinitions-->
+					<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=DeleteAction.IsBusy or fapiaofenpei.IsBusy or fapiaolist.IsBusy}">
+						<toolkit:DockPanel>
+							<Grid Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+						    <RowDefinition Height="1"/>
+							<RowDefinition Height="1"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="0.593*"/>
+							</Grid.ColumnDefinitions>
+								<a:Data.Context>
+									<o:SearchObject />        	
+								</a:Data.Context>
+						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="5" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0,-3,0,0" FontSize="14" Width="64" HorizontalAlignment="Left" d:LayoutOverrides="HorizontalAlignment" Grid.RowSpan="3"  />
+						
+								<TextBlock TextWrapping="Wrap" Text="所属公司："  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+								<sdk:DatePicker   SelectedDate="{m:Bind Path=f_date}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_date"  
+											Operator="f_date = substring('this',1,10)"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<TextBlock TextWrapping="Wrap" Text="分配日期：" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" />
+								<ComboBox  Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="1" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_filiale"  Default="{m:Exp Str=LoginUser.f_fengongsi}" Operator="f_filiale = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+								<Button Content="删  除" x:Name="deletebutton" Grid.Column="5" Click="{m:Exp Str=deletettip.Show()}" Margin="68,-3,0,0" FontSize="14" Width="59" HorizontalAlignment="Left" Grid.RowSpan="3"  />
+								
+		                       
+							</Grid>
+							
+					<sdk:DataGrid x:Name="fenpeitj"  Margin="0,1,0,2" toolkit:DockPanel.Dock="Top"  IsReadOnly="True" MaxHeight="150" 
+								AutoGenerateColumns="False" Background="{x:Null}" SelectedIndex="0" ItemsSource="{m:Exp Str=fapiaofenpei}" Grid.Row="2">
+								
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn Header="起始发票号" Binding="{Binding f_startinvoices}"/>
+									<sdk:DataGridTextColumn  Header="终止发票号" Binding="{Binding f_endinvoices}"/>
+									<sdk:DataGridTextColumn  Header="份数" Binding="{Binding f_nums}"/>
+									<sdk:DataGridTextColumn Header="使用人" Binding="{Binding f_sgoperator}"/>
+									<sdk:DataGridTextColumn  Header="分配人" Binding="{Binding f_operator}"/>
+									<sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
+									<sdk:DataGridTextColumn Header="部门" Binding="{Binding f_parentname}"/>
+									<sdk:DataGridTextColumn Header="分配日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+								<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="50" toolkit:DockPanel.Dock="Top" Height="24"   />
+								
+								<!--Button Content="    导出Excel    " Click="{m:Exp Str=excel.Export()}"
+				     		 Margin="0" toolkit:DockPanel.Dock="Right" Background="white "/-->
+								
+								<TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+							</toolkit:DockPanel>
+					
+							
+					      <sdk:DataGrid x:Name="daninfos"  toolkit:DockPanel.Dock="Top"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" ItemsSource="{m:Exp Str=fapiaolist}">
+								
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+								    <sdk:DataGridTextColumn Header="发票编号" Binding="{Binding f_invoiceid}"/>
+									<sdk:DataGridTextColumn Header="发票号" Binding="{Binding f_invoicenum}"/>
+									<sdk:DataGridTextColumn  Header="使用人" Binding="{Binding f_sgoperator}"/>
+									<sdk:DataGridTextColumn Header="分配人" Binding="{Binding f_operator}"/>
+									<sdk:DataGridTextColumn Header="发票状态" Binding="{Binding f_fapiaostatue}"/>
+									<sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
+									<sdk:DataGridTextColumn Header="发票分配日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+							 
+						</toolkit:DockPanel>
+					</toolkit:BusyIndicator>
+				</Grid>
+				
+				<c:MessageTipObj  Name="deletettip" Tip="您确认要删除此选择项吗？" OK="{m:Exp Str=DeleteAction.Invoke()}" />
+			<!--/sdk:TabItem>
+		</sdk:TabControl-->
+	</Grid>
+</UserControl>

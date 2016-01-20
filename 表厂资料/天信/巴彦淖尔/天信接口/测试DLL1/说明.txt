@@ -1,0 +1,18 @@
+//本DLL适合北京握奇CRW系列读卡器 ，写密钥传输卡和写用户卡及购气都用同一函数WriteUCard。 
+//各函数返回值说明:0---函数成功执行;1---串口初始化错误;2---保留;3---用户卡复位错误;4---用户卡操作错误;5---PSAM卡复位错误;6---PSAM卡操作错误
+//                                7---写标志错误;8---卡号过长;9---单位号过长;10---购气量过大;11---函数的单位号或卡号参数赋值同此用户卡不匹配
+
+function IsSelf(port,rate:integer;pFlag,pErr:pchar):integer;stdcall;far;external 'Tancy_Card.DLL' name 'IsSelf';
+//参数说明    串口号 波特率   本厂卡标志 错误信息         // pFlag='1'为本厂卡,0则否
+
+function ReadUCard(Port,rate:integer;id,ickh,Gasvalue,fc,tpsw,pErr,ICMark:pchar):integer;stdcall;far;external 'Tancy_Card.DLL' name 'ReadUCard';
+//参数说明       串口号 波特率    卡标识 卡号 气量值 充值次数 卡别 错误信息 用户号   //tpsw='0'为用户卡，tpsw='1'为开户卡（密钥传递卡），tpsw='2'新卡
+
+function NewCardCheck(port,rate:integer;pFlag,pErr:pchar):integer;stdcall;far;external 'Tancy_Card.DLL' name 'NewCardCheck';
+//参数说明          串口号 波特率   新卡标志 错误信息           pFlag='1'为新卡,0则否
+
+function WriteUCard(Port,rate:integer;ICId,icpsw:pchar;ICCSpare:double;fc:integer;pErr,ICMark:pchar;WriteFlag:integer):integer;stdcall;far;external 'Tancy_Card.DLL' name 'WriteUCard';
+//参数说明         串口号 波特率     卡号  密码       购气量   已充值次数  错误 用户号        写标志//WriteFlag=2为售气，1为补卡，0为开户（密钥传递卡）
+
+function InitCard(Port,Rate:integer;icpsw,pErr:pchar):integer;stdcall;far;external 'Tancy_Card.DLL' name 'InitCard';
+//参数说明      串口号 波特率 卡密码(未用) 错误信息

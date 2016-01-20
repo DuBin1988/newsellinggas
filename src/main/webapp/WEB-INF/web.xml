@@ -1,0 +1,54 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app id="WebApp_ID">
+  	<display-name>sellinggas</display-name>
+  <servlet>
+    <servlet-name>SpringContextServlet</servlet-name>
+    <servlet-class>
+     org.springframework.web.context.ContextLoaderServlet
+    </servlet-class>
+    <load-on-startup>1</load-on-startup>
+ </servlet>
+ <servlet>
+    <servlet-name>SpringLog4jConfigServlet</servlet-name>
+    <servlet-class>
+     org.springframework.web.util.Log4jConfigServlet
+    </servlet-class>
+ </servlet>
+ <servlet>
+    <servlet-name>web</servlet-name>
+    <servlet-class>
+     org.springframework.web.servlet.DispatcherServlet
+    </servlet-class>
+ </servlet>
+  	<listener> 
+        <listener-class>com.aote.listener.ContextListener</listener-class> 
+    </listener>
+	<servlet>
+		<servlet-name>rs</servlet-name>
+		<display-name>rs</display-name>
+		<description></description>
+		<servlet-class>
+			com.sun.jersey.spi.spring.container.servlet.SpringServlet
+		</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.aote.rs</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>rs</servlet-name>
+		<url-pattern>/rs/*</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

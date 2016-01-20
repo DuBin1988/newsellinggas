@@ -1,0 +1,190 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.自动下账信息">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<o:ExcelObj Name="excel" Bind="Index,f_userid,f_username,f_bankcardid,f_comtype,f_bankls,lastinputgasnum,lastrecord,f_pregas,f_gasprice,money,f_zhye,f_bczhye,shifoujiaofei,f_valid,f_filiale,f_network,f_operator,f_inputdate" Source="{m:Exp Str=daninfos}"/>
+			
+			<o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from paramvalue where param.name\=\'操作员查询用\' and code \=\'\{daninfosearch.DataContext.f_sgnetwork\}\'$}" 
+			   IsOld="{m:Exp Str=wangdianlist.State\=\=$End$}"/>
+			<!--公司类型列表对象-->
+			<o:ObjectList Name="gongsitypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from paramvalue where param.name\=\'网点查询用\' and code \=\'\{daninfosearch.DataContext.f_filiale\}\'$}" 
+			IsOld="{m:Exp Str=fgslist.State\=\=$End$}"/>
+			<!--分公司列表对象-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<!--总公司名称-->
+		    <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+			<!--是否有效查询用-->
+			<o:ObjectList Name="youxiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+		<!--金额合计-->
+			<o:GeneralObject Name="heji" EntityType="t_automaticxz" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$one/select new Map(Sum(f_pregas) as f_pregas\,Sum(f_preamount) as f_preamount) from t_automaticxz where \{daninfosearch.DataContext.Condition\} and f_valid\=\'有效\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$one/select new Map(Sum(f_pregas) as f_pregas\,Sum(f_preamount) as f_preamount) from t_automaticxz where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_valid\=\'有效\'$\,$0$}"
+				IsOld="{m:Exp Str=heji.State\=\=$End$}">
+			</o:GeneralObject>
+		
+		</m:ResourceLoad>
+		<!--sdk:TabControl Margin="0" >
+					
+			<sdk:TabItem Header="民用档案" Height="Auto" Width="Auto" Margin="0,2,0,0"-->
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="10*"/>
+						<ColumnDefinition Width="0*"/>
+					</Grid.ColumnDefinitions>
+					<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+						<toolkit:DockPanel>
+							<Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="1"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="80"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="80"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="80"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="0.647*"/>
+							</Grid.ColumnDefinitions>
+								<a:Data.Context>
+									<o:SearchObject />        	
+								</a:Data.Context>
+								
+									<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+									<TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+										</a:Data.Prop>
+									</TextBox>
+									<TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="1" Margin="0,1,0,2" Height="25" TextAlignment="Right"/>
+									<TextBox Name="tj7" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,1,0,2" Height="25" Grid.ColumnSpan="1" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
+										</a:Data.Prop>
+									</TextBox>
+										<ComboBox Name="tjc2" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+						<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>          
+                    	</a:Data.Prop>
+						</ComboBox>
+						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="2" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="20,-2,0,2" FontSize="14"  />
+						<Button Content=" 置  空"  Grid.Row="2" Grid.Column="7" Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null;tjc1.SelectedValue\=null;tjc2.SelectedValue\=null;tjc3.SelectedValue\=null;tjc4.SelectedValue\=null;tjc5.SelectedValue\=null}" FontSize="14" HorizontalAlignment="Left" Width="60" Margin="0,-2,0,2"  />
+						<TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0,1,0,2" Height="25" TextAlignment="Right" Text="操作日期 从："/>
+								<sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<!-- Value="{m:Exp Str=SysTime.Today}"-->
+										<o:PropertySetter PropertyName="f_yytdate1"  Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_inputdate >= substring('this',1,10)"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="2" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" Grid.ColumnSpan="1" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_yytdate2"   Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_inputdate ^= substring('this',1,10)"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="2" Margin="0,1,0,2" Height="25" TextAlignment="Right"/>
+								<TextBlock TextWrapping="Wrap" Text="所属公司：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+								<TextBlock TextWrapping="Wrap" Text="是否有效：" Grid.Column="2"  Margin="0,3,0,0" Height="25" TextAlignment="Right" />
+								<ComboBox x:Name="tjc1"  SelectedValue="{m:Bind Path=f_valid}" Grid.Column="3" ItemsSource="{m:Exp Str=youxiaolist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_valid"  Operator="f_valid = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+								<TextBlock TextWrapping="Wrap" Text="网　　点：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" />
+								<ComboBox x:Name="tjc4"  SelectedValue="{m:Bind Path=f_network}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=wangdianlist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_network"  Operator="f_network = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+								<TextBlock TextWrapping="Wrap" Text="操 作 员：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
+								<ComboBox x:Name="tjc5"  SelectedValue="{m:Bind Path=f_operator}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=czylist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_operator"  Operator="f_operator = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+								<Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	Margin="64,0,0,3" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="7" Grid.Row="2"/>
+								<TextBlock TextWrapping="Wrap" Text="下账类型：" Grid.Column="4"  Margin="0,1,0,2" Height="25" TextAlignment="Right" Grid.Row="1" />
+								<ComboBox x:Name="tjc3"  SelectedValue="{m:Bind Path=f_comtype}" ItemsSource="{m:Exp Str=gongsitypelist}" Grid.Row="1" Grid.Column="5"   Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_comtype"  Operator="f_comtype = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+							</Grid>
+					
+							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+								<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+								<TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项 总气量\{heji.f_pregas\!\=null:heji.f_pregas\,$0$ \} 总金额\{heji.f_preamount\!\=null:heji.f_preamount\,$0$ \}元}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+							</toolkit:DockPanel>
+					
+							<sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+								<a:Data.Items>
+									<o:PagedObjectList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_automaticxz where \{daninfosearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_automaticxz where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+										 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="id"/>
+								</a:Data.Items>
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="银行账号" Binding="{Binding f_bankcardid}"/>			
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="代扣类型" Binding="{Binding f_comtype}"/>			
+									<sdk:DataGridTextColumn Header="银行流水号" Binding="{Binding f_bankls}"/>						
+
+									
+									<sdk:DataGridTextColumn Header="上期指数" Binding="{Binding lastinputgasnum}"/>
+									<sdk:DataGridTextColumn Header="本期指数" Binding="{Binding lastrecord}"/>
+									<sdk:DataGridTextColumn Header="气量" Binding="{Binding f_pregas}"/>
+									<sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
+									<sdk:DataGridTextColumn Header="金额" Binding="{Binding money}"/>
+									<sdk:DataGridTextColumn Header="上期结余" Binding="{Binding f_zhye}"/>
+									<sdk:DataGridTextColumn Header="本期结余" Binding="{Binding f_bczhye}"/>
+									<sdk:DataGridTextColumn Header="是否缴费" Binding="{Binding shifoujiaofei}"/>
+									<sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_valid}"/>
+									<sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
+									<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_network}"/>
+									<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operator}"/>
+									<sdk:DataGridTextColumn Header="下账日期" Binding="{Binding f_inputdate,StringFormat=yyyy-MM-dd}"/>
+							        
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+				
+							
+							
+				</toolkit:DockPanel>
+					
+						
+					</toolkit:BusyIndicator>
+					
+				</Grid>
+				
+			<!--/sdk:TabItem>
+		</sdk:TabControl-->
+	</Grid>
+</UserControl>

@@ -1,0 +1,163 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:b1="clr-namespace:Com.Aote.Behaviors"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.发票分配">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<!--分公司列表对象-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司'"/>
+			<!--用户类型查询用-->
+			<o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用'"/>
+			<!--总公司名称-->
+		    <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+			
+			<!--发票分配对象-->
+            <o:GeneralObject Name="fenpei" EntityType="t_invoicedistribution" WebClientInfo="{StaticResource dbclient}"
+				IsInit="{m:Exp Str='CreateInvoices.State==$End$'}">
+            </o:GeneralObject>
+            <!--批量生成发票时采用的SQL语句-->
+			<b:HQLAction Name="InsertInvoice" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+HQL="{m:Exp Str=$
+insert into t_fapiaoinfos(f_invoiceid\, f_invoicenum\, f_filiale\, f_fapiaostatue\, f_sgoperator\,
+	parentid)
+select \'\{fenpei.f_invoiceid\}\'\, value\, \'\{fenpei.f_filiale\}\'\, \'未用\'\, \'\{fenpei.f_sgoperator\}\'\,
+	\{fenpei.id\}
+from ints(\{fenpei.f_startinvoices\}\, \{fenpei.f_endinvoices\}\,1) i left join t_fapiaoinfos f on i.value\=f.f_invoicenum
+where f.f_invoicenum is null 
+}"/>
+
+			<!--保存分配对象-->	
+		    <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+			    <b:BatchInfo Source="{m:Exp Str=fenpei}" MethodName="SaveToJson"/>
+		    </b:BatchExcuteAction>
+				
+			<!--生成发票对象-->	
+		    <b:BatchExcuteAction Name="CreateInvoices" CanSave="{m:Exp Str=SaveAction.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
+			    <b:BatchInfo Source="{m:Exp Str=InsertInvoice}" MethodName="InvokeToJson"/>
+		    </b:BatchExcuteAction>
+				
+		</m:ResourceLoad>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="10*"/>
+						<ColumnDefinition Width="0*"/>
+					</Grid.ColumnDefinitions>
+					<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=SaveAction.IsBusy or CreateInvoices.IsBusy}">
+						<toolkit:DockPanel>
+                    <Grid Name="daninfosearch" DataContext="{m:Exp Str=fenpei}" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="0.795*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="生成发票" IsEnabled="{m:Exp Str=!daninfosearch.DataContext.HasErrors}" x:Name="dansearchbutton" Grid.Row="2" Grid.Column="6" Click="{m:Exp Str=SaveAction.Invoke()}" Margin="0,-4,-14,-1" FontSize="14" HorizontalAlignment="Right" Width="66"  />
+                        <!--Button Content=" 保  存" Name="saveButton" Click="{m:Exp Str=SaveAction.Invoke()}" Grid.Row="2" Grid.Column="7"   Margin="0,-4,72,-1" FontSize="14" HorizontalAlignment="Right" Width="60"  /-->
+                        <Button Content=" 置  空"  Grid.Row="2" Grid.Column="7" Click="{m:Exp Str=fenpei.f_nums\=null;fenpei.f_invoiceid\=null;fenpei.f_startinvoices\=null;fenpei.f_endinvoices\=null;fenpei.remarks\=null;fenpei.f_sgoperator\=null;fenpei.f_date\=null}" Margin="0,-4,62,-1" FontSize="14" HorizontalAlignment="Right" Width="60"  />
+                        <TextBlock TextWrapping="Wrap" Text="分公司："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
+                        <TextBlock TextWrapping="Wrap" Text="部门：" Grid.Column="2" Grid.Row="1"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                        <TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="0" Height="25" TextAlignment="Right" Text="终止发票号："/>
+                        <TextBlock TextWrapping="Wrap" Text="发票使用人：" Grid.Column="4" Margin="0" Height="25" TextAlignment="Right"/>
+                        <TextBlock TextWrapping="Wrap" Text="起始发票号："  Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBlock TextWrapping="Wrap" Text="发票总份数："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" />
+                        <TextBlock TextWrapping="Wrap" Text="备注：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBox x:Name="yueshu" TextWrapping="Wrap" Grid.Row="0" Grid.Column="7" Text="{m:Bind Path=remarks}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="remarks"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="操作员："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" Grid.Column="4" />
+                        <TextBlock TextWrapping="Wrap" Text="分配日期：" Grid.Column="6" Grid.Row="1"  Margin="0" Height="25" TextAlignment="Right" />
+                        <sdk:DatePicker   SelectedDate="{m:Bind Path=f_date}" Grid.Row="1" Grid.Column="7" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_date" Default="{m:Exp Str=SysTime.Today}" Value="{m:Exp Str=SysTime.Today}" 
+											 Operator="1 = 1"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="1" Grid.Column="5" Text="{m:Bind Path=f_operator}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="True" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_operator" Default="{m:Exp Str=LoginUser.name}" Operator="1 = 1"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_endinvoices}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_endinvoices" NotNull="True" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="2" Grid.Column="3" Text="{m:Bind Path=f_chushi}" Visibility="Collapsed" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_chushi" Default="1"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_startinvoices}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_startinvoices" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Grid.Column="1"  Text="{m:Bind Path=f_nums}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" 
+								 VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_nums" Value="{m:Exp Str=fenpei.f_endinvoices.ToInt()-fenpei.f_startinvoices.ToInt()+fenpei.f_chushi.ToInt()}" Default="0" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+
+                        <TextBox  TextWrapping="Wrap" Grid.Row="0" Grid.Column="5" Text="{m:Bind Path=f_sgoperator}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="False" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_sgoperator" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_filiale}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="True" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}" Operator="1 = 1"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox  TextWrapping="Wrap" Grid.Row="1" Grid.Column="3" Text="{m:Bind Path=f_parentname}" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" IsReadOnly="True" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_parentname" Default="{m:Exp Str=LoginUser.f_parentname}" Operator="1 = 1"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="发票代码：" Grid.Column="2" Grid.Row="2"  Margin="0,1,0,2" Height="25" TextAlignment="Right" />
+                        <TextBox  TextWrapping="Wrap" Grid.Row="2" Grid.Column="3" Text="{m:Bind Path=f_invoiceid}" Width="Auto" Margin="0,1,0,2" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_invoiceid" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                    </Grid>
+
+                </toolkit:DockPanel>
+					</toolkit:BusyIndicator>
+				</Grid>
+        <c:MessageTipObj Tip="{m:Exp Str=$生成发票成功$}" IsShow="{m:Exp Str=SaveAction\=>Completed!\=null}"/>
+        <!--/sdk:TabItem>
+		</sdk:TabControl-->
+	</Grid>
+</UserControl>

@@ -1,0 +1,70 @@
+<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--工程进度表-->
+    <class   entity-name="t_worklog" table="t_worklog"  dynamic-update="true">
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+		
+		<!-- 关联id，对应apply -->
+        <property name="applyid" type="int" />
+		
+		
+<!-- 基本信息 -->
+		<!-- 申请人 -->
+		<property name="f_username" type="string" />
+		<!-- 报建编号 -->
+		<property name="f_code" type="string"/>
+		<!-- 报建日期 -->
+		<property name="f_date" type="date"/>
+		<!-- 民用单位 -->
+		<property name="f_minyongdept" type="string"/>
+		<!-- 非民用单位 -->
+		<property name="f_applydept" type="string"/>
+		<!-- 地址 -->
+		<property name="f_address" type="string"/>
+		<!-- 电话 -->
+		<property name="f_phone" type="string"/>
+		<!-- 用气类型 -->
+		<property name="f_usertype" type="string"/>
+		<!-- 房屋类型 -->
+		<property name="f_usertypepro" type="string"/>
+		<!-- 片区 -->
+		<property name="f_area" type="string"/>
+		<!-- 报建状态-->
+		<property name="f_state" type="string"/>
+		
+		
+		
+		<!-- 日期 -->
+		<property name="f_workdate" type="date"/>
+		<!-- 星期 -->
+		<property name="f_week" type="string"/>
+		<!-- 项目负责人 -->
+		<property name="f_xiangmufuzeren" type="string"/>
+		<!--突发事件 -->
+		<property name="f_emergency" type="string" length="5000"/>
+		<!--延期原因 -->
+		<property name="f_yanqiyuanyin" type="string" length="5000"/>
+		<!--解决方案-->
+		<property name="f_jiejuefangan" type="string" length="5000"/>
+		
+		<!-- 工作记录 -->
+		<property name="f_workinfo" type="string" length="5000"/>
+		
+		
+		<!-- 备注 -->
+		<property name="f_remark" type="string" length="5000"/>
+		<!-- 记录人 -->
+		<property name="f_recorder" type="string"/>
+		<!-- 部门 -->
+		<property name="f_recorderdepar" type="string"/>
+		<!-- 记录日期 -->
+		<property name="f_recorderdate" type="date"/>
+		
+		
+	</class> 
+</hibernate-mapping>

@@ -1,0 +1,924 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.苍南民用售气收费">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-101,0">
+			<!--非民用限购参数对象-->
+        	<o:GeneralObject Name="gsxiangou" EntityType="t_gsxiangou" WebClientInfo="{StaticResource dbclient}"
+                  Path="{m:Exp Str=$one/from t_gsxiangou where f_fanwei &lt;\= \{kbusers.f_flownum\} and f_daofanwei &gt; \{kbusers.f_flownum\}}">
+			</o:GeneralObject>
+			<!--民用壁挂炉用户采暖季参数对象-->
+        	<o:GeneralObject Name="cainuanji" EntityType="t_addons" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from cainuanji }">
+			</o:GeneralObject>	
+			<!--历史交费列表-->
+			<o:ObjectList Name="kbsellgas" WebClientInfo="{StaticResource dbclient}"
+										Path="{m:Exp Str=kbusers.f_userid !\= null:$from t_sellinggas where f_userid\=\'\{kbfee.f_userid\}\' order by f_deliverydate desc $\,$abc$}"
+										IsOld="{m:Exp Str=SaveAction.State\=\=$End$}" />
+			<!--本月有效费列表,目的是计算用户本月已经购买的气量-->
+			<o:ObjectList Name="kbbysellgas" WebClientInfo="{StaticResource dbclient}"
+										Path="{m:Exp Str=kbusers.f_userid !\= null:$from t_sellinggas where f_userid\=\'\{kbfee.f_userid\}\' and f_payfeetype \=\'卡表收费\' and f_payfeevalid\=\'有效\' and year(f_deliverydate) \=\'\{SysTime.Today.ToString($yyyy$)\}\' and month(f_deliverydate) \=\'\{SysTime.Today.ToString($MM$)\}\'$\,$abc$ }"
+										IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"/>
+		    <!--o:ObjectList Name="kbsellgas" EntityType="t_sellinggas" HasEmptyRow="True"></o:ObjectList-->
+           <!--卡对象BuyTimes="{m:Exp Str=kbfee.f_times.ToInt()}"-->
+		    <o:BJICCard Name="card" Init="True"  CardId="{m:Exp Str=kbfee.f_cardid}" Factory="{m:Exp Str=kbfee.f_aliasname}"  Price="1" IcardCont="{m:Exp Str=kbfee.f_maichong.ToLong()}" TableCont="{m:Exp Str=kbfee.f_watchnum.ToLong()}" >
+		    </o:BJICCard>
+			<!--付款方式列表-->
+			<o:ObjectList Name="paylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<!--打开窗口对象-->
+			<o:ChildWindowObj Name="openxiangou" CWName="/Pages/管理员登录" />
+			
+			<!--混合气价对象 -->
+        	<o:GeneralObject Name="hunhes" EntityType="t_hunhe" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from t_hunhe }">
+			</o:GeneralObject>	
+			
+			<!--单值对象-->
+			<o:GeneralObject Name="fbffobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='民用低保户月维护费' "   ></o:GeneralObject>
+			<o:GeneralObject Name="mwhfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='民用月维护费' "   ></o:GeneralObject>
+			<o:GeneralObject Name="fwhfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='非民用月维护费' "   ></o:GeneralObject>
+        	<o:GeneralObject Name="mxggasobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='民用月限购气量'"   ></o:GeneralObject>
+			<o:GeneralObject Name="mzdgasobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='民用单次最大购气量'"   ></o:GeneralObject>
+			<o:GeneralObject Name="fzdgasobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='非民用单次最大购气量'"   ></o:GeneralObject>	
+			<o:GeneralObject Name="mygqlobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="one/from t_singlevalue where name='民用购气量' "   ></o:GeneralObject>
+		<!--卡表用户对象 -->
+        	<!--o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from t_userfiles where f_userid\=\'\{kbfee.f_userid\}\'}">-->
+			<o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and ( card.Factory \=\=$DM$ or card.Factory \=\=$CangNan$):$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"  IsInit="{m:Exp Str=print.State\=\=$End$}">
+        		 <!--o:PropertySetter PropertyName="f_metergasnums" Value="{m:Exp Str=kbfee1.DataContext.f_metergasnums}"/>>
+				<o:PropertySetter PropertyName="f_cumulativepurchase" Value="{m:Exp Str=kbfee1.DataContext.f_cumulativepurchase}"/>
+				<o:PropertySetter PropertyName="f_finallybought" Value="{m:Exp Str=kbfee1.DataContext.f_pregas}"/>
+				<o:PropertySetter PropertyName="f_finabuygasdate" Value="{m:Exp Str=kbfee1.DataContext.f_deliverydate}"/-->
+				<!--o:PropertySetter PropertyName="f_buka" Value="{m:Exp Str=kbfee1.DataContext.f_buka}"/>
+				<o:PropertySetter PropertyName="f_times" Value="{m:Exp Str=kbfee1.DataContext.f_times.ToInt()}"/-->
+				<!--维护费开始月份，交费时的开始月份加交费月数后进行回写>
+				<o:PropertySetter PropertyName="f_beginfee" Value="{m:Exp Str='kbfee1.DataContext.f_usertype\=\=$民用$:kbfee1.DataContext.f_beginfee.ToDate().AddMonths(kbfee1.DataContext.f_repairnum.ToInt()),null'}"/-->
+			</o:GeneralObject>
+		<!--超用用户对象 >
+        	<o:GeneralObject Name="cyqusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from t_userfiles where f_userid\=\'\{cyqfee.f_userid\}\'}">
+        		<o:PropertySetter PropertyName="f_metergasnums" Value="{m:Exp Str=cyqfee1.DataContext.f_metergasnums}"/>
+				<o:PropertySetter PropertyName="f_cumulativepurchase" Value="{m:Exp Str=cyqfee1.DataContext.f_cumulativepurchase}"/>
+				<o:PropertySetter PropertyName="finallybought" Value="{m:Exp Str=cyqfee1.DataContext.f_pregas}"/>
+				<o:PropertySetter PropertyName="f_finallyboughtgasdate" Value="{m:Exp Str=cyqfee1.DataContext.f_deliverydate}"/>			
+			</o:GeneralObject-->
+			<!--卡表收费对象 -->
+        	<o:GeneralObject Name="kbfee" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
+              IsInit="{m:Exp Str=print.State\=\=$End$}">
+			</o:GeneralObject>
+			<!--超用对象 >
+        	<o:GeneralObject Name="cyqfee"   EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
+              IsInit="{m:Exp Str=cyqSaveAction.State\=\=$End$}">
+			</o:GeneralObject-->
+		    <!--卡表保存对象 -->
+			 <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=kbusers}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=kbfee1.DataContext}" MethodName="SaveToJson"/>
+				<!--发票对象-->
+				<b:BatchInfo Source="{m:Exp Str=fpinfosobj}" MethodName="SaveToJson"/>
+			</b:BatchExcuteAction>
+		     <!--超用气表保存对象>
+			 <b:BatchExcuteAction Name="cyqSaveAction" WebClientInfo="{StaticResource dbclient}">
+				<b:BatchInfo Source="{m:Exp Str=cyqusers}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=cyqfee1.DataContext}" MethodName="SaveToJson"/>
+			</b:BatchExcuteAction --> 
+			<!--发票对象 去掉IsInit="{m:Exp Str=print.State\=\=$End$}"-->
+        	<o:GeneralObject Name="fpinfosobj" EntityType="t_fapiaoinfos" WebClientInfo="{StaticResource dbclient}" IsInit="{m:Exp Str='SaveAction.State==$End'}">
+        		<o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=kbfee1.DataContext.f_username}"/>
+				<o:PropertySetter PropertyName="f_invoicenum" Value="{m:Exp Str=kbfee1.DataContext.f_invoicenum}"/>
+				<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=kbfee1.DataContext.f_userid}" />
+				<o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=kbfee1.DataContext.f_cardid}"/>
+				<o:PropertySetter PropertyName="f_gas" Value="{m:Exp Str=kbfee1.DataContext.f_pregas}" />
+				<o:PropertySetter PropertyName="f_money" Value="{m:Exp Str=kbfee1.DataContext.f_preamount}" />
+				<o:PropertySetter PropertyName="f_repairfee" Value="{m:Exp Str=kbfee1.DataContext.f_amountmaintenance}" />
+				<o:PropertySetter PropertyName="f_totalfee" Value="{m:Exp Str=kbfee1.DataContext.f_totalcost}" />
+				<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=kbfee1.DataContext.f_sgnetwork}" />
+				<o:PropertySetter PropertyName="f_sgoperator" Value="{m:Exp Str=kbfee1.DataContext.f_sgoperator}" />
+				<o:PropertySetter PropertyName="f_fapiaotime" Value="{m:Exp Str=kbfee1.DataContext.f_deliverytime}" />
+				<o:PropertySetter PropertyName="f_fapiaodate" Value="{m:Exp Str=kbfee1.DataContext.f_deliverydate}" />
+				<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=kbfee1.DataContext.f_filiale}" />
+				<o:PropertySetter PropertyName="f_fapiaotype" Default="购气"  />
+				<o:PropertySetter PropertyName="f_fapiaostatue" Default="已用"  />
+			</o:GeneralObject>
+			<!--异步执行一系列保存动作-->
+			<b:SyncActionFactory Name="BackSave">
+				<!--写卡-->
+				<b:CallMethodAction Name="writecard" TargetObject="{m:Exp Str=card}"  MethodName="SellGas"/> 
+				<!--卡表保存对象 -->
+				<b:CallMethodAction Name="kasave" TargetObject="{m:Exp Str=SaveAction}"  MethodName="Invoke"/> 
+			</b:SyncActionFactory>
+		</m:ResourceLoad>
+		<Grid >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.25*"/>
+				<ColumnDefinition Width="0.75*"/>
+			</Grid.ColumnDefinitions >
+			<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" >
+				<toolkit:DockPanel >
+					<toolkit:DockPanel x:Name="userfilesearch"  Background="#FFCFEFFF" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" >
+						<a:Data.Context>
+							<o:SearchObject />        	
+						</a:Data.Context>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="50*"/>
+								<ColumnDefinition Width="50*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="28"/>
+								<RowDefinition Height="28"/>
+							</Grid.RowDefinitions>
+						<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,6,0,6" HorizontalAlignment="Right"/>
+						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,3" Height="25" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_userid" Operator="f_userid like 'this'"/>               
+							</a:Data.Prop>
+						</TextBox>
+						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="卡　　号：" Margin="5,6,0,6" HorizontalAlignment="Right"/>
+						<TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_cardid}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,3" Height="25" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_cardid" Operator="f_cardid like '%this%'"/>               
+							</a:Data.Prop>
+						</TextBox>
+						<Button Content="查  询" x:Name="searchbutton" Grid.Column="2" Grid.Row="1" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,-5,5,0" HorizontalAlignment="Right" Width="50" />
+					</Grid>
+					</toolkit:DockPanel>
+					
+					<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom">
+						<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"    Margin="0" PageSize="18" Height="24" toolkit:DockPanel.Dock="Top"/>
+						<TextBlock TextWrapping="Wrap" Margin="5" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
+						
+					</toolkit:DockPanel>
+					
+					<sdk:DataGrid x:Name="userfiles" Margin="0,0,0,2"  
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+						<a:Data.Items>
+							<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"		
+								Path="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\} and f_sgoperator \=\'\{LoginUser.name\}\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_deliverydate \=\'\{SysTime.Today.ToString($yyyy-MM-dd$)\}\' }"
+								IsOld="{m:Exp Str='SaveAction.State\=\=$End$ '}"
+								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+						</a:Data.Items>
+						<sdk:DataGrid.Columns>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="名称" Binding="{Binding f_username}"/>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+							<sdk:DataGridTextColumn Header="购气量" Binding="{Binding f_pregas}"/>
+							<sdk:DataGridTextColumn Header="金额" Binding="{Binding f_preamount}"/>
+							<!--sdk:DataGridTextColumn Header="地  址" Binding="{Binding f_address}"/>
+							<sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/-->
+							<sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
+							<sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss tt}"/>
+							<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_sgoperator}"/>
+						</sdk:DataGrid.Columns>
+					</sdk:DataGrid>
+					
+					
+					<!--提交按钮-->
+				</toolkit:DockPanel>
+			</toolkit:BusyIndicator>
+			
+			<Grid Grid.Column="1" Margin="5,0,0,0">
+			 <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=kbusers.IsBusy or kbfee1.DataContext.IsBusy or card.IsBusy or SaveAction.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+				<toolkit:DockPanel>
+					<StackPanel toolkit:DockPanel.Dock="Top">
+						<Grid   Margin="0" x:Name="kbfee1" DataContext="{m:Exp Str=kbfee}" >
+							<Grid.Background>
+						<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+							<GradientStop Color="#FFF2F8FF" Offset="0"/>
+							<GradientStop Color="#FFDDF2FD" Offset="1"/>
+						</LinearGradientBrush>
+					</Grid.Background>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="1"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="1"/>
+								<RowDefinition Height="1"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="1"/>
+								<RowDefinition Height="37"/>
+								<RowDefinition Height="37"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Text="用户编号：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Height="25"/>
+							<TextBlock Text="用户/单位名称：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2" Height="25"/>
+							<TextBlock Text="地　　址：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2" RenderTransformOrigin="1.638,0.44"/>
+							<TextBlock Text="小区名称：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="气表品牌：" Margin="0" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="气表型号：" Margin="0" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+							<TextBlock Margin="0" Grid.Row="5" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right" Grid.Column="2" Height="25"/>
+							<TextBlock Text="气　　价：" Grid.Column="4"  TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Margin="0" Height="25"/>
+							<TextBlock Text="上次总累计购气量："  TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Margin="0" Height="25"/>
+							<TextBlock Text="限购气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Grid.Column="4" Height="25"/>
+							<TextBlock Text="混合气价：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4"  Height="25"/>
+							<StackPanel Grid.ColumnSpan="4" Grid.Column="1" Visibility="{m:Exp Str=kbfee1.DataContext.f_gasproperties\=\=$混合型$:$Visible$\,$Collapsed$}" Margin="0,2,-11,2" Grid.Row="4" Orientation="Horizontal" Height="25"  >
+								<TextBlock Text="民用气价" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,2" />
+								<TextBox Text="{m:Bind Path=f_myprice}" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_myprice" Value="{m:Exp Str=kbusers.f_myprice\=&gt;Completed}" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock Text="所占比率" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="10,2,0,2" />
+								<TextBox Text="{m:Bind Path=f_myfenzhi}" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True"  Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_myfenzhi" Value="{m:Exp Str=kbusers.f_myfenzhi\=&gt;Completed}" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock Text="非民用气价" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="10,2,0,2" />
+								<TextBox Text="{m:Bind Path=f_gsprice}" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_gsprice" Value="{m:Exp Str=kbusers.f_gsprice\=&gt;Completed}"  />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock Text="所占比率" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="10,2,0,2" />
+								<TextBox Text="{m:Bind Path=f_gsfenzhi}" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_gsfenzhi" Value="{m:Exp Str=kbusers.f_gsfenzhi\=&gt;Completed}"  />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_myqiliang}"  Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Grid.ColumnSpan="1" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="36"  >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_myqiliang" Value="{m:Exp Str=kbfee.f_pregas*kbfee.f_myfenzhi}"/>
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_myqiliangjine}"  Grid.Column="3" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Grid.ColumnSpan="1" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="41"  >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_myqiliangjine" Value="{m:Exp Str=kbfee.f_myqiliang*kbfee.f_myprice}"/>
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_feimyqiliang}"  Grid.Column="5" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Grid.ColumnSpan="1" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="39"  >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_feimyqiliang" Value="{m:Exp Str=kbfee.f_pregas*kbfee.f_gsfenzhi}"/>
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_feimyqiliangjine}"  Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Grid.ColumnSpan="1" Grid.Row="10" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="35"  >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_feimyqiliangjine" Value="{m:Exp Str=kbfee.f_feimyqiliang*kbfee.f_gsprice}"/>
+									</a:Data.Prop>
+								</TextBox>
+							</StackPanel>
+							<TextBlock Text="用户类型：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+							<TextBlock Text="用气性质：" Margin="0" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="维管费起始月份：" Margin="0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="维管费截止月份：" Margin="0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
+							<TextBlock Text="预购气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="10" Width="130" Height="25"/>
+							<TextBlock Text="预购金额：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="10" Grid.Column="2" Height="25"/>
+							<TextBlock Text="付款方式：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="11" Height="25"/>
+							<TextBlock Text="收　　款：" Grid.Column="2" Margin="0" Grid.Row="11" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="应交金额：" Margin="0" Grid.Row="10" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+							<TextBlock Text="找　　零：" Margin="0" Grid.Row="11" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+							<TextBox x:Name="f_userid" IsReadOnly="True" Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0,7,9.833,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=kbusers.f_userid\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<Button Click="{m:Exp Str=card.ReadCard()}" Content="读卡" Margin="-6,4,0,2" FontSize="12" Grid.Column="2" HorizontalAlignment="Left"/>
+							<TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="3" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=kbusers.f_username\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<CheckBox IsChecked="{m:Bind Path=f_dibaohu}"  Content="低保户" Margin="-0.167,0,0,0" Grid.Row="0" Grid.Column="5" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left"  Width="62">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_dibaohu" Value="{m:Exp Str=kbusers.f_dibaohu\=&gt;Completed}" Default="{m:Exp Str=False}"/>
+								</a:Data.Prop>
+							</CheckBox>
+							<TextBox Text="{m:Bind Path=f_idnumber}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=kbusers.f_idnumber\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=kbusers.f_address\=&gt;Completed}" NotNull="True"/>
+									<!--o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=$\{gsxiangou.f_gscustomgas\=>Completed\}}"/-->
+								</a:Data.Prop>
+							</TextBox>	
+							
+							<TextBox Text="{m:Bind Path=f_districtname}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=kbusers.f_districtname\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0" Grid.Row="3" IsReadOnly="True" Height="25" VerticalAlignment="Stretch"   >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=kbusers.f_gaswatchbrand\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="3" IsReadOnly="True" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=kbusers.f_metertype\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_gaspricetype}"  Grid.Column="3" Margin="0" Grid.Row="5" IsReadOnly="True" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=kbusers.f_gaspricetype\=&gt;Completed}"/>
+								</a:Data.Prop>	
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_gasprice}" Grid.Column="5"  Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=kbusers.f_gasprice\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_unitfee}" Grid.Column="5"  Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Right" Width="8" Margin="0,4,121,1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_unitfee" Value="{m:Exp Str=(kbfee.f_usertype\=\=$民用$ and kbfee.f_dibaohu!\=$True$):mwhfobj.value\,(kbfee.f_usertype\=\=$民用$ and kbfee.f_dibaohu\=\=$True$):fbffobj.value\,0}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_upbuynum}" Grid.Column="1" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_upbuynum" Value="{m:Exp Str=kbusers.f_cumulativepurchase\=&gt;Completed}" NotNull="True"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_limitbuygas}"  Grid.Column="5" Margin="0,0,71,0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="3" Height="25"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_limitbuygas"   
+										Value="{m:Exp Str='openxiangou.Result!=null:openxiangou.Result,kbfee.f_xiangoubj\!\=null:kbfee.f_xiangoubj\,kbfee.f_limitbuygasbj^0:0\,kbfee.f_limitbuygasbj'}" 
+											/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_xiangoubj}" Visibility="Collapsed"  Grid.Column="5" Margin="0,1,59,11" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Right" Width="89" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_xiangoubj" Value="{m:Exp Str=kbusers.f_xiangou \!\=$0$ and kbusers.f_usertype !\=null :(kbusers.f_usertype\=\=$非民用$:kbusers.f_xiangou.ToInt() - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\!\=True):kbusers.f_xiangou.ToInt() - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\=\=True and (kbfee.f_year.ToInt() &gt; kbfee.f_cainuanend.ToInt()) and (kbfee.f_year.ToInt() ^ kbfee.f_cainuanstate.ToInt())):kbusers.f_xiangou - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\=\=True and (((kbfee.f_year.ToInt() &gt;\= kbfee.f_cainuanstate.ToInt()) and (kbfee.f_year.ToInt() ^\= kbfee.f_zuidayue.ToInt())) or ((kbfee.f_year.ToInt() &gt;\= kbfee.f_zuixiaoyue.ToInt()) and (kbfee.f_year.ToInt() ^\= kbfee.f_cainuanend.ToInt())))   ):kbusers.f_xiangou + cainuanji.gas.ToInt() - kbbysellgas[True].Sum(f_pregas)\,null)\,null}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<Button Content="修改气量" Click="{m:Exp Str=openxiangou.IsOpen\=True}"  Margin="0" FontSize="12" Width="66" Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="3" Margin="0" Grid.Row="1"  HorizontalAlignment="Stretch" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=kbusers.f_usertype\=&gt;Completed}"/>
+								</a:Data.Prop>	
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_userstate}" Grid.Column="5" Margin="0" Grid.Row="0" TextWrapping="Wrap"  HorizontalAlignment="Right" Height="25" VerticalAlignment="Stretch" Width="100" IsReadOnly="True" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=kbusers.f_userstate\=&gt;Completed}" Validation="{m:Exp Str= value\=\=$正常$}"  ErrorMessage="已停用或销户不能购气！"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_gasproperties}" Grid.Column="1" Margin="0" Grid.Row="5" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_gasproperties" Value="{m:Exp Str=kbusers.f_gasproperties\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<!--TextBox Text="{Binding f_beginfee, StringFormat=yyyy-MM-dd}" Grid.Column="1" Margin="0" Grid.Row="6" IsReadOnly="False" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_beginfee" Value="{m:Exp Str=kbusers.f_beginfee\=&gt;Completed}"/>
+								</a:Data.Prop>	
+							</TextBox-->
+							<sdk:DatePicker SelectedDate="{m:Bind Path=f_beginfee}" FontWeight="Bold" Foreground="Red" Grid.Column="1" Margin="0" Grid.Row="7"  Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_beginfee" Value="{m:Exp Str=kbusers.f_beginfee\=&gt;Completed}" />
+								</a:Data.Prop>	
+							</sdk:DatePicker>
+							<!--从档案中取购气次数-->
+                            <TextBox Text="{m:Bind Path=f_times}"  Grid.Column="4" Margin="7.583,8,0,4" Grid.Row="11" IsReadOnly="True" HorizontalAlignment="Left" Width="40" RenderTransformOrigin="0.143,2.167" Height="Auto" VerticalAlignment="Stretch" Visibility="Collapsed" >
+									<a:Data.Prop>
+											<o:PropertySetter PropertyName="f_times" Value="{m:Exp Str=kbusers.f_times}"/>
+									</a:Data.Prop>
+							</TextBox>
+							<!--从档案中取购气次数>
+										<TextBox Text="{m:Bind Path=f_times}"  Grid.Column="4" Margin="0,8,5,4" Grid.Row="11" IsReadOnly="True" HorizontalAlignment="Right" Width="40" RenderTransformOrigin="0.143,2.167" Height="Auto" VerticalAlignment="Stretch" >
+											<a:Data.Prop>
+												<o:PropertySetter PropertyName="f_times" Value="{m:Exp Str=kbusers.f_times.ToInt()+1}"/>
+											</a:Data.Prop>
+										</TextBox-->
+					<!--TextBox Text="{Binding Path=f_endfee, StringFormat=yyyy-MM}"  Grid.Column="1" Margin="0,3,41,2" Grid.Row="6" Height="25"  >
+											<a:Data.Prop>
+												<o:PropertySetter PropertyName="f_endfee" Default="{m:Exp Str=SysTime.Today}" />
+											</a:Data.Prop>	
+										</TextBox-->
+							<sdk:DatePicker x:Name="whfdate" SelectedDate="{m:Bind Path=f_endfee}" FontWeight="Bold" Foreground="Red" IsEnabled="true" Grid.Column="3" Margin="0" Grid.Row="7"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" DisplayDate="2012-2-1" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_endfee" Value="{m:Exp Str=kbfee1.DataContext.f_usertype\=\=$民用$ and kbfee1.DataContext.f_beginfeebj\!\=null:kbfee1.DataContext.f_beginfeebj.ToDate().AddMonths(kbfee.f_weihuheji.ToInt())\,null}"/>
+								</a:Data.Prop>
+							</sdk:DatePicker>
+							<TextBox Text="{m:Bind Path=f_pregas}" FontWeight="Bold" Foreground="Red" Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Grid.Row="10" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_pregas" NotNull="True" Value="{m:Exp Str='openxiangou.Result!\=null:null,kbfee.f_usertype\=\=$民用$:mygqlobj.value\,null'}" 
+									 Validation="{m:Exp Str= value ^\= kbfee.f_limitbuygas}"  ErrorMessage="购买气量超出限购气量，不能购气！"
+									 NoDependValue="{m:Exp Str='openxiangou.Result!=null:null,null'}"/>
+								</a:Data.Prop>
+							</TextBox>
+										
+										
+										
+										
+							<TextBox Text="{m:Bind Path=f_preamount}"  Grid.Column="3" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="10" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_preamount" Value="{m:Exp Str=kbfee.f_gasproperties\=\=$混合型$:kbfee.f_myqiliangjine+kbfee.f_feimyqiliangjine\,kbfee.f_pregas*kbfee.f_gasprice}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_cumulativepurchase}"  Grid.Column="5" Margin="0,4,100,1" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="0"  HorizontalAlignment="Right" Height="25" VerticalAlignment="Stretch" Width="10" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_cumulativepurchase" 
+										Value="{m:Exp Str=kbfee.f_upbuynum+kbfee.f_pregas}"/>
+								</a:Data.Prop>
+							</TextBox>	
+							
+							<TextBox Text="{m:Bind Path=f_metergasnums}" IsReadOnly="True" Grid.Column="5" Margin="0,-1,93,6" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" HorizontalAlignment="Right" Width="5" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_metergasnums" 
+										Value="{m:Exp Str=kbfee.f_premetergasnums+kbfee.f_pregas}" />
+								</a:Data.Prop>
+							</TextBox>	
+							<ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=paylist}" SelectedValue="{m:Bind Path=f_payment}"  Grid.Column="1" Margin="0" Grid.Row="11" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" > 
+								<a:Data.Prop>
+									<o:PropertySetter  PropertyName="f_payment"
+										Default="{m:Exp Str=paylist.Count &gt; 0 :paylist.First().name\,null}" />
+								</a:Data.Prop>
+							</ComboBox>
+							<TextBox Text="{m:Bind Path=f_grossproceeds}" Grid.Column="3" Margin="0" Grid.Row="11" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_grossproceeds" NotNull="True" Value="{m:Exp Str=kbfee.f_totalcost}"/>
+								</a:Data.Prop>
+							</TextBox>	
+							
+							<TextBox Text="{m:Bind Path=f_totalcost}" FontWeight="Bold" Foreground="Red" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="10" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_totalcost"
+										Value="{m:Exp Str=kbfee.f_preamount+kbfee.f_amountmaintenance}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_givechange}"  Grid.Column="5" Margin="0,2,0,0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="11"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_givechange" 
+										Value="{m:Exp Str=kbfee.f_grossproceeds-kbfee.f_totalcost}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_meternumber}"  Grid.Column="5" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="4"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=kbusers.f_meternumber}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Margin="0" Grid.Row="13" TextWrapping="Wrap" Text="网　　点：" TextAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_sgnetwork}" Grid.Column="1" Margin="0" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_sgnetwork"  
+										Default="{m:Exp Str=LoginUser.f_parentname}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Grid.Column="2" Margin="0" Grid.Row="13" TextWrapping="Wrap" Text="操 作 员："  TextAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_sgoperator}" Grid.Column="3" Margin="0" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_sgoperator"  
+										Default="{m:Exp Str=LoginUser.name}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Grid.Column="4" Margin="0" Grid.Row="13" TextWrapping="Wrap" Text="交费日期：" TextAlignment="Right" Height="25"/>
+							<sdk:DatePicker SelectedDate="{m:Bind Path=f_deliverydate}" IsEnabled="False" Grid.Column="5" Margin="0" Grid.Row="13"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_deliverydate" 
+										Default="{m:Exp Str=SysTime.Today}"/>
+								</a:Data.Prop>
+							</sdk:DatePicker>
+							<TextBox Text="{m:Bind Path=f_singlegasnum}" Grid.Column="5" Margin="0,2,84,3" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Right" Height="25" VerticalAlignment="Stretch" Width="8" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_singlegasnum" Value="{m:Exp Str=kbfee.f_usertype\=\=$民用$:mzdgasobj.value\,kbfee.f_usertype\=\=$非民用$:fzdgasobj.value\,0}" />
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Text="维护费交费月数：" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_repairnum}" Grid.Column="5" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_repairnum" Default="0" 
+										Value="{m:Exp Str=(kbfee.f_endfee.ToDate().Year-kbfee.f_beginfee.ToDate().Year)*12+(kbfee.f_endfee.ToDate().Month-kbfee.f_beginfee.ToDate().Month +1)}" />
+									<!--o:PropertySetter PropertyName="f_repairnum" 
+												 Value="{m:Exp Str=(kbfee.f_endfee.ToDate().Year \- kbfee.f_beginfee.ToDate().Year)*12}" /-->
+								</a:Data.Prop>
+							</TextBox>
+							
+							<TextBlock Text="维护费金额：" Margin="0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
+											<!--隐藏域-->
+							<TextBox Text="{m:Bind Path=f_amountmaintenance}" FontWeight="Bold" Foreground="Red" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_amountmaintenance" 
+										Value="{m:Exp Str=kbfee.f_repairnum*kbfee.f_unitfee}"/>
+								</a:Data.Prop>
+							</TextBox>
+											<!--是否结账-->
+							<TextBox Text="{m:Bind Path=f_jiezhangstate}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_jiezhangstate" 
+										Default="未结账"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_payfeetype}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_payfeetype" 
+										Default="卡表收费"/>
+								</a:Data.Prop>
+							</TextBox>
+
+
+											<!--卡号-->
+							<TextBox Text="{m:Bind Path=f_cardid}"  Grid.Column="1" Margin="0" Grid.Row="1" HorizontalAlignment="Stretch" Width="Auto" Height="25" IsReadOnly="True" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=kbusers.f_cardid\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+											<!--补卡标记-->
+							<TextBox Text="{m:Bind Path=f_buka}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_buka" Default="否"/>
+								</a:Data.Prop>
+							</TextBox>
+											<!--限购气量-->
+							<TextBox Text="{m:Bind Path=f_customgas}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_customgas" />
+								</a:Data.Prop>
+							</TextBox>
+											<!--额定流量-->
+							<TextBox Text="{m:Bind Path=f_flownum}"  Grid.Column="5" Margin="126.833,6,0,6" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Left" Width="6" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_flownum" Value="{m:Exp Str=kbusers.f_flownum\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+											<!--上次表累计购气量-->
+							<TextBox Text="{m:Bind Path=f_premetergasnums}"  Grid.Column="3" Margin="0" Grid.Row="6" HorizontalAlignment="Stretch" Width="Auto" Height="25" IsReadOnly="True" VerticalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_premetergasnums" Value="{m:Exp Str=kbusers.f_metergasnums\=&gt;Completed}" NotNull="True"/>
+								</a:Data.Prop>
+							</TextBox>
+											<!--厂家别名-->
+							<TextBox Text="{m:Bind Path=f_aliasname}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=kbusers.f_aliasname\=&gt;Completed}"  />
+								</a:Data.Prop>
+							</TextBox>
+											<!--购气有效类型-->
+							<TextBox Text="{m:Bind Path=f_payfeevalid}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_payfeevalid" Default="有效"/>
+								</a:Data.Prop>
+							</TextBox>
+											
+											<!--最后购气量_冲正时用-->
+							<TextBox Text="{m:Bind Path=f_finallybought}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_finallybought" Value="{m:Exp Str=kbusers.f_finallybought\=&gt;Completed}"  />
+								</a:Data.Prop>
+							</TextBox>
+											<!--最后购气量日期_冲正时用-->
+							<TextBox Text="{m:Bind Path=f_finabuygasdate}" Visibility="Collapsed" Grid.Column="2" Margin="0,6" Grid.Row="10" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_finabuygasdate" Value="{m:Exp Str=kbusers.f_finabuygasdate\=&gt;Completed}"  />
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Margin="0" Grid.Row="14" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="14" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_filiale" 
+										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_fengongsinum}"  Grid.Column="5" Margin="0,5,77,0" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="25" Width="4" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_fengongsinum" NotNull="True"
+										Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Text="卡　　号：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Margin="0,0,5,0" Grid.Row="0" Grid.Column="4" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" IsEnabled="False">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_wallhangboiler" Value="{m:Exp Str=kbusers.f_wallhangboiler\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</CheckBox>
+							<TextBox Text="{m:Bind Path=f_nowyear}" IsReadOnly="True" Grid.Column="5" Margin="0,4,73,1" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="5" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_nowyear"
+										Default="{m:Exp Str=$\{SysTime.Today.ToString($yyyy$)\}}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_year}" IsReadOnly="True" Grid.Column="5" Margin="0,2,66,3" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="5" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_year"
+										Default="{m:Exp Str=$\{SysTime.Today.ToString($yyyyMMdd$)\}}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_cainuanstate}" IsReadOnly="True" Grid.Column="5" Margin="0,1,57,4" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="6" RenderTransformOrigin="1.08,4.32" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_cainuanstate"
+										Default="{m:Exp Str=$\{kbfee.f_nowyear\}\{cainuanji.startdate\}}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_cainuanend}" IsReadOnly="True" Grid.Column="5" Margin="137.833,-3,0,8" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="5" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_cainuanend"
+										Default="{m:Exp Str=$\{kbfee.f_nowyear\}\{cainuanji.enddate\}}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_zuidayue}" IsReadOnly="True" Grid.Column="5" Margin="144.833,4,0,1" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="7" RenderTransformOrigin="-2.588,-4.28" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_zuidayue"
+										Default="{m:Exp Str=$\{kbfee.f_nowyear\}1231}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_zuixiaoyue}" IsReadOnly="True" Grid.Column="5" Margin="165.833,-1,0,6" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="7" RenderTransformOrigin="1.515,0.52" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_zuixiaoyue"
+										Default="{m:Exp Str=$\{kbfee.f_nowyear\}0101}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_watchnum}"  Grid.Column="5" Margin="0,6,46,6" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Right" Width="7" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<TextBox.RenderTransform>
+									<CompositeTransform ScaleX="-1"/>
+								</TextBox.RenderTransform>
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_watchnum" Value="{m:Exp Str=kbusers.f_watchnum\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_maichong}"  Grid.Column="5" Margin="0,6,17,6" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Right" Width="10" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_maichong" Value="{m:Exp Str=kbusers.f_maichong\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_gas}" Grid.Column="5" Margin="0" Grid.Row="1" TextWrapping="Wrap"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" Width="Auto" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_gas" Value="{m:Exp Str=card.Factory\=\=$QinChuanGY$:0\,card.Gas}" Validation="{m:Exp Str= value ^\= 0}"  ErrorMessage="卡内有气量，不能进行购气！"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Text="表上次累计购气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Grid.Column="2" Height="25"/>
+							<TextBlock Grid.Column="4" Margin="0" Grid.Row="14" TextWrapping="Wrap" TextAlignment="Right" Height="25"><Run Text="交费"/><Run Text="时间"/><Run Text="："/></TextBlock>
+							<toolkit:TimePicker Value="{m:Bind Path=f_deliverytime}" IsEnabled="False" Grid.Column="5" Margin="0" Grid.Row="14"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_deliverytime" Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
+								</a:Data.Prop>
+							</toolkit:TimePicker>
+							<TextBlock Text="卡内气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" Grid.Column="4" Height="25"/>
+							<TextBox Text="{Binding f_beginfeebj, StringFormat=yyyy-MM-dd}" Grid.Column="2" Margin="35.167,0,111.583,5" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_beginfeebj"  Value="{m:Exp Str=SysTime.Today>kbusers.f_beginfee.ToDate():kbusers.f_beginfee.ToDate()\,null}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{Binding f_beginfeehx, StringFormat=yyyy-MM-dd}" Grid.Column="2" Margin="44.167,3,0,2" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="6" Visibility="Collapsed">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_beginfeehx"  Value="{m:Exp Str='kbfee.f_endfee !\=null:  kbfee.f_beginfee.ToDate().AddMonths(kbfee.f_repairnum.ToInt())\,kbfee.f_beginfee'}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_weihunians}" Grid.Column="2" Margin="24.167,4,0,1" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="7" Visibility="Collapsed">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_weihunians"   Value="{m:Exp Str=SysTime.Today.Subtract(kbusers.f_beginfee.ToDate()).Days >0:SysTime.Today.Subtract(kbusers.f_beginfee.ToDate()).Days /365\,0}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_weihuheji}" Grid.Column="2" Margin="11.167,1,0,4" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="5" Visibility="Collapsed">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_weihuheji"   Value="{m:Exp Str=(kbfee.f_weihunians.ToInt()+kbfee.f_weihuyue.ToInt())*12-1}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_weihuyue}" Grid.Column="2" Margin="19.167,1,0,4" Grid.Row="13" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="3" Visibility="Collapsed">
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_weihuyue"   Value="{m:Exp Str=(kbusers.f_beginfee.ToDate().Year\=\=SysTime.Today.Year and kbusers.f_beginfee.ToDate().Month>SysTime.Today.Month):0\,1}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_limitbuygasbj}"  Grid.Column="5" Margin="0,6,5,6" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Right" Width="10" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_limitbuygasbj" Value="{m:Exp Str=kbusers.f_usertype\=\=$非民用$:gsxiangou.f_gscustomgas.ToInt() - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\!\=True):mxggasobj.value.ToInt() - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\=\=True and (kbfee.f_year.ToInt() &gt; kbfee.f_cainuanend.ToInt()) and (kbfee.f_year.ToInt() ^ kbfee.f_cainuanstate.ToInt())):mxggasobj.value.ToInt() - kbbysellgas[True].Sum(f_pregas)\,(kbusers.f_usertype\=\=$民用$ and kbfee.f_wallhangboiler\=\=True and (((kbfee.f_year.ToInt() &gt;\= kbfee.f_cainuanstate.ToInt()) and (kbfee.f_year.ToInt() ^\= kbfee.f_zuidayue.ToInt())) or ((kbfee.f_year.ToInt() &gt;\= kbfee.f_zuixiaoyue.ToInt()) and (kbfee.f_year.ToInt() ^\= kbfee.f_cainuanend.ToInt())))   ):mxggasobj.value.ToInt() + cainuanji.gas.ToInt() - kbbysellgas[True].Sum(f_pregas)\,0}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_apartment}"  Grid.Column="5" Margin="0,6,34,6" Grid.Row="0" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.477,-1.111" HorizontalAlignment="Right" Width="10" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_apartment" Value="{m:Exp Str=kbusers.f_apartment\=&gt;Completed}"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Text="剩余补气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Grid.Column="4" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_surplusgas}" Grid.Column="5"  Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_surplusgas" Value="{m:Exp Str=kbusers.f_surplusgas\=&gt;Completed}" Validation="{m:Exp Str= value ^\= 0}"  ErrorMessage="该用户还有剩余补气量，请先进行补气！"/>
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock Text="发 票 号：" Grid.Column="2" Margin="0" Grid.Row="14" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_invoicenum}" Grid.Column="3" Margin="0" Grid.Row="14" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_invoicenum" Default="{m:Exp Str=LoginUser.f_invoicenum}"/>
+								</a:Data.Prop>
+							</TextBox>
+						</Grid>
+						<toolkit:DockPanel  Background="#FFC3E4FD" Margin="0"     >
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+											<!--IsEnabled="{m:Exp Str=kbfee1.DataContext.f_gas.ToString()\=\=$0$ or kbfee1.DataContext.f_gas\=\=null}"
+											IsEnabled="{m:Exp Str=!kbfee.HasErrors and  (kbfee1.DataContext.f_gas\=\=$0$ or kbfee1.DataContext.f_gas\=\=$-5$ or kbfee1.DataContext.f_gas\=\=null ) and (kbusers.f_surplusgas\=\=$0$ or kbusers.f_surplusgas\=\=null)}" 
+											-->
+								<Button x:Name="save2" Content="写  卡" Margin="5" 
+									IsEnabled="{m:Exp Str=!kbfee1.DataContext.HasErrors}" 
+									Click="{m:Exp Str=kbfee.f_invoicenumint\=kbfee.f_invoicenum.ToInt()+1;LoginUser.f_invoicenum\=kbfee.f_invoicenumint.ToString();kbusers.f_beginfee\=kbfee.f_beginfeehx;kbusers.f_times\=kbfee1.DataContext.f_times.ToInt()+1;card.BuyTimes\=kbfee1.DataContext.f_times.ToInt()+1;card.Gas\=kbfee1.DataContext.f_pregas.ToInt();kbusers.f_finabuygastime\=kbfee.f_deliverytime;kbusers.f_finabuygasdate\=kbfee.f_deliverydate;kbusers.f_metergasnums\=kbfee.f_metergasnums;kbusers.f_cumulativepurchase\=kbfee.f_cumulativepurchase;kbusers.f_finallybought\=kbfee.f_pregas;BackSave.Invoke()}" Width="50" />
+											
+											<!-- 次数从卡里处理 Button x:Name="save2" Content="保  存" Margin="5" 
+												IsEnabled="{m:Exp Str=kbfee1.DataContext.f_gas.ToString()\=\=$0$ or kbfee1.DataContext.f_gas\=\=null}"
+												Click="{m:Exp Str=kbusers.f_times\=card.BuyTimes+1;card.BuyTimes\=card.BuyTimes+1;card.Gas\=kbfee1.DataContext.f_pregas.ToInt();card.SellGas();kbusers.f_metergasnums\=kbfee.f_metergasnums;kbusers.f_cumulativepurchase\=kbfee.f_cumulativepurchase}" Width="50" /-->
+								<Button Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=kbfee1.DataContext.New();kbusers.New();kbsellgas.New();kbbysellgas.New()}" Width="50"/>
+							</StackPanel>
+						</toolkit:DockPanel></StackPanel>
+					<sdk:DataGrid  AutoGenerateColumns="False" x:Name="kbgaslist" ItemsSource="{m:Exp Str=kbsellgas}" Margin="0" toolkit:DockPanel.Dock="Bottom" IsReadOnly="True">
+								
+						<sdk:DataGrid.Columns>
+							<sdk:DataGridTemplateColumn>
+								<sdk:DataGridTemplateColumn.CellTemplate>
+									<DataTemplate/>
+								</sdk:DataGridTemplateColumn.CellTemplate>
+							</sdk:DataGridTemplateColumn>
+								
+							<sdk:DataGridTextColumn Header="序   号" d:IsLocked="True" Binding="{Binding Index}" />
+							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+							<sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+							<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
+							<sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate, StringFormat=yyyy-MM-dd}"/>
+							<sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss tt}"/>
+							<sdk:DataGridTextColumn Header="购 气 量" Binding="{Binding f_pregas}"/>
+							<sdk:DataGridTextColumn Header="气    价" Binding="{Binding f_gasprice}"/>
+							<sdk:DataGridTextColumn Header="购气金额" Binding="{Binding f_preamount}"/>
+							<sdk:DataGridTextColumn Header="网　　点" Binding="{Binding f_sgnetwork}"/>
+							<sdk:DataGridTextColumn Header="操 作 员" Binding="{Binding f_sgoperator}"/>
+							
+
+							<sdk:DataGridTextColumn Header="维护费交费开始年月" Binding="{Binding f_beginfee, StringFormat=yyyy-MM}"/>
+							<sdk:DataGridTextColumn Header="维护费交费截止年月" Binding="{Binding f_endfee, StringFormat=yyyy-MM}"/>
+							<sdk:DataGridTextColumn Header="维护费金额" Binding="{Binding f_amountmaintenance}"/>
+							<sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_payfeevalid}"/>
+							<sdk:DataGridTextColumn Header="旧业务类型" Binding="{Binding f_oldtype}"/>
+						</sdk:DataGrid.Columns>
+					</sdk:DataGrid>
+				</toolkit:DockPanel>
+				</toolkit:BusyIndicator>
+			</Grid>
+		</Grid>
+		 <!--卡表打印-->
+	<Grid x:Name="kabiaoprint"  Background="White"  HorizontalAlignment="Left" Width="350"  VerticalAlignment="Bottom" Margin="60,0,0,-617" d:LayoutOverrides="Width">
+		<a:Data.Context>
+            		<o:GeneralObject  Name="kbprint" WebClientInfo="{StaticResource dbclient}" 
+		EntityType="t_sellinggas"  >
+					      		
+		</o:GeneralObject>
+	   </a:Data.Context>
+		<Grid.RowDefinitions >
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="31"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="110"/>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="1*"/>
+		</Grid.ColumnDefinitions>
+		<TextBlock Text="{m:Exp Str='SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now.ToString($HH:mm:ss$),$$'}" Grid.Column="2" Margin="-30,4,0,3" Grid.Row="3" TextWrapping="Wrap" Height="18" VerticalAlignment="Stretch" d:LayoutOverrides="HorizontalAlignment"/>
+			<sdk:Label HorizontalAlignment="Left" Margin="70,4,0,4" Width="16" Content="日" Height="22" Grid.Column="1" Grid.Row="3"/>
+			<sdk:Label HorizontalAlignment="Right" Margin="0,0,20,0" Width="16" Content="年" RenderTransformOrigin="0.438,0.579" Height="22" d:LayoutOverrides="HorizontalAlignment" Grid.Row="3"/>
+			<sdk:Label HorizontalAlignment="Right" Margin="0,4,92,4" Width="16" Content="月" Height="22" Grid.Column="1" Grid.Row="3"/>
+			<sdk:Label Margin="0" Content="用户编号：" FontSize="13.333" Grid.Row="4" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Margin="0" Content="用户姓名：" FontSize="13.333" Grid.Row="5" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Margin="0" Content="单　　价：" FontSize="13.333" Grid.Row="12" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Margin="0" Content="地　　址：" FontSize="13.333" Grid.Row="6" d:LayoutOverrides="VerticalAlignment" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}" Grid.Column="0"  HorizontalAlignment="Left" Margin="38,4,0,3" Grid.Row="3" TextWrapping="Wrap" Width="43" Height="18" VerticalAlignment="Stretch"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}" Grid.Column="0"  HorizontalAlignment="Right" Margin="0,3,-10,3" Grid.Row="3" TextWrapping="Wrap" Width="25" Height="18" VerticalAlignment="Stretch"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}" Grid.Column="1"  HorizontalAlignment="Left" Margin="41,3,0,3" Grid.Row="3" TextWrapping="Wrap" Width="21" Height="18" VerticalAlignment="Stretch"/>
+			<sdk:Label Margin="0" Content="购 气 量：" FontSize="13.333" Grid.Row="11" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Margin="0" Content="卡　　号：" FontSize="13.333" Grid.Row="7" d:LayoutOverrides="VerticalAlignment" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_pregas}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="11" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_gasprice}" Grid.Column="1"  HorizontalAlignment="Left" Margin="0" Grid.Row="12" TextWrapping="Wrap" Width="65" Height="25" VerticalAlignment="Stretch"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_totalcost.ToChinaMoney()}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,0,15,0" Grid.Row="15" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2"/>
+			<TextBlock Text="{m:Exp Str=LoginUser.f_fapiaotaitu}" Grid.Column="0"  HorizontalAlignment="Stretch" Margin="43,0,15,0" Grid.Row="16" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_cardid}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,0,-46,0" Grid.Row="7" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_username}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="5"  Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2"/>
+			<TextBlock Text="{m:Exp Str='(kbfee.f_districtname\=\=null or kbfee.f_apartment\=\=null):$\{kbfee.f_address\}$\,$\{kbfee.f_address\}\{kbfee.f_districtname\}\{kbfee.f_apartment\}$'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="6"  Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_userid}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="4"  Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Padding="0,2,0,0"/>
+			<TextBlock Text="{m:Exp Str=whfdate.Text}"   Grid.Column="1"  HorizontalAlignment="Left" Margin="0" Grid.Row="9"  Height="25" VerticalAlignment="Stretch" Width="55"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_preamount}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="13"  Width="Auto" Height="25" VerticalAlignment="Stretch"/>
+			<sdk:Label Margin="0" Content="金　　额：" FontSize="13.333" Grid.Row="13" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Content="大　　写：" FontSize="13.333" Grid.Row="15" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=LoginUser.f_fgsshuihao}" Grid.Column="0"  HorizontalAlignment="Stretch" Margin="43,0,15,0" Grid.Row="17" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"/>
+			<TextBlock Text="{m:Exp Str=LoginUser.f_fgsdizhi}" Grid.Column="0"  HorizontalAlignment="Stretch" Margin="43,0,15,0" Grid.Row="18" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"/>
+			<TextBlock Text="{m:Exp Str=LoginUser.f_fgsdianhua}" Grid.Column="0"  HorizontalAlignment="Stretch" Margin="43,0,15,0" Grid.Row="19" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"/>
+			<sdk:Label Margin="0" Content="网　　点：" FontSize="13.333" Grid.Row="21" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<sdk:Label Margin="0" Content="操 作 员：" FontSize="13.333" Grid.Row="20" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_sgoperator}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="20" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_sgnetwork}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="21" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch"/>
+			<sdk:Label Margin="0" Content="维护费起始年月：" FontSize="13.333" Grid.Row="8" HorizontalAlignment="Right" VerticalContentAlignment="Top" d:LayoutOverrides="VerticalAlignment"/>
+			<sdk:Label Margin="0" Content="维护费金额：" FontSize="13.333" Grid.Row="10" HorizontalAlignment="Right" VerticalContentAlignment="Top" d:LayoutOverrides="VerticalAlignment"/>
+			<TextBlock Text="{m:Exp Str=kbfee1.DataContext.f_beginfee}" Grid.Column="1" Margin="0" Grid.Row="8"  Height="25" VerticalAlignment="Stretch"  Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="55"  />
+			<TextBlock Text="{m:Exp Str=kbfee1.DataContext.f_amountmaintenance}" Grid.Column="1" Margin="0" Grid.Row="10"  Height="25" VerticalAlignment="Stretch"  Grid.ColumnSpan="1"  />
+			<sdk:Label Margin="0" Content="维护费截至年月：" FontSize="13.333" Grid.Row="9" HorizontalAlignment="Right" VerticalContentAlignment="Top" d:LayoutOverrides="VerticalAlignment"/>
+			<sdk:Label Margin="0" Content="小　　计：" FontSize="13.333" Grid.Row="14" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=kbfee.f_totalcost}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,0,58,0" Grid.Row="14" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2"/>
+		<TextBlock Text="{m:Exp Str=kbfee.f_invoicenum}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0" Grid.Row="2"  Width="Auto" Height="25" VerticalAlignment="Stretch" Padding="0,2,0,0"/>
+		</Grid>
+		<!--超用气打印>
+	<Grid x:Name="chaoyongqiprint"  Margin="784,0,616,-806" HorizontalAlignment="Stretch" Width="750" Height="359" VerticalAlignment="Bottom">
+		<a:Data.Context>
+            		<o:GeneralObject  Name="sjprint1" WebClientInfo="{StaticResource dbclient}" 
+		EntityType="t_sellinggas" Source="{m:Exp Str=userfiles.SelectedItem}" >
+					      		
+		</o:GeneralObject>
+	   </a:Data.Context>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="0*"/>
+			<RowDefinition Height="0.159*"/>
+			<RowDefinition Height="0.351*"/>
+			<RowDefinition Height="0.265*"/>
+			<RowDefinition Height="0.123*"/>
+			<RowDefinition Height="0.103*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.024*"/>
+			<ColumnDefinition Width="0.759*"/>
+			<ColumnDefinition Width="0.217*"/>
+		</Grid.ColumnDefinitions>
+			<sdk:Label HorizontalAlignment="Left" Margin="260,16,0,0" Width="16" Content="日" Grid.Column="1" Grid.Row="3" Height="22" VerticalAlignment="Top"/>
+			<sdk:Label HorizontalAlignment="Left" Margin="163,16,0,0" Width="16" Content="年" RenderTransformOrigin="0.438,0.579" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+			<sdk:Label HorizontalAlignment="Left" Margin="213,16,0,0" Width="16" Content="月" Grid.Column="1" Grid.Row="3" Height="22" VerticalAlignment="Top"/>
+			<sdk:Label Margin="31,46,0,0" Content="交款人：" FontSize="13.333" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="70" Height="25" VerticalAlignment="Top"/>
+			<sdk:Label Margin="31,75,50,0" Content="超用气量：：" FontSize="13.333" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="70" Height="25" VerticalAlignment="Top" d:LayoutOverrides="HorizontalAlignment"/>
+			<sdk:Label Margin="262,75,0,0" Content="超用金额：" FontSize="13.333" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="70" Height="25" VerticalAlignment="Top"/>
+			<sdk:Label Margin="0,0,-11,0" Content="用户类型:" FontSize="13.333" Grid.Column="1" Grid.Row="3" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="60"/>
+			<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Right" Margin="0,36.943,51,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="138.767" VerticalAlignment="Top" Grid.Column="1" Grid.Row="3" Grid.RowSpan="3"/>
+			<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Right" Margin="0,36.512,23.333,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="134.198" VerticalAlignment="Top" Grid.Column="2" Grid.Row="3" Grid.RowSpan="3"/>
+				
+			<Path
+				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="17.091,36.512,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="139.198" VerticalAlignment="Top" Grid.Row="3" Grid.RowSpan="3" Grid.Column="1"/>
+			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="17.091,37.012,23.333,0" Grid.ColumnSpan="2" Grid.Row="3" Grid.Column="1"/>
+			<Path Data="M17,186 L492.26941,186" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="17.091,45.776,23.333,1" Grid.ColumnSpan="2" Grid.Row="3" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
+			<Path Data="M17,186 L492.26941,186" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="17.091,-1,23.333,18" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="1"/>
+			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Bottom" Margin="17.091,0,23.333,0" Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="1"/>
+			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="17.091,57.092,23.333,0" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="1"/>
+			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="16.622,1.71,23.333,0" Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
+			
+			
+			<sdk:Label Height="25" Margin="26,3,0,0" VerticalAlignment="Top" Content="合计(小写)：" RenderTransformOrigin="0.5,0.52" FontSize="13.333" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Width="78"/>
+			<sdk:Label HorizontalAlignment="Left" Height="25" Margin="228,3,0,0" VerticalAlignment="Top" Width="76" Content="合计(大写)：" RenderTransformOrigin="0.5,0.52" FontSize="13.333" Grid.Column="1" Grid.Row="5"/>
+			<sdk:Label HorizontalAlignment="Right" Height="25" Margin="0,1,-3,0" VerticalAlignment="Top" Width="50" Content="操作人：" RenderTransformOrigin="0.5,0.52" Grid.Column="1" Grid.Row="5"/>
+			<TextBlock Grid.Column="1" Margin="23,-23,0,0" TextWrapping="Wrap" Text="宝鸡天然气总公司收据" Grid.Row="3" FontSize="21.333" FontWeight="Bold" TextAlignment="Center" Grid.ColumnSpan="2" Height="47" VerticalAlignment="Top"/>
+			<TextBlock Text="{m:Bind Path=f_gasprice}"  Grid.Column="1" Margin="247,15,60,4" Grid.Row="4" TextWrapping="Wrap"/>
+			<sdk:Label Margin="33,17,0,9" Content="气价：" FontSize="13.333" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="176"/>
+			<TextBlock Text="{m:Exp Str=cygaslist.SelectedItem.f_totalcost}"  Grid.Column="1"  HorizontalAlignment="Left" Margin="108,3,0,3" Grid.Row="5" TextWrapping="Wrap"  Width="116"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}" Grid.Column="1"  HorizontalAlignment="Left" Margin="116,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="43" Height="18" VerticalAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}" Grid.Column="1"  HorizontalAlignment="Left" Margin="183,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="26" Height="18" VerticalAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}" Grid.Column="1"  HorizontalAlignment="Left" Margin="229,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="26" Height="18" VerticalAlignment="Top"/>
+			<TextBlock Text="{m:Exp Str=LoginUser.name}" Grid.Column="2"  HorizontalAlignment="Stretch" Margin="3,4,28,8" Grid.Row="5" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch"/>
+			<sdk:Label Margin="0,43,-19,0" Content="付款方式：" FontSize="13.333" Grid.Row="3" Grid.Column="1" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Width="70"/>
+			<TextBlock Text="{m:Exp Str=cygaslist.SelectedItem.f_totalcost.ToChinaMoney()}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="308,3,56,3" Grid.Row="5" TextWrapping="Wrap"  Width="Auto"/>
+			<TextBlock Text="{m:Exp Str=cygaslist.SelectedItem.f_payment}"   Grid.Column="2" Margin="21,42,28,28" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1"/>
+			<TextBlock Text="{m:Bind Path=f_username}"  Grid.Column="1" Margin="108,42,0,28" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="134"/>
+			<TextBlock Text="{m:Bind Path=f_pregas}" Grid.Column="1" Margin="101,0,0,-2" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="134" Height="25" VerticalAlignment="Bottom" d:LayoutOverrides="HorizontalAlignment"/>
+			<TextBlock Text="{m:Bind Path=f_preamount}" Grid.Column="1" Margin="320,0,0,-1" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="134" Height="25" VerticalAlignment="Bottom"/>
+			<TextBlock Text="{m:Bind Path=f_usertype}" Grid.Column="2" Margin="15,0,0,-1" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="122" Height="25" VerticalAlignment="Bottom"/>
+			
+		</Grid-->
+	<c:MessageTipObj  Name="submittip" Tip="您确认要结账吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />
+	<c:PrintObj Name="print" IsPrint="{m:Exp Str=BackSave.State\=\=$End$}" Area="{m:Res Key=kabiaoprint}"/>
+	</Grid>
+</UserControl>

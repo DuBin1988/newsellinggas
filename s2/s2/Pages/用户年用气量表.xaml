@@ -1,0 +1,91 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="Com.Aote.Pages.用户年用气量表" FontSize="13" d:DesignWidth="800" d:DesignHeight="600">
+
+	<Grid x:Name="LayoutRoot" Background="White" Height="Auto" Width="Auto">
+	<m:ResourceLoad Margin="0" Grid.ColumnSpan="1">
+		<o:SearchObject Name="search"/>
+		<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+			MultiPath="{m:Exp Str='$from t_userfiles where {search.Condition}'}"
+			Path="{m:Exp Str=$select u\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-01\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-02\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-03\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-04\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-05\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-06\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-07\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-08\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-09\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-10\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-11\' and h.f_userid\=u.f_userid)\,
+			(select SUM(oughtamount) from t_handplan h where substring(f_handdate\,1\,7)\=\'\{SysTime.Now.ToString($yyyy$)\}-12\' and h.f_userid\=u.f_userid)
+			from t_userfiles u where \{search.Condition\}/one\,two\,three\,four\,five\,six\,seven\,eight\,nine\,ten\,eleven\,twelve}"
+			PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+	</m:ResourceLoad>
+	<c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfileslist.IsBusy}">
+		<toolkit:DockPanel HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,100">
+			<toolkit:DockPanel  x:Name="userfilesearch" DataContext="{m:Exp Str=search}" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF" Width="741"  >
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="28"/>
+						<RowDefinition Height="28"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="100"/>
+						<ColumnDefinition Width="50*"/>
+						<ColumnDefinition Width="50*"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+					<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,0" Height="25" FontSize="13.333" VerticalAlignment="Top" d:LayoutOverrides="Height" >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_userid"  Operator="f_userid like 'this%'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="用户姓名：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+					<TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_username"  Operator="f_username like 'this%'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<Button Content="查  询" x:Name="searchbutton" Grid.Row="1" Grid.Column="2" Click="{m:Exp Str=search.Search()}" HorizontalAlignment="Left" Width="75"  FontSize="13.333"/>
+				</Grid>
+			</toolkit:DockPanel>
+			<sdk:DataGrid x:Name="userfiles" Margin="0,-5,0,-44"  FontSize="13.333" ItemsSource="{m:Exp Str=userfileslist}"
+				AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+				<sdk:DataGrid.Columns>
+					<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+					<sdk:DataGridTextColumn Header="1月" Binding="{Binding one}"/>
+					<sdk:DataGridTextColumn Header="2月" Binding="{Binding two}"/>
+					<sdk:DataGridTextColumn Header="3月" Binding="{Binding three}"/>
+					<sdk:DataGridTextColumn Header="4月" Binding="{Binding four}"/>
+					<sdk:DataGridTextColumn Header="5月" Binding="{Binding five}"/>
+					<sdk:DataGridTextColumn Header="6月" Binding="{Binding six}"/>
+					<sdk:DataGridTextColumn Header="7月" Binding="{Binding seven}"/>
+					<sdk:DataGridTextColumn Header="8月" Binding="{Binding eight}"/>
+					<sdk:DataGridTextColumn Header="9月" Binding="{Binding nine}"/>
+					<sdk:DataGridTextColumn Header="10月" Binding="{Binding ten}"/>
+					<sdk:DataGridTextColumn Header="11月" Binding="{Binding eleven}"/>
+					<sdk:DataGridTextColumn Header="12月" Binding="{Binding twelve}"/>
+				</sdk:DataGrid.Columns>
+			</sdk:DataGrid>
+			<!--提交按钮-->
+		</toolkit:DockPanel></c:BusyIndicatorEx>
+  <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"  Margin="0,0,0,32" PageSize="20" Height="24" VerticalAlignment="Bottom" Grid.Column="0" FontSize="13.333"/>
+</Grid>
+</UserControl>

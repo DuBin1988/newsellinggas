@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="s2.Pages.安检汇总" FontSize="13"
+    mc:Ignorable="d" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:v="clr-namespace:s2.Pages"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit">
+  
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad x:Name="pageResource">
+            <o:PagedList Name="repairManList" WebClientInfo="{StaticResource dbclient}" Path="sql"
+                         HQL="{m:Exp Str=$select ID\, NAME from t_user  where charindex((select id from t_role where NAME\=\'维修人员\')\,roles\,1)\=1$}"
+                         Names="REPAIRMAN_ID,REPAIRMAN,rn" PageIndex="0" PageSize="9999" SumNames=","/>
+        </m:ResourceLoad>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在提取数据，请稍等" IsBusy="{m:Exp Str=checkerGrid.ItemsSource.IsBusy}" Grid.Column="0" Grid.Row="0">
+                <toolkit:DockPanel LastChildFill="True">
+                    <Grid Background="#FFDBE4F3" toolkit:DockPanel.Dock="Top"  Name="criteriaPanel">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject>
+                            </o:SearchObject>
+                        </a:Data.Context>
+                        <TextBlock TextWrapping="Wrap" Text="开始日期：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
+                        <sdk:DatePicker  Name="StartDate" SelectedDate="{m:Bind Path=ARRIVAL_TIME}" Margin="0"  Height="25" Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="ARRIVAL_TIME" Operator="1=1" Value="{m:Exp Str=SysTime.MonthsBeforeToday(1)}"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="结束日期：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" />
+                        <sdk:DatePicker Name="EndDate" SelectedDate="{m:Bind Path=DEPARTURE_TIME}" Margin="0" Height="25" Grid.Row="0" Grid.Column="4" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="DEPARTURE_TIME" Operator="1=1" Value="{m:Exp Str=SysTime.Today}"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <Button x:Name="btnSearch" Content="查 询" IsEnabled="{m:Exp Str=!criteriaPanel.DataContext.HasErrors}" Height="30" Width="70"  Grid.Column="6"  Grid.Row="0" Click="btnSearch_Click"/>
+                    </Grid>
+            <sdk:DataGrid x:Name="checkerGrid" Margin="0"  AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True">
+                <a:Data.Items>
+                    <o:PagedList x:Name="checkerList" WebClientInfo="{StaticResource dbclient}"  EntityType="t_singlevalue"
+                                PageIndex="0" PageSize="10000000" SumNames=","/>
+                </a:Data.Items>
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn Header="安检（户）" Binding="{Binding jiancha}"/>
+                    <sdk:DataGridTextColumn Header="入户（户）" Binding="{Binding ruhu}"/>
+                    <sdk:DataGridTextColumn Header="无人（户）" Binding="{Binding wuren}"/>
+                    <sdk:DataGridTextColumn Header="拒检（户）" Binding="{Binding jujian}"/>
+                    <sdk:DataGridTextColumn Header="漏气(户)" Binding="{Binding louqi}"/>
+                    <sdk:DataGridTextColumn Header="表故障(块)" Binding="{Binding biao}"/>
+                    <sdk:DataGridTextColumn Header="发通知书(户）" Binding="{Binding tongzhishu}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+                </toolkit:DockPanel >
+            </c:BusyIndicatorEx>
+        </Grid>
+    </Grid>
+</UserControl>

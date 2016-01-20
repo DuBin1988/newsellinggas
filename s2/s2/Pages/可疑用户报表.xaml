@@ -1,0 +1,31 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="s2.可疑用户报表"
+	Width="976" Height="530">
+ 	<Grid x:Name="LayoutRoot"  >
+		
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="250"/>
+		</Grid.RowDefinitions>
+		<m:ResourceLoad HorizontalAlignment="Left" Width="266" Height="50" VerticalAlignment="Top"/>
+         <!--WebBrowser Source="http://192.168.0.201/jsp/pagenologin.jsp?templatename=operatordayreport" Margin="8,8,19,-272"/-->
+		 <WebBrowser Visibility="{m:Exp Str=!start.IsChecked:$Visible$\,$Collapsed}"   UseLayoutRounding="True"   Source="http://10.10.50.76:90/jsp/pagenologin.jsp?templatename=keyifenxi" Margin="8,8,19,-272" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping 
+	package="org.hibernate.auction">
+
+	<class name="com.browsesoft.workflow.perform.ActivityInstance" table="activityins" lazy="true">
+		<comment>Users may bid for or sell auction items.</comment>
+		
+		<id name="id" type="string" unsaved-value="null">
+			<generator class="uuid.hex"/>
+		</id>
+		<property name="defid" type="string" />
+		<!-- 活动定义名 -->
+		<property name="defname" type="string" />
+		<!-- 执行者表达式 -->
+		<property name="actorexpression" type="string"></property>
+		<many-to-one name="process" column="processid" class="com.browsesoft.workflow.perform.ProcessInstance"/>
+		<property name="processName" type="string"/>
+		<property name="state" type="string"/>
+		<!-- 发送人及发送时间 -->
+		<property name="sendTime" column="sendtime" type="timestamp"/>
+		<property name="senderId" column="senderid" type="string"/>
+		<property name="sender" column="sender" type="string"/>
+		<!-- 完成人及完成时间 -->
+		<property name="finishTime" column="finishtime" type="timestamp"/>
+		<property name="userid" column="userid" type="string"/>
+		<property name="person" column="person" type="string"/>
+		<many-to-one name="foreActivityInstance" column="previd" class="com.browsesoft.workflow.perform.ActivityInstance"/>
+		<set name="backActivities">
+            <key column="previd"/>
+            <one-to-many class="com.browsesoft.workflow.perform.ActivityInstance"/>
+        </set>
+	</class>
+	
+</hibernate-mapping>

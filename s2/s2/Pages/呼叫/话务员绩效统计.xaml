@@ -1,0 +1,138 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.话务员绩效统计">
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--完成情况ItemsSource="{m:Exp Str=wcqklist}"-->
+            <o:ObjectList Name="wcqklist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='完成情况' order by id"/>
+
+            <!--接单人对象列表 -->
+            <o:ObjectList Name="jiedanrenlist" WebClientInfo="{StaticResource dbclient}"  Path="from repairsman" />
+            <o:ExcelObj Name="excel" Bind="Index,f_sender,hj,online,online_zyj,ywc,dwc,wwc,fwmy,fwbmy,zlmy,zlbmy" Source="{m:Exp Str=daninfos}"/>
+            <!--安检列表-->
+            <o:PagedList Name="areafileslist"  />
+                         
+        </m:ResourceLoad>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Width="auto" HorizontalAlignment="Stretch" Height="30" d:LayoutOverrides="Width, Height" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="72"/>
+                            <ColumnDefinition Width="89"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="0" Height="28" Grid.Column="7" Click="so_heji" Margin="0,0,0,0" FontSize="14"  />
+                        <!-- <Button Content="打印" Click="{m:Exp Str=print.Print()}" Height="28" VerticalAlignment="Bottom"  Grid.Column="8" Grid.Row="0" Margin="0,0,2,0"/>
+                        <StackPanel Grid.Row="0" Grid.Column="9" Orientation="Horizontal" Height="28" >
+                            <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$\{daninfos.ItemsSource.Path\}}" Completed="{m:Exp Str=downLoad.Down()}"
+								Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_sender:接线员|hj:接线合计|online:电话处理|online_zyj:转移交|ywc:已完成|dwc:待完成|wwc:未完成|fwmy:服务满意|fwbmy:服务不满意|zlmy:质量满意|zlbmy:质量不满意$}" Height="30" VerticalAlignment="Top" Width="0"/>
+                            <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"/>
+                            <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=&gt;Completed!\=null}"/>
+                            <Button Content="导出Excel" Click="{m:Exp Str=toExcel.ToExcel()}" Height="28" VerticalAlignment="top" Width="69" Margin="0,0,0,0"/>
+                        </StackPanel> -->
+                        <TextBlock TextWrapping="Wrap" Text="报修时间："  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Right" Width="71" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0" />
+                        <sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate1"  Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_reporttime >= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate2"   Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_reporttime ^= substring('this',1,10) + ' 23:59:59'"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到："  Margin="4,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="2" Grid.Row="0" />
+                    </Grid>
+
+                   <!-- <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel> -->
+
+                    <sdk:DataGrid x:Name="daninfos" ItemsSource="{m:Exp Str=areafileslist}" Margin="0,0,0,3" IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn  Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="话务员" Binding="{Binding f_sender}"/>
+                            <sdk:DataGridTextColumn Header="接线合计" Binding="{Binding hj}"/>
+                            <sdk:DataGridTextColumn Header="电话处理" Binding="{Binding online}"/>
+                            <sdk:DataGridTextColumn Header="转移交" Binding="{Binding online_zyj}"/>
+                            <sdk:DataGridTextColumn Header="已完成" Binding="{Binding ywc}"/>
+                            <sdk:DataGridTextColumn Header="待完成" Binding="{Binding dwc}"/>
+                            <sdk:DataGridTextColumn Header="未完成" Binding="{Binding wwc}"/>
+                            <sdk:DataGridTextColumn Header="服务满意" Binding="{Binding fwmy}"/>
+                            <sdk:DataGridTextColumn Header="服务不满意" Binding="{Binding fwbmy}"/>
+                            <sdk:DataGridTextColumn Header="质量满意" Binding="{Binding zlmy}"/>
+                            <sdk:DataGridTextColumn Header="质量不满意" Binding="{Binding zlbmy}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+
+                </toolkit:DockPanel>
+
+            </c:BusyIndicatorEx>
+
+        </Grid>
+        <c:PrintPageObj x:Name="print" ListNameInArea="selllist" Area="{m:Res Key=sqprint1}" List="{m:Exp Str=daninfos.ItemsSource}" PageRow="25"  />
+        <Grid  x:Name="sqprint1" VerticalAlignment="Bottom" Margin="-1355,0,0,25" HorizontalAlignment="Left" Width="1227" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="0.942*"/>
+            </Grid.RowDefinitions>
+            <sdk:Label HorizontalAlignment="Left" Grid.Row="0" Content="总记录数:" Height="24"   VerticalAlignment="Bottom" Width="105" Margin="2,0,0,4"/>
+            <sdk:Label HorizontalAlignment="Left" Content="{m:Exp Str=daninfos.ItemsSource.Count}"  Grid.Row="0" Height="24" Margin="111,0,0,4" VerticalAlignment="Bottom" Width="90"/>
+
+            <sdk:DataGrid x:Name="selllist" AutoGenerateColumns="False" Style="{StaticResource DataGridPrintStyle}" FontSize="11"  Grid.Row="1" VerticalAlignment="Top" >
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn  Header="序号" Binding="{Binding Index}"/>
+                    <sdk:DataGridTextColumn Header="话务员" Binding="{Binding f_sender}"/>
+                    <sdk:DataGridTextColumn Header="接线合计" Binding="{Binding hj}"/>
+                    <sdk:DataGridTextColumn Header="电话处理" Binding="{Binding online}"/>
+                    <sdk:DataGridTextColumn Header="转移交" Binding="{Binding online_zyj}"/>
+                    <sdk:DataGridTextColumn Header="已完成" Binding="{Binding ywc}"/>
+                    <sdk:DataGridTextColumn Header="待完成" Binding="{Binding dwc}"/>
+                    <sdk:DataGridTextColumn Header="未完成" Binding="{Binding wwc}"/>
+                    <sdk:DataGridTextColumn Header="服务满意" Binding="{Binding fwmy}"/>
+                    <sdk:DataGridTextColumn Header="服务不满意" Binding="{Binding fwbmy}"/>
+                    <sdk:DataGridTextColumn Header="质量满意" Binding="{Binding zlmy}"/>
+                    <sdk:DataGridTextColumn Header="质量不满意" Binding="{Binding zlbmy}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+
+        </Grid>
+    </Grid>
+</UserControl>

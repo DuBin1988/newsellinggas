@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Browsesoft>
+    <!--rest服务编码字符集-->
+    <RestCharacterSet  value="UTF-8" />
+    <Buttons classes="FileNewAction,FileOpenAction,CloseAction,DiagramDeleteAction,FileSaveAction,FileSaveAsAction,UndoAction,RedoAction,DeleteAction,DiversionCombineAction,DiversionSplitAction,ShowPropertyAction,TransferSelectAction" />
+	<Diversions types="一般,回退,自转移,结束" />
+	<Selectors types="AllUserSelector:actor_all_user,DepartmentUserSelector:actor_department,RoleUserSelector:actor_resource,RoleofOrgSelector:actor_department_role,SessionUsersSelector:actor_auto" />
+	<HtmlCharacterSet type="GBK" />
+	<JspCharacterSet type="GBK" />
+ 	<characterset type="GBK" />
+    <!--baoji-->
+	<Database driver="com.microsoft.sqlserver.jdbc.SQLServerDriver" URL="jdbc:sqlserver://125.76.225.223:5223;database=sellinggas;" user="sa" password="af@QFG123" maxCount="100" connCount="5" stringtype="varchar" numbertype="decimal" SQLStatement="com.browsesoft.sqlserver.SQLServerStatement"  />
+    <!-- baoji-->
+    <Encrypt item="userpassword" encryptmachine="com.browsesoft.oa.FlaseSimpleEncryptMachine" /> 
+	
+   
+  
+  <!--Database
+    driver="sun.jdbc.odbc.JdbcOdbcDriver" 
+    URL="jdbc:odbc:ht"
+    user="sa"
+    password="000000"
+    maxCount="100"
+    connCount="5"
+    stringtype="varchar"
+    numbertype="decimal"
+    SQLStatement="com.browsesoft.sqlserver.SQLServerStatement"
+  /-->   
+   <!-- <JspCharacterSet type="iso8859-1" />
+	<characterset type="iso8859-1" />
+	<Database driver="com.mysql.jdbc.Driver" URL="jdbc:mysql://192.168.2.114/ht?autoReconnect=true" user="root" password="root" maxCount="100" connCount="5" stringtype="longtext,char" numbertype="bigint" SQLStatement="com.browsesoft.mysql.MysqlStatement" />
+	 -->
+	 <!-- 连接外部数据库配置-->
+	<outerdatasource driver="oracle.jdbc.driver.OracleDriver" URL="jdbc:oracle:thin:@192.168.1.17:1521:ORCL1" user="wxcrg" password="wxcrg"/>
+	 
+	<Server port="80" />
+	<handworkBackup file="D:\browse\tomcat\bsgi_backup\" />
+	<excel path="d:\" />
+	<DataBackup>
+		<databasefile name="databasefile" file="D:\browse\defaultroot\database\" isFile="false" />
+		<root name="root" file="D:\browse\defaultroot\" isFile="false" />
+		<!--<flowfile name="flowfile" file="D:\browse\tomcat\流程定义\" isFile="false" />-->
+		<pagelayout name="pagelayout" file="/chpages/" isFile="false" />
+		<!--<text name="text" file="c:\dubin\smoke_old\tomcat\正式文本\" isFile="false" />-->
+		<licence name="licence" file="D:\browse\tomcat\licence.xml" isFile="true" />
+		<properties name="properties" file="D:\browse\tomcat\properties.xml" isFile="true" />
+	</DataBackup>
+	<msm ip="10.52.172.188" port="9009" />
+	<time timeout="480" />
+	<rmi port="1219" />
+	<server_text port="8001" />
+	<remote address="127.0.0.1:1098" />
+	<compComparator classname="com.browsesoft.oa.ComponentInitComparator" />
+	<ProcessDef path="/workflowdefs/" />
+	<Text path="/正式文件目录/" formalpath="/attackment/" />
+	<!--<SendBankFiles path="D:\TomcatD5.0\webapps\ROOT\sendbankfiles\"/>-->
+	<!--<ErrorBankLog path="D:\TomcatD5.0\webapps\ROOT\errorbankfiles\"/>-->
+	<css path="D:\browse\defaultroot\css\" />
+	<!--<personalfolder path="C:\dubin\工作目录\兰州烟厂OA\DEFAULTROOT\personalfolder\" />-->
+	<righttype>
+		<oaspace type="维护帖子,编辑版块,删除版块" />
+		<column type="编辑新闻,审核新闻" />
+		<archives type="归档,查阅档案,编辑档案,销毁档案" />
+	</righttype>
+	<!--
+		<thread name="com.browsesoft.website.CheckRelease" />
+		<thread name="com.browsesoft.oa.SMSWakeSender" />
+		<thread name="com.browsesoft.LicenceTimeVerify" />
+	-->
+	<manager>
+		<diagram classname="com.browsesoft.workflow.perform.DiagramManager" />
+		<template classname="com.browsesoft.htmlcomponent.TemplateManager" path="/pages/" />
+		<processdef classname="com.browsesoft.workflow.perform.ProcessDefManager" />
+		<right classname="com.browsesoft.resource.RightManager" />
+		<!-- 传递对象管理器 -->
+		<formtransfer classname="com.browsesoft.workflow.support.FormTransferManager" />
+		<entity classname="com.browsesoft.EntityManager">
+			<t_root classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_organization classname="com.browsesoft.user.Organization" orderby="position" number="number" />
+			<t_user classname="com.browsesoft.user.User" orderby="position" number="number" />
+			<t_parentrole classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_role classname="com.browsesoft.user.Role" orderby="position" number="number" />
+			<t_function classname="com.browsesoft.resource.UniversalResourceEntity" orderby="position" number="number" />
+			<t_linkresource classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_column classname="com.browsesoft.website.Column" />
+			<t_content classname="com.browsesoft.website.Content" />
+			<t_title classname="com.browsesoft.website.Title" />
+			<t_oaspace classname="com.browsesoft.oa.OASpace" orderby="position" number="number" />
+			<t_oapost classname="com.browsesoft.oa.OAPost" entitytypes="oatheme,oapost" />
+			<t_archives classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_calendar classname="com.browsesoft.oa.KalendarModel" entitytypes="calendar" />
+			<t_record classname="com.browsesoft.archives.ArchivesEntity" entitytypes="archives" />
+			<t_documenttemplate classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_document classname="com.browsesoft.adapter.DocumentTemplate" />
+			<t_processdef classname="com.browsesoft.resource.UniversalResourceEntity" />
+			<t_notice classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="notice" />
+			<t_personaladdress classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="personaladdress" />
+			<t_publicaddress classname="com.browsesoft.oa.GetSelectValueFromOtherModel" entitytypes="publicaddress" />
+			<t_personalstyle classname="com.browsesoft.oa.CssStyle" entitytypes="personalstyle" />
+			<t_filetype classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="filetype" />
+			<t_personalfolders classname="com.browsesoft.oa.PersonalFolder" entitytypes="personalfolder" />
+			<t_personalfiles classname="com.browsesoft.oa.PersonalFile" entitytypes="personalfiles" />
+			<t_folderspace classname="com.browsesoft.oa.OneItemEntity" entitytypes="folderspace" />
+			<t_attachconfig classname="com.browsesoft.oa.OneItemEntity" entitytypes="attachconfig" />
+			<t_remindconfig classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="remindconfig" />
+			<t_personalinfo classname="com.browsesoft.oa.PersonalInfo" entitytypes="personalinfo" />
+			<t_personalforuminfo classname="com.browsesoft.oa.PersonalInfo" entitytypes="personalforuminfo" />
+			<t_affiche classname="com.browsesoft.baseadapter.AdvancedSimpleEntity" entitytypes="affiche" />
+			<t_boardroom classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="boardroom" />
+			<t_externalconference classname="com.browsesoft.oa.GetSelectValueFromOtherModel" entitytypes="externalconference" />
+			<t_car classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="car" />
+			<t_licensepolicy classname="com.browsesoft.resource.LicensePolicyEntity" entitytypes="licensepolicy" />
+			<t_mailbox classname="com.browsesoft.oa.Mailbox" entitytypes="mailbox" />
+			<t_mail classname="com.browsesoft.oa.Mail" entitytypes="mail" />
+			<t_website classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="website" />
+			<t_desktopcolumn classname="com.browsesoft.oa.DesktopColumn" entitytypes="desktopcolumn" />
+			<t_attackment classname="com.browsesoft.oa.AttackmentEntity" entitytypes="attackment" />
+			<t_images classname="com.browsesoft.oa.AttackmentEntity" entitytypes="imageatt" />
+			<t_internalconference classname="com.browsesoft.oa.WeekConferenceModel" entitytypes="internalconference" />
+
+			<!-- 气价类型 -->
+			<t_pricetype classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="pricetype" />
+			<!-- 气表型号实体 -->
+			<t_gaswatchtype classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="gaswatchtype" />
+			<!-- 抄表录入实体 -->
+			<t_recordinput classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="recordinput" isLazy="isLazy" />
+			<!-- 交费实体 -->
+			<t_payfee classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="payfee" isLazy="isLazy" />
+			<!-- 否结档案实体 -->
+			<t_nobalance classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="nobalance" isLazy="isLazy" />
+			<!-- 购气量实体 -->
+			<t_buygasnumber classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="buygasnumber" isLazy="isLazy" />
+			<!-- 用户类型实体 -->
+			<t_consumertype classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="consumertype" />
+			<!-- 地区代码实体 -->
+			<t_areacode classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="areacode" isLazy="isLazy" />
+			<!-- 停用实体 -->
+			<t_stopuse classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="stopuse" isLazy="isLazy" />
+			<!-- 过户实体 -->
+			<t_transferconsumer classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="transferconsumer" isLazy="isLazy" />
+			<!-- 启用实体 -->
+			<t_restartuse classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="restartuse" isLazy="isLazy" />
+			<!-- 发卡实体 -->
+			<t_providecard classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="providecard" isLazy="isLazy" />
+			<!-- 换卡实体 -->
+			<t_replacingcard classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="replacingcard" isLazy="isLazy" />
+			<!-- 补卡实体 -->
+			<t_reissuecard classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="reissuecard" isLazy="isLazy" />
+			<!-- 补气信息录入实体 -->
+			<t_repairfillgas classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="repairfillgas" isLazy="isLazy" />
+			<!-- 单值实体 -->
+			<t_singlevalue classname="com.browsesoft.baseadapter.SimpleEntity" entitytypes="singlevalue" />
+			<!--售气量统计月报表-->
+			<t_sellgasstatistic classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="sellgasstatistic" />
+
+			<!--分销商-->
+			<!-- <t_sales classname="com.browsesoft.adapter.UniversalResourceEntityAdapter"  entitytypes="sales"  isLazy="isLazy" />-->
+			<!-- 发送用户档案 -->
+			<t_sendconsumerfile classname="com.aote.entity.dbtransfer.DBExportEntity" entitytypes="sendconsumerfile" isLazy="isLazy" />
+			<!-- 发送售气记录 -->
+			<t_sendpayfeefile classname="com.aote.entity.dbtransfer.DBExportEntity" entitytypes="sendpayfeefile" isLazy="isLazy" />
+			<!-- 接收数据 -->
+			<t_revicedatafile classname="com.aote.entity.dbtransfer.DBImportEntity" entitytypes="revicedatafile" isLazy="isLazy" />
+			<t_finishfee classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="finishfee" isLazy="isLazy" />
+			<t_sales classname="com.browsesoft.resource.UniversalResourceEntity" entitytypes="sales" orderby="position" number="number" />
+			<!-- 用户实体 -->
+			<t_consumer classname="com.browsesoft.baseadapter.HTMLLazyEntityModel" entitytypes="domain" isLazy="isLazy" />
+			<!--退气实体-->
+
+			<t_cancelsellgas classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="cancelsellgas" isLazy="isLazy"/>
+		   <!-- 分销商充值 -->			
+			<t_rechargeable classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="rechargeable" isLazy="isLazy"/>
+			<!-- 分销商购气 -->			
+			<t_salesbuygas classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="salesbuygas" isLazy="isLazy"/>	
+			<!-- 分销商充值结算 -->			
+			<t_balancerecharge classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="balancerecharge" isLazy="isLazy"/>
+			<!-- 分销商购气结算 -->			
+			<t_balancebuygas classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="balancebuygas" isLazy="isLazy"/>
+		
+			<t_finishfeexiangxi classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="t_finishfeexiangxi" isLazy="isLazy"/>
+			<!-- 小区 -->			
+			<t_partcode classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="partcode" isLazy="isLazy"/>
+			<!-- 给pose机发送调价信息 -->			
+			<t_posepriceadjust classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="posepriceadjust" isLazy="isLazy"/>
+			<!-- 给pose机发送参数信息 -->			
+			<t_poseparam classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="poseparam" isLazy="isLazy"/>
+			<!-- pos机抄表数据 -->			
+			<t_chaobiao classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="chaobiao" isLazy="isLazy"/>
+	        <!--销户实体-->
+	        <t_removeconsumer  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="removeconsumer" isLazy="isLazy"/>
+	        <!--退气实体-->
+	        <t_cancelsellgas  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="cancelsellgas" isLazy="isLazy"/>
+	        <!--气表型号-->
+	        <t_qibiao  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="qibiao" isLazy="isLazy"/>
+	        <!--民用采暖季参数-->
+	        <t_addons  classname="com.browsesoft.baseadapter.SimpleEntity"  entitytypes="addons" />
+	        <!--卡号设置-->t_cardresetwatch
+	        <t_cardreset  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="cardreset" isLazy="isLazy"/>
+	        <!--卡号设置-->
+	        <t_cardresetwatch  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="cardresetwatch" isLazy="isLazy"/>
+	        <!--工商根据表额定流量设定限购-->
+	        <t_gsxiangou  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="gsxiangou" isLazy="isLazy"/>
+	        <!--气表型号编辑-->
+	        <t_qbnumber  classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="qbnumber" isLazy="isLazy"/>
+	        <!--混合类型参数设置-->
+	        <t_hunhe classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="hunhe" isLazy="isLazy"/>
+	        <!--气价类型设置-->
+	        <t_qijiatype classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="qijiatype" isLazy="isLazy"/>
+	        <!--用气性质、气价类型、气价 设置-->
+	        <t_gasproperties classname="com.browsesoft.baseadapter.HTMLLazyEntityModel"  entitytypes="gasproperties" isLazy="isLazy"/>
+	</entity>
+
+		<task classname="com.browsesoft.workflow.support.TaskManager">
+			<tasks classname="com.browsesoft.workflow.perform.ActivityInstance" />
+		</task>
+		<verify classname="com.browsesoft.oa.VerifyFactory" />
+	</manager>
+	<attackment path="D:/TomcatD5.0/webapps/ROOT/attackment/" classname="com.browsesoft.servertext.AttackmentGroup" />
+	<WakeGather>
+		<waitdeal classname="com.browsesoft.oa.WaitDealWakeGatherContainer" />
+		<unreadmail classname="com.browsesoft.oa.UnreadMailWakeGatherContainer" />
+		<calendarplan classname="com.browsesoft.oa.CalendarPlanWakeGatherContainer" />
+		<affiche classname="com.browsesoft.oa.AfficheWakeGatherContainer" />
+		<inform classname="com.browsesoft.oa.InformWakeGatherContainer" />
+	</WakeGather>
+	<VerifyManager>
+		<notnull classname="com.browsesoft.oa.NotnullVerifyTool" hint=" 不为空" />
+		<number classname="com.browsesoft.oa.NumberVerifyTool" hint=" 数字格式不正确" />
+		<format classname="com.browsesoft.oa.CalendarVerifyTool" hint=" 日期格式错误" />
+		<sameloginname classname="com.browsesoft.oa.SameLoginNameVerifyTool" hint=" 登录名重复" />
+		<email classname="com.browsesoft.oa.EmailVerifyTool" hint=" Email format error" />
+		<samepassword classname="com.browsesoft.oa.SamePassWithLoginUserVerifyTool" hint=" errorneous" />
+		<samepassword2 classname="com.browsesoft.oa.SamePass2WithLoginUserVerifyTool" hint=" errorneous" />
+		<passlength classname="com.browsesoft.oa.PassLengthVerifyTool" hint=" failed meet to digits requirement" />
+		<sameatt classname="com.browsesoft.oa.SameAttOfReourceVerifyTool" hint=" this information alread exists" />
+		<usermaxnum classname="com.browsesoft.oa.UserSumVerifyTool" hint=" numbers of user &lt; 5000" />
+		<handsetnum classname="com.browsesoft.oa.HandsetNumVerifyTool" hint=" failed meet to digits requirement or wrong number" />
+		<onlywithloginuser classname="com.browsesoft.oa.OnlyVerifyToolWithLoginUser" hint=" repetition!" />
+		<onlywithparentid classname="com.browsesoft.oa.OnlyVerifyToolWithParentId" hint=" repetition!" />
+		<datepairs classname="com.browsesoft.oa.DatePairsVerifier" hint="已存在"/>
+	    <!--唯一性校验器-->
+	    <onlyonecheck classname="com.ht.OnlyOneCheck"  />
+	    <editonlyonecheck classname="com.ht.EditOnlyOneCheck"  />
+	</VerifyManager>
+	<!--  邮件服务器地址，url必须以'/'结束-->
+	<mailaddress url="http://10.52.179.10/" />
+
+	<!--<timetask classname="com.browsesoft.oa.SetUserOutTag" />
+		<timetask classname="com.browsesoft.oa.SetBoardroomState" />
+		<timetask classname="com.browsesoft.oa.SetCarState" />-->
+
+	<AuthenticationMode name="simple" class="com.browsesoft.authentication.TwoPasswordAuthentication" default="default"/>
+	<AuthenticationMode name="ekey" class="project.safety.authentication.EKeyAuthentication">
+		<cookie ename="KOAL_CERT_ALIAS" />
+		<ControlUserRecord manager="com.browsesoft.control.DJHTMLSignUseRecordManager" />
+	</AuthenticationMode>
+
+	<SynchronConfig>
+		<SynchronServer classname="com.browsesoft.synchronserver.SynchronServer" />
+		<SynchronIps></SynchronIps>
+	</SynchronConfig>
+	<activitytask name="其中之一,全部完成" class="com.browsesoft.workflow.perform.OrTask,com.browsesoft.workflow.perform.AndTask" />
+	<!-- 由于有些机器时间不对,所以进行时间调整 -->
+	<!--<date hour="8"/>-->
+	<!-- 统计意义上的月对应的天的开始 -->
+	<Month startDay="26" />
+	<!--blob实体类型-->
+	<blob class="com.browsesoft.baseadapter.FileBlobEntity" />
+	<!--临时文件工厂参数-->
+	<tempFile maxCount="100" initCount="10" filePath="c:\tempFiles\" />
+	<!--正文模板的存储类型-->
+	<textTemplate className="com.browsesoft.control.TemplateDatabase" />
+	<!--所下载附件的存储类型-->
+	<attackmentType className="com.browsesoft.servertext.AttackmentDatabase" />
+	<!-- 根组织id -->
+	<OrganizationRoot resourceId="2586252" />
+	<!-- 不进行userid号到username的转化 -->
+	<SimpleEntity notTransUserId="notTransUserId" />
+	<!-- 表达式配置 -->
+	<!-- 表达式处理中的时机条件配置-->
+	<occassions default="everytime">
+		<everytime className="com.aote.expression.occasion.EveryTimeOccasion" />
+		<novalue className="com.aote.expression.occasion.NoValueOccasion" />
+		<depend className="com.aote.expression.occasion.DependOccasion" />
+	</occassions>
+	<!-- 表达式类型配置-->
+	<expressiones default="string">
+		<math expression="com.aote.expression.antlr.NumberExpression" lexer="com.aote.expression.antlr.BasicLexer" />
+		<string expression="com.aote.expression.antlr.StringExpression" lexer="com.aote.expression.antlr.StringLexer" />
+	</expressiones>
+	<!-- 参数处理器配置 -->
+	<paramProcessorConfig default="self">
+		<!-- 取最大值 -->
+		<max className="com.aote.expression.paramprocessor.MaxValueProcessor"/>
+		<!-- 计算日期差 -->
+		<subdate className="com.aote.expression.paramprocessor.DateDispersionProcessor"/>
+		<!-- sql默认值处理器 -->
+		<sql className="com.aote.expression.paramprocessor.SqlProcessor" />
+		<!-- 日期默认值处理器 -->
+		<systemtime className="com.aote.expression.paramprocessor.DateProcessor" />
+		<!-- 登录用户属性默认值处理器 -->
+		<loginuser className="com.aote.expression.paramprocessor.LoginUserAttrProcessor" />
+		<!-- 本身属性默认值处理器 -->
+		<self className="com.aote.expression.paramprocessor.SelfAttrProcessor" />
+		<!-- 单值参数 -->
+		<singlevalue className="com.aote.expression.paramprocessor.SingleValueProcessor" />
+		<!-- 编号默认值处理器 -->
+		<serialnumber className="com.aote.expression.paramprocessor.SerialNumberProcessor" />
+		<!-- 编号默认值处理器 -->
+		<proserialnumber className="com.aote.expression.paramprocessor.ProSerialNumberProcessor" />
+		<!--退气金额-->
+		<deletemoney className="com.aote.gas.qingang.paramprocessor.DeleteMoneyParamprocessor" />
+		<!--采暖季限购气量-->
+		<cainuan className="com.aote.expression.paramprocessor.CaiNuanJiLimitProcessor" />
+		<!--根据气表品牌获得编号 -->
+		<createnumber className="com.aote.expression.paramprocessor.CreateNumberProcessor" />
+		<!-- 金额转大写 -->
+		<chinamoney className="com.aote.expression.paramprocessor.ChineseMoneyProcessor"/>
+		<sqlvalue className="com.aote.expression.paramprocessor.SQLValueProcessor"/>
+	</paramProcessorConfig>
+	<!-- 参数替换器 -->
+       <replacer name="loginuser" className="com.aote.component.replacer.LoginUserReplacer" />
+       <replacer name="compid" className="com.aote.component.replacer.ComponentIDReplacer" />
+	<!-- 自增长编号类初始化规则配置 元素标记为使用改规则得编号名称-->
+	<increasenum className="com.aote.serialnumber.YearInitRule" />
+
+	<!-- 字符串处理函数 -->
+	<stringfunction name="cutLast" class="com.aote.expression.function.CutLastFunction" />
+
+	<!-- 年月格式到月的单位处理 -->
+	<unitprocessor name="月" class="com.aote.expression.unit.YearMonthToMonths" />
+	<!-- 月到年月格式的处理 -->
+	<unitprocessor name="年月" class="com.aote.expression.unit.MonthsToYearMonth" />
+	<!-- 负数转换成0的处理 -->
+	<unitprocessor name="正值" class="com.aote.expression.unit.NegtiveToZero" />
+	<!-- 转换成整数的单位处理 -->
+	<unitprocessor name="整数" class="com.aote.expression.unit.Int" />
+
+	<!-- 小数点保留固定位数的格式处理 -->
+	<formatter name="number" class="com.aote.component.format.NumberFormatter" />
+	<!-- 小写转大写处理 -->
+	<formatter name="numtochina" class="com.aote.component.format.ChineseMoney" />
+	<!-- 时间格式处理器 -->
+	<formatter name="date" class="com.aote.component.format.DateFormatter" />
+	<!--图表配置文件目录-->
+	<chart path="/chart/" />
+
+	<importtables>
+		<table name="t_consumer" delcondition="  f_number='#f_number#' " />
+		<table name="t_payfee" delcondition="  f_number='#f_number#' " />
+		<table name="t_cancelsellgas" delcondition="  f_number='#f_number#' " />
+	</importtables>
+
+	<!--sql表达式-->
+	<售气笔数 sql="select count(id) from t_SellingGas where f_jiezhangstate='未结账' and f_payfeevalid='有效' and f_sgoperator='#name#'" />
+	<售气金额 sql="select sum(CAST(f_preamount as float)) from t_SellingGas where f_jiezhangstate='未结账' and f_payfeevalid='有效' and f_sgoperator='#name#'" />
+	<!--机表收费 sql="select sum(CAST(f_recordtotalcost as float)) from t_SellingGas where f_jiezhangstate='未结账' and f_payfeetype='机表收费' and f_payfeevalid='有效' and f_sgoperator='#name#'" /-->
+    <!--超用气收费 sql="select sum(CAST(f_excessamount as float)) from t_SellingGas where f_jiezhangstate='未结账' and f_payfeetype='超用收费' and f_payfeevalid='有效' and f_sgoperator='#name#'"/-->
+    <冲正笔数 sql="select count(id) from t_reversal where f_reversalname='#name#' and f_reversaldate like '%#systemtime#%'" />
+    <过户笔数 sql="select count(id) from t_transfer where f_toperator='#name#' and f_tdate like '%#systemtime#%'" />
+    <换表笔数 sql="select count(id) from t_changmeter where f_cmoperator='#name#' and f_cmdate like '%#systemtime#%'" />
+    <混合民用气价 sql="select f_myprice from t_hunhe"/>
+    <混合非民用气价 sql="select f_gsprice from t_hunhe"/>
+    <!--混合民用分值 sql="select f_myfenzhi from t_hunhe"/-->
+    <!--混合工商分值 sql="select f_gsfenzhi from t_hunhe"/-->
+    <!--民用附加购气量  sql="select gas from t_cainuan where startdate &gt;= '#date#' and enddate &lt;= '#date#' " /-->
+    <!--用户本月购气量 sql="select sum(f_pregas) from t_SellingGas where f_deliverydate  " /-->
+    
+     <!-- 工作任务  -->
+     <works>
+       <work name="派单任务" >
+         <sql name="抢修"  datasql=" select * from  t_bx_firstaid_paper  order by state('未受理','跳过'),id" />
+         <sql name="报修"  datasql=" select * from  t_bx_repair_paper    order by state('未受理','跳过'),id"  />
+         <sql name="投诉"  datasql=" select * from  t_bx_complaint       order by state('未受理','跳过'),id"  />
+       </work> 
+     </works>
+   
+    
+</Browsesoft>

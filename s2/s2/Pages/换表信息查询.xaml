@@ -1,0 +1,107 @@
+﻿<UserControl 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    x:Class="Com.Aote.Pages.换表信息查询" FontSize="13"
+    mc:Ignorable="d"  FontFamily="Microsoft YaHei">
+
+    <Grid x:Name="LayoutRoot" Background="White">
+        <m:ResourceLoad Margin="1,1,1,1">
+            <!--用户类型查询用-->
+            <o:ObjectList Name="payfeevalid"  EntityType="paramvalue"  HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用'"/>
+            <!--查询条件对象-->
+            <o:SearchObject Name="search"/>
+
+            <!--用户档案列表-->
+            <o:PagedObjectList Name="userfiles" WebClientInfo="{StaticResource dbclient}"
+				MultiPath="{m:Exp Str=$from t_changmeter where \{search.Condition\} }" 
+				Path="{m:Exp Str=$from t_changmeter where \{search.Condition\} order by id }" 
+				PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+        </m:ResourceLoad>
+        <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
+        <c:BusyIndicatorEx x:Name="ui_userBusy" BusyContent="正在工作，请稍等！" IsBusy="{m:Exp Str=ui_gqdDataGrid.ItemsSource.IsBusy or toExcel.IsBusy}">
+            <toolkit:DockPanel>
+                <StackPanel x:Name="ui_setSearch" DataContext="{m:Exp Str=search}" Orientation="Horizontal" Height="30" toolkit:DockPanel.Dock="Top">
+                    <TextBlock Text="姓名:" VerticalAlignment="Center"></TextBlock>
+                    <TextBox Width="120" x:Name="ui_username" Height="25" Text="{Binding Path=f_username, Mode=TwoWay}" Margin="0,0,15,0">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="编号:" VerticalAlignment="Center"></TextBlock>
+                    <TextBox Width="120" x:Name="ui_userid" Height="25" Margin="0,0,15,0" Text="{Binding Path=f_userid, Mode=TwoWay}">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="地址:"  VerticalAlignment="Center"></TextBlock>
+                    <TextBox Width="120" x:Name="ui_address" Height="25" Margin="0,0,15,0" Text="{Binding Path=f_address, Mode=TwoWay}">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="是否撤销:" VerticalAlignment="Center"></TextBlock>
+                    <ComboBox x:Name="ui_whetherback" SelectedValue="{m:Bind Path=f_payfeevalid}" ItemsSource="{m:Exp Str=payfeevalid}" Width="80" Height='25'  SelectedValuePath="name" >
+                         <ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+						<a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_payfeevalid"  Operator="f_payfeevalid = 'this'" />
+                        </a:Data.Prop>
+                    </ComboBox>
+                    <Button x:Name="ui_SearchButton" Width="70" Margin="15,0,0,0"  Click="{m:Exp Str=search.Search()}">查询</Button>
+                    <Button x:Name="zhikong" Width="70" Margin="2,0,0,0" Click="zhikong_Click">置空</Button>
+                    <Button x:Name="excel" IsEnabled="{m:Exp Str=ui_gqdDataGrid.ItemsSource.Count!\=0:True\,False}" Width="70" Margin="2,0,0,0" Click="{m:Exp Str=toExcel.ToExcel()}">导出excel</Button>
+                    <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$\{ui_gqdDataGrid.ItemsSource.Path\}}" 
+						Completed="{m:Exp Str=downLoad.Down()}"
+						Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{ui_gqdDataGrid.ItemsSource.Count\}/id:编号|f_username:姓名|f_userid:用户编号|f_address:地址|f_usertype:用户类型|f_watchfee:表费|f_cardfees:卡费|f_cmnewgaswatchbrand:新表品牌|f_cmnewmetertype:新表型号|f_cmnewmeternumber:新表表号|f_cmaddgas:补气量|f_cypregas:超用原因|f_cnote:换表原因|f_cmoperator:换表人|f_cmdate:换表日期|f_cancelnote:撤销原因|f_cxoperation:撤销人|f_canceldate:撤销日期$}" Height="30" VerticalAlignment="Top" Width="0"/>
+                    <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"/>
+                </StackPanel>
+                <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="50">
+                    <sdk:DataPager  x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=ui_gqdDataGrid}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                    <TextBlock  TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{ui_gqdDataGrid.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                    <TextBlock x:Name="ui_pagedcount" Text="{m:Exp Str=$\{ui_gqdDataGrid.ItemsSource.Count\}}"  Visibility="Collapsed"></TextBlock>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                </toolkit:DockPanel>
+                <toolkit:DockPanel >
+                    <sdk:DataGrid x:Name="ui_gqdDataGrid" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{m:Exp Str=userfiles}">
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="编号" Binding="{Binding id}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="姓名" Binding="{Binding f_username}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="表费" Binding="{Binding f_watchfee}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="卡费" Binding="{Binding f_cardfees}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="新表品牌" Binding="{Binding f_cmnewgaswatchbrand}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="新表型号" Binding="{Binding f_cmnewmetertype}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="新表表号" Binding="{Binding f_cmnewmeternumber}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="补气量" Binding="{Binding f_cmaddgas}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="超用气量" Binding="{Binding f_cypregas}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="换表原因" Binding="{Binding f_cnote}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="换表人" Binding="{Binding f_cmoperator}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="换表日期" Binding="{Binding f_cmdate}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="撤销原因" Binding="{Binding f_cancelnote}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="撤销人" Binding="{Binding f_cxoperation}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="撤销日期" Binding="{Binding f_canceldate}"></sdk:DataGridTextColumn>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>
+            </toolkit:DockPanel>
+        </c:BusyIndicatorEx>
+    </Grid>
+</UserControl>

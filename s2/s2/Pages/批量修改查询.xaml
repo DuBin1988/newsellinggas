@@ -1,0 +1,188 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.批量变更查询">
+
+	<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.3*"/>
+				<ColumnDefinition Width="0.7*"/>
+	
+			</Grid.ColumnDefinitions>
+		<m:ResourceLoad>
+		<!--分公司列表对象-->
+		<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司'"/>
+
+		<!--总公司名称-->
+		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+        </o:GeneralObject>
+		</m:ResourceLoad>
+		<toolkit:BusyIndicator  Grid.Column="1" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bkinfos.ItemsSource.IsBusy}">
+			<Grid>
+				<toolkit:DockPanel>
+				</toolkit:DockPanel>
+				<toolkit:DockPanel>
+					<Grid x:Name="biangeng" Width="Auto" Height="Auto" Margin="0">
+						<a:Data.Context>
+								<o:GeneralObject WebClientInfo="{StaticResource dbclient}" 
+									EntityType="t_plchange" Source="{m:Exp Str=bkinfos.SelectedItem}"/>
+							</a:Data.Context>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.145*"/>
+							<ColumnDefinition Width="0.188*"/>
+							<ColumnDefinition Width="0.278*"/>
+							<ColumnDefinition Width="0.389*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1"/>
+							<RowDefinition Height="142"/>
+							
+							<RowDefinition Height="25"/>
+							<RowDefinition Height="153"/>
+							<RowDefinition Height="30"/>
+							<RowDefinition Height="30"/>
+							<RowDefinition Height="52"/>
+						</Grid.RowDefinitions>
+						
+							<sdk:DataGrid  AutoGenerateColumns="False" x:Name="userfileslist" ItemsSource="{m:Exp Str=data.f_piliangchange}"   IsReadOnly="True"  HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Width="Auto">	
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+							<sdk:DataGrid  AutoGenerateColumns="False" x:Name="fileschange" ItemsSource="{m:Exp Str=data.f_changesid}"   HorizontalAlignment="Stretch" Grid.Column="1" Margin="0" Grid.Row="3" VerticalAlignment="Stretch" Grid.ColumnSpan="3" Width="Auto" >
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn Header="变更字段名称" Binding="{Binding f_filename}"/>									<sdk:DataGridTextColumn Header="编码" Binding="{Binding code}"/>																	<sdk:DataGridTextColumn Header="变更后内容" Binding="{Binding f_changehou}"/>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+						<TextBlock Grid.Row="2" TextWrapping="Wrap" Text="变更原因：" Height="25" TextAlignment="Right" VerticalAlignment="Top" d:LayoutOverrides="Height" Margin="0,0,-0.333,0"/>
+						<TextBox Text="{m:Bind Path=f_changereason}" Grid.Column="1" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="Auto" Height="25" Grid.Row="2" Grid.ColumnSpan="3" d:LayoutOverrides="Height">
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_changereason" NotNull="True"/>
+							</a:Data.Prop>
+						</TextBox>
+						<TextBlock Margin="0,5,0,0" Grid.Row="4" TextWrapping="Wrap" Text="分公司：" Height="25" TextAlignment="Right"/>
+						<TextBlock Margin="0,0,0,27" Visibility="Collapsed" Grid.Row="3" TextWrapping="Wrap" Text="分公司编号" Height="25" TextAlignment="Right" Grid.Column="2" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+						<TextBlock Margin="0,5,0,0" Grid.Row="5" TextWrapping="Wrap" Text="部　　门:" Height="25" TextAlignment="Right"/>
+						<TextBlock Margin="0,5,0,0" Grid.Row="4" TextWrapping="Wrap" Text="操 作 员：" Height="25" TextAlignment="Right" Grid.Column="2"/>
+						<TextBlock Margin="0,5,0,0" Grid.Row="5" TextWrapping="Wrap" Text="日　　期：" Height="25" TextAlignment="Right" Grid.Column="2"/>
+						<TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed" Grid.Column="3" HorizontalAlignment="Stretch" Margin="0,0,0,32" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="Auto" Height="25" Grid.Row="3" RenderTransformOrigin="4.727,0.48" IsReadOnly="True" d:LayoutOverrides="Height">
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_fengongsinum"/>
+							</a:Data.Prop>
+						</TextBox>
+						<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="3" HorizontalAlignment="Stretch" Margin="0,5,0,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto" Height="25" Grid.Row="4" RenderTransformOrigin="4.727,0.48" IsReadOnly="True">
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_operator"/>
+							</a:Data.Prop>
+						</TextBox>
+						<TextBox Text="{m:Bind Path=f_department}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0.333,5,0,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto" Height="25" Grid.Row="5" RenderTransformOrigin="4.727,0.48" IsReadOnly="True">
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_department" />
+							</a:Data.Prop>
+						</TextBox>
+						<TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="1.333,5,0,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto" Height="25" Grid.Row="4" RenderTransformOrigin="4.727,0.48" >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_filiale"/>
+							</a:Data.Prop>
+						</TextBox>
+						<sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False"  Grid.Column="3" Margin="0,5,0,0" Grid.Row="5"  Height="25" VerticalAlignment="Stretch"  >
+							<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_date"/>
+							</a:Data.Prop>
+						</sdk:DatePicker></Grid>
+				</toolkit:DockPanel>
+
+				</Grid>
+				</toolkit:BusyIndicator>
+			
+					<toolkit:BusyIndicator Margin="0,0,5,0" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bkinfos.ItemsSource.IsBusy}">
+						<toolkit:DockPanel   >
+							<toolkit:DockPanel x:Name="bkinfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
+						<Grid x:Name="danbginfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
+								
+								<a:Data.Context>
+									<o:SearchObject />        	
+								</a:Data.Context>
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="50*"/>
+								<ColumnDefinition Width="50*"/>
+							</Grid.ColumnDefinitions>
+									<TextBlock TextWrapping="Wrap" Text="用户编号:" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+									<TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Height="25" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="f_userid" Operator="users.f_userid like 'this'"/>               
+										</a:Data.Prop>
+									</TextBox>
+									<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="操作日期:" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+									<sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" Grid.Row="1" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_date" 
+											Operator=" (f_date, StringFormat=yyyy-MM-dd)  = cast('this' as date)"/>              
+									</a:Data.Prop>
+								</sdk:DatePicker>
+									<TextBlock TextWrapping="Wrap" Grid.Row="2" Text="用户姓名：" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+									<TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="2" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
+										<a:Data.Prop>
+											<o:PropertySetter PropertyName="f_username" Operator="users.f_username like 'this%'"/>               
+										</a:Data.Prop>
+									</TextBox>
+									<ComboBox Name="Combox3"   Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="2" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
+						<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>          
+                    	</a:Data.Prop>
+						</ComboBox>
+						
+									<Button Content="查  询" x:Name="dabgsearchbutton" Grid.Row="2" Grid.Column="2" Click="{m:Exp Str=danbginfosearch.DataContext.Search()}" Margin="0,0,8,3" HorizontalAlignment="Right" FontSize="14" Height="25" Width="50"  />
+								
+							</Grid>
+							</toolkit:DockPanel>
+							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+								<sdk:DataPager x:Name="pager0" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=bkinfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+								<TextBlock TextWrapping="Wrap" Margin="5,0,0,3" Text="{m:Exp Str=$共\{bkinfos.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+							</toolkit:DockPanel>
+							
+							<sdk:DataGrid x:Name="bkinfos" Margin="0,0,0,2"  
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+								<a:Data.Items>
+									<o:PagedObjectList x:Name="danbginfoslist" WebClientInfo="{StaticResource dbclient}"
+										MultiPath="{m:Exp Str=$from t_plchange  where \{danbginfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}" 	
+	                                    Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_plchange as apply left join fetch apply.f_piliangchange users left join fetch apply.f_changesid  where \{danbginfosearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_plchange as apply left join fetch apply.f_piliangchange left join fetch apply.f_changesid where \{danbginfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+										PageIndex="{m:Exp Str=pager0.PageIndex}" PageSize="{m:Exp Str=pager0.PageSize}" SumNames="id"/>
+								</a:Data.Items>
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn Header="变更原因" Binding="{Binding f_changereason}"/>
+									<sdk:DataGridTextColumn Header="部   门" Binding="{Binding f_department}"/>
+									<sdk:DataGridTextColumn Header="操 作 人" Binding="{Binding f_operator}"/>
+									<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date, StringFormat=yyyy-MM-dd}"/>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+						</toolkit:DockPanel>
+					</toolkit:BusyIndicator>
+				</Grid>
+
+</UserControl>

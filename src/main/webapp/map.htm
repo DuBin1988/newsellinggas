@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Hello, World</title>
+<style type="text/css">
+html{height:100%}
+body{height:100%;margin:0px;padding:0px}
+#container{height:100%}
+</style>
+<script src="../js/jquery-1.3.2.min.js"></script>
+<script src="../js/jquery-ui-1.7.2.custom.min.js"></script>
+<script src="../js/timepicker.js"></script>
+<script src="../js/jquery.json-2.3.min.js"></script>
+<script src="../js/knockout-2.1.0.js"></script>
+<script src="../js/knockout.mapping-latest.js"></script>
+<script src="../js/af.js"></script>
+<script src="../js/af.map.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+
+<link type="text/css" href="css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+
+</head>
+<script type="text/javascript">
+$(function() {
+    $('#datetime').datepicker({
+    	duration: '',
+        showTime: true,
+        constrainInput: false
+     });
+	 $('#datetime1').datepicker({
+    	duration: '',
+        showTime: true,
+        constrainInput: false
+     });
+});
+</script>
+
+<style type="text/css">
+	body{ font: 80% "Trebuchet MS", sans-serif; margin: 50px;}
+</style>
+
+<body>
+	<div>
+		
+		起始日期 : 
+		<input type="text" name="datetime" id="datetime"/>
+		截止日期 : 
+		<input type="text" name="datetime1" id="datetime1"/>
+		安检员姓名 : 
+		<input type="text" id="username" name ="username"/>
+		<input type="button" onClick="clickmap()" value="查看"/>
+	</div>
+	<div id="container"></div>
+</body>
+</html>
+<script type="text/javascript">
+var map;
+(function() {
+
+	//加载位置数据的对象
+	/*var data = af.objectList({
+		path: ko.computed(function() {
+			return "../rs/db/from t_location t where f_time=(select max(f_time) from t_location where f_equipment=t.f_equipment)";
+		})
+	});
+    */
+	//地图对象
+	map = new BMap.Map("container");
+	map.enableScrollWheelZoom();
+	map.centerAndZoom("西安", 13); 
+
+	//将数据对象与地图对象绑定，档数据发生变化时，在地图上添加标记
+	//af.map.markView(data, map);
+	
+	//定时让数据对象加载数据
+	setInterval(function() {
+		loadp(map);
+	}, 100000000);
+	
+	
+})();
+
+
+var ret = [];
+function loadp(map){
+	var path = encodeURI("/rs/db/sql/longitude,latitude,username,userid/0/100");
+	//alert(path);
+	$.ajax({
+       	url: path,
+		type: "post",
+		data:"select longitude,latitude,username,userid from t_geolocation where uploadtime in (select max(uploadtime) from t_geolocation group by username)",
+		dataType: "json",
+		success: function(data) {
+			//移走原有标注
+			$.each(ret, function(key, value){
+				map.removeOverlay(value);
+			});
+			//添加新标注d
+			$.each(data, function(){
+				var point = new BMap.Point(this.longitude,this.latitude);
+				var marker = new BMap.Marker(point);
+				var label = new BMap.Label(this.username+'' ,{offset:new BMap.Size(20,-10)});
+				marker.setLabel(label);
+				map.addOverlay(marker);
+				//ret.push(marker);
+			});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert(errorThrown);
+		},
+
+     });
+
+}
+var ret1 = [];
+function clickmap(){
+	//移除原有坐标
+	
+	map.clearOverlays();
+	var datetime = $("#datetime").val();
+	var datetime1 = $("#datetime1").val();
+	var username = $("#username").val();
+	if(username != "")
+	{
+		//var path = encodeURI("/rs/db/sql/longitude,latitude,userid,uploadtime/0/100");
+		var path = encodeURI("/rs/db/from t_geolocation  where uploadtime >= '"+datetime+"' and  uploadtime <= '"+datetime1+"' and username = '"+username+"'");
+		$.ajax({
+       	url: path,
+		type: "get",
+		dataType: "json",
+		success: function(data) {
+			//存放所有点
+			var points = [];
+			//对于每一个点
+			$.each(data, function(){
+				var point = new BMap.Point(this.longitude,this.latitude);
+				//保存到点的集合里
+				points.push(point);
+				//添加时间标注
+				var marker = new BMap.Marker(point);
+				var label = new BMap.Label(this.username+':  '+this.uploadTime  ,{offset:new BMap.Size(20,-10)});
+				marker.setLabel(label);
+				map.addOverlay(marker);
+			});
+				//添加折线
+				var polyline = new BMap.Polyline(points, {strokeColor:"red", strokeWeight:5, strokeOpacity:0.5});
+				map.addOverlay(polyline);
+			
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert(errorThrown);
+		},
+     });
+	}
+	else 
+	{
+		/*var path = encodeURI("/rs/db/from t_geolocation  where uploadtime = '"+(jzsj+' 23:59:00')+"'");*/
+		var path = encodeURI("/rs/db/from t_geolocation  where uploadtime = '"+datetime1+"'");
+		$.ajax({
+       	url: path,
+		type: "get",
+		dataType: "json",
+		success: function(data) {
+			//添加新标注d
+			$.each(data, function(){
+				var point = new BMap.Point(this.longitude,this.latitude);
+				var marker = new BMap.Marker(point);
+				var label = new BMap.Label(this.username+':  '+this.uploadTime ,{offset:new BMap.Size(20,-10)});
+				marker.setLabel(label);
+				map.addOverlay(marker);
+				//ret.push(marker);
+			});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert(errorThrown);
+		},
+
+     });
+	}
+	
+}
+</script>

@@ -1,0 +1,192 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="16"
+	x:Class="Com.Aote.Pages.档案修改字段">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-101,0">
+			<!--批量删除语句-->
+			<b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$delete from t_area where id in (\{userfiles.SelectedItems.ToString(id)\=&gt;SelectionChanged\})}"/>
+			<!--提交-->
+			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$update t_area set f_substate\=null where id in (\{userfiles.SelectedItems.ToString(id)\=>SelectionChanged\}) }"/>
+		</m:ResourceLoad>
+		<Grid >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="6*"/>
+				<ColumnDefinition Width="4*"/>
+			</Grid.ColumnDefinitions>
+			<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" >
+				<toolkit:DockPanel >
+					<!--提交按钮-->
+					<toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5" Height="45">
+						<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" />
+					</toolkit:DockPanel>
+						<toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
+							<a:Data.Context>
+								<o:SearchObject />        	
+							</a:Data.Context>
+							<TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="5,4,0,4" />
+							<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>          
+								</a:Data.Prop>
+							</TextBox>
+							<TextBlock TextWrapping="Wrap" Text="小区地址：" Margin="5,4,0,4" />
+							<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>          
+								</a:Data.Prop>
+							</TextBox>
+							<Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,-2" HorizontalAlignment="Right" d:LayoutOverrides="Height" Width="70"/>
+						</toolkit:DockPanel>
+					<sdk:DataGrid x:Name="userfiles" Margin="0" FontSize="14" 
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}"  >
+						<a:Data.Items>
+							<o:ObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+								Path="{m:Exp Str=$from t_area where \{userfilesearch.DataContext.Condition\} and f_usertype\=\'非民用\' }"
+								IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or DeleteAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}"/>
+						</a:Data.Items>
+						<sdk:DataGrid.Columns>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+							<sdk:DataGridTextColumn Header="小区地址" Binding="{Binding f_address}"/>
+							<sdk:DataGridTextColumn Header="街    道" Binding="{Binding f_road}"/>
+							<sdk:DataGridTextColumn Header="单 元 号" Binding="{Binding f_cusDy}"/>
+							<sdk:DataGridTextColumn Header="楼    号" Binding="{Binding f_cusDom}"/>
+							<sdk:DataGridTextColumn Header="楼    层" Binding="{Binding f_cusFloor}"/>
+						</sdk:DataGrid.Columns>
+					</sdk:DataGrid>
+					<!--提交按钮-->
+				</toolkit:DockPanel >
+			</toolkit:BusyIndicator>
+			<toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=userfile.DataContext.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
+				<toolkit:DockPanel>
+				<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Left" >
+						<Button x:Name="save" Content="保  存" Margin="5" FontSize="14"
+							IsEnabled="{m:Exp Str=userfile.DataContext.IsModified and !userfile.DataContext.HasErrors}"
+							Click="{m:Exp Str=userfile.DataContext.Save()}" Width="70" />
+						<Button Content="撤  销" Margin="5" FontSize="14"
+							Click="{m:Exp Str=userfile.DataContext.New()}" Width="70"/>
+					</toolkit:DockPanel>
+					<Grid x:Name="userfile" >
+						<a:Data.Context>
+							<o:GeneralObject  x:Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
+								EntityType="t_area" Source="{m:Exp Str=userfiles.SelectedItem}"
+								IsInit="{m:Exp Str=this.State\=\=$End}"        	/>
+						</a:Data.Context>
+						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" toolkit:DockPanel.Dock="Top" >
+							<Grid Margin="0" HorizontalAlignment="Stretch" >
+								<Grid.Background>
+									<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+										<GradientStop Color="#FFF2F8FF" Offset="0"/>
+										<GradientStop Color="#FFDDF2FD" Offset="1"/>
+									</LinearGradientBrush>
+								</Grid.Background>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="45"/>
+									<RowDefinition Height="45"/>
+									<RowDefinition Height="45"/>
+									<RowDefinition Height="45"/>
+									<RowDefinition Height="45"/>
+									<RowDefinition Height="45"/>		
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="100"/>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="110"/>
+									<ColumnDefinition Width="1*"/>
+								</Grid.ColumnDefinitions>
+								<TextBlock Text="小区名称：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right"/>
+								<TextBlock Text="小区地址：" Grid.Column="0" Margin="0,9" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right"/>	
+						
+								<TextBox Text="{m:Bind Path=f_districtname}"  Grid.Column="1" Margin="0,9" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="3" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_districtname" NotNull="True"/>
+									</a:Data.Prop>
+								</TextBox>	
+						
+								<TextBox Text="{m:Bind Path=f_address}" IsReadOnly="False" Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="3" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_address" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock Text="市：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2"/>
+								<TextBlock Text="区：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" HorizontalAlignment="Right"  Grid.Column="2"/>
+								<TextBlock Text="街       道：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" />
+								<TextBlock Text="单  元  号：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4"/>
+								<TextBlock Text="楼       号：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" />
+								<TextBlock Text="楼       层：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Right" />
+								<TextBlock Text="操  作  员：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" />
+								<TextBlock Text="操作日期：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="5" HorizontalAlignment="Right" />
+								<TextBox Text="{m:Bind Path=f_city}"  Grid.Column="1" Margin="0,9" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False" HorizontalAlignment="Stretch"  >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_city" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_area}"  Grid.Column="3" Margin="0,9" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_area" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_road}"  Grid.Column="1" Margin="0,9" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False" VerticalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_road" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_cusDy}"  Grid.Column="3" Margin="0,9" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_cusDy" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_cusDom}"  Grid.Column="1" Margin="0,9" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_cusDom" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="1" Margin="0,9" Grid.Row="5" TextWrapping="Wrap"  d:LayoutOverrides="Height, GridBox" IsReadOnly="True">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_operator"
+											Default="{m:Exp Str=LoginUser.name}"/>
+									</a:Data.Prop>
+								</TextBox>
+								<TextBox Text="{m:Bind Path=f_cusFloor}"  Grid.Column="3" Margin="0,9" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_cusFloor" NotNull="True" />
+									</a:Data.Prop>
+								</TextBox>
+								<sdk:DatePicker Grid.Column="3" Margin="0,9" Grid.Row="5"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" d:LayoutOverrides="GridBox" Grid.ColumnSpan="1" BorderThickness="1,1,1,0">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_date"
+											Default="{m:Exp Str=SysTime.Today}"/>
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<!--隐藏域-->
+								<TextBox Text="{m:Bind Path=f_usertype}" Visibility="Collapsed"  Margin="0,2"  IsReadOnly="True" Height="Auto" VerticalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_usertype" Default="非民用"/>
+									</a:Data.Prop>	
+								</TextBox>
+							</Grid>
+						</ScrollViewer>
+					</Grid>
+				</toolkit:DockPanel>
+			</toolkit:BusyIndicator>
+		</Grid>
+	</Grid>
+</UserControl>

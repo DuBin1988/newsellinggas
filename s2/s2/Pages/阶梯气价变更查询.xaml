@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="s2.Pages.阶梯气价变更查询"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignHeight="768" d:DesignWidth="1024">
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+        <m:ResourceLoad>
+            <!--阶梯气价信息列表-->
+            <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice"/>
+        </m:ResourceLoad>
+        <toolkit:DockPanel>
+            <Grid Height="33"  x:Name="ui_SearchUser" Background="#FFCFEFFF" toolkit:DockPanel.Dock="Top">
+                <a:Data.Context>
+                    <o:SearchObject />
+                </a:Data.Context>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="统计日期从：" VerticalAlignment="Center" TextAlignment="Center"/>
+                <sdk:DatePicker x:Name="tj1" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Center" d:LayoutOverrides="Height" >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_yytdate1"  Value="{m:Exp Str=SysTime.Today}"
+                        Operator="f_operdate >= substring('this',1,10)"/>
+                    </a:Data.Prop>
+                </sdk:DatePicker>
+                <TextBlock Text="到：" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Right" Grid.Column="2"/>
+                <sdk:DatePicker x:Name="tj2"  SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Center" d:LayoutOverrides="Height" >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_yytdate2"  Value="{m:Exp Str=SysTime.Today}"
+					    Operator="f_operdate^= substring('this',1,10)"/>
+                    </a:Data.Prop>
+                </sdk:DatePicker>
+                <TextBlock Grid.Row="0" Grid.Column="4" TextWrapping="Wrap" Text="阶梯气价类型：" TextAlignment="Right" Height="25"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <ComboBox x:Name="CoboxStair" DisplayMemberPath="f_stairtype" SelectedValuePath="f_stairtype" ItemsSource="{m:Exp Str=stairlist}" SelectedValue="{m:Bind Path=f_stairtype}" Grid.Column="5" Margin="0,2,0,3" Grid.Row="0" Height="25" VerticalAlignment="Stretch"   >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_stairtype" NoDependValue="{m:Exp Str=stairlist.SelectedItem.f_stairtype}"
+                        Operator="f_stairtype = 'this')"                  />
+                    </a:Data.Prop>
+                </ComboBox>
+                <Button x:Name="ui_SearchUserButton" Grid.Column="6" Margin="5,2" Click="{m:Exp Str=ui_SearchUser.DataContext.Search()}">查询</Button>
+                <Button Grid.Column="7"  Click="{m:Exp Str=toExcel.ToExcel()}" Margin="5,2">导出Excel</Button>
+                <c:Excel x:Name="toExcel"
+                         HQL="{m:Exp Str=$\{userfiles.ItemsSource.HQL\}}"
+                         Completed="{m:Exp Str=downLoad.Down()}"
+                         Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{userfiles.ItemsSource.Count\}/f_stairtype:阶梯气价类型|f_stair1amount:阶段一气量|f_stair1price:阶段一单价|f_stair2amount:阶段二气量|f_stair2price:阶段二单价|f_stair3amount:阶段三气量|f_stair3price:阶段三单价|f_stairmonths:阶段月数|f_operator:操作人|f_operdate:操作日期|f_counts:操作总数|f_usertype:用户类型条件|f_gasmeterstyle:气表类型条件|f_gaspricetype:气价类型条件$}"/>
+                <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Margin="0,1,2,2"  Grid.Column="9" Width="60" HorizontalAlignment="Right" />
+            </Grid>
+        
+            <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51"  Width="auto" >
+                <sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="901" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+            </toolkit:DockPanel>
+            <sdk:DataGrid x:Name="userfiles" Margin="0" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}"
+                    IsReadOnly="True">
+                <a:Data.Items>
+                    <o:PagedList x:Name="ui_SearchUserList" WebClientInfo="{StaticResource dbclient}"
+									LoadOnPathChanged="False" IsOld="{m:Exp Str='ui_SearchUserButton=>Click!=null'}"
+									SumHQL="{m:Exp Str=$from t_changestairprice where \{ui_SearchUser.DataContext.Condition\}}"
+									HQL="{m:Exp Str=$from t_changestairprice where \{ui_SearchUser.DataContext.Condition\} order by id desc }"
+                                    Path="hql" PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames=",">
+                    </o:PagedList>
+                </a:Data.Items>
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn Header="阶梯气价类型" Binding="{Binding f_stairtype}"/>
+                    <sdk:DataGridTextColumn Header="阶段一气量" Binding="{Binding f_stair1amount}"/>
+                    <sdk:DataGridTextColumn Header="阶段一单价" Binding="{Binding f_stair1price}"/>
+                    <sdk:DataGridTextColumn Header="阶段二气量" Binding="{Binding f_stair2amount}"/>
+                    <sdk:DataGridTextColumn Header="阶段二单价" Binding="{Binding f_stair2price}"/>
+                    <sdk:DataGridTextColumn Header="阶段三气量" Binding="{Binding f_stair3amount}"/>
+                    <sdk:DataGridTextColumn Header="阶段三单价" Binding="{Binding f_stair3price}"/>
+                    <sdk:DataGridTextColumn Header="阶段月数" Binding="{Binding f_stairmonths}"/>
+                    <sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_operator}"/>
+                    <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_operdate}"/>
+                    <sdk:DataGridTextColumn Header="操作总数" Binding="{Binding f_counts}"/>
+                    <sdk:DataGridTextColumn Header="用户类型条件" Binding="{Binding f_usertype}"/>
+                    <sdk:DataGridTextColumn Header="气表类型条件" Binding="{Binding f_gasmeterstyle}"/>
+                    <sdk:DataGridTextColumn Header="气价类型条件" Binding="{Binding f_gaspricetype}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+        </toolkit:DockPanel>
+        
+    </Grid>
+</UserControl>

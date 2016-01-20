@@ -1,0 +1,90 @@
+﻿<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--用户档案表-->
+	<class  entity-name="t_userinfo" table="t_userinfo" dynamic-update="true">
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+      
+		<!--机表用户账户结余-->
+		<property name="f_zhye" type="double"/>
+		<!--单位编号 -->
+		<property name="f_unitid" type="string"/>
+        <!-- 用户姓名/单位名称 -->
+		<property name="f_username" type="string"/>
+		<!--小区名称-->
+		<property name="f_districtname" type="string"/>
+		<!--小区地址-->
+		<property name="f_address" type="string"/>
+		<!--门牌号 -->
+		<property name="f_apartment" type="string"/>
+		<!--联系人 -->
+		<property name="f_linkname" type="string"/>
+		<!--市 -->
+		<property name="f_city" type="string"/>
+		<!--区 -->
+		<property name="f_area" type="string"/>
+		<!--街道 -->
+		<property name="f_road" type="string"/>
+		<!--单元号 -->
+		<property name="f_cusDy" type="string"/>
+		<!--楼号 -->
+		<property name="f_cusDom" type="string"/>
+		<!--楼层 -->
+		<property name="f_cusFloor" type="string"/>
+
+		<!--证件类型-->
+		<property name="f_credentials" type="string"/>
+		<!--证件号码-->
+		<property name="f_idnumber" type="string"/>
+		<!--电话-->
+		<property name="f_phone" type="string"/>
+		<!--座机-->
+		<property name="f_phone1" type="string"/>
+		<!--用户类型-->
+		<property name="f_usertype" type="string"/>
+		<!--用气性质-->
+		<property name="f_gasproperties" type="string"/>
+		<!--用户性质-->
+		<property name="f_yhxz" type="string"/>
+
+		<!--用户状态-->
+		<property name="f_userstate" type="string"/>
+		
+		<!--付款方式 为现金、银行代扣-->
+		<property name="f_payment" type="string"/>
+
+		<!--开户日期-->
+		<property name="f_dateofopening" type="date"/>
+		<!--点火日期-->
+		<property name="f_fireopening" type="date"/>
+
+		
+		<!--营业厅部门-->
+		<property name="f_yytdepa" type="string"/>
+		<!--营业厅操作人-->
+                <property name="f_yytoper" type="string"/>
+		<!--营业厅建档日期-->
+		<property name="f_yytdate" type="date"/>
+		<!-- 分公司 -->
+		<property name="f_filiale" type="string"/>
+		<!-- 分公司编号-->
+		<property name="f_fengongsinum" type="string"/>
+
+			<!--档案> 
+	   	<set name="f_userfiles" cascade="all-delete-orphan">
+          <key column="f_userinfoid" on-delete="noaction" /> 
+          <one-to-many entity-name="t_userfiles" not-found="exception" /> 
+        </set-->
+		<!--用户的表档案信息，一户多表--> 
+	       <!--set name="f_meterinfo" cascade="all-delete-orphan"-->
+                   <!--key column="parentid" on-delete="noaction" /--> 
+                   <!--one-to-many entity-name="t_userfiles" not-found="exception" /--> 
+              <!--/set-->
+        
+		
+</class>
+</hibernate-mapping>

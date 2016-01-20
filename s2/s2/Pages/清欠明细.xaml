@@ -1,0 +1,266 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:Marks="clr-namespace:Com.Aote.Marks;assembly=s2DLL" xmlns:ObjectTools="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL" xmlns:Controls="clr-namespace:Com.Aote.Controls;assembly=s2DLL" xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" xmlns:Attachs="clr-namespace:Com.Aote.Attachs;assembly=s2DLL" xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+	mc:Ignorable="d"
+	x:Class="s2.清欠明细"
+>
+
+ 
+	<Grid x:Name="LayoutRoot" Margin="0,0,0,0">
+		<Marks:ResourceLoad Margin="0,0,-12,0">
+			<ObjectTools:ExcelObj x:Name="excel" Bind="Index,f_userid,f_username,f_districtname,f_apartment,f_usertype,f_cardid,f_gaswatchbrand,f_gaspricetype,f_gasprice,f_pregas,f_preamount,f_beginfee,f_endfee,f_amountmaintenance,f_totalcost,f_comtype,f_invoicenum,f_payfeevalid,f_payfeetype,f_filiale,f_sgnetwork,f_sgoperator,f_deliverydate" Source="{Marks:Exp Str=daninfos}"/>
+			<!--o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from paramvalue where param.name\=\'操作员查询用\' }" 
+			   IsOld="{m:Exp Str=wangdianlist.State\=\=$End$}"/-->
+			<!--网点列表对象-->
+            <!--操作员列表对象-->
+			<ObjectTools:ObjectList x:Name="czylist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'  order by id"/>
+			<ObjectTools:ObjectList x:Name="czylistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用' " HasEmptyRow="True"/>
+            <!--公司类型列表对象-->
+			<ObjectTools:ObjectList x:Name="gongsitypelist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<ObjectTools:ObjectList x:Name="gongsitypelistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' " HasEmptyRow="True"/>
+            <!--o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/-->
+			<ObjectTools:ObjectList x:Name="wangdianlist"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="{Marks:Exp Str=$from paramvalue where param.name\=\'网点查询用\' and code \=\'\{daninfosearch.DataContext.f_filiale\}\'$}" 
+				IsOld="{Marks:Exp Str=fgslist.State\=\=$End$}"/>
+            <!--分公司列表对象-->
+			<ObjectTools:ObjectList x:Name="fgslist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+            <!--用户类型查询用-->
+			<ObjectTools:ObjectList x:Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
+			<ObjectTools:ObjectList x:Name="usertypelistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' " HasEmptyRow="True"/>
+            <!--付款方式-->
+			<ObjectTools:ObjectList x:Name="fukuanfangshi"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<ObjectTools:ObjectList x:Name="fukuanfangshinull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' " HasEmptyRow="True"/>
+               <!--气表品牌-->
+			<ObjectTools:ObjectList x:Name="qblist"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表品牌' order by id"/>
+			<ObjectTools:ObjectList x:Name="qblistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表品牌' " HasEmptyRow="True"/>
+            <!--气价类型-->
+			<ObjectTools:ObjectList x:Name="qjlist"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气价类型' order by id"/>
+			<ObjectTools:ObjectList x:Name="qjlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气价类型' " HasEmptyRow="True"/>
+            <!--收费类型查询用-->
+			<ObjectTools:ObjectList x:Name="payfeetypelist"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
+			<ObjectTools:ObjectList x:Name="payfeetypelistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' " HasEmptyRow="True"/>
+            <!--是否有效查询用-->
+			<ObjectTools:ObjectList x:Name="youxiaolist"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+			<ObjectTools:ObjectList x:Name="youxiaolistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' " HasEmptyRow="True"/>
+			<ObjectTools:ObjectList x:Name="yinhanglist1"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名'"/>
+			<ObjectTools:ObjectList x:Name="yinhanglistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名' " HasEmptyRow="True"/>
+		</Marks:ResourceLoad>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="10*"/>
+				<ColumnDefinition Width="0*"/>
+			</Grid.ColumnDefinitions>
+			<Controls:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{Marks:Exp Str=daninfos.ItemsSource.IsBusy or toExcel.IsBusy}">
+				<toolkit:DockPanel>
+					<Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+						<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="28"/>
+							<RowDefinition Height="1"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="90"/>
+							<ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="80"/>
+							<ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="80"/>
+							<ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="80"/>
+							<ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="0.647*"/>
+						</Grid.ColumnDefinitions>
+						<Attachs:Data.Context>
+							<ObjectTools:SearchObject />
+						</Attachs:Data.Context>
+
+						<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+						<TextBox x:Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{Marks:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_userid"  Operator="fin.f_userid like '%this%'"/>
+							</Attachs:Data.Prop>
+						</TextBox>
+						<TextBlock TextWrapping="Wrap" Text="卡　　号：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+						<TextBox x:Name="tj2" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{Marks:Bind Path=f_cardid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_cardid"  Operator="u.f_cardid='this'"/>
+							</Attachs:Data.Prop>
+						</TextBox>
+						<TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+						<TextBox x:Name="tj7" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{Marks:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_username"  Operator="u.f_username like '%this%'"/>
+							</Attachs:Data.Prop>
+						</TextBox>
+						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="6" Click="{Marks:Exp Str=daninfosearch.DataContext.Search()}" Margin="18,0,11,0" FontSize="14"  />
+						<StackPanel Grid.Row="3" Grid.Column="6" Orientation="Horizontal"  Margin="69,0,0,0" Grid.ColumnSpan="2">
+							<Button Content="导出Excel" IsEnabled="{Marks:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{Marks:Exp Str=toExcel.ToExcel()}" Margin="50,0,0,0" />
+                            <!--Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="7" Grid.Row="3"/-->
+
+							<Controls:Excel x:Name="toExcel" HQL="{Marks:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
+								Completed="{Marks:Exp Str=downLoad.Down()}"
+								Path="{Marks:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_address:地址|f_districtname:小区名称|f_apartment:门牌号|f_cardid:卡号|f_gasprice:气价|f_prevaccountzhye:上期结余|f_oughtfee:应交|f_realmoney:实交|f_debtmoney:欠费|f_accountzhye:本期余额|f_payfeevalid:是否有效|f_debtdate:抄表日期|f_deliverydate:收费日期|f_deliverytime:收费时间|f_sgnetwork:网点|f_opertor:操作员|f_usertype:用户类型|f_gaswatchbrand:气表品牌|f_gaspricetype:气价类型$}"/>
+							<Controls:DownLoad x:Name="downLoad" Path="{Marks:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls"/>
+
+
+
+						</StackPanel>
+						<TextBlock TextWrapping="Wrap" Text="气表品牌：" Grid.Column="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+						<ComboBox x:Name="tj5" SelectedValue="{Marks:Bind Path=f_gaswatchbrand}" Grid.Column="3" ItemsSource="{Marks:Exp Str=qblistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_gaswatchbrand"  Operator="u.f_gaswatchbrand = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Text="气价类型：" Grid.Column="2" Grid.Row="1"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+						<ComboBox x:Name="tj6" Grid.Row="1" SelectedValue="{Marks:Bind Path=f_gaspricetype}" Grid.Column="3" ItemsSource="{Marks:Exp Str=qjlistnull}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_gaspricetype"  Operator="u.f_gaspricetype = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right" Text="收费日期 从："/>
+						<sdk:DatePicker x:Name="tj4" SelectedDate="{Marks:Bind Path=f_yytdate1}" Grid.Row="3" Grid.Column="1" Attachs:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_yytdate1"  Value="{Marks:Exp Str=SysTime.Today}" 
+									Operator="fin.f_deliverydate &gt;= substring('this',1,10)"/>
+							</Attachs:Data.Prop>
+						</sdk:DatePicker>
+						<sdk:DatePicker x:Name="tj8" SelectedDate="{Marks:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" Attachs:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_yytdate2"   Value="{Marks:Exp Str=SysTime.Today}" 
+									Operator="fin.f_deliverydate ^= substring('this',1,10) + ' 23:59:59'"/>
+							</Attachs:Data.Prop>
+						</sdk:DatePicker>
+						<TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="3" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+						<TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
+						<ComboBox x:Name="tja"  SelectedValue="{Marks:Bind Path=f_usertype}" Grid.Row="1" Grid.Column="5" ItemsSource="{Marks:Exp Str=usertypelistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_usertype"  Operator="u.f_usertype = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Text="是否有效：" Grid.Column="2"  Margin="2,1,148,2" Height="25" TextAlignment="Right" Grid.Row="2" Grid.ColumnSpan="2" />
+						<ComboBox x:Name="tjc"  SelectedValue="{Marks:Bind Path=f_payfeevalid}" Grid.Row="2" Grid.Column="3" ItemsSource="{Marks:Exp Str=youxiaolistnull}"  Margin="2,1,78,2"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Width="Auto">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_payfeevalid"       Operator="fin.f_payfeevalid = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Text="网　　点：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" />
+						<ComboBox x:Name="tjwangdian"  SelectedValue="{Marks:Bind Path=f_sgnetwork}" Grid.Row="0" Grid.Column="7" ItemsSource="{Marks:Exp Str=wangdianlistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_sgnetwork"  Operator="fin.f_department = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Text="操 作 员：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
+						<ComboBox x:Name="tjczy"  SelectedValue="{Marks:Bind Path=f_sgoperator}" Grid.Row="1" Grid.Column="7" ItemsSource="{Marks:Exp Str=czylistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding name}" Height="20"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_sgoperator"  Operator="fin.f_opertor = 'this'"/>
+							</Attachs:Data.Prop>
+						</ComboBox>
+						<TextBlock TextWrapping="Wrap" Text="小区名称：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="80" />
+						<TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Grid.Row="0" Grid.Column="5" Text="{Marks:Bind Path=f_districtname}" Width="150" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
+							<Attachs:Data.Prop>
+								<ObjectTools:PropertySetter PropertyName="f_districtname"  Operator="u.f_districtname like '%this%'"/>
+							</Attachs:Data.Prop>
+						</TextBox>
+					</Grid>
+
+					<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+						<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="42" toolkit:DockPanel.Dock="Top" Height="24"   />
+						<TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{Marks:Exp Str=$共\{daninfos.ItemsSource.Count\}项   实收金额\{daninfos.ItemsSource.Count!\=0:daninfos.ItemsSource.f_realmoney\,$0$\}元 }"   Foreground="#FF140000" Width="901" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+					</toolkit:DockPanel>
+
+					<sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True"
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+						<Attachs:Data.Items>
+					 				<ObjectTools:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
+								LoadOnPathChanged="False" IsOld="{Marks:Exp Str=dansearchbutton\=&gt;Click!\=null}"
+								Names="f_userid,f_username,f_address,f_districtname,f_apartment,f_cardid,f_gasprice,f_prevaccountzhye,f_oughtfee,f_realmoney,f_debtmoney,f_accountzhye,f_debtdate,f_payfeevalid,f_sgnetwork,f_opertor,f_deliverydate,f_deliverytime,f_usertype,f_gaswatchbrand,f_gaspricetype"
+SumHQL="{Marks:Exp Str=$select fin.f_userid\,u.f_username\,u.f_address\,u.f_districtname\,u.f_apartment\,u.f_cardid\,
+fin.f_gasprice\,fin.f_prevaccountzhye\,fin.f_oughtfee\,fin.f_realmoney\,fin.f_debtmoney\,fin.f_accountzhye\,fin.f_debtdate\,
+fin.f_payfeevalid\,fin.f_sgnetwork\,fin.f_opertor\,fin.f_deliverydate\,fin.f_deliverytime\,u.f_usertype\,u.f_gaswatchbrand\,
+u.f_gaspricetype  from t_financedetail fin left join t_userfiles   u on u.f_userid \=  fin.f_userid where \{daninfosearch.DataContext.Condition\} }"
+  					HQL="{Marks:Exp Str=$select fin.f_userid\,u.f_username\,u.f_address\,u.f_districtname\,u.f_apartment\,u.f_cardid\,
+fin.f_gasprice\,round(fin.f_prevaccountzhye\,2)  f_prevaccountzhye\,round(fin.f_oughtfee\,2) f_oughtfee \,round(fin.f_realmoney\,2) f_realmoney\,round(fin.f_debtmoney\,2) f_debtmoney\,round(fin.f_accountzhye\,2) f_accountzhye\,CONVERT(varchar(12)\, fin.f_debtdate\,  23 ) f_debtdate\,
+fin.f_payfeevalid\,fin.f_sgnetwork\,fin.f_opertor\,CONVERT(varchar(12)\, fin.f_deliverydate\, 23 ) f_deliverydate\,CONVERT(varchar(12)\, fin.f_deliverytime\, 24 ) f_deliverytime \,u.f_usertype\,u.f_gaswatchbrand\,
+u.f_gaspricetype  from t_financedetail fin left join t_userfiles   u on u.f_userid \=  fin.f_userid where \{daninfosearch.DataContext.Condition\} order by f_deliverydate desc\,f_deliverytime desc }"
+								Path="sql" PageIndex="{Marks:Exp Str=pager2.PageIndex}" PageSize="{Marks:Exp Str=pager2.PageSize}" SumNames="f_realmoney"/>
+						</Attachs:Data.Items>
+						<sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+							<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+							<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
+							<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
+							<sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
+						 	<!--上期余额-->
+							<sdk:DataGridTextColumn Header="上期余额" Binding="{Binding f_prevaccountzhye}"/>
+						 	<!--应收-->
+							<sdk:DataGridTextColumn Header="应收" Binding="{Binding f_oughtfee}"/>
+							<!--实收-->
+							<sdk:DataGridTextColumn Header="实收" Binding="{Binding f_realmoney}"/>
+							<!--欠费-->
+							<sdk:DataGridTextColumn Header="欠费" Binding="{Binding f_debtmoney}"/>
+							<!--本期余额-->
+							<sdk:DataGridTextColumn Header="本期余额" Binding="{Binding f_accountzhye}"/>
+							<!--抄表日期-->
+							<sdk:DataGridTextColumn Header="抄表日期" Binding="{Binding f_debtdate,StringFormat=yyyy-MM-dd}"/>
+						  	<sdk:DataGridTextColumn Header="收费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
+							<sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss}"/>
+						   <sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_payfeevalid}"/>
+							<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_sgnetwork}"/>
+							<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_opertor}"/>
+							 <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+							<sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
+					 		 
+						</sdk:DataGrid.Columns>
+					</sdk:DataGrid>
+
+
+
+				</toolkit:DockPanel>
+
+
+			</Controls:BusyIndicatorEx>
+
+		</Grid>
+	 
+	</Grid>
+
+ 
+</UserControl>

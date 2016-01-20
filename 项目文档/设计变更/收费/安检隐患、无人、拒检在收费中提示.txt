@@ -1,0 +1,27 @@
+对于安检有隐患、无人、拒检在收费中分别提示（仅仅判断用户最新一条的安检状态）
+卡表收费时（售气收费页面）
+1.定义3个对象，分别是隐患yinhuan、无人wuren、拒检jujian
+<!-- 安检隐患对象 -->
+<o:ObjectList Name="yinhuan" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{kbfee.f_userid\}\')and f_userid\= \'\{kbfee.f_userid\}\' and NEEDS_REPAIR\=\'是\' $\,$null$}">
+</o:ObjectList>
+<!-- 安检无人对象 -->
+<o:ObjectList Name="wuren" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{kbfee.f_userid\}\')and f_userid\= \'\{kbfee.f_userid\}\' and CONDITION\=\'无人\' $\,$null$}">
+</o:ObjectList>
+<!-- 安检拒检对象 -->
+<o:ObjectList Name="jujian" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{kbfee.f_userid\}\')and f_userid\= \'\{kbfee.f_userid\}\' and CONDITION\=\'拒检\' $\,$null$}">
+</o:ObjectList>
+2.定义3个MessageTipObj分别提示安检隐患、无人、拒检(在隐患对象Count>0、无人对象Count>0、拒检对象Count>0时分别提示)
+<c:MessageTipObj Name="safechecktip" Tip="{m:Exp Str=$该用户安检存在隐患$}" IsShow="{m:Exp Str=yinhuan.Count>0}"/>
+<c:MessageTipObj Name="wurentip" Tip="{m:Exp Str=$该用户安检时无人$}" IsShow="{m:Exp Str=wuren.Count>0}"/>
+<c:MessageTipObj Name="jujiantip" Tip="{m:Exp Str=$该用户安检时拒检$}" IsShow="{m:Exp Str=jujian.Count>0}"/>
+机表收费时（机表交费页面）
+注：定义隐患yinhuan、无人wuren、拒检jujian对象时f_userid是userfiles.SelectedItem.f_userid，左侧查询结果选中的用户ID。
+<!-- 安检隐患对象 -->
+<o:ObjectList Name="yinhuan" WebClientInfo="{StaticResource dbclient}"Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{userfiles.SelectedItem.f_userid\}\')and f_userid\= \'\{userfiles.SelectedItem.f_userid\}\' and NEEDS_REPAIR\=\'是\' $\,$null$}">
+</o:ObjectList>
+<!-- 安检无人对象 -->
+<o:ObjectList Name="wuren" WebClientInfo="{StaticResource dbclient}"Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{userfiles.SelectedItem.f_userid\}\')and f_userid\= \'\{userfiles.SelectedItem.f_userid\}\' and CONDITION\=\'无人\' $\,$null$}">
+</o:ObjectList>
+<!-- 安检拒检对象 -->
+<o:ObjectList Name="jujian" WebClientInfo="{StaticResource dbclient}"Path="{m:Exp Str=kbusers.f_userid !\= null\:$sql/select f_userid \, NEEDS_REPAIR from T_INSPECTION where ARRIVAL_TIME \= (select MAX(ARRIVAL_TIME) from T_INSPECTION where f_userid\= \'\{userfiles.SelectedItem.f_userid\}\')and f_userid\= \'\{userfiles.SelectedItem.f_userid\}\' and CONDITION\=\'拒检\' $\,$null$}">
+</o:ObjectList>

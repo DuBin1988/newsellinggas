@@ -1,0 +1,1369 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:Com.Aote.Pages"
+    xmlns:beh="clr-namespace:Com.Aote.Behavior"
+	mc:Ignorable="d" FontSize="12"
+	x:Class="Com.Aote.Pages.安检结果小区统计"   >
+
+    <UserControl.Resources>
+        <!--也可以在这里引用自定义转换器，推荐在全局APP.xaml引用 -->
+        <local:youwu x:Key="booltoyou" />
+        <local:yesno x:Key="booltoyes" />
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot">
+
+        <m:ResourceLoad Margin="0,0,0,0">
+            <!--供暖方式-->
+            <o:ObjectList Name="gongnuanlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='供暖方式'"/>
+            <!--租住-->
+            <o:ObjectList Name="zuzhulist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='租住户'"/>
+            <!--重点用户-->
+            <o:ObjectList Name="iszhongdianlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='重点用户'"/>
+            <!--小区性质-->
+            <o:ObjectList Name="propertylist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='小区性质'"/>
+            <!--漏气失效-->
+            <o:ObjectList Name="lqsx" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='漏气失效'"/>
+            <!--用气设备-->
+            <o:ObjectList Name="deviceslist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用气设备'"/>
+
+            <!--安检列表-->
+            <o:PagedList Name="areafileslist1" WebClientInfo="{StaticResource dbclient}" Path="hql" 
+                         SumHQL="{m:Exp Str=$from T_INSPECTION t where \{areafilesearch.DataContext.Condition\}$}" 
+                         HQL="{m:Exp Str=$select distinct t from T_INSPECTION t  where \{areafilesearch.DataContext.Condition\}$}"
+                         PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="," />
+
+            <!--安检状态-->
+            <o:ObjectList Name="conditionlist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='安检状态'"/>
+            <o:ObjectList Name="f_checktypeList" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='安检类型'"/>
+
+        </m:ResourceLoad>
+        <ScrollViewer  VerticalScrollBarVisibility="Auto">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!-- <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=areafiles.ItemsSource.IsBusy}" >
+                <Border BorderThickness="1" BorderBrush="#FF9AA2AB" Margin="0" Padding="2" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >  -->
+                <toolkit:DockPanel Width="Auto"  Height="Auto"  >
+                    <toolkit:DockPanel   Background="#94a8cd" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5" Height="25" >
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{areafiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,0,1" Foreground="#FF140000" />
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=areafiles}"  Margin="0,0,0,-2" PageSize="20"/>
+                    </toolkit:DockPanel>
+                    <toolkit:DockPanel  x:Name="areafilesearch" toolkit:DockPanel.Dock="Top"  Margin="0,0,0,5"   >
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Grid Background="#FF94A8CD">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock TextWrapping="Wrap" Text="基础条件" Margin="16,4,0,4" Grid.Column="0" HorizontalAlignment="Left" />
+                            <TextBlock TextWrapping="Wrap" Text="街道：" Margin="5,4,0,4" Grid.Column="1" HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=ROAD}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="ROAD"  Operator="ROAD like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="5,4,0,4" Grid.Column="3" HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="4" Text="{m:Bind Path=UNIT_NAME}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="UNIT_NAME"  Operator="UNIT_NAME like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
+                            <TextBlock TextWrapping="Wrap" Text="楼号：" Grid.Column="5" Grid.Row="0" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Column="6" Grid.Row="0" Text="{m:Bind Path=CUS_DOM}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="CUS_DOM"  Operator="CUS_DOM like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="单元：" Grid.Row="0" Grid.Column="7" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Column="8" Grid.Row="0" Text="{m:Bind Path=CUS_DY}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="CUS_DY"  Operator="CUS_DY like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.Column="9" Text="楼层：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="10" Text="{m:Bind Path=CUS_FLOOR}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="CUS_FLOOR"  Operator="CUS_FLOOR like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="0" Text="房号："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="12" Text="{m:Bind Path=CUS_ROOM}" Width="Auto" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="CUS_ROOM"  Operator="CUS_ROOM like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="姓名："  Grid.Column="1" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="2" Text="{m:Bind Path=f_consumername}" Width="Auto" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_consumername"  Operator="f_consumername like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="卡号："  Grid.Column="3" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="4" Text="{m:Bind Path=f_kahao}" Width="Auto" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_kahao"  Operator="f_kahao like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="安检情况：" Margin="5,4,0,4" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right"/>
+                            <ComboBox Name="condition"   SelectedValue="{m:Bind Path=CONDITION}" Grid.Row="2" Grid.Column="2" ItemsSource="{m:Exp Str=conditionlist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="CONDITION"  Operator="CONDITION like '%this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="安检员：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="4" Text="{m:Bind Path=f_anjianren}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_anjianren"  Operator="f_anjianren like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="维修员：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="6" Text="{m:Bind Path=REPAIRMAN}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="REPAIRMAN"  Operator="REPAIRMAN like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="安检告知单号：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="7" HorizontalAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="8" Text="{m:Bind Path=f_renow_id}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_renow_id"  Operator="f_renow_id like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="安检开始日期：" Margin="0,7,0,1"  HorizontalAlignment="Right" Grid.Column="9"/>
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_anjianriqi}" Margin="0"  Height="25" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="10" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_anjianriqi" Value="{m:Exp Str=SysTime.MonthsBeforeToday(1)}"
+								Operator=" substring(ARRIVAL_TIME,1,10) >= substring('this',1,10)"/>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="安检截至日期：" Margin="0,7,0,1"  HorizontalAlignment="Right" Grid.Column="11"/>
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_anjianriqi2}" Margin="0"  Height="25" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="12" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_anjianriqi2" Value="{m:Exp Str=SysTime.Today}"
+								Operator=" substring(ARRIVAL_TIME,1,10) ^= substring('this',1,10)"/>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+
+                            <TextBlock TextWrapping="Wrap" Text="小区条件" Margin="16,4,0,4" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" />
+                            <TextBlock TextWrapping="Wrap" Text="小区性质：" Margin="5,4,0,4" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right"/>
+                            <ComboBox  SelectedValue="{m:Bind Path=f_property}" Grid.Row="3" Grid.Column="2" ItemsSource="{m:Exp Str=propertylist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_property"  Operator="f_property like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+
+                            <TextBlock TextWrapping="Wrap" Text="供暖方式：" Margin="5,4,0,4" Grid.Column="3" Grid.Row="3" HorizontalAlignment="Right"/>
+                            <ComboBox  SelectedValue="{m:Bind Path=f_gongnuan}" Grid.Row="3" Grid.Column="4" ItemsSource="{m:Exp Str=gongnuanlist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_gongnuan"  Operator="f_gongnuan like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="租住：" Margin="5,4,0,4" Grid.Column="5" Grid.Row="3" HorizontalAlignment="Right"/>
+                            <ComboBox  SelectedValue="{m:Bind Path=f_zuzhu}" Grid.Row="3" Grid.Column="6" ItemsSource="{m:Exp Str=zuzhulist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_zuzhu"  Operator="f_zuzhu like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="是否重点用户：" Margin="5,4,0,4" Grid.Column="7" Grid.Row="3" HorizontalAlignment="Right"/>
+                            <ComboBox  Name="ttttt" SelectedValue="{m:Bind Path=f_iszhongdian}" Grid.Row="3" Grid.Column="8" ItemsSource="{m:Exp Str=iszhongdianlist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_iszhongdian"  Operator="f_iszhongdian like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="用气设备：" Margin="5,4,0,4" Grid.Column="9" Grid.Row="3" HorizontalAlignment="Right"/>
+                            <ComboBox  SelectedValue="{m:Bind Path=f_devices}" Grid.Row="3" Grid.Column="10" ItemsSource="{m:Exp Str=deviceslist}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_devices"  Operator="f_devices like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="设备条件" Margin="16,4,0,4" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" />
+                            <CheckBox Content="报警器" Grid.Column="1" Grid.Row="5" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_baojingqi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_baojingqi"  Operator="f_baojingqi = CASE WHEN 'True'= 'this' THEN '有' ELSE '无' END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="已到期" Grid.Column="2" Grid.Row="5" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_alarm_expire_time}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_alarm_expire_time"  Operator="f_alarm_expire_time is not null and substring(CONVERT(varchar(50),GETDATE(),120),1,7)- substring(CONVERT(varchar(50),f_alarm_expire_time,120),1,7)>0"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="热水器" Grid.Column="1" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_rshqshiyong}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_rshqshiyong"  Operator="f_rshqshiyong = CASE WHEN 'True'= 'this' THEN 0 ELSE 1 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="已到期" Grid.Column="2" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_expire_time}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_expire_time"  Operator="f_heater_expire_time is not null and substring(CONVERT(varchar(50),GETDATE(),120),1,7)- substring(CONVERT(varchar(50),f_heater_expire_time,120),1,7)>0"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="超期使用" Grid.Column="3" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_overdue}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_overdue"  Operator="f_heater_overdue = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="软管连接" Grid.Column="4" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_softconnector}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_softconnector"  Operator="f_heater_softconnector = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="未排室外" Grid.Column="5" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_trapped}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_trapped"  Operator="f_heater_trapped = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="直排" Grid.Column="6" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_emit}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_emit"  Operator="f_heater_emit = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="7" Grid.Row="6" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_heater_leakage}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_heater_leakage"  Operator="f_heater_leakage = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="灶具" Grid.Column="1" Grid.Row="7" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_zjshiyong}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_zjshiyong"  Operator="f_zjshiyong = CASE WHEN 'True'= 'this' THEN 0 ELSE 1 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="已到期" Grid.Column="2" Grid.Row="7" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_cooker_expire_time}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_cooker_expire_time"  Operator="f_cooker_expire_time is not null and substring(CONVERT(varchar(50),GETDATE(),120),1,7)- substring(CONVERT(varchar(50),f_cooker_expire_time,120),1,7)>0"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="超期使用" Grid.Column="3" Grid.Row="7" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_cooker_overdue}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_cooker_overdue"  Operator="f_cooker_overdue = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="无熄火保护" Grid.Column="4" Grid.Row="7" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_cooker_nofireprotection}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_cooker_nofireprotection"  Operator="f_cooker_nofireprotection = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="5" Grid.Row="7" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_cooker_leakage}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_cooker_leakage"  Operator="f_cooker_leakage = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="挂壁炉" Grid.Column="1" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_bglshiyong}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_bglshiyong"  Operator="f_bglshiyong = CASE WHEN 'True'= 'this' THEN 0 ELSE 1 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="已到期" Grid.Column="2" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_expire_time}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_expire_time"  Operator="f_furnace_expire_time is not null and substring(CONVERT(varchar(50),GETDATE(),120),1,7)- substring(CONVERT(varchar(50),f_furnace_expire_time,120),1,7)>0"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="超期使用" Grid.Column="3" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_overdue}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_overdue"  Operator="f_furnace_overdue = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="软管连接" Grid.Column="4" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_softconnector}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_softconnector"  Operator="f_furnace_softconnector = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="未排室外" Grid.Column="5" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_trapped}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_trapped"  Operator="f_furnace_trapped = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="直排" Grid.Column="6" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_emit}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_emit"  Operator="f_furnace_emit = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="7" Grid.Row="8" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_furnace_leakage}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_furnace_leakage"  Operator="f_furnace_leakage = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="燃气表" IsEnabled="False"  Grid.Column="1" Grid.Row="9" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" />
+                            <CheckBox Content="已到期" Grid.Column="2" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_meter_manufacture_date}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meter_manufacture_date"  Operator="f_meter_manufacture_date is not null and substring(CONVERT(varchar(50),GETDATE(),120),1,7)- substring(CONVERT(varchar(50),f_meter_manufacture_date,120),1,7)>3650"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="死表" Grid.Column="3" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_sibiao}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_sibiao"  Operator="f_sibiao = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="常通" Grid.Column="4" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_changtong}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_changtong"  Operator="f_changtong = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="反装" Grid.Column="5" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_fanzhuang}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_fanzhuang"  Operator="f_fanzhuang = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="6" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_qblouqi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_qblouqi"  Operator="f_qblouqi = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="气量不符" Grid.Column="7" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_reading_mismatch}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_reading_mismatch"  Operator="f_reading_mismatch = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="包裹" Grid.Column="8" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_meter_wrapped}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meter_wrapped"  Operator="f_meter_wrapped = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="挂物" Grid.Column="9" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_meter_hanger}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meter_hanger"  Operator="f_meter_hanger = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="近火源或电源" Grid.Column="10" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_meter_nearfire}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meter_nearfire"  Operator="f_meter_nearfire = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="不便维修" Grid.Column="11" Grid.Row="9" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_meter_unfavorable}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meter_unfavorable"  Operator="f_meter_unfavorable = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="立管" IsEnabled="False"  Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" />
+                            <CheckBox Content="包裹" Grid.Column="2" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgbaoguo}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgbaoguo"  Operator="f_lgbaoguo = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="挂物" Grid.Column="3" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgguawu}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgguawu"  Operator="f_lgguawu = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="电源火源近" Grid.Column="4" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lghuoyuan}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lghuoyuan"  Operator="f_lghuoyuan = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="未固定" Grid.Column="5" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgweiguding}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgweiguding"  Operator="f_lgweiguding = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="穿越禁止区域" Grid.Column="6" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgchuanyue}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgchuanyue"  Operator="f_lgchuanyue = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="不便维修" Grid.Column="7" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgbubianweixiu}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgbubianweixiu"  Operator="f_lgbubianweixiu = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="腐蚀" Grid.Column="8" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgfushi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgfushi"  Operator="f_lgfushi = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="私改" Grid.Column="9" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lgsigai}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lgsigai"  Operator="f_lgsigai = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="10" Grid.Row="10" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_lglouqi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_lglouqi"  Operator="f_lglouqi = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+
+                            <CheckBox Content="表后管" IsEnabled="False"  Grid.Column="1" Grid.Row="11" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" />
+                            <CheckBox Content="包管" Grid.Column="2" Grid.Row="11" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_bhgbaoguan}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_bhgbaoguan"  Operator="f_bhgbaoguan = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="3" Grid.Row="11" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_bhglouqi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_bhglouqi"  Operator="f_bhglouqi = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="与电源过近" Grid.Column="4" Grid.Row="11" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_bhgdianyuan}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_bhgdianyuan"  Operator="f_bhgdianyuan = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+
+                            <CheckBox Content="灶具连接管正常" Grid.Column="1"  Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpgzhengchang}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" FontSize="11">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpgzhengchang"  Operator="f_jpgzhengchang = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="漏气" Grid.Column="2" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpglouqi}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpglouqi"  Operator="f_jpglouqi = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="老化" Grid.Column="3" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpglaohua}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpglaohua"  Operator="f_jpglaohua = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="过长" Grid.Column="4" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpgguochang}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpgguochang"  Operator="f_jpgguochang = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="无管夹" Grid.Column="5" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpgwuguanjia}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpgwuguanjia"  Operator="f_jpgwuguanjia = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="穿墙或吊顶" Grid.Column="6" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpgdiaoding}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpgdiaoding"  Operator="f_jpgdiaoding = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="暗埋" Grid.Column="7" Grid.Row="12" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_jpganmai}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_jpganmai"  Operator="f_jpganmai = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+
+                            <CheckBox Content="其他隐患" IsEnabled="False"  Grid.Column="1" Grid.Row="13" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top" />
+                            <CheckBox Content="密闭式厨房" Grid.Column="2" Grid.Row="13" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_precaution_kitchen}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_precaution_kitchen"  Operator="f_precaution_kitchen = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="开放式" Grid.Column="3" Grid.Row="13" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_precaution_openkitchen}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_precaution_openkitchen"  Operator="f_precaution_openkitchen = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <CheckBox Content="多种火源" Grid.Column="4" Grid.Row="13" IsThreeState="True" Click="CheckBox_Click" IsChecked="{m:Bind Path=f_precaution_multisource}" HorizontalAlignment="Left" Margin="5,6,0,0"  VerticalAlignment="Top">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_precaution_multisource"  Operator="f_precaution_multisource = CASE WHEN 'True'= 'this' THEN 1 ELSE 0 END"/>
+                                </a:Data.Prop>
+                            </CheckBox>
+                            <TextBlock TextWrapping="Wrap" Text="更改用途：" Margin="5,6,0,4" Grid.Column="5" Grid.Row="13" HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="6" Grid.Row="13" Text="{m:Bind Path=f_precaution_otheruse}" Width="Auto" Margin="0" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_precaution_otheruse"  Operator="f_precaution_otheruse like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="表前阀：" Margin="5,6,0,4" Grid.Column="1" Grid.Row="14" HorizontalAlignment="Right" />
+
+                            <ComboBox Name="f_biaoqianfa" SelectedValue="{m:Bind Path=f_biaoqianfa}" Grid.Column="2" Grid.Row="14" ItemsSource="{m:Exp Str=lqsx}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_biaoqianfa"  Operator="f_biaoqianfa like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="灶前阀：" Margin="5,6,0,4" Grid.Column="3" Grid.Row="14" HorizontalAlignment="Right" />
+
+                            <ComboBox Name="f_zaoqianfa" SelectedValue="{m:Bind Path=f_zaoqianfa}" Grid.Column="4" Grid.Row="14"  ItemsSource="{m:Exp Str=lqsx}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_zaoqianfa"  Operator="f_zaoqianfa like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="自闭阀：" Margin="5,6,0,4" Grid.Column="5" Grid.Row="14" HorizontalAlignment="Right" />
+
+                            <ComboBox Name="f_zibifa"  SelectedValue="{m:Bind Path=f_zibifa}" Grid.Column="6" Grid.Row="14"  ItemsSource="{m:Exp Str=lqsx}" SelectedValuePath="code"  Margin="0" DisplayMemberPath="name"   Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_zibifa"  Operator="f_zibifa like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+
+                            <Button Content="查询" x:Name="areasearchbutton" Click="{m:Exp Str=areafilesearch.DataContext.Search()}" Grid.Column="10" Grid.Row="14" Margin="0,1,0,1" HorizontalAlignment="Right" Width="70"  Style="{StaticResource 查询btn}"/>
+                            <Button Content="计算合计" x:Name="chongzhi" Click="so_heji" Grid.Column="11" Grid.Row="14"  HorizontalAlignment="Left" Width="auto" Margin="5,0,0,0" Grid.RowSpan="1" />
+                            <Button Content="导出统计" Visibility="Collapsed" x:Name="exportBtn" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Column="12" Grid.Row="14"  HorizontalAlignment="Left" Width="auto" Margin="5,0,0,0" />
+
+
+                        </Grid>
+                    </toolkit:DockPanel>
+                    <sdk:DataGrid x:Name="areafiles" Margin="0" AutoGenerateColumns="False" Width="Auto" IsReadOnly="True" Height="Auto" >
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="街道" Binding="{Binding ROAD}" />
+                            <sdk:DataGridTextColumn Header="小区" Binding="{Binding UNIT_NAME}" />
+                            <sdk:DataGridTextColumn Header="用户数" Binding="{Binding YONGHS}" />
+                            <sdk:DataGridTextColumn Header="已安检" Binding="{Binding YIAJ}" />
+                            <sdk:DataGridTextColumn Header="无人" Binding="{Binding WUREN}" />
+                            <sdk:DataGridTextColumn Header="拒检" Binding="{Binding JUJIAN}" />
+                            <sdk:DataGridTextColumn Header="壁挂炉供暖" Binding="{Binding GUABLGN}" />
+                            <sdk:DataGridTextColumn Header="集中供暖" Binding="{Binding JIZHGN}" />
+                            <sdk:DataGridTextColumn Header="燃气取暖器供暖" Binding="{Binding QUNQGN}" />
+                            <sdk:DataGridTextColumn Header="其他" Binding="{Binding QIT}" />
+                            <sdk:DataGridTextColumn Header="不是重点户" Binding="{Binding BUSZDH}" />
+                            <sdk:DataGridTextColumn Header="气量出入" Binding="{Binding QILCR}" />
+                            <sdk:DataGridTextColumn Header="重大隐患" Binding="{Binding ZHONGDYH}" />
+                            <sdk:DataGridTextColumn Header="孤寡老人" Binding="{Binding GUGLR}" />
+                            <sdk:DataGridTextColumn Header="安置小区" Binding="{Binding ANZHXQ}" />
+                            <sdk:DataGridTextColumn Header="企事业单位" Binding="{Binding QISHIYDW}" />
+                            <sdk:DataGridTextColumn Header="物业小区" Binding="{Binding WUYXQ}" />
+                            <sdk:DataGridTextColumn Header="自建房" Binding="{Binding ZIJF}" />
+                            <sdk:DataGridTextColumn Header="餐饮" Binding="{Binding CAIY}" />
+                            <sdk:DataGridTextColumn Header="普通居住" Binding="{Binding PUTJZ}" />
+                            <sdk:DataGridTextColumn Header="托管培训" Binding="{Binding TUOGPX}" />
+                            <sdk:DataGridTextColumn Header="办公" Binding="{Binding BANG}" />
+                            <sdk:DataGridTextColumn Header="集体宿舍" Binding="{Binding JITSS}" />
+                            <sdk:DataGridTextColumn Header="不是租住户" Binding="{Binding FOU}" />
+                            
+                            <sdk:DataGridTextColumn Header="是否换表" Binding="{Binding RQBHB}" />
+                            <sdk:DataGridTextColumn Header="燃气表故障" Binding="{Binding RQBGZ}" />
+                            <sdk:DataGridTextColumn Header="死表" Binding="{Binding RQBSB}" />
+                            <sdk:DataGridTextColumn Header="常通" Binding="{Binding RQBCT}" />
+                            <sdk:DataGridTextColumn Header="反装" Binding="{Binding RQBFZ}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding RQBLQ}" />
+                            <sdk:DataGridTextColumn Header="气量不符" Binding="{Binding RQBDS}" />
+                            <sdk:DataGridTextColumn Header="燃气表隐患" Binding="{Binding RQBYH}" />
+                            <sdk:DataGridTextColumn Header="包裹" Binding="{Binding RQBBG}" />
+                            <sdk:DataGridTextColumn Header="挂物" Binding="{Binding RQBGW}" />
+                            <sdk:DataGridTextColumn Header="近火源或电源" Binding="{Binding RQBJHY}" />
+                            <sdk:DataGridTextColumn Header="不便维修" Binding="{Binding RQBBBWX}" />
+                            
+                            <sdk:DataGridTextColumn Header="报警器安装" Binding="{Binding BAOJQ}" />
+                            <sdk:DataGridTextColumn Header="报警器到期" Binding="{Binding BAOJQDQ}" />
+                            
+                            <sdk:DataGridTextColumn Header="热水器安装" Binding="{Binding RESQ}" />
+                            <sdk:DataGridTextColumn Header="热水器到期" Binding="{Binding RESQDQ}" />
+                            <sdk:DataGridTextColumn Header="热水器隐患" Binding="{Binding RESQYH}" />
+                            <sdk:DataGridTextColumn Header="超期使用" Binding="{Binding RESQCQ}" />
+                            <sdk:DataGridTextColumn Header="软管连接" Binding="{Binding RESQRGLJ}" />
+                            <sdk:DataGridTextColumn Header="未排除室外" Binding="{Binding RESQWPSW}" />
+                            <sdk:DataGridTextColumn Header="直排" Binding="{Binding RESQZP}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding RESQLQ}" />
+                            
+                            <sdk:DataGridTextColumn Header="灶具安装" Binding="{Binding ZAOJ}" />
+                            <sdk:DataGridTextColumn Header="灶具到期" Binding="{Binding ZAOJDQ}" />
+                            <sdk:DataGridTextColumn Header="灶具隐患" Binding="{Binding ZAOJYH}" />
+                            <sdk:DataGridTextColumn Header="超期使用" Binding="{Binding ZAOJCQSY}" />
+                            <sdk:DataGridTextColumn Header="无熄火保护" Binding="{Binding ZAOJWBH}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding ZAOJLQ}" />
+                            
+                            <sdk:DataGridTextColumn Header="挂壁炉安装" Binding="{Binding GUABZ}" />
+                            <sdk:DataGridTextColumn Header="挂壁炉到期" Binding="{Binding GUABZDQ}" />
+                            <sdk:DataGridTextColumn Header="挂壁炉隐患" Binding="{Binding GUABZYH}" />
+                            <sdk:DataGridTextColumn Header="超期使用" Binding="{Binding GUABZCQSY}" />
+                            <sdk:DataGridTextColumn Header="软管连接" Binding="{Binding GUABZRGLJ}" />
+                            <sdk:DataGridTextColumn Header="直排" Binding="{Binding GUABZZP}" />
+                            <sdk:DataGridTextColumn Header="未排除室外" Binding="{Binding GUABZWPSW}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding GUABZLQ}" />
+                            
+                            <sdk:DataGridTextColumn Header="立管隐患" Binding="{Binding LGYH}" />
+                            <sdk:DataGridTextColumn Header="包裹" Binding="{Binding LGBG}" />
+                            <sdk:DataGridTextColumn Header="挂物" Binding="{Binding LGGW}" />
+                            <sdk:DataGridTextColumn Header="与电源火源过近" Binding="{Binding LGHYJ}" />
+                            <sdk:DataGridTextColumn Header="未固定" Binding="{Binding LGWGD}" />
+                            <sdk:DataGridTextColumn Header="穿越禁止区域" Binding="{Binding LGCYJQ}" />
+                            <sdk:DataGridTextColumn Header="不便维修" Binding="{Binding LGBBWX}" />
+                            <sdk:DataGridTextColumn Header="腐蚀" Binding="{Binding LGFS}" />
+                            <sdk:DataGridTextColumn Header="私改" Binding="{Binding LGSG}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding LGLQ}" />
+                            
+                            <sdk:DataGridTextColumn Header="表后管隐患" Binding="{Binding BHGYH}" />
+                            <sdk:DataGridTextColumn Header="包管" Binding="{Binding BHGBG}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding BHGLQ}" />
+                            <sdk:DataGridTextColumn Header="与电源过近" Binding="{Binding BHGDYJ}" />
+
+                            <sdk:DataGridTextColumn Header="灶具连接管正常" Binding="{Binding JBGZC}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管漏气" Binding="{Binding JBGLQ}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管老化" Binding="{Binding JBGLH}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管过长" Binding="{Binding JBGGC}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管无管夹" Binding="{Binding JBGWJG}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管穿墙吊顶" Binding="{Binding JBGDD}" />
+                            <sdk:DataGridTextColumn Header="灶具连接管暗埋" Binding="{Binding JBGAM}" />
+
+                            <sdk:DataGridTextColumn Header="表前阀隐患" Binding="{Binding BQFYH}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding BQFLQ}" />
+                            <sdk:DataGridTextColumn Header="失效" Binding="{Binding BQFSX}" />
+                            <sdk:DataGridTextColumn Header="自闭阀隐患" Binding="{Binding ZBFYH}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding ZBFLQ}" />
+                            <sdk:DataGridTextColumn Header="失效" Binding="{Binding ZBFSX}" />
+                            <sdk:DataGridTextColumn Header="灶前阀隐患" Binding="{Binding ZQFYH}" />
+                            <sdk:DataGridTextColumn Header="漏气" Binding="{Binding ZQFLQ}" />
+                            <sdk:DataGridTextColumn Header="失效" Binding="{Binding ZQFSX}" />                          
+                            
+                            <sdk:DataGridTextColumn Header="其他隐患" Binding="{Binding QTYH}" />
+                            <sdk:DataGridTextColumn Header="密闭式厨房" Binding="{Binding QTFBCF}" />
+                            <sdk:DataGridTextColumn Header="开放式" Binding="{Binding QTKFS}" />
+                            <sdk:DataGridTextColumn Header="多种火源" Binding="{Binding QTDZHY}" />
+
+                            <sdk:DataGridTextColumn Header="更改用途" Binding="{Binding QTGGYT}" />
+                            <sdk:DataGridTextColumn Header="隐患合计" Binding="{Binding YHHJ}" />
+                            <sdk:DataGridTextColumn Header="需要维修" Binding="{Binding NEEDS_REPAIR}" />
+                            <sdk:DataGridTextColumn Header="未维修" Binding="{Binding REPAIR_STATE}" />
+                            <sdk:DataGridTextColumn Header="安检告知单发放数" Binding="{Binding F_RENOW_ID}" />
+                            
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+
+                </toolkit:DockPanel>
+                <!--  </Border>
+           </c:BusyIndicatorEx> -->
+                <Grid Grid.Row="2" x:Name="hejiitems" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock TextWrapping="Wrap" Text="数据统计：" Margin="5,4,0,4" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
+                    <TextBlock TextWrapping="Wrap" Text="小区数：" Margin="5,4,0,4" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" Grid.Column="2" Text="{m:Bind Path=XIAOQS}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="XIAOQS" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="用户数：" Margin="5,4,0,4" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" Grid.Column="4" Text="{m:Bind Path=YONGHS}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="YONGHS" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="已安检：" Margin="5,4,0,4" Grid.Row="1" Grid.Column="5" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" Grid.Column="6" Text="{m:Bind Path=YIAJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="YIAJ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="无人：" Grid.Column="7" Grid.Row="1" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="8" Grid.Row="1" Text="{m:Bind Path=WUREN}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="WUREN" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="拒检：" Grid.Row="1" Grid.Column="9" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="10" Grid.Row="1" Text="{m:Bind Path=JUJIAN}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JUJIAN" />
+                        </a:Data.Prop>
+                    </TextBox>
+
+                    <TextBlock TextWrapping="Wrap" Text="壁挂炉供暖：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Grid.Column="2" Text="{m:Bind Path=GUABLGN}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABLGN" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="集中供暖：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Grid.Column="4" Text="{m:Bind Path=JIZHGN}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JIZHGN" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="燃气取暖器供暖：" Margin="5,4,0,4" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Grid.Column="6" Text="{m:Bind Path=QUNQGN}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QUNQGN" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="其他：" Grid.Column="7" Grid.Row="2" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="8" Grid.Row="2" Text="{m:Bind Path=QIT}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QIT" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="不是重点户：" Grid.Row="3" Grid.Column="1" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="2" Grid.Row="3" Text="{m:Bind Path=BUSZDH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BUSZDH" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="3" Text="气量出入：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="3" Grid.Column="4" Text="{m:Bind Path=QILCR}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QILCR" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="3" Text="重大隐患："  Grid.Column="5" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="3" Grid.Column="6" Text="{m:Bind Path=ZHONGDYH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZHONGDYH" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="3" Text="孤寡老人："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="3" Grid.Column="8" Text="{m:Bind Path=GUGLR}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUGLR" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="安置小区：" Margin="5,4,0,4" Grid.Row="4"  Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="4"  Grid.Column="2" Text="{m:Bind Path=ANZHXQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ANZHXQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="企事业单位：" Margin="5,4,0,4" Grid.Row="4"  Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="4"  Grid.Column="4" Text="{m:Bind Path=QISHIYDW}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QISHIYDW" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="物业小区：" Margin="5,4,0,4" Grid.Row="4"  Grid.Column="5" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="4"  Grid.Column="6" Text="{m:Bind Path=WUYXQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="WUYXQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="自建房：" Grid.Column="7" Grid.Row="4"  Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="8" Grid.Row="4"  Text="{m:Bind Path=ZIJF}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZIJF" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="餐饮：" Grid.Row="5"  Grid.Column="1" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="2" Grid.Row="5"  Text="{m:Bind Path=CAIY}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="CAIY" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="5"  Grid.Column="3" Text="普通居住：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5"  Grid.Column="4" Text="{m:Bind Path=PUTJZ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="PUTJZ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="5"  Text="托管培训："  Grid.Column="5" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5"  Grid.Column="6" Text="{m:Bind Path=TUOGPX}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="TUOGPX" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="5"  Text="办公："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5"  Grid.Column="8" Text="{m:Bind Path=BANG}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BANG" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="5"  Text="集体宿舍："  Grid.Column="9" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5"  Grid.Column="10" Text="{m:Bind Path=JITSS}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JITSS" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="5"  Text="不是租住户："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5"  Grid.Column="12" Text="{m:Bind Path=FOU}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="FOU" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="用户设备：" Grid.Row="6"  Grid.Column="1" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="2" Grid.Row="6"  Text="{m:Bind Path=SBHJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="SBHJ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="6"  Grid.Column="3" Text="单灶：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="6"  Grid.Column="4" Text="{m:Bind Path=SBDJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="SBDJ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="6"  Text="灶具+热水器："  Grid.Column="5" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="6"  Grid.Column="6" Text="{m:Bind Path=SBRSQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="SBRSQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="6"  Text="灶具+壁挂炉："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="6"  Grid.Column="8" Text="{m:Bind Path=SBBG}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="SBBG" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="6"  Text="灶具+燃气取暖器："  Grid.Column="9" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="6"  Grid.Column="10" Text="{m:Bind Path=SBQN}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="SBQN" />
+                        </a:Data.Prop>
+                    </TextBox>
+
+
+                    <TextBlock TextWrapping="Wrap" Text="设备合计：" Margin="5,4,0,4" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right"/>
+                    <TextBlock TextWrapping="Wrap" Text="报警器安装：" Margin="5,4,0,4" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="8" Grid.Column="2" Text="{m:Bind Path=BAOJQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BAOJQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="报警器到期：" Margin="5,4,0,4" Grid.Row="8" Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="8" Grid.Column="4" Text="{m:Bind Path=BAOJQDQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BAOJQDQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="热水器安装：" Margin="5,4,0,4" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="2" Text="{m:Bind Path=RESQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="热水器到期：" Grid.Column="3" Grid.Row="9" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="4" Grid.Row="9" Text="{m:Bind Path=RESQDQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQDQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="热水器隐患：" Grid.Row="9" Grid.Column="5" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="6" Grid.Row="9" Text="{m:Bind Path=RESQYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQYH" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="8" Grid.Row="9" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="9" Grid.Column="9" Text="超期使用：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="10" Text="{m:Bind Path=RESQCQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQCQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="9" Text="软管连接："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="12" Text="{m:Bind Path=RESQRGLJ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQRGLJ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="9" Grid.Column="13" Text="未排除室外：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="14" Text="{m:Bind Path=RESQWPSW}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQWPSW"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="9" Grid.Column="15" Text="直排：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="16" Text="{m:Bind Path=RESQZP}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQZP"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="9" Text="漏气："  Grid.Column="17" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="9" Grid.Column="18" Text="{m:Bind Path=RESQLQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RESQLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Grid.Column="1" Text="灶具安装：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="2" Text="{m:Bind Path=ZAOJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Text="灶具到期："  Grid.Column="3" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="4" Text="{m:Bind Path=ZAOJDQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJDQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Text="灶具隐患："  Grid.Column="5" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="6" Text="{m:Bind Path=ZAOJYH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJYH" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="8" Grid.Row="10" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Grid.Column="9" Text="超期使用：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="10" Text="{m:Bind Path=ZAOJCQSY}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJCQSY"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Text="无熄火保护："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="12" Text="{m:Bind Path=ZAOJWBH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJWBH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="10" Grid.Column="13" Text="漏气：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="10" Grid.Column="14" Text="{m:Bind Path=ZAOJLQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZAOJLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+
+                    <TextBlock TextWrapping="Wrap" Text="挂壁炉安装：" Margin="5,4,0,4" Grid.Row="11" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="2" Text="{m:Bind Path=GUABZ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="挂壁炉到期：" Margin="5,4,0,4" Grid.Row="11" Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="4" Text="{m:Bind Path=GUABZDQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZDQ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="挂壁炉隐患：" Margin="5,4,0,4" Grid.Row="11" Grid.Column="5" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="6" Text="{m:Bind Path=GUABZYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="8" Grid.Row="11" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="11" Grid.Column="9" Text="超期使用：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="10" Text="{m:Bind Path=GUABZCQSY}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZCQSY"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="11" Text="软管连接："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="12" Text="{m:Bind Path=GUABZRGLJ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZRGLJ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="11" Grid.Column="13" Text="直排：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="14" Text="{m:Bind Path=GUABZZP}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZZP"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="11" Grid.Column="15" Text="未排除室外：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="16" Text="{m:Bind Path=GUABZWPSW}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZWPSW"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="11" Text="漏气："  Grid.Column="17" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="11" Grid.Column="18" Text="{m:Bind Path=GUABZLQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="GUABZLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="立管隐患：" Grid.Column="1" Grid.Row="12" Margin="5,4,0,4" HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="2" Grid.Row="12" Text="{m:Bind Path=LGYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="12" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Grid.Column="5" Text="包裹：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="6" Text="{m:Bind Path=LGBG}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGBG"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Text="挂物："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="8" Text="{m:Bind Path=LGGW}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGGW"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Grid.Column="9" Text="与电源火源过近：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="10" Text="{m:Bind Path=LGHYJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGHYJ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Text="未固定："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="12" Text="{m:Bind Path=LGWGD}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGWGD"  />
+                        </a:Data.Prop>
+                    </TextBox>
+
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Grid.Column="13" Text="穿越禁止区域：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="14" Text="{m:Bind Path=LGCYJQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGCYJQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Grid.Column="15" Text="不便维修：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="16" Text="{m:Bind Path=LGBBWX}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGBBWX"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="12" Text="腐蚀："  Grid.Column="17" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="12" Grid.Column="18" Text="{m:Bind Path=LGFS}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGFS"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="13" Grid.Column="5" Text="私改：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="13" Grid.Column="6" Text="{m:Bind Path=LGSG}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGSG"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="13" Text="漏气："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="13" Grid.Column="8" Text="{m:Bind Path=LGLQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="LGLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+
+                    <TextBlock TextWrapping="Wrap" Text="表后管隐患：" Grid.Row="14" Grid.Column="1" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Column="2" Grid.Row="14" Text="{m:Bind Path=BHGYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BHGYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="14" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="14" Grid.Column="5" Text="包管：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="14" Grid.Column="6" Text="{m:Bind Path=BHGBG}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BHGBG"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="14" Text="漏气："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="14" Grid.Column="8" Text="{m:Bind Path=BHGLQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BHGLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="14" Grid.Column="9" Text="与电源过近：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="14" Grid.Column="10" Text="{m:Bind Path=BHGDYJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BHGDYJ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="15" Grid.Column="1" Text="表前阀隐患：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="15" Grid.Column="2" Text="{m:Bind Path=BQFYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BQFYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="15" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="15" Grid.Column="5" Text="漏气：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="15" Grid.Column="6" Text="{m:Bind Path=BQFLQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BQFLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="15" Text="失效："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="15" Grid.Column="8" Text="{m:Bind Path=BQFSX}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="BQFSX"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="16" Text="自闭阀隐患："  Grid.Column="1" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="16" Grid.Column="2" Text="{m:Bind Path=ZBFYH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZBFYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="16" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="16" Grid.Column="5" Text="漏气：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="16" Grid.Column="6" Text="{m:Bind Path=ZBFLQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZBFLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="16" Text="失效："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="16" Grid.Column="8" Text="{m:Bind Path=ZBFSX}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZBFSX"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="17" Text="灶前阀隐患："  Grid.Column="1" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="17" Grid.Column="2" Text="{m:Bind Path=ZQFYH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZQFYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="17" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="17" Grid.Column="5" Text="漏气：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="17" Grid.Column="6" Text="{m:Bind Path=ZQFLQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZQFLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="17" Text="失效："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="17" Grid.Column="8" Text="{m:Bind Path=ZQFSX}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="ZQFSX"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="18" Grid.Column="1" Text="是否换表：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="18" Grid.Column="2" Text="{m:Bind Path=RQBHB}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBHB"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Grid.Column="1" Text="燃气表故障：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="2" Text="{m:Bind Path=RQBGZ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBGZ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="19" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Text="死表："  Grid.Column="5" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="6" Text="{m:Bind Path=RQBSB}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBSB"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Text="常通："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="8" Text="{m:Bind Path=RQBCT}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBCT"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Grid.Column="9" Text="反装：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="10" Text="{m:Bind Path=RQBFZ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBFZ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Text="漏气："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="12" Text="{m:Bind Path=RQBLQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Text="气量不符："  Grid.Column="13" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="14" Text="{m:Bind Path=RQBDS}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBDS"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="19" Text="到期数："  Grid.Column="15" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="19" Grid.Column="16" Text="{m:Bind Path=RQBDQ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBDQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="20" Grid.Column="1" Text="燃气表隐患：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="20" Grid.Column="2" Text="{m:Bind Path=RQBYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="20" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="20" Grid.Column="5" Text="包裹：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="20" Grid.Column="6" Text="{m:Bind Path=RQBBG}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBBG"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="20" Text="挂物："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="20" Grid.Column="8" Text="{m:Bind Path=RQBGW}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBGW"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="20" Text="近火源或电源："  Grid.Column="9" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="20" Grid.Column="10" Text="{m:Bind Path=RQBJHY}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBJHY"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="20" Text="不便维修："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="20" Grid.Column="12" Text="{m:Bind Path=RQBBBWX}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="RQBBBWX"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="灶具连接管：" Margin="5,4,0,4" Grid.Row="21" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="2" Text="{m:Bind Path=JBGYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="21" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Grid.Column="5" Text="漏气：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="6" Text="{m:Bind Path=JBGLQ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGLQ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Text="老化："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="8" Text="{m:Bind Path=JBGLH}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGLH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Text="过长："  Grid.Column="9" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="10" Text="{m:Bind Path=JBGGC}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGGC"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Text="无管夹："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="12" Text="{m:Bind Path=JBGWGJ}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGWGJ"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Text="穿墙吊顶："  Grid.Column="13" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="14" Text="{m:Bind Path=JBGDD}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGDD"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="21" Text="暗埋："  Grid.Column="15" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="21" Grid.Column="16" Text="{m:Bind Path=JBGAM}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="JBGAM"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="其他隐患：" Margin="5,4,0,4" Grid.Row="22" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="22" Grid.Column="2" Text="{m:Bind Path=QTYH}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QTYH"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="分项：" Grid.Column="4" Grid.Row="22" Margin="5,4,0,4" HorizontalAlignment="Right" Foreground="Red" />
+                    <TextBlock TextWrapping="Wrap" Grid.Row="22" Grid.Column="5" Text="密闭式厨房：" Margin="5,4,0,4"  HorizontalAlignment="Right"/>
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="22" Grid.Column="6" Text="{m:Bind Path=QTFBCF}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QTFBCF"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="22" Text="开放式："  Grid.Column="7" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="22" Grid.Column="8" Text="{m:Bind Path=QTKFS}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QTKFS"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="22" Text="多种火源："  Grid.Column="9" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="22" Grid.Column="10" Text="{m:Bind Path=QTDZHY}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QTDZHY"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Grid.Row="22" Text="更改用途："  Grid.Column="11" Margin="0,7,0,1"  HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="22" Grid.Column="12" Text="{m:Bind Path=QTGGYT}" Width="60" Margin="0,4,0,27" Height="25" Grid.RowSpan="2" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="QTGGYT"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="隐患合计：" Margin="5,4,0,4" Grid.Row="23" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="23" Grid.Column="2" Text="{m:Bind Path=YHHJ}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="YHHJ" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="需要维修：" Margin="5,4,0,4" Grid.Row="25" Grid.Column="1" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="25" Grid.Column="2" Text="{m:Bind Path=NEEDS_REPAIR}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="NEEDS_REPAIR" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="未维修：" Margin="5,4,0,4" Grid.Row="25" Grid.Column="3" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="25" Grid.Column="4" Text="{m:Bind Path=REPAIR_STATE}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="REPAIR_STATE" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="安检告知单发放数：" Margin="5,4,0,4" Grid.Row="25" Grid.Column="5" HorizontalAlignment="Right" />
+                    <TextBox TextWrapping="Wrap" IsReadOnly="True" Grid.Row="25" Grid.Column="6" Text="{m:Bind Path=F_RENOW_ID}" Width="60" Margin="0" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="F_RENOW_ID"  />
+                        </a:Data.Prop>
+                    </TextBox>
+
+
+                </Grid>
+
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

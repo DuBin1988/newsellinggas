@@ -1,0 +1,80 @@
+﻿<Window x:Class="Workflow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:Workflow.Model"
+        xmlns:w="clr-namespace:workflow"
+        xmlns:ww="clr-namespace:workflow.Model"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+        xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+        xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+        Title="流程图" Height="768" Width="1024">
+    <Window.Resources>
+        <l:PosConverter x:Key="PosConverter"></l:PosConverter>
+        <ww:TransferConvert x:Key="TransferConvert"></ww:TransferConvert>
+    </Window.Resources>
+
+    <Grid>
+        
+        <DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <StackPanel Height="30" Orientation="Horizontal">
+                    <Button x:Name="ui_NewActivity" Width="60" Margin="2,2" Click="ui_NewServer_Click" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left">添加活动</Button>
+                    <Button x:Name="ui_NewActor"  Margin="2,2"  Height="25" Click="ui_NewActor_Click"  VerticalAlignment="Center" HorizontalAlignment="Left">添加执行者</Button>
+                    <Button x:Name="ui_DelActor"  Margin="2,2"  Height="25" Click="ui_DelActor_Click" VerticalAlignment="Center" HorizontalAlignment="Left">删除执行者</Button>
+                    <!--Button x:Name="ui_UpdActor"  Margin="2,2"  Height="25" Click="ui_UpdActor_Click" VerticalAlignment="Center" HorizontalAlignment="Left">修改执行者</-->
+                </StackPanel>
+            </Grid>
+            <Grid x:Name="ui_Diagram">
+                <!--所有执行者列表-->
+                <ListBox x:Name="ui_ActorListBox" ItemsSource="{Binding Path=Actors}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="50" x:Name="ui_ActorGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="800"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="ui_ActorName" Text="{Binding Path=acName,Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Center" ></TextBox>
+                                <!--执行者的活动列表-->
+                                <Grid Grid.Column="1" MouseDown="Grid_MouseDown" Width="800" Background="Gold">
+                                    <ItemsControl ItemsSource="{Binding Path=Activities}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock MouseLeftButtonDown="Activity_MouseDown" MouseLeftButtonUp="Activity_MouseUp" Text="{Binding Path=ActivityName,Mode=TwoWay}" Margin="{Binding Path=Pos,Mode=OneWay,Converter={StaticResource PosConverter}}"></TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas></Canvas>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <!--转移线列表-->
+                <ListBox x:Name="ui_Transfer" Margin="200,0,0,0" ItemsSource="{Binding Path=Transfer}" Background="{x:Null}" IsHitTestVisible="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <w:Polygen x:Name="ui_line" Start="{Binding Path=Start,Mode=TwoWay,Converter={StaticResource TransferConvert}}" End="{Binding Path=End,Mode=TwoWay,Converter={StaticResource TransferConvert}}" Width="800" Height="600"></w:Polygen>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas></Canvas>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>

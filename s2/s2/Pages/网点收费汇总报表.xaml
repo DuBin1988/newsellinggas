@@ -1,0 +1,608 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.网点收费汇总报表">
+	<Grid>
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<!--付款方式-->
+			<o:ObjectList Name="fukuanfangshilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<!--网点列表对象-->
+			<o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from paramvalue where param.name\=\'网点查询用\' and code \=\'\{infosearch.DataContext.f_filiale\}\'$}"
+			IsOld="{m:Exp Str=fgslist.State\=\=$End$}"/>
+			<!--查询分公司参数-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<!--天然气公司网点-->
+			<o:GeneralObject  Name="trqgswd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'天然气公司\'}"/>
+		   <!--家福营业厅网点-->
+			<o:GeneralObject  Name="jfwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'家福营业厅\'}"/>
+		   <!--银行户县余下支行-->
+			<o:GeneralObject  Name="zhyxwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县余下支行\'}"/>
+		 	<!--户县仪表厂支行-->
+			<o:GeneralObject  Name="zhybcwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县仪表厂支行\'}"/>
+		 	<!--户县支行营业部-->
+			<o:GeneralObject  Name="zhhxzhwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县支行营业部\'}"/>
+		   <!--户县古槐广场支行-->
+			<o:GeneralObject  Name="zhghgcwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县古槐广场支行\'}"/>
+		 	<!--户县展宏路支行-->
+			<o:GeneralObject  Name="zhzhlwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县展宏路支行\'}"/>
+		 	<!--户县人民路分理处-->
+			<o:GeneralObject  Name="zhrmlwd" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_sgnetwork\=\'户县人民路分理处\'}"/>
+		 		<!--合计-->
+			<o:GeneralObject  Name="heji" WebClientInfo="{StaticResource dbclient}" 
+				EntityType="t_sellinggas"  Path="{m:Exp Str=$one/select new Map(count(*) as count\,Sum(f_pregas) as pregas\,sum(cast(f_preamount  as big_decimal)) as preamount\,sum(cast(f_amountmaintenance  as big_decimal)) as amountmaintenance\,sum(cast(f_totalcost  as big_decimal)) as totalcost)  from t_sellinggas where \{searchbutton.DataContext.Condition\} and f_payfeevalid\=\'有效\' }"/>   
+		</m:ResourceLoad>
+		<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=trqgswd.IsBusy or jfwd.IsBusy or zhyxwd.IsBusy or zhybcwd.IsBusy or zhhxzhwd.IsBusy or zhghgcwd.IsBusy or zhzhlwd.IsBusy or zhrmlwd.IsBusy}" >
+		<toolkit:DockPanel >
+			<!--天然气公司网点-->
+			<toolkit:DockPanel x:Name="infosearch"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					
+					<TextBlock TextWrapping="Wrap" Text="开始日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedate}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="120"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedate" Value="{m:Exp Str=SysTime.Today}"
+								Operator=" f_deliverydate >= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="结束日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddate}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="120"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddate" Value="{m:Exp Str=SysTime.Today}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="付款方式：" Margin="5,6,0,6" Height="25"/>
+						
+						<ComboBox Name="fukuanfangshi"   SelectedValue="{m:Bind Path=f_payment}" Grid.Row="1" Grid.Column="3" ItemsSource="{m:Exp Str=fukuanfangshilist}" SelectedValuePath="name"  Margin="0" DisplayMemberPath="name"   Height="25" >
+							
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_payment"  Operator="f_payment = 'this'"/>          
+                    	    </a:Data.Prop>
+						</ComboBox>
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+						
+						<ComboBox Name="Comboxfx"   SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Width="50">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>          
+                    	</a:Data.Prop>
+						</ComboBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						
+						<ComboBox Name="wangdian"   SelectedValue="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3" ItemsSource="{m:Exp Str=wangdianlist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Width="50">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork"  Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</ComboBox>
+				</StackPanel> 		
+				<!--Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=infosearch.DataContext.Search();infosearch1.DataContext.Search();infosearch2.DataContext.Search();infosearch3.DataContext.Search();infosearch4.DataContext.Search();infosearch5.DataContext.Search();infosearch6.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" /-->
+				<Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=infosearch.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />
+				<Button Content="置  空" x:Name="zhikong" Click="{m:Exp Str=infosearch.DataContext.f_startedate\=null;infosearch.DataContext.f_enddate\=null;Comboxfx.SelectedValue\=null;wangdian.SelectedValue\=null;fukuanfangshi.SelectedValue\=null}" Margin="0,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" RenderTransformOrigin="0.14,0.469" />
+				<Button Content="打  印" x:Name="zhikong_Copy"  Click="{m:Exp Str=print.Print()}" Margin="0,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" RenderTransformOrigin="0.14,0.469" />
+			</toolkit:DockPanel>
+			<!--福利气价查询条件>
+			<toolkit:DockPanel x:Name="infosearch1"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					
+					<TextBlock TextWrapping="Wrap" Text="日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedatefuli}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedatefuli" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddatefuli}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddatefuli" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+					<TextBox x:Name="Comboxfx1"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian1" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton1" Click="{m:Exp Str=infosearch1.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			<!--营业气价查询条件>
+			<toolkit:DockPanel x:Name="infosearch2"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					
+					<TextBlock TextWrapping="Wrap" Text="换表日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedateyingye}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedateyingye" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="换表日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddateyingye}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddateyingye" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+						
+					<TextBox x:Name="Comboxfx2"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian2" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton2" Click="{m:Exp Str=infosearch2.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			
+			<!--工业气价查询条件>
+			<toolkit:DockPanel x:Name="infosearch3"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedategongye}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedategongye" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddategongye}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddategongye" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+					<TextBox x:Name="Comboxfx3"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian3" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton3" Click="{m:Exp Str=infosearch3.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			<!--麟游民用气价查询条件>
+			<toolkit:DockPanel x:Name="infosearch4"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedatelymin}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedatelymin" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddatelymin}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddatelymin" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+					<TextBox x:Name="Comboxfx4"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian4" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton4" Click="{m:Exp Str=infosearch4.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			<!--麟游营业气价查询条件>
+			<toolkit:DockPanel x:Name="infosearch5"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedatelyyy}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedatelyyy" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddatelyyy}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddatelyyy" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+					<TextBox x:Name="Comboxfx5"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian5" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton5" Click="{m:Exp Str=infosearch5.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			<!--维护费查询条件>
+			<toolkit:DockPanel x:Name="infosearch6"  toolkit:DockPanel.Dock="Top" Margin="0" Background="#FFCFEFFF" d:LayoutOverrides="Width" Height="35" Visibility="Collapsed" >
+				<a:Data.Context>
+					<o:SearchObject />        	
+				</a:Data.Context>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum1}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum1" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum1}" Operator="f_invoicenum >= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="到：" Margin="5,6,0,6" Height="25"/>
+					<TextBox Text="{m:Bind Path=f_invoicenum2}" Margin="0,6"  Height="25" VerticalAlignment="Stretch" Width="80"  >
+						<a:Data.Prop>
+								<o:PropertySetter PropertyName="f_invoicenum2" Value="{m:Exp Str=infosearch.DataContext.f_invoicenum2}" Operator="f_invoicenum ^= this"/>               
+							</a:Data.Prop>
+					</TextBox>
+					
+					
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_startedatewh}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_startedatewh" Value="{m:Exp Str=infosearch.DataContext.f_startedate}"
+								Operator=" f_deliverydate &gt;= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<TextBlock TextWrapping="Wrap" Text="发卡日期：" Margin="5,6,0,6" Height="25"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=f_enddatelwh}" Margin="0,6"  Height="25" VerticalAlignment="Stretch"  >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_enddatelwh" Value="{m:Exp Str=infosearch.DataContext.f_enddate}"
+								Operator=" f_deliverydate ^= substring('this',1,10)"/>
+						</a:Data.Prop>
+					</sdk:DatePicker>	
+					<TextBlock TextWrapping="Wrap" Text="分公司：" Margin="5,6,0,6" Height="25"/>
+					<TextBox x:Name="Comboxfx6"   Text="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3"  Margin="0"   Height="25" Width="180">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=infosearch.DataContext.f_filiale}" Operator="f_filiale = 'this'"/>          
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="网点：" Margin="5,6,0,6" Height="25"/>
+						<TextBox x:Name="wangdian6" Text="{m:Bind Path=f_sgnetwork}" Grid.Row="1" Grid.Column="3"   Margin="0"  Height="25" Width="200">
+							<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=infosearch.DataContext.f_sgnetwork}" Operator="f_sgnetwork = 'this'"/>          
+                    	</a:Data.Prop>
+						</TextBox>
+					<Button Content="查  询" x:Name="searchbutton6" Click="{m:Exp Str=infosearch6.DataContext.Search()}" Margin="10,0,5,5" HorizontalAlignment="Left" Width="50"  Height="32" Padding="2" />			
+				</StackPanel>
+			</toolkit:DockPanel-->
+			
+			
+			<Grid Margin="0,2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="0.144*"/>
+					<ColumnDefinition Width="0.144*"/>
+					<ColumnDefinition Width="0.144*"/>
+					<ColumnDefinition Width="0.144*"/>
+					<ColumnDefinition Width="0.211*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+				</Grid.RowDefinitions>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="售气网点" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Text="气量" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="气费金额(元)" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="天然气公司：" Height="25" TextAlignment="Right" Grid.Row="1" FontWeight="Bold"/>
+				<TextBlock Text="{m:Exp Str=trqgswd.count!\=null:trqgswd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="1" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=trqgswd.pregas!\=null:trqgswd.pregas\,0}" Grid.Row="1" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.preamount!\=null:trqgswd.preamount\,0}" Height="25" Grid.Row="1" TextAlignment="Right"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="家福营业厅：" Height="25" TextAlignment="Right" Grid.Row="2" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="中行户县余下支行：" Height="25" TextAlignment="Right" Grid.Row="3" FontWeight="Bold"/>
+				<TextBlock Grid.Column="1" Margin="0" TextWrapping="Wrap" Text="笔数" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="中行户县仪表厂支行：" Height="25" TextAlignment="Right" Grid.Row="4" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="中行户县支行营业部：" Height="25" TextAlignment="Right" Grid.Row="5" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="户县古槐广场支行中行：" Height="25" TextAlignment="Right" Grid.Row="6" FontWeight="Bold"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="中行户县展宏路支行：" Height="25" TextAlignment="Right" Grid.Row="7" FontWeight="Bold"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="维护费金额(元)" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="小计(元)" Height="25" TextAlignment="Right" FontWeight="Bold"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.amountmaintenance!\=null:trqgswd.amountmaintenance\,0}" Height="25" Grid.Row="1" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.totalcost!\=null:trqgswd.totalcost\,0}" Height="25" Grid.Row="1" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=jfwd.count!\=null:jfwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=jfwd.pregas!\=null:jfwd.pregas\,0}" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.preamount!\=null:jfwd.preamount\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.amountmaintenance!\=null:jfwd.amountmaintenance\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.totalcost!\=null:jfwd.totalcost\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhyxwd.count!\=null:zhyxwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhyxwd.pregas!\=null:zhyxwd.pregas\,0}" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.preamount!\=null:zhyxwd.preamount\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.amountmaintenance!\=null:zhyxwd.amountmaintenance\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.totalcost!\=null:zhyxwd.totalcost\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhybcwd.count!\=null:zhybcwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhybcwd.pregas!\=null:zhybcwd.pregas\,0}" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.preamount!\=null:zhybcwd.preamount\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.amountmaintenance!\=null:zhybcwd.amountmaintenance\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.totalcost!\=null:zhybcwd.totalcost\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhhxzhwd.count!\=null:zhhxzhwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhhxzhwd.pregas!\=null:zhhxzhwd.pregas\,0}" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.preamount!\=null:zhhxzhwd.preamount\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.amountmaintenance!\=null:zhhxzhwd.amountmaintenance\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.totalcost!\=null:zhhxzhwd.totalcost\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhghgcwd.count!\=null:zhghgcwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhghgcwd.pregas!\=null:zhghgcwd.pregas\,0}" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.preamount!\=null:zhghgcwd.preamount\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.amountmaintenance!\=null:zhghgcwd.amountmaintenance\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.totalcost!\=null:zhghgcwd.totalcost\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhzhlwd.count!\=null:zhzhlwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhzhlwd.pregas!\=null:zhzhlwd.pregas\,0}" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.preamount!\=null:zhzhlwd.preamount\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.amountmaintenance!\=null:zhzhlwd.amountmaintenance\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.totalcost!\=null:zhzhlwd.totalcost\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="户县人民路分理处中行：" Height="25" TextAlignment="Right" Grid.Row="8" FontWeight="Bold"/>
+				<TextBlock Text="{m:Exp Str=zhrmlwd.count!\=null:zhrmlwd.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhrmlwd.pregas!\=null:zhrmlwd.pregas\,0}" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.preamount!\=null:zhrmlwd.preamount\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.amountmaintenance!\=null:zhrmlwd.amountmaintenance\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.totalcost!\=null:zhrmlwd.totalcost\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Margin="0" TextWrapping="Wrap" Text="合计：" Height="25" TextAlignment="Right" Grid.Row="9" FontWeight="Bold"/>
+				<TextBlock Text="{m:Exp Str=heji.count!\=null:heji.count\,0}" Grid.Column="1" Margin="0" TextWrapping="Wrap"  Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=heji.pregas!\=null:heji.pregas\,0}" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=heji.preamount!\=null:heji.preamount\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=heji.amountmaintenance!\=null:heji.amountmaintenance\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0" TextWrapping="Wrap" Text="{m:Exp Str=heji.totalcost!\=null:heji.totalcost\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+			</Grid>					
+		</toolkit:DockPanel>
+		</toolkit:BusyIndicator>
+		<c:PrintObj x:Name="print" Area="{m:Res Key=chaoyongqiprint1 }" Grid.ColumnSpan="4" />
+		<Grid x:Name="chaoyongqiprint1"  Background="White"  HorizontalAlignment="Left" Width="Auto"  VerticalAlignment="Bottom" Margin="292,0,0,-391" Height="Auto">
+		<a:Data.Context>
+            		<o:GeneralObject  Name="cyqprint1" WebClientInfo="{StaticResource dbclient}" EntityType="t_sellinggas"  >
+					      		
+		</o:GeneralObject>
+	   </a:Data.Context>
+		<Grid Margin="0,3,0,1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="100"/>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="100"/>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="140"/>
+					<ColumnDefinition Width="140"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+				</Grid.RowDefinitions>
+                <Path Data="M-163.95555,59.488014 L1890.8831,59.488014" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,0,-4,-0.5" Grid.ColumnSpan="6" Height="1" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<TextBlock Margin="0,2" TextWrapping="Wrap" Text="售气网点" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.ColumnSpan="2" Grid.Row="1"/>
+				<TextBlock Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Text="气量" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Row="1"/>
+				<TextBlock Grid.Column="4" Margin="0,2" TextWrapping="Wrap" Text="气费金额(元)" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Row="1"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="天然气公司：" Height="25" TextAlignment="Right" Grid.Row="2" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Text="{m:Exp Str=trqgswd.count!\=null:trqgswd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=trqgswd.pregas!\=null:trqgswd.pregas\,0}" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.preamount!\=null:trqgswd.preamount\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="家福营业厅：" Height="25" TextAlignment="Right" Grid.Row="3" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="中行户县余下支行：" Height="25" TextAlignment="Right" Grid.Row="4" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Grid.Column="2" Margin="0,2" TextWrapping="Wrap" Text="笔数" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Row="1"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="中行户县仪表厂支行：" Height="25" TextAlignment="Right" Grid.Row="5" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="中行户县支行营业部：" Height="25" TextAlignment="Right" Grid.Row="6" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="户县古槐广场支行中行：" Height="25" TextAlignment="Right" Grid.Row="7" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="中行户县展宏路支行：" Height="25" TextAlignment="Right" Grid.Row="8" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Text="维护费金额(元)" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Row="1"/>
+				<TextBlock Grid.Column="6" Margin="0,2" TextWrapping="Wrap" Text="小计(元)" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Row="1"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.amountmaintenance!\=null:trqgswd.amountmaintenance\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=trqgswd.totalcost!\=null:trqgswd.totalcost\,0}" Height="25" Grid.Row="2" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=jfwd.count!\=null:jfwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=jfwd.pregas!\=null:jfwd.pregas\,0}" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.preamount!\=null:jfwd.preamount\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.amountmaintenance!\=null:jfwd.amountmaintenance\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=jfwd.totalcost!\=null:jfwd.totalcost\,0}" Height="25" Grid.Row="3" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhyxwd.count!\=null:zhyxwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhyxwd.pregas!\=null:zhyxwd.pregas\,0}" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.preamount!\=null:zhyxwd.preamount\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.amountmaintenance!\=null:zhyxwd.amountmaintenance\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhyxwd.totalcost!\=null:zhyxwd.totalcost\,0}" Height="25" Grid.Row="4" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhybcwd.count!\=null:zhybcwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhybcwd.pregas!\=null:zhybcwd.pregas\,0}" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.preamount!\=null:zhybcwd.preamount\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.amountmaintenance!\=null:zhybcwd.amountmaintenance\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhybcwd.totalcost!\=null:zhybcwd.totalcost\,0}" Height="25" Grid.Row="5" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhhxzhwd.count!\=null:zhhxzhwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhhxzhwd.pregas!\=null:zhhxzhwd.pregas\,0}" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.preamount!\=null:zhhxzhwd.preamount\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.amountmaintenance!\=null:zhhxzhwd.amountmaintenance\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhhxzhwd.totalcost!\=null:zhhxzhwd.totalcost\,0}" Height="25" Grid.Row="6" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhghgcwd.count!\=null:zhghgcwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhghgcwd.pregas!\=null:zhghgcwd.pregas\,0}" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.preamount!\=null:zhghgcwd.preamount\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.amountmaintenance!\=null:zhghgcwd.amountmaintenance\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhghgcwd.totalcost!\=null:zhghgcwd.totalcost\,0}" Height="25" Grid.Row="7" TextAlignment="Right"/>
+				<TextBlock Text="{m:Exp Str=zhzhlwd.count!\=null:zhzhlwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhzhlwd.pregas!\=null:zhzhlwd.pregas\,0}" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.preamount!\=null:zhzhlwd.preamount\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.amountmaintenance!\=null:zhzhlwd.amountmaintenance\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhzhlwd.totalcost!\=null:zhzhlwd.totalcost\,0}" Height="25" Grid.Row="8" TextAlignment="Right"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="户县人民路分理处中行：" Height="25" TextAlignment="Right" Grid.Row="9" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Text="{m:Exp Str=zhrmlwd.count!\=null:zhrmlwd.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=zhrmlwd.pregas!\=null:zhrmlwd.pregas\,0}" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.preamount!\=null:zhrmlwd.preamount\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.amountmaintenance!\=null:zhrmlwd.amountmaintenance\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=zhrmlwd.totalcost!\=null:zhrmlwd.totalcost\,0}" Height="25" Grid.Row="9" TextAlignment="Right"/>
+				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="合计：" Height="25" TextAlignment="Right" Grid.Row="10" FontWeight="Bold" Grid.ColumnSpan="2"/>
+				<TextBlock Text="{m:Exp Str=heji.count!\=null:heji.count\,0}" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap"  Height="25" Grid.Row="10" TextAlignment="Right"/>
+				<TextBlock Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap" Height="25" Text="{m:Exp Str=heji.pregas!\=null:heji.pregas\,0}" Grid.Row="10" TextAlignment="Right"/>
+				<TextBlock Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=heji.preamount!\=null:heji.preamount\,0}" Height="25" Grid.Row="10" TextAlignment="Right"/>
+				<TextBlock Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=heji.amountmaintenance!\=null:heji.amountmaintenance\,0}" Height="25" Grid.Row="10" TextAlignment="Right"/>
+				<TextBlock Grid.Column="6" Margin="0,3,0,2" TextWrapping="Wrap" Text="{m:Exp Str=heji.totalcost!\=null:heji.totalcost\,0}" Height="25" Grid.Row="10" TextAlignment="Right"/>
+				<Path Data="M-161.24287,358.48804 L1882.427,357.48804" Height="2" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Bottom" Margin="-6.5,0,-0.5,-0.5" Grid.Row="10" Grid.ColumnSpan="6" Grid.Column="1"/>
+				<Path Data="M-163.57999,88.488037 L1885.4242,88.488037" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Bottom" Margin="-7.5,0,-1.5,-0.5" Grid.ColumnSpan="6" Grid.Column="1" Grid.Row="1"/>
+				<Path Data="M-163.57999,90.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,0,-1.5,-0.5" Grid.Row="2" Grid.ColumnSpan="6" Height="3" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path Data="M-163.57999,89.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,0,-1.5,0.5" Grid.Row="3" Grid.ColumnSpan="6" Height="2" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path Data="M-163.57999,91.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,0,-1.5,-1.5" Grid.Row="4" Grid.ColumnSpan="6" Height="4" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path Data="M-163.57999,92.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,-1.5,-1.5,0" Grid.Row="6" Grid.ColumnSpan="6" Height="5" VerticalAlignment="Top" Grid.Column="1"/>
+				<Path Data="M-163.57999,90.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,-0.5,-1.5,0" Grid.Row="7" Grid.ColumnSpan="6" Height="3" VerticalAlignment="Top" Grid.Column="1"/>
+				<Path Data="M-163.57999,90.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-7.5,0,-1.5,-1.5" Grid.Row="7" Grid.ColumnSpan="6" Height="3" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path Data="M-165.99626,89.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-8.5,-0.5,-1.5,0" Grid.Row="9" Grid.ColumnSpan="6" Height="2" VerticalAlignment="Top" Grid.Column="1"/>
+				<Path Data="M-161.16371,86.488037 L1885.4242,88.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-6.5,0,-1.5,-0.5" Grid.Row="9" Grid.ColumnSpan="6" Height="3" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path Data="M-161.16371,89.488037 L1895.0894,89.488037" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Margin="-6.5,0,-5.5,0.5" Grid.Row="10" Grid.ColumnSpan="6" Height="1" VerticalAlignment="Bottom" Grid.Column="1"/>
+				<Path
+					Data="M-121,-256.4599 L-121.5,410.39514" HorizontalAlignment="Right" Margin="0,0.5,95,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.5" Height="299" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="2" Grid.Row="1"/>
+				<Path
+					Data="M-170.5,-256.4599 L-170.5,410.16394" HorizontalAlignment="Right" Margin="0,-0.5,143.5,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="300" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="3" Grid.Row="1"/>
+				<Path
+					Data="M-121,-256.4599 L-121.5,412.03754" HorizontalAlignment="Right" Margin="0,-2,145,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.5" Height="302.5" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="4" Grid.Row="1"/>
+				<Path
+					Data="M-121,-256.4599 L-120.5,409.82031" HorizontalAlignment="Right" Margin="0,-2,144.5,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.5" Height="301.5" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="5" Grid.Row="1"/>
+				<Path
+					Data="M-121,-256.4599 L-121.5,409.82031" HorizontalAlignment="Right" Margin="0,-2,135,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.5" Height="301.5" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="6" Grid.Row="1"/>
+				<Path
+					Data="M-122.5,-256.4599 L-122.5,414.25479" HorizontalAlignment="Right" Margin="0,-2,136.5,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="303.5" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Column="7" Grid.Row="1"/>
+				<Path
+					Data="M-125.16666,-256.4599 L-124.49966,410.27933" HorizontalAlignment="Right" Margin="0,0,4.5,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.667" Height="299.5" VerticalAlignment="Top" Grid.RowSpan="10" Grid.Row="1"/>
+				<TextBlock Margin="-48,3,-62,2" TextWrapping="Wrap" Text="网点收费汇总报表" Height="25" TextAlignment="Right" FontWeight="Bold" Grid.Column="3"/>
+		</Grid> 
+		
+	</Grid>
+	</Grid>
+	
+</UserControl>

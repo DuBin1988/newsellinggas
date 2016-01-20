@@ -1,0 +1,215 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+		xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+		xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+		xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+		xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+		xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+	    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+	    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+		xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d"
+	x:Class="s2.UserControl1"
+	d:DesignWidth="640" d:DesignHeight="480">
+	
+
+	<Grid x:Name="LayoutRoot"  >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.43*"/>
+			<ColumnDefinition Width="0.57*"/>
+		</Grid.ColumnDefinitions>
+		<m:ResourceLoad Margin="0,0,-101,0" Grid.ColumnSpan="2">
+			<o:ObjectList Name="userfiles" EntityType="t_userfiles"  WebClientInfo="{StaticResource dbclient}"
+			 Path="{m:Exp Str=$from t_userfiles}" ></o:ObjectList>
+			
+			<o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
+					EntityType="t_userfiles" Source="{m:Exp Str=user.SelectedItem}" 
+					 	       	>
+				</o:GeneralObject>
+			 <o:GeneralObject Name="LoginUser" 
+			IsInit="{m:Exp Str='this.State==$LoadError'}" 
+			Path="{m:Exp Str='$user/{this.ename}/{this.password}/公司OA'}"
+			LoadOnPathChanged="False" WebClientInfo="{StaticResource ldapaddress}">
+	            <o:PropertySetter PropertyName="ename" Type="string" NotNull="True"/>
+	            <o:PropertySetter PropertyName="password" Type="string" NotNull="True"/>
+	        </o:GeneralObject>
+		</m:ResourceLoad>	
+		<sdk:ChildWindow Width="248" VerticalAlignment="Bottom" Height="158">
+			<Grid  x:Name="sr" Margin="15,0,23,11" Tag="ttt">
+				<TextBox TextWrapping="Wrap"  SelectedText=""  SelectionLength="3"  VerticalScrollBarVisibility="Auto"  HorizontalAlignment="Left" Width="83" Margin="0,0,0,8">
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_pregas"  Default="{m:Exp Str='$请{LoginUser.ename}于下午开会$'}"  />
+					</a:Data.Prop>
+				</TextBox>
+				<TextBox Margin="0,8,8,0" TextWrapping="Wrap" Text="12" HorizontalAlignment="Right" Height="28" VerticalAlignment="Top" Width="76"/>
+				
+				
+			</Grid>
+			
+		</sdk:ChildWindow>
+		
+		
+		<toolkit:DockPanel x:Name="userfilesearch" Height="27"  toolkit:DockPanel.Dock="Top" Margin="0,8,0,5" HorizontalAlignment="Stretch" Background="#FFCFEFFF"   >
+    			<a:Data.Context>
+    				<o:SearchObject />        	
+    			</a:Data.Context>
+    			<TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="17,0,0,0" FontSize="15"/>
+    			<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" FontSize="15" a:ControlAttach.DefaultButton="searchbutton" Width="120" >
+    				<a:Data.Prop>
+    					<o:PropertySetter PropertyName="f_username" Operator="f_username like 'this%'"/>               
+    				</a:Data.Prop>
+    			</TextBox>
+    			<Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="50,0,5,0" HorizontalAlignment="Left" Width="60"/>
+    			
+    		</toolkit:DockPanel>
+		
+		
+		
+		
+		<toolkit:DockPanel >
+    				
+    				<sdk:DataGrid x:Name="userfile" Margin="3,0"  
+    					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+    					<a:Data.Items>
+    						<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
+    							Path="{m:Exp Str=$from t_renewalcard where \{userfilesearch.DataContext.Condition\}}"
+    							IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or DeleteAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}"
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+    						
+    					</a:Data.Items>
+    					<sdk:DataGrid.Columns>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="状  态" Binding="{Binding f_substate}"/>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+    						<sdk:DataGridTextColumn d:IsLocked="True" Header="卡费" Binding="{Binding f_cardfees}"/>
+    						<sdk:DataGridTextColumn Header="身份证号" Binding="{Binding f_idnumber}"/>
+    						<sdk:DataGridTextColumn Header="卡 编 号" Binding="{Binding f_cardnumber}"/>
+    						<sdk:DataGridTextColumn Header="新卡编号" Binding="{Binding f_newcardnumber}"/>
+    						<sdk:DataGridTextColumn Header="补卡日期" Binding="{Binding f_recoverycarddate, StringFormat=yyyy-MM-dd}"/>
+    					</sdk:DataGrid.Columns>
+    				</sdk:DataGrid>
+    				<!--提交按钮-->
+    			</toolkit:DockPanel>
+		
+		
+		
+		
+		
+		<Grid Background="AliceBlue" Height="160" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto" Margin="0,0,44,0" >
+			<StackPanel Orientation="Horizontal">
+				<sdk:DataGridRow Header="变更名称"  Background="#FFAACEED"  BorderThickness="2"  VerticalAlignment="Top" Height="22" Margin="0,0,8,0">
+				</sdk:DataGridRow>
+				<sdk:DataGridRow Header="变更名称"  Background="#FFAACEED"  BorderThickness="2"  VerticalAlignment="Top" Height="22" Margin="0,0,8,0">
+				</sdk:DataGridRow>
+			</StackPanel>
+			
+			<StackPanel Orientation="Horizontal">
+				<sdk:DataGridRow Header="用户编号"  Background="#FFAACEED"  BorderThickness="2"  VerticalAlignment="Top" Height="22" Margin="0,43,0,0">
+				</sdk:DataGridRow>
+				<TextBox Text="{m:Bind Path=f_userid}" Margin="0" TextWrapping="Wrap" Height="33"  >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_userid" />
+					</a:Data.Prop>
+				</TextBox>
+			</StackPanel>
+			
+				
+			<sdk:DataGridRow Header="小区地址"  Background="#FFAACEED"  BorderThickness="2"   VerticalAlignment="Bottom" Height="22"/>
+			<sdk:DataGridRow Header="电话"  Background="#FFAACEED"  BorderThickness="2" Height="22"  />
+			<sdk:DataGridRow Header="用户姓名"  Background="#FFAACEED"  BorderThickness="2" Margin="0,30,0,0" Height="22"  />
+			<sdk:DataGridRow Header="身份证号"  Background="#FFAACEED"  BorderThickness="2" Margin="0,60,0,0" Height="22"  />
+			<sdk:DataGridRow Header="用户类型"  Background="#FFAACEED"  BorderThickness="2" Margin="0,114,0,24" Height="22" HorizontalAlignment="Left" Width="73"  />
+		</Grid>
+		<StackPanel Margin="57,183,0,179" Orientation="Horizontal" Grid.ColumnSpan="2">
+			<Button  Content="Button" HorizontalAlignment="Right" Height="27" Margin="0,0,8,0" VerticalAlignment="Bottom" Width="64" Cursor="Wait"/>
+			<ListBox Background="AliceBlue"  ItemsSource="{m:Exp Str=userfiles}" HorizontalAlignment="Stretch" Width="219" BorderThickness="0"  >
+				<ListBox.ItemTemplate >
+					<DataTemplate  >
+						<StackPanel Orientation="Horizontal"   >
+							<TextBox Text="{m:Bind Path=f_userid}"  Background="AliceBlue" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_userid"  />
+								</a:Data.Prop>
+							</TextBox>
+							<TextBox Text="{m:Bind Path=f_username}"  Background="AliceBlue" >
+								<a:Data.Prop>
+									<o:PropertySetter PropertyName="f_username"  />
+								</a:Data.Prop>
+							</TextBox>
+						</StackPanel>
+						
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+			</ListBox>
+			<sdk:DataGrid x:Name="user" AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userfiles}" HorizontalAlignment="Stretch" Width="283" >
+				<sdk:DataGrid.Columns>
+					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}" />
+					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}" />
+					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_pregas}" />
+				</sdk:DataGrid.Columns>
+			</sdk:DataGrid>
+		</StackPanel>
+		<CheckBox  Margin="0,115,50,0" HorizontalAlignment="Right" Width="54" Height="15" VerticalAlignment="Top" Content="aa" Grid.Column="1"></CheckBox>
+		<toolkit:BusyIndicator BusyContent="不能操作" IsBusy="{m:Exp Str='u.DataContext.f_userid==$2011M00019$:$True$,$False$'}" Grid.ColumnSpan="2" Grid.Column="1">
+			<Grid x:Name="u"   VerticalAlignment="Top" DataContext="{m:Exp Str=userfilego}" Height="162" >
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="0.453*"/>
+					<ColumnDefinition Width="0.547*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="0.222*"/>
+					<RowDefinition Height="0.253*"/>
+					<RowDefinition Height="0.377*"/>
+					<RowDefinition Height="0.148*"/>
+				</Grid.RowDefinitions>
+				<Image Source="2.gig"></Image>
+				
+				<TextBlock Margin="8" TextWrapping="Wrap"  >
+					
+				</TextBlock>
+				<TextBox Text="{m:Bind Path=f_pregas}"  Grid.Column="0" Margin="0,8,8,17" TextWrapping="Wrap" Grid.ColumnSpan="1" Grid.Row="2" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_pregas"  />
+					</a:Data.Prop>
+				</TextBox>
+				<TextBox Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=a.SelectedItem.f_userid}" />
+					</a:Data.Prop>
+				</TextBox>
+				<TextBox Text="{m:Bind Path=f_username}"  Grid.Column="0" Margin="0,8,8,-1" TextWrapping="Wrap" Grid.ColumnSpan="1" Grid.Row="1" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=a.SelectedItem.f_username}" />
+					</a:Data.Prop>
+				</TextBox>
+				<ComboBox x:Name="a" Grid.Column="1" Margin="8,19,8,0" Grid.Row="1" ItemsSource="{m:Exp Str=userfiles}"  DisplayMemberPath="f_userid">
+					<a:Data.Items>
+						<o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from v as v left join fetch v.f_username}" />
+					</a:Data.Items>
+				</ComboBox>
+				<toolkit:TimePicker IsEnabled="False"  Value="{m:Bind Path=time}" Grid.Column="1" Margin="22,-10,8,8" Height="Auto" Grid.Row="3" Grid.RowSpan="1" VerticalAlignment="Stretch" RenderTransformOrigin="1.336,0.7">
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="time" NotNull="True" Default="{m:Exp Str=SysTime.Now}"/>
+					</a:Data.Prop>
+				</toolkit:TimePicker>
+			</Grid>
+			</toolkit:BusyIndicator>
+		<sdk:TabControl  TabNavigation="Cycle"  HorizontalAlignment="Right" Height="127" Margin="0,0,0,27" VerticalAlignment="Bottom" Width="164" TabStripPlacement="Bottom" Grid.Column="1">
+			<sdk:TabItem Header="TabItem" >
+				<Grid Background="#FFE5E5E5"/>
+			</sdk:TabItem>
+			<sdk:TabItem Header="TabItem">
+				<Grid Background="#FFE5E5E5"/>
+			</sdk:TabItem>
+		</sdk:TabControl>
+	</Grid>
+	
+</UserControl>

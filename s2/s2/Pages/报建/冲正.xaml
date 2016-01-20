@@ -1,0 +1,355 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="s2.冲正" FontSize="13"
+	d:DesignWidth="1024">
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad d:IsHidden="True" Name="loader">
+            <!--冲正对象-->
+            <o:GeneralObject Name="reversalmx" WebClientInfo="{StaticResource dbclient}" EntityType="t_reversalmx" IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
+                <o:PropertySetter PropertyName="f_reversalfee" Value="{m:Exp Str=paydetails.f_fee}" />
+                <o:PropertySetter PropertyName="applyid" Value="{m:Exp Str=paydetails.applyid}" />
+            </o:GeneralObject>
+            <!--收费对象-->
+            <o:GeneralObject Name="paydetails" EntityType="t_paydetail" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str=reversalmxgrid.DataContext.State\=\=$End$}"
+			    Path="{m:Exp Str=applylistgrid.SelectedItem!\=null:$one/from t_paydetail where applyid\=\'\{applylistgrid.SelectedItem.id\}\' and id\=(select max(id) from t_paydetail where f_state\=\'有效\' and applyid\=\'\{applylistgrid.SelectedItem.id\}\')$\,null}"/>
+            <!--收费列表-->
+            <o:ObjectList Name="paydetailslist" EntityType="t_paydetail" WebClientInfo="{StaticResource dbclient}"
+			Path="{m:Exp Str='applylistgrid.SelectedItem!=null:$from t_paydetail as pay where applyid={applylistgrid.SelectedItem.id}$,null'}"/>
+            <b:SyncActionFactory Name="SaveAction">
+                <!--保存数据-->
+                <b:CallMethodAction Name="saver" TargetObject="{m:Exp Str=reversalmxgrid1.DataContext}" MethodName="Save"/>
+            </b:SyncActionFactory>
+        </m:ResourceLoad>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="7*"/>
+            </Grid.ColumnDefinitions>
+            <toolkit:DockPanel  LastChildFill="True" Grid.ColumnSpan="1" Margin="0">
+                <toolkit:WrapPanel x:Name="applysearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,5" Orientation="Horizontal" >
+                    <a:Data.Context>
+                        <o:SearchObject />
+                    </a:Data.Context>
+                    <TextBlock TextWrapping="Wrap" Text="申 请 人："/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Height="22">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this%'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_phone}" Width="Auto" Height="22">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_phone"  Operator="f_phone = 'this'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Text="报建编号：" Margin="5,0,0,0"/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_code}" Width="Auto" Height="22">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_code"  Operator="f_code = 'this'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <Button Content="  查 询  " x:Name="searchbutton" Click="{m:Exp Str=applysearch.DataContext.Search()}" Margin="5,0,0,0"/>
+                </toolkit:WrapPanel>
+                <!--提交按钮-->
+                <toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5"  >
+                    <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=applylistgrid,Converter={StaticResource DataPagerConverter}}" Margin="0" PageSize="20" Height="24" toolkit:DockPanel.Dock="Top" />
+                    <TextBlock Height="27" TextWrapping="Wrap" Text="{m:Exp Str=$共\{applylistgrid.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
+                </toolkit:DockPanel>
+                <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applylistgrid.ItemsSource.IsBusy}">
+                    <sdk:DataGrid x:Name="applylistgrid" Margin="0,0,3,0"  IsReadOnly="True" AutoGenerateColumns="False">
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"
+								Path="{m:Exp Str=$ from t_apply  where \{applysearch.DataContext.Condition\} and f_state!\=\'完工\' and f_state!\=\'民用转商用\' and f_state!\=\'终止报建\' and (f_actualfee>0)$}"
+								 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="实交金额" Binding="{Binding f_actualfee}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作员" Binding="{Binding f_opertor}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作部门" Binding="{Binding f_department}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </c:BusyIndicatorEx>
+            </toolkit:DockPanel>
+            <Grid Background="{StaticResource LoginBgColorBrush1}" Grid.Column="1" >
+                <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height">
+                    <sdk:TabItem Header="报建基本信息" >
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+                            <StackPanel>
+                                <Grid HorizontalAlignment="Stretch" Grid.Row="0" x:Name="reversalmxgrid" DataContext="{m:Exp Str=applylistgrid.SelectedItem}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" Grid.Column="2"/>
+                                    <TextBox x:Name="ui_code" Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_code"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" TextWrapping="Wrap" Text="报建日期：" TextAlignment="Right"/>
+                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Grid.Column="5" Margin="0,3"  Height="Auto" Grid.Row="0" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_date"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申 请 人：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="1" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_username"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" Grid.Column="4"/>
+                                    <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="True" Grid.Column="5" Margin="0,2" Grid.Row="1" TextWrapping="Wrap" Height="Auto" HorizontalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_phone"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="片 区：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_area}" IsReadOnly="True" Grid.Column="5" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_area"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_usertype}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_usertype"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="房屋类型：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_usertypepro}" Grid.Column="3" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_usertypepro"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="申请户数：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_applycount}"  Grid.Column="5" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_applycount"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="安装户数：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="交费户数：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="排 空 费：" TextAlignment="Right"/>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="工程材料费：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="自闭阀费：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="报警器费：" TextAlignment="Right"/>
+                                    <TextBlock  Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="费用合计：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_installnum}" Grid.Column="1" Margin="0,2" Grid.Row="4" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_installnum" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_payfeenum}" Grid.Column="3" Margin="0,2" Grid.Row="4" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_payfeenum" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_emptyingfee}" Grid.Column="5" Margin="0,2" Grid.Row="4" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_emptyingfee"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_materialfee}" Grid.Column="1" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_materialfee"   />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_selfclosfee}" Grid.Column="3" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_selfclosfee" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_alarmfee}" Grid.Column="5" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_alarmfee"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_totalfee}" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="用户姓名/单位：" Grid.Row="1"/>
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_minyongdept"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock  Grid.Row="6" TextWrapping="Wrap" Text="实交金额：" TextAlignment="Right" Grid.Column="2"/>
+                                    <TextBox Text="{m:Bind Path=f_actualfee}" Grid.Column="3" Margin="0" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1" Grid.ColumnSpan="1">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_actualfee"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </Grid>
+                                <Grid  x:Name="paydetailsgrid" DataContext="{m:Exp Str=paydetails}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock  Grid.Row="0" TextWrapping="Wrap" Text="冲正金额：" TextAlignment="Right" Grid.Column="0"/>
+                                    <TextBox Text="{m:Bind Path=f_fee}" Grid.Column="1" Grid.Row="0" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_fee" Default="0"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox x:Name="ui_id" Text="{m:Bind Path=id}" Visibility="Collapsed"/>
+                                    <TextBlock  Grid.Row="0" TextWrapping="Wrap" Text="更改前状态：" TextAlignment="Right" Grid.Column="2"/>
+                                    <TextBox Text="{m:Bind Path=f_state}" Grid.Column="3" Grid.Row="0" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch"/>
+                                    <TextBlock  Grid.Row="0" TextWrapping="Wrap" Text="更改后状态：" TextAlignment="Right" Grid.Column="4"/>
+                                    <TextBox Grid.Column="5" Grid.Row="0" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_state"  Value="无效"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </Grid>
+                                <Grid  x:Name="reversalmxgrid1" DataContext="{m:Exp Str=reversalmx}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="30"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock  Grid.Row="0" TextWrapping="Wrap" Text="冲正原因：" TextAlignment="Right" VerticalAlignment="Center" Grid.Column="0"/>
+                                    <TextBox Text="{m:Bind Path=f_yuanyin}" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="0" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_yuanyin" NotNull="True"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock  Grid.Row="1" TextWrapping="Wrap" Text="操作员：" TextAlignment="Right" Grid.Column="0"/>
+                                    <TextBox Text="{m:Bind Path=f_reversalr}" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_reversalr" NotNull="True" Default="{m:Exp Str=LoginUser.name}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock  Grid.Row="2" TextWrapping="Wrap" Text="部门：" TextAlignment="Right" Grid.Column="2"/>
+                                    <TextBox Text="{m:Bind Path=f_reversalc}" Grid.Column="3" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_reversalc" NotNull="True" Default="{m:Exp Str=LoginUser.f_parentname}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Grid.Row="1" TextWrapping="Wrap" Text="冲正日期：" TextAlignment="Right"  d:IsLocked="True"/>
+                                    <sdk:DatePicker x:Name="ui_f_reversaldate" SelectedDate="{m:Bind Path=f_reversaldate}" IsEnabled="false" Grid.Column="5" Margin="1" Grid.Row="6"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="40" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_reversaldate" Default="{m:Exp Str=SysTime.Today}"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </sdk:TabItem>
+                    <sdk:TabItem Header="收费明细">
+                        <sdk:DataGrid AutoGenerateColumns="False" IsReadOnly="True"
+								ItemsSource="{m:Exp Str=paydetailslist}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="484">
+                            <sdk:DataGrid.Columns>
+                                <sdk:DataGridTemplateColumn Header="序号">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{m:Exp Str=data.Index}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="金额">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_fee}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="付款方式">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_paytype}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="交费日期">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_payfeedate,StringFormat=yyyy-MM-dd}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="部门">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_department}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="负责人">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_opertor}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}"/>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn Header="是否有效">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding f_state}" IsReadOnly="True" Foreground="{m:Exp Str=data.f_state!\=$有效$:Red\,Black}">
+                                            </TextBox>
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn>
+                            </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+                    </sdk:TabItem>
+                </sdk:TabControl>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="586">
+                    <Button Content="确  定" Click="save_Click"  Margin="5" IsEnabled="{m:Exp Str=!reversalmxgrid1.DataContext.HasErrors}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

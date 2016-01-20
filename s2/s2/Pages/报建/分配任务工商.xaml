@@ -1,0 +1,290 @@
+﻿<UserControl 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d"
+	x:Class="s2.分配任务工商"
+	>
+
+    <Grid x:Name="LayoutRoot">
+
+        <m:ResourceLoad>
+            <!--流程启动对象-->
+            <o:GeneralObject  Name="startprocess" WebClientInfo="{StaticResource server}" 
+		        EntityType="t_test" 
+	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/perfomactivity/\{persons.SelectedItem.actid\}/\{LoginUser.name\}/\{LoginUser.id\}}"
+                 >
+            </o:GeneralObject>
+
+
+            <o:PagedList Name="personslist" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='((SubmitAction.State\=\=$Free$ or SubmitAction.State\=\=$End$) and
+							   (surveyAction.State \=\=$Free$ or surveyAction.State\=\=$End$) and 
+							     (unsurveyAction.State\=\=$Free$ or unsurveyAction.State\=\=$End$) and 
+							    (designersAction.State\=\=$Free$ or designersAction.State\=\=$End$) and 
+								(undesignersAction.State\=\=$Free$ or undesignersAction.State\=\=$End$)) or
+                myqrzbPager.DataContext.State==$End$'}"
+                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_designers,f_survey,f_designersdate,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_designers\,apply.f_survey\,CONVERT(varchar\, apply.f_designersdate\,23)f_designersdate\,apply.f_processid
+                from activityins act 
+                join t_actorperson p 
+                on act.actorexpression \= p.actorid 
+                join t_apply apply 
+                on apply.f_processid\=act.processid 
+                where \{personsearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'非民用流程\' and act.defname\=\'放线任务分配\' and p.userid\=\'\{LoginUser.ename\}\'}"
+                Path="sql" PageIndex="{m:Exp Str=myqrzbPager.PageIndex}" PageSize="{m:Exp Str=myqrzbPager.PageSize}" SumNames="," />
+
+
+            <!--批量删除语句-->
+            <b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}" 
+		HQL="{m:Exp Str='$delete from t_apply where id in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+            </b:HQLAction>
+            <!--放线人选择-->
+            <b:HQLAction Name="surveyAction"  WebClientInfo="{StaticResource dbclient}" 
+		 HQL="{m:Exp Str=$update t_apply set f_substate\=\'完成\'\,f_surveydate\=getdate()\,f_surveyopertor\=\'\{LoginUser.name\}\'\,f_issurvey\=1 \,f_survey\=\'\{people.SelectedItems.ToString(name)\=>SelectionChanged\}\' \, f_surveyid\=\'\{people.SelectedItems.ToString(id)\=>SelectionChanged\}\' where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\})}">
+            </b:HQLAction>
+            <!--设计人选择-->
+            <b:HQLAction Name="designersAction"  WebClientInfo="{StaticResource dbclient}" 
+		 HQL="{m:Exp Str=$update t_apply set f_substate\=\'完成\'\,f_designersdate\=getdate()\,f_designersopertor\=\'\{LoginUser.name\}\'\,f_isdesigners\=1 \, f_designers\=\'\{designer.SelectedItems.ToString(name)\=>SelectionChanged\}\' \,f_designerid\=\'\{designer.SelectedItems.ToString(id)\=>SelectionChanged\}\' where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\})}">
+            </b:HQLAction>
+
+            <!--取消放线人选择-->
+            <b:HQLAction Name="unsurveyAction"  WebClientInfo="{StaticResource dbclient}" 
+		 HQL="{m:Exp Str=$update t_apply set f_substate\=null\,f_issurvey\=0 \,f_surveydate\=getdate()\,f_surveyopertor\=\'\{LoginUser.name\}\'\, f_survey\=\'\' \, f_surveyid\=\'\' where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\})}">
+            </b:HQLAction>
+
+            <!--取消设计人选择-->
+            <b:HQLAction Name="undesignersAction"  WebClientInfo="{StaticResource dbclient}" 
+		 HQL="{m:Exp Str=$update t_apply set f_substate\=null\,f_designersdate\=getdate()\,f_designersopertor\=\'\{LoginUser.name\}\'\,f_isdesigners\=0 \, f_designers\=\'\' \,f_designerid\=\'\' where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\})}">
+            </b:HQLAction>
+         <!--提交-->
+            <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+		HQL="{m:Exp Str=$update t_apply  set f_fprwzt\=\'已完成\' \,f_substate\=null where id in (\{persons.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
+        </m:ResourceLoad>
+
+        <StackPanel>
+            <toolkit:DockPanel Margin="0,3,0,0" >
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                    <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}">
+                        <toolkit:DockPanel Margin="0,0,5,0" LastChildFill="True" >
+                            <StackPanel x:Name="personsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="5,0,0,5" Orientation="Horizontal" Height="110" >
+                                <a:Data.Context>
+                                    <o:SearchObject  ></o:SearchObject>
+                                </a:Data.Context>
+
+                                <!--<TextBlock TextWrapping="Wrap" Text="姓 名：" Height="22" Margin="2,0,0,0" d:LayoutOverrides="Height"/>
+                		<TextBox TextWrapping="Wrap" Text="{m:Bind Path=name}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" HorizontalAlignment="Stretch" Grid.Column="0" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" d:LayoutOverrides="Height">
+                			<a:Data.Prop>
+                				<o:PropertySetter PropertyName="name" Operator="name like '%this%'"/>               
+                			</a:Data.Prop>
+                		</TextBox>
+					
+                		<CheckBox Content="是否分配放线人"  IsChecked="{m:Bind Path=f_issurvey}"  a:ControlAttach.DefaultButton="searchbutton" Height="22" Width="Auto" HorizontalAlignment="Stretch" Margin="5,0,0,0" Grid.Column="0" VerticalAlignment="Stretch" Grid.ColumnSpan="1" d:LayoutOverrides="Height"  >
+                			<a:Data.Prop>
+                				<o:PropertySetter PropertyName="f_issurvey" Operator="f_issurvey =this"/>               
+                			</a:Data.Prop>
+                		</CheckBox>
+                		<CheckBox Content="是否分配设计人"  IsChecked="{m:Bind Path=f_isdesigners}"  a:ControlAttach.DefaultButton="searchbutton" Height="22" Width="Auto" HorizontalAlignment="Stretch" Margin="5,0,0,0" Grid.Column="0" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Row="0" d:LayoutOverrides="Height"  >
+                			<a:Data.Prop>
+                				<o:PropertySetter PropertyName="f_isdesigners" Operator="f_isdesigners =this"/>               
+                			</a:Data.Prop>
+                		</CheckBox>
+			
+                		<Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="50,0,0,0" Height="22"/>
+                -->
+                                <Grid Width="677" Margin="0"  >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="20"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="108"/>
+                                        <ColumnDefinition Width="119"/>
+                                        <ColumnDefinition Width="92"/>
+                                        <ColumnDefinition Width="133"/>
+                                        <ColumnDefinition Width="62"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock TextWrapping="Wrap" Text="申 请 人：" Height="22" Margin="0" TextAlignment="Right"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_username" Operator="apply.f_username like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <CheckBox Content="是否分配放线人"  IsChecked="{m:Bind Path=f_issurvey}"  a:ControlAttach.DefaultButton="searchbutton" Height="22" Width="Auto" HorizontalAlignment="Stretch" Margin="0,-1" Grid.Column="0" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Row="3"  >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_issurvey" Operator="f_issurvey =this"/>
+                                        </a:Data.Prop>
+                                    </CheckBox>
+                                    <CheckBox Content="是否分配设计人"  IsChecked="{m:Bind Path=f_isdesigners}"  a:ControlAttach.DefaultButton="searchbutton" Height="22" Width="Auto" HorizontalAlignment="Stretch" Margin="0,-1" Grid.Column="1" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Row="3"  >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_isdesigners" Operator="f_isdesigners =this"/>
+                                        </a:Data.Prop>
+                                    </CheckBox>
+                                    <TextBlock TextWrapping="Wrap" Text="放线人员：" Height="22" Margin="0" Grid.Row="1" TextAlignment="Right"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_survey}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.Row="1" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_survey" Operator="apply.f_survey like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="设计人员：" Height="22" Margin="0,4,0,0" Grid.Column="2" Grid.Row="1" TextAlignment="Right"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_designers}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="3" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.Row="1" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designers" Operator="apply.f_designers like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="8,-10,-7,0" Grid.Column="4" Grid.Row="3" RenderTransformOrigin="1.981,0.591"/>
+                                    <TextBlock TextWrapping="Wrap" Text="片　　区：" Height="22" Margin="0" Grid.Row="2" TextAlignment="Right"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_area}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.Row="2" d:LayoutOverrides="VerticalAlignment" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_area" Operator="apply.f_area like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="报建日期：" Height="22" Margin="0" Grid.Column="2" Grid.Row="3" TextAlignment="Right"/>
+                                    <sdk:DatePicker  SelectedDate="{m:Bind Path=f_date}" a:ControlAttach.DefaultButton="searchbutton"  Margin="8,-1,6,-1" HorizontalAlignment="Stretch" Grid.Column="3" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.Row="3" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_date" Operator="apply.f_date = '%this%'"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="地　　址：" Height="22" TextAlignment="Right" Grid.Column="2"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="3" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Grid.Row="2" d:LayoutOverrides="VerticalAlignment" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address" Operator="apply.f_address like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_code}" a:ControlAttach.DefaultButton="searchbutton"  Margin="0" HorizontalAlignment="Stretch" Grid.Column="3" Grid.RowSpan="1" Height="22" Grid.ColumnSpan="1" VerticalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_code" Operator="apply.f_code = 'this'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="报建编号：" Height="22" Margin="0,8,0,0" TextAlignment="Right" Grid.Column="2"/>
+                                    <CheckBox x:Name="isSetf" Content="未分配" IsChecked="True" Margin="0,0,-161,-2" Height="22" Grid.ColumnSpan="1" Width="55" Grid.Column="4" HorizontalAlignment="Right" Grid.Row="3" d:LayoutOverrides="HorizontalAlignment, Width" />
+                                </Grid>
+                            </StackPanel>
+                            <toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" >
+                                <TextBlock Height="23" TextWrapping="Wrap" Text="{m:Exp Str='$共{persons.ItemsSource.Count}项'}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
+                                <Button Content="提交勘查人员" Width="88"  Click="{m:Exp Str=submittip.Show()}"
+                        IsEnabled="{m:Exp Str='persons.SelectedItem!=null'}" HorizontalAlignment="Stretch" Margin="300,1,1,1"/>
+
+                            </toolkit:DockPanel>
+
+                            <sdk:DataGrid x:Name="persons" Margin="0"  AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="400" ItemsSource="{m:Res Key=personslist}">
+                                
+                                <sdk:DataGrid.Columns>
+                                    <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+                                    <sdk:DataGridTextColumn Header="状态" Binding="{Binding f_substate}"/>
+                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
+                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="申请单位" Binding="{Binding f_applydept}"/>
+                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
+                                    <sdk:DataGridTextColumn Header="放线人" Binding="{Binding f_survey}" FontWeight="Bold"/>
+                                    <sdk:DataGridTextColumn Header="设计人" Binding="{Binding f_designers}" FontWeight="Bold"/>
+                                    <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+                                    <sdk:DataGridTextColumn Header="户数" Binding="{Binding f_applycount}"/>
+                                    <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+                                    <sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+                                    <sdk:DataGridTextColumn Header="放线任务分配日期" Binding="{Binding f_surveydate,StringFormat=yyyy-MM-dd}"/>
+                                </sdk:DataGrid.Columns>
+                            </sdk:DataGrid>
+
+                        </toolkit:DockPanel>
+                    </c:BusyIndicatorEx>
+                </StackPanel>
+                <toolkit:DockPanel>
+
+
+                    <StackPanel>
+                        <toolkit:DockPanel>
+                            <Button Visibility="Collapsed" Content=" &lt;&lt; " Height="22"  VerticalAlignment="Top"  Click="{m:Exp Str=surveyAction.Invoke()}"
+                        IsEnabled="{m:Exp Str='persons.SelectedItems.Count=>SelectionChanged!=0 and people.SelectedItems.Count=>SelectionChanged!=0'}" Margin="7,1,7,57"/>
+                            <StackPanel>
+                                <TextBlock Text="放线人员" Height="25" FontSize="14.667" FontWeight="Bold" TextAlignment="Center" ></TextBlock>
+                                <Button Content="取消选择" Height="22" HorizontalAlignment="Right" Click="{m:Exp Str='people.SelectedIndex=-1'}"  IsEnabled="{m:Exp Str='people.SelectedItems.Count=>SelectionChanged!=0'}" Margin="0,0,0,5" />
+                                <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}">
+                                    <sdk:DataGrid x:Name="people" Margin="0"  MaxHeight="200"  AutoGenerateColumns="False" SelectionMode="Single"  IsReadOnly="True">
+                                        <a:Data.Items>
+                                            <!--榆林防线人5253534-->
+                                            <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(survey) as icount) from t_userbz as u left join u.f_applysurvey as survey  where roles like '%5253534%' group by u.id,u.name" 
+					 IsOld="{m:Exp Str='surveyAction.State\=\=$End$ or unsurveyAction.State\=\=$End$'}" />
+                                        </a:Data.Items>
+                                        <sdk:DataGrid.Columns>
+                                            <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+                                            <sdk:DataGridTextColumn d:IsLocked="True" Header="姓名" Binding="{Binding name}"/>
+                                            <sdk:DataGridTextColumn  Header="任务数量" Binding="{Binding icount}" />
+                                        </sdk:DataGrid.Columns>
+                                    </sdk:DataGrid>
+                                </c:BusyIndicatorEx>
+
+                            </StackPanel>
+                        </toolkit:DockPanel>
+                        <!---->
+			 <toolkit:DockPanel>
+			 		<Button Visibility="Collapsed" Content=" &lt;&lt; " Height="22"  VerticalAlignment="Top" Click="{m:Exp Str=designersAction.Invoke()}"
+                        IsEnabled="{m:Exp Str='persons.SelectedItems.Count=>SelectionChanged!=0 and designer.SelectedItems.Count=>SelectionChanged!=0'}" Margin="7,1,7,57"/>		
+			 <StackPanel>
+			 <TextBlock Text="设计人员" Height="25" FontSize="14.667" FontWeight="Bold" TextAlignment="Center" ></TextBlock>	
+			 <Button Content="取消选择" Height="22" HorizontalAlignment="Right" Click="{m:Exp Str='designer.SelectedIndex=-1'}" IsEnabled="{m:Exp Str='designer.SelectedItems.Count=>SelectionChanged!=0'}" Margin="0,0,0,5"/>
+			 <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}"   >
+			 <sdk:DataGrid x:Name="designer" Margin="0" MaxHeight="200" IsReadOnly="True"  AutoGenerateColumns="False" SelectionMode="Single" >
+			 	<a:Data.Items><!-- 榆林设计人 5253539-->
+                        <!--test服务 5078369 -->
+                        <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(designer) as icount) from t_userbz as u left join u.f_applydesigner as designer  where roles like '%5253539%' group by u.id,u.name"
+					 IsOld="{m:Exp Str='designersAction.State\=\=$End$ or undesignersAction.State\=\=$End$' }"/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="姓名" Binding="{Binding name}"/>
+                            <sdk:DataGridTextColumn  Header="任务数量" Binding="{Binding icount}"/>
+                        </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+                        </c:BusyIndicatorEx>
+                    </StackPanel>
+                </toolkit:DockPanel>
+        </StackPanel>
+
+
+
+        </toolkit:DockPanel>
+
+        </toolkit:DockPanel>
+        <toolkit:DockPanel Height="29" Margin="0,0,228,0"  >
+            <sdk:DataPager x:Name="myqrzbPager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=persons}" 
+                	HorizontalAlignment="Left" PageSize="20" Width="682" Height="28" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+            <TextBlock Text="总待办数:" Margin="-880,10,260,0" Width="56" />
+            <TextBlock Text="{m:Exp Str=personslist.Count}"  Margin="-800,10,210,0" Width="65" />
+        </toolkit:DockPanel>
+        <toolkit:DockPanel>
+            <Button Content=" 取消放线人 " Click="{m:Exp Str=unsurveyAction.Invoke()}" 
+     		IsEnabled="{m:Exp Str=persons.SelectedItem!\=null}" Margin="2,0,0,0"/>
+            <Button Content=" 取消设计人 " Click="{m:Exp Str=undesignersAction.Invoke()}" 
+     		IsEnabled="{m:Exp Str=persons.SelectedItem!\=null}" Margin="5,0"/>
+            <Button Content=" 取消人员 " Click="{m:Exp Str=undesignersAction.Invoke();unsurveyAction.Invoke()}" 
+     		IsEnabled="{m:Exp Str=persons.SelectedItem!\=null}" FontWeight="Bold" Margin="2,0,0,0"/>
+            <Button Content="打印" Height="22" Width="50" Click="{m:Exp Str=print.Print()}"/>
+            <TextBlock Width="20"></TextBlock>
+            <toolkit:DockPanel HorizontalAlignment="Right">
+                <Button Content=" 分配人员 " Height="22"    Click="{m:Exp Str=surveyAction.Invoke();designersAction.Invoke()}"
+     		IsEnabled="{m:Exp Str='persons.SelectedItem!=null  and people.SelectedItem!=null and designer.SelectedItem!=null '}" FontWeight="Bold" />
+                <Button  Content=" 分配放线人 " Height="22"   Click="{m:Exp Str=surveyAction.Invoke()}"
+                        IsEnabled="{m:Exp Str='persons.SelectedItem!=null and people.SelectedItem!=null'}" Margin="5,0"  />
+                <Button Content=" 分配设计人 " Height="22" Width="Auto"  Click="{m:Exp Str=designersAction.Invoke()}"
+                        IsEnabled="{m:Exp Str='persons.SelectedItem!=null and designer.SelectedItem!=null'}" Margin="2,0,0,0"  />
+
+            </toolkit:DockPanel>
+        </toolkit:DockPanel>
+        </StackPanel>
+        <c:MessageTipObj  Name="submittip" Tip="您确认要提交勘查人员吗？" OK="{m:Exp Str=startprocess.id\=persons.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
+
+        <c:PrintObj x:Name="print" UseDefaultPrinter="False" Area="{m:Res Key=persons }" Grid.ColumnSpan="4" />
+    </Grid>
+</UserControl>

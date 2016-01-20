@@ -1,0 +1,201 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    x:Class="Com.Aote.Pages.制清零卡" FontSize="13"
+    mc:Ignorable="d" > 
+	  <Grid x:Name="LayoutRoot">
+	<m:ResourceLoad Margin="0,0,-12,0">
+		<!--总公司名称-->
+		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+        </o:GeneralObject>
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司'"/>
+		<!--卡对象-->
+		<o:BJICCard Name="card" Init="True" Factory="{m:Exp Str=apply.DataContext.f_aliasname}"  IcardCont="{m:Exp Str=apply.DataContext.f_maichong.ToLong()}" TableCont="{m:Exp Str=apply.DataContext.f_watchnum.ToLong()}" >
+		</o:BJICCard>
+		<!--气表品牌列表-->
+		<o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
+		  
+		<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+			<b:BatchInfo Source="{m:Exp Str=apply.DataContext}" MethodName="SaveToJson"/>
+		</b:BatchExcuteAction>
+		
+	</m:ResourceLoad>
+	<Grid >
+		<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="3*"/>
+				<ColumnDefinition Width="7*"/>
+			</Grid.ColumnDefinitions>
+        <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applys.ItemsSource.IsBusy}">
+            <toolkit:DockPanel >
+                <toolkit:DockPanel x:Name="applysearch"  Background="#FFCFEFFF" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" >
+                   <a:Data.Context>
+            		  	<o:SearchObject  ></o:SearchObject>          	
+				   </a:Data.Context>
+					<TextBlock TextWrapping="Wrap" Text="气表品牌：" Margin="5,0,0,0" Height="25"/>
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_gaswatchbrand}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25" >
+                      <a:Data.Prop>
+                      	   <o:PropertySetter PropertyName="f_gaswatchbrand" Operator="f_gaswatchbrand like '%this%'"/>               
+					  </a:Data.Prop>
+					</TextBox>
+					<ComboBox x:Name="Comboxfx"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" ItemsSource="{m:Exp Str=fgslist}"  Margin="4,0,0,0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" Width="Auto" d:LayoutOverrides="Height">
+                    	<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>          
+                    	</a:Data.Prop>
+                    </ComboBox>
+                    <Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=applysearch.DataContext.Search()}" Margin="0,0,5,0" HorizontalAlignment="Right" Width="60"/>
+
+                </toolkit:DockPanel>
+                <toolkit:DockPanel  Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0"  Height="45" >
+                    <!--信息列表翻页-->
+                	<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{applys.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                </toolkit:DockPanel>
+                <sdk:DataGrid x:Name="applys" Margin="0,0,0,24"  
+				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
+                	<a:Data.Items>
+                		<o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
+                      Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_clearzerocard where \{applysearch.DataContext.Condition\}$\,LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_clearzerocard where \{applysearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+					 IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or apply.DataContext.State\=\=$End$}"
+					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+					</a:Data.Items>
+					
+                    <sdk:DataGrid.Columns>
+                       <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+					   		<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+							
+							<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_parentname}"/>
+							<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operator}"/>
+							<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+							
+                    </sdk:DataGrid.Columns>
+                </sdk:DataGrid>
+			</toolkit:DockPanel >
+        </toolkit:BusyIndicator>
+        <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=apply.DataContext.IsBusy or SaveAction.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+            <Grid Background="{x:Null}" x:Name="apply" >
+            	<a:Data.Context>
+            		<!--o:GeneralObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_clearzerocard" 
+						Source="{m:Exp Str=applys.SelectedItem}" 
+						IsInit="{m:Exp Str='SaveAction.State==$End'}">
+					</o:GeneralObject-->
+					<o:GeneralObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_clearzerocard" 
+						IsInit="{m:Exp Str='SaveAction.State==$End'}">
+					</o:GeneralObject>
+				</a:Data.Context>
+				
+			<!--主操作区-->
+            	<Grid Margin="0,0,0,45" HorizontalAlignment="Stretch" d:LayoutOverrides="Width, Height" >
+            		<Grid.Background>
+            			<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+            				<GradientStop Color="#FFF2F8FF" Offset="0"/>
+            				<GradientStop Color="#FFDDF2FD" Offset="1"/>
+            			</LinearGradientBrush>
+            		</Grid.Background>
+            		<Grid.RowDefinitions>
+            			<RowDefinition Height="45"/>
+            			<RowDefinition Height="45"/>
+            			<RowDefinition Height="45"/>
+            			<RowDefinition Height="45"/>
+            			<RowDefinition Height="45"/>
+            			<RowDefinition Height="45"/>
+            		</Grid.RowDefinitions>
+            		<Grid.ColumnDefinitions>
+            			<ColumnDefinition Width="100"/>
+            			<ColumnDefinition Width="1*"/>
+            			<ColumnDefinition Width="110"/>
+            			<ColumnDefinition Width="1*"/>
+            		</Grid.ColumnDefinitions>
+            		<TextBlock Text="气表品牌：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right"/>
+            		<TextBlock Text="厂家别名：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" HorizontalAlignment="Right" />
+            		<TextBlock Text="网　　点：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Grid.Column="2" d:LayoutOverrides="Width" Height="25" />
+            		<TextBlock Text="操  作  员：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="3" Height="25" />
+            		<TextBlock Text="操作日期：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="3" Height="25" />
+            		<ComboBox x:Name="CoboxPinpai" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" SelectedValue="{m:Bind Path=f_gaswatchbrand}" ItemsSource="{m:Exp Str=pinpailist}" Grid.Column="1" Margin="0,9" Grid.Row="0"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_gaswatchbrand"  />
+            			</a:Data.Prop>
+            		</ComboBox>
+            		<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="1" Margin="0" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" Height="25" HorizontalAlignment="Stretch">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_operator"
+            					Default="{m:Exp Str=LoginUser.name}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBox Text="{m:Bind Path=f_aliasname}"  Grid.Column="3" Margin="0,9" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=CoboxPinpai.SelectedItem.f_aliasname}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBox Text="{m:Bind Path=f_parentname}"  Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"   >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_parentname" 
+								Default="{m:Exp Str=LoginUser.f_parentname}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<sdk:DatePicker Grid.Column="3" Margin="0" Grid.Row="3"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Grid.ColumnSpan="1" BorderThickness="1,1,1,0" Height="25" HorizontalAlignment="Stretch">
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_date"
+            					Default="{m:Exp Str=SysTime.Today}"/>
+            			</a:Data.Prop>
+            		</sdk:DatePicker>
+								
+            		<TextBlock Text="分  公  司：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" />
+            		<TextBox Text="{m:Bind Path=f_filiale}"  Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_filiale" 
+            					Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBlock Text="分公司编号：" Visibility="Collapsed" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" Grid.Column="2" />
+            		<TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed"  Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_fengongsinum" 
+            					Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBlock Margin="0" TextWrapping="Wrap" Text="气表型号：" TextAlignment="Right" Grid.Row="1" Height="25"/>
+            		<ComboBox x:Name="DaXiaoKa" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber" ItemsSource="{m:Exp Str=CoboxPinpai.SelectedItem.qbnumber}" SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="1" Margin="0" Grid.Row="1" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+            			
+            		</ComboBox>
+            		<TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="脉冲(表系数)：" TextAlignment="Right" Height="25" Grid.Column="2"/>
+            		<TextBox Text="{m:Bind Path=f_maichong}"  Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_maichong" Value="{m:Exp Str=DaXiaoKa.SelectedItem.f_maichong}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBlock Margin="0" TextWrapping="Wrap" Text="海力表型编码：" TextAlignment="Right" Grid.Row="2" Height="25"/>
+            		<TextBox Text="{m:Bind Path=f_watchnum}"  Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="-10.153,-6" >
+            			<a:Data.Prop>
+            				<o:PropertySetter PropertyName="f_watchnum" Value="{m:Exp Str=DaXiaoKa.SelectedItem.f_watchnum}"/>
+            			</a:Data.Prop>
+            		</TextBox>
+            		<TextBlock Foreground="Red" Margin="5,2,-1,18" Grid.Row="5" TextWrapping="Wrap" Text="注意：秦川工业、山城民用、山城非民用不能制作清零卡。" Height="25" Grid.ColumnSpan="4"/>
+            	</Grid>
+            	<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
+            		<Button x:Name="save" Content="保 存" Margin="5" 
+            			IsEnabled="{m:Exp Str=apply.DataContext.IsModified and !apply.DataContext.HasErrors}"
+            			Click="{m:Exp Str=card.MakeClearCard();SaveAction.Invoke();apply.DataContext.New()}" Width="60"/>
+            		<Button Content="撤 销" Margin="5" Click="{m:Exp Str=apply.DataContext.New()}" Width="60"/>
+                    
+            	</StackPanel>
+            </Grid>
+        </toolkit:BusyIndicator>
+		<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=applys,Converter={StaticResource DataPagerConverter}}"  Margin="1,0,0,44" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+    </Grid>
+  </Grid>
+</UserControl>

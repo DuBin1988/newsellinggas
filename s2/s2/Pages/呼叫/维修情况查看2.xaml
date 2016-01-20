@@ -1,0 +1,278 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.维修情况查看2">
+    <UserControl.Resources>
+        <!--也可以在这里引用自定义转换器，推荐在全局APP.xaml引用
+        <local:strtobool x:Key="booltostr" /> 
+        <SolidColorBrush x:Key="Red" Color="Red"></SolidColorBrush>
+        <SolidColorBrush x:Key="Black" Color="Black"></SolidColorBrush> -->
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--完成情况ItemsSource="{m:Exp Str=wcqklist}"-->
+            <o:ObjectList Name="wcqklist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='完成情况' order by id"/>
+            <o:ObjectList Name="tdzxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='调度中心'"/>
+            <o:ObjectList Name="ypdlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='呼叫已派单'"/>
+            
+            <!--接单人对象列表 -->
+            <o:ObjectList Name="jiedanrenlist" WebClientInfo="{StaticResource dbclient}"  Path="from repairsman" />
+            <o:ExcelObj Name="excel" Bind="Index,f_cucode,f_havacomplete,f_username,f_userid,f_downloadstatus,f_address,f_phone,f_repairreason,f_reporttime,f_recorddate,f_repairtype,f_dealtype,f_dzzx,f_meetunit,f_accepter,f_havadeal,f_senddate,f_sendtime,f_dealonline,f_smwxjl,f_havacomplete,f_ifvisit,f_repairer2,f_completedate2,f_completetime,f_visitren,f_visitrq,f_consumeroption,f_operator" Source="{m:Exp Str=daninfos}"/>
+        </m:ResourceLoad>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3"  Width="auto" HorizontalAlignment="Stretch" Height="84" d:LayoutOverrides="Width, Height" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Button Content="打印" Visibility="Collapsed" Click="{m:Exp Str=print.Print()}" Height="28" VerticalAlignment="Bottom"  Grid.Column="9" Grid.Row="2" Margin="0,0,2,0"/>
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="5" Grid.Column="7" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="5,0,5,0" FontSize="14" Grid.RowSpan="2"  />
+                        <Button Content="清空条件" x:Name="clearbutton" Grid.Row="2" Grid.Column="8" Click="{m:Exp Str=daninfosearch.DataContext.f_accepter\=null;daninfosearch.DataContext.f_cucode\=null;daninfosearch.DataContext.f_phone\=null;daninfosearch.DataContext.ypd\=null;daninfosearch.DataContext.f_operator\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_address\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_havacomplete\=null}" Margin="5,0,5,0"/>
+                        <StackPanel Grid.Row="2" Grid.Column="9" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="5,0,5,0">
+                            <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$\{daninfos.ItemsSource.Path\}}" Completed="{m:Exp Str=downLoad.Down()}"
+								Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/Index:序号|f_cucode:报修编号|f_havacomplete:完成情况|f_username:用户姓名|f_userid:用户ID|f_downloadstatus:任务下载|f_address:用户地址|f_phone:来电电话|f_repairreason:来电内容|f_reporttime:报修日期|f_recorddate:报修时间|f_repairtype:报修类型|f_dealtype:处理方式|f_dzzx:调度中心|f_meetunit:接单部门|f_accepter:接单人|f_havadeal:是否处理|f_senddate:派单日期|f_sendtime:派单时间|f_dealonline:处理记录|f_smwxjl:上门维修记录|f_havacomplete:完成情况|f_ifvisit:是否回访|f_repairer2:维修人员|f_completedate2:完成日期|f_completetime:完成时间|f_visitren:回访员|f_visitrq:回访日期|f_consumeroption:用户意见|f_operator:值班员$}" Height="30" VerticalAlignment="Top" Width="0"/>
+                            <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"/>
+                            <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=&gt;Completed!\=null}"/>
+                            <Button Content="导出Excel" Click="{m:Exp Str=toExcel.ToExcel()}" Height="30" VerticalAlignment="top" Width="69" Margin="0,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" Text="派单情况："  Margin="6,0,4,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.Column="6" />
+                        <ComboBox SelectedValue="{m:Bind Path=ypd}" ItemsSource="{m:Exp Str=ypdlist}" DisplayMemberPath="name" SelectedValuePath="code" Margin="1,2,0,1" Height="25" Grid.Column="7" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="ypd" Operator="f_accepter this"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="接单人："  Margin="6,0,4,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+
+                        <ComboBox  SelectedValue="{m:Bind Path=f_accepter}" ItemsSource="{m:Exp Str=jiedanrenlist}" DisplayMemberPath="man" SelectedValuePath="man" Margin="1,2,0,1" Height="25" Grid.Column="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_accepter" Operator="f_accepter = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="报修编号："  Margin="0,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="75" VerticalAlignment="Top" d:LayoutOverrides="Height" Grid.Column="2" />
+                        <TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Text="{m:Bind Path=f_cucode}" Width="149" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" 
+
+	Grid.Column="3" d:LayoutOverrides="Height" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_cucode" Operator="f_cucode like 'this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户编号：" Height="25" TextAlignment="Right" 
+
+									HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="6" d:LayoutOverrides="Height" Grid.Row="1" Margin="0,1,0,0" Width="79" />
+                        <TextBox x:Name="tjwhf_Copy1" TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" 
+
+									Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+
+	Grid.Column="7" d:LayoutOverrides="Height" Grid.Row="1" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="值班人："  Margin="35,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="54" VerticalAlignment="Top" d:LayoutOverrides="Height" Grid.Row="1" />
+                        <TextBox x:Name="tjwhf_Copy2" TextWrapping="Wrap" Text="{m:Bind Path=f_operator}" Width="149" Margin="1,2,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" 
+
+									Grid.Column="1" Grid.ColumnSpan="1" d:LayoutOverrides="Height" Grid.Row="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_operator" Operator="f_operator like 'this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户姓名："  Margin="4,1,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="2" d:LayoutOverrides="Height" Grid.Row="1" />
+                        <TextBox x:Name="tjwhf_Copy3" TextWrapping="Wrap" Text="{m:Bind Path=f_username}" Width="149" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" 
+
+									Grid.Column="3" Grid.ColumnSpan="1" d:LayoutOverrides="Height" Grid.Row="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户地址："  Margin="4,1,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="4" d:LayoutOverrides="Height" Grid.Row="1" />
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="149" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" 
+
+									Grid.Column="5" Grid.ColumnSpan="1" d:LayoutOverrides="Height" Grid.Row="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_address" Operator="f_address like 'this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="来电电话：" Height="25" TextAlignment="Right" 
+
+									HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="4" Width="79" d:LayoutOverrides="Height" Margin="0,2,0,0" />
+                        <TextBox x:Name="tjwhf_Copy4" TextWrapping="Wrap" Text="{m:Bind Path=f_phone}" 
+
+									Width="Auto" Margin="1,2,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+
+									Grid.Column="5" Grid.Row="0" Grid.ColumnSpan="1" d:LayoutOverrides="Height" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_phone"  Operator="f_phone = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="完成情况：" Grid.Row="2" Grid.Column="4"/>
+                        <ComboBox SelectedValue="{m:Bind Path=f_havacomplete}" ItemsSource="{m:Exp Str=wcqklist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Grid.Row="2" Grid.Column="5" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_havacomplete" Operator="f_havacomplete = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="报修时间："  Margin="6,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="0" Grid.Row="2" />
+                        <sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="3" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate1"  Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_reporttime >= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate2"   Value="{m:Exp Str=SysTime.Today}" 
+											Operator="f_reporttime ^= substring('this',1,10) + ' 23:59:59'"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到："  Margin="4,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="2" Grid.Row="2" />
+                    </Grid>
+
+                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="40" toolkit:DockPanel.Dock="Top" Height="24"   />
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+                    <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="ldlist" WebClientInfo="{StaticResource dbclient}"
+												Path="{m:Exp Str=$from t_repairsys where \{daninfosearch.DataContext.Condition\}}"
+												IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
+												PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn  Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTemplateColumn Header="报修编号" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding f_cucode}"  />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="完成情况" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding f_havacomplete}" Foreground="{m:Exp Str=(data.f_havacomplete\=\=$未完成$ or data.f_havacomplete\=\=$二次新工单$):Red\,Black}" />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn Header="用户ID" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="任务下载" Binding="{Binding f_downloadstatus}"/>
+                            <sdk:DataGridTextColumn Header="用户地址" Binding="{Binding f_address}"/>
+                            <sdk:DataGridTextColumn Header="来电电话" Binding="{Binding f_phone}"/>
+                            <sdk:DataGridTextColumn Header="来电内容" Binding="{Binding f_repairreason}"/>
+                            <sdk:DataGridTextColumn Header="备注" Binding="{Binding f_beizhu}"/>
+                            <sdk:DataGridTextColumn Header="报修日期" Binding="{Binding f_reporttime,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="报修时间" Binding="{Binding f_recorddate,StringFormat=hh:mm}"/>
+                            <sdk:DataGridTextColumn Header="报修类型" Binding="{Binding f_repairtype}"/>
+                            <sdk:DataGridTextColumn Header="处理方式" Binding="{Binding f_dealtype}"/>
+                            <sdk:DataGridTextColumn Header="调度中心" Binding="{Binding f_dzzx}"/>
+                            <sdk:DataGridTextColumn Header="接单部门" Binding="{Binding f_meetunit}"/>
+                            <sdk:DataGridTextColumn Header="接单人" Binding="{Binding f_accepter}"/>
+                            <sdk:DataGridTextColumn Header="是否处理" Binding="{Binding f_havadeal}"/>
+                            <sdk:DataGridTextColumn Header="派单日期" Binding="{Binding f_senddate,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="派单时间" Binding="{Binding f_sendtime,StringFormat=hh:mm}"/>
+                            <sdk:DataGridTextColumn Header="处理记录" Binding="{Binding f_dealonline}"/>
+                            <sdk:DataGridTextColumn Header="上门维修记录" Binding="{Binding f_smwxjl}"/>
+                            <sdk:DataGridTemplateColumn Header="完成情况" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding f_havacomplete}" Foreground="{m:Exp Str=(data.f_havacomplete\=\=$未完成$ or data.f_havacomplete\=\=$二次新工单$):Red\,Black}" />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTextColumn Header="是否回访" Binding="{Binding f_ifvisit}"/>
+                            <sdk:DataGridTextColumn Header="维修人员" Binding="{Binding f_repairer2}"/>
+                            <sdk:DataGridTextColumn Header="完成日期" Binding="{Binding f_completedate2,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="完成时间" Binding="{Binding f_completetime,StringFormat=hh:mm}"/>
+                            <sdk:DataGridTextColumn Header="回访员" Binding="{Binding f_visitren}"/>
+                            <sdk:DataGridTextColumn Header="回访日期" Binding="{Binding f_visitrq}"/>
+                            <sdk:DataGridTextColumn Header="用户意见" Binding="{Binding f_consumeroption}"/>
+                            <sdk:DataGridTextColumn Header="值班员" Binding="{Binding f_operator}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+
+
+
+                </toolkit:DockPanel>
+
+
+            </c:BusyIndicatorEx>
+
+        </Grid>
+        <c:PrintPageObj x:Name="print" ListNameInArea="selllist" Area="{m:Res Key=sqprint1}" 
+      List="{m:Exp Str=daninfos.ItemsSource}" PageRow="25"  />
+        <Grid  x:Name="sqprint1" VerticalAlignment="Bottom" Margin="-1355,0,0,25" HorizontalAlignment="Left" Width="1227" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="0.942*"/>
+            </Grid.RowDefinitions>
+            <sdk:Label HorizontalAlignment="Left" Grid.Row="0" Content="总记录数:" Height="24"   VerticalAlignment="Bottom" Width="105" Margin="2,0,0,4"/>
+            <sdk:Label HorizontalAlignment="Left" Content="{m:Exp Str=daninfos.ItemsSource.Count}"  Grid.Row="0" Height="24" Margin="111,0,0,4" VerticalAlignment="Bottom" Width="90"/>
+
+            <sdk:DataGrid x:Name="selllist" AutoGenerateColumns="False" Style="{StaticResource DataGridPrintStyle}" FontSize="11"  Grid.Row="1" VerticalAlignment="Top" >
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTemplateColumn Header="" d:IsLocked="True" >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text=" "   IsReadOnly="True"/>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
+                    <sdk:DataGridTextColumn Header="完成情况" Binding="{Binding f_havacomplete}"/>
+                    <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+                    <sdk:DataGridTextColumn Header="用户ID" Binding="{Binding f_userid}"/>
+                    <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+                    <sdk:DataGridTextColumn Header="来电电话" Binding="{Binding f_phone}"/>
+                    <sdk:DataGridTextColumn Header="报修类型" Binding="{Binding f_repairtype}"/>
+                    <sdk:DataGridTextColumn Header="来电类型" Binding="{Binding f_teltype}"/>
+                    <sdk:DataGridTextColumn Header="处理方式" Binding="{Binding f_dealtype}"/>
+                    <sdk:DataGridTextColumn Header="接单人" Binding="{Binding f_accepter}"/>
+                    <sdk:DataGridTextColumn Header="是否处理" Binding="{Binding f_havadeal}"/>
+                    <sdk:DataGridTextColumn Header="值班员" Binding="{Binding f_operator}"/>
+                    <sdk:DataGridTextColumn Header="报修日期" Binding="{Binding f_reporttime}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+
+        </Grid>
+    </Grid>
+</UserControl>

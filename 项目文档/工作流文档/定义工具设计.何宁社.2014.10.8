@@ -1,0 +1,81 @@
+一、Model部分
+
+1. 执行者，Actor
+
+2. 每个执行者包含一批活动 Activity
+
+class Actor {
+  List<Activity> c;
+  
+  string Name;
+}
+
+3. 活动之间用转移线连接 Transfer
+
+class Transfer {
+  Activity head;
+  Activity tail;
+}
+
+4. 整个图由一批执行者，一批转移线组成
+
+class Diagram {
+  List<Actor> actors;
+  List<Transfer> transfers;
+}
+
+二、View部分
+
+利用mvvm思路
+
+<listBox ItemsSource=diagram.actors>
+  <ItemPanel>
+     <Grid Click="">
+     <TextBlock Text=Name>
+     <listbox ItemsSource={Binding activities}>
+        <ItemPanel>
+            <TextBox Text=Name Margin={Binding }/>
+        <Itempanel>
+     <listbox>
+     <Grid>
+  <ItemPanel>
+</ListBox>
+
+线的显示？
+<listBox ItemsSource=diagram.actors>
+  <ItemPanel>
+     <TextBlock Text=Name>
+     <listbox ItemsSource={Binding activities}>
+        <ItemPanel>
+            <TextBox Text=Name/>
+        <Itempanel>
+     <listbox>
+  <ItemPanel>
+</ListBox>
+
+三、控制部分
+
+主要在后台c#中，
+
+string tool;
+
+给显示图的ListBox加单击事件，
+
+OnMouseDown()
+{
+  if(tool == "活动 ")
+  {
+     //获取鼠标点击处的Actor
+     Actor = Grid.DataContext;
+     Point p = GetPoint(grid);
+     //给Actor添加一个新活动
+     new Activity() { name='新活动', pos = p.x};
+  }
+}
+
+四、保存Activity位置
+
+class Activity {
+   string Name;
+   int pos;
+}

@@ -1,0 +1,151 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d" Width="1024" Height="768"
+	x:Class="Com.Aote.Pages.大屏显示"
+	>
+	<UserControl.Background>
+		<ImageBrush Stretch="Fill" ImageSource="System.Windows.Media.Imaging.BitmapImage"/>
+	</UserControl.Background>
+
+	
+		<Viewbox HorizontalAlignment="Left" Height="768" Margin="0" VerticalAlignment="Top" Width="1024">
+
+	
+		<Grid x:Name="LayoutRoot" Height="768" Width="1024" d:LayoutOverrides="Width, Height" >
+			<m:ResourceLoad>
+			<o:GeneralObject Name="persongo1" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_screenset" Path="{m:Exp Str='$one/from t_screenset where rownum \= 1 order by id desc'}"
+						IsOld="{m:Exp Str='Timer.State==$Loaded'}"/>
+				<!--客服系统开始运行时间-->
+				<o:GeneralObject Name="rundate" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="paramvalue"  
+						IsOld="{m:Exp Str='Timer.State==$Loaded'}"
+						Path="{m:Exp Str=this.tiaojian}">
+				      <o:PropertySetter PropertyName="tiaojian" Value="{m:Exp Str=$one/from paramvalue where param.name\=\'客服系统开始运行时间\'}"/>
+				</o:GeneralObject>
+				
+						
+			<o:UtilAction Name="cha" Page="/Pages/大屏显示.xaml" LargeTime="{m:Exp Str='${SysTime.Now.ToString($yyyy-MM-dd$)}'}" SmallTime="{m:Exp Str=rundate.name }" Calculate="{m:Exp Str='Timer.State==$Loaded'}"/>
+			
+			
+			</m:ResourceLoad>
+
+			<Border BorderThickness="0" Margin="0" Grid.Row="1" CornerRadius="0,0,3,3"> 
+				<Border.Background>
+					<ImageBrush Stretch="Fill"/>
+				</Border.Background>
+				<Grid Background="{StaticResource BigScreenBrush1}" HorizontalAlignment="Stretch" Height="Auto" Margin="0" VerticalAlignment="Stretch" Width="Auto">
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.049*"/>
+						<ColumnDefinition Width="0.951*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.281*"/>
+						<RowDefinition Height="0.109*"/>
+						<RowDefinition Height="0.087*"/>
+						<RowDefinition Height="0.105*"/>
+						<RowDefinition Height="0.098*"/>
+						<RowDefinition Height="0.103*"/>
+						<RowDefinition Height="0.104*"/>
+						<RowDefinition Height="0.112*"/>
+					</Grid.RowDefinitions>
+			 
+		
+					
+					<!--日期-->
+					<Image Source="大屏.jpg" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stretch="Fill" Grid.Column="1" Grid.Row="7"/>
+		
+					<!--日期-->
+					<StackPanel Grid.Column="0" Height="51" Margin="0" VerticalAlignment="Bottom" Grid.ColumnSpan="9" Orientation="Horizontal" HorizontalAlignment="Center" d:LayoutOverrides="GridBox">
+						<sdk:Label FontSize="40" Foreground="#FFCDE8FF" Content="截止 " HorizontalAlignment="Center" Height="Auto" Margin="0" VerticalAlignment="Bottom" Width="Auto" Grid.Column="1" Grid.ColumnSpan="5" d:LayoutOverrides="GridBox" Style="{StaticResource TopLabelStyle3}" />
+						<sdk:Label FontSize="40" Foreground="#FFCDE8FF" Content="{m:Exp Str=$\{SysTime.Now.ToString($yyyy$)\} 年 \{SysTime.Now.ToString($MM$)\} 月 \{SysTime.Now.ToString($dd$)\} 日}" HorizontalAlignment="Center" Height="Auto" Margin="0" VerticalAlignment="Bottom" Width="Auto" Grid.Column="1" Grid.ColumnSpan="5" d:LayoutOverrides="GridBox" Style="{StaticResource TopLabelStyle3}" />
+						<sdk:Label FontSize="40" Foreground="#FFCDE8FF" Content="  已安全运行" HorizontalAlignment="Center" Height="Auto" Margin="0" VerticalAlignment="Bottom" Width="Auto" Grid.Column="1" Grid.ColumnSpan="5" d:LayoutOverrides="GridBox" Style="{StaticResource TopLabelStyle3}" />
+						<sdk:Label FontSize="40" Foreground="#FFCDE8FF" Content="{m:Exp Str=$\{cha.Difference+5303\}}" HorizontalAlignment="Center" Height="Auto" Margin="0" VerticalAlignment="Bottom" Width="120" Grid.Column="1" Grid.ColumnSpan="5" d:LayoutOverrides="GridBox" Style="{StaticResource TopLabelStyle4}" />
+						<sdk:Label FontSize="40" Foreground="#FFCDE8FF" Content="天" HorizontalAlignment="Center" Height="Auto" Margin="0" VerticalAlignment="Bottom" Width="Auto" Grid.Column="1" Grid.ColumnSpan="5" d:LayoutOverrides="GridBox" Style="{StaticResource TopLabelStyle3}" />
+ 	
+					</StackPanel>
+	
+					<Button Content="全屏"  Foreground="White" Click="{m:Exp Str=cha.Open()}" Grid.Column="1" Margin="0,28,8,8" Grid.Row="7"   Background="#FFD5E0E9" RenderTransformOrigin="11.641,3.75" HorizontalAlignment="Right" Width="39" Style="{StaticResource BigScreenButtonStyle1}"/>
+					<sdk:Label Content="今日客服处理情况：" FontSize="35" Grid.Column="1" Margin="0,30,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" HorizontalAlignment="Left" Width="367" VerticalAlignment="Center"    />
+					<sdk:Label Content="昨日用气情况：" FontSize="35" Grid.Column="1" Grid.Row="4" FontFamily="Microsoft YaHei" VerticalAlignment="Center" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" HorizontalAlignment="Left" Width="367"  />
+					<StackPanel Grid.ColumnSpan="1" Margin="76,8,15,8" Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+						<!--电话量-->
+						<sdk:Label Content="来电总数:" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0" Width="Auto" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"   d:LayoutOverrides="HorizontalAlignment"   />
+						<sdk:Label Content="{m:Exp Str=$\{zxcount.Count+smwxcount.Count+qxcount.Count\}}" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="10,0,0,0" Width="100" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal"   />
+							<sdk:Label Content="个" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="10,0,0,0" Width="100" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"   />
+					
+						<sdk:Label Content="在线处理:" FontSize="30.667" FontFamily="Microsoft YaHei" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="Auto" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" d:LayoutOverrides="HorizontalAlignment" />
+	
+						<sdk:Label Content="{m:Exp Str=$\{zxcount.Count\}}" FontSize="30.667" FontFamily="Microsoft YaHei"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="10,0,0,0" Width="100" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal" />
+									<sdk:Label Content="个" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="10,0,0,0" Width="30" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"   />
+				
+					</StackPanel>
+						<StackPanel Grid.ColumnSpan="1" Margin="76,8,15,8" Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+						<!--电话量-->
+				
+						<sdk:Label Content="上门维修:" FontSize="30.667" FontFamily="Microsoft YaHei" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" />
+	
+						<sdk:Label Content="{m:Exp Str=$\{smwxcount.Count\}}" FontSize="30.667" FontFamily="Microsoft YaHei"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="10,0,0,0" Width="100" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal" />
+									<sdk:Label Content="个" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="10,0,0,0" Width="100" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"   />
+				
+						<sdk:Label Content="抢      险:" FontSize="30.667" FontFamily="Microsoft YaHei" VerticalAlignment="Stretch" HorizontalAlignment="Left" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Margin="20,0,0,0" Width="131" />
+	
+						<sdk:Label Content="{m:Exp Str=$\{qxcount.Count\}}" FontSize="30.667" FontFamily="Microsoft YaHei"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="10,0,0,0" Width="100" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal" />
+								<sdk:Label Content="个" FontSize="30.667" FontFamily="Microsoft YaHei" Foreground="#FFCDE8FF" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="10,0,0,0" Width="30" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"   />
+				
+					</StackPanel>
+				
+					<StackPanel Grid.ColumnSpan="1" Grid.Column="1" Margin="76,2,0,-2" Grid.Row="5" Orientation="Horizontal">
+						<!--售气量-->
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="省末站:" HorizontalAlignment="Left" Height="Auto" Margin="0" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="100"/>
+	
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="{m:Exp Str=$\{persongo1.shengml\}}" HorizontalAlignment="Right" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" Width="120" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal"/>
+							<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="方" HorizontalAlignment="Left" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="50"/>
+					
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="门  站:" HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Stretch" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" d:LayoutOverrides="Height" FontWeight="Normal" RenderTransformOrigin="0.547,-0.176" Margin="0" Width="100"/>
+		
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="{m:Exp Str=$\{persongo1.menz\}}" HorizontalAlignment="Right" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" Width="120" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" d:LayoutOverrides="Height" FontWeight="Normal" RenderTransformOrigin="0.547,-0.176"/>
+								<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="方" HorizontalAlignment="Left" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"/>
+					</StackPanel>
+		<StackPanel Grid.ColumnSpan="1" Grid.Column="1" Margin="76,2,0,-2" Grid.Row="6" Orientation="Horizontal">
+						<!--售气量-->
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="彩   虹:" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,4" VerticalAlignment="Stretch" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="100"/>
+		
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="{m:Exp Str=$\{persongo1.caih\}}" HorizontalAlignment="Right" Height="Auto" Margin="10,0,0,4" VerticalAlignment="Stretch" Width="120" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal"/>
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="方" HorizontalAlignment="Left" Height="Auto" Margin="10,0,0,4" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="50"/>
+					
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="七0四:" HorizontalAlignment="Left" Height="Auto" Margin="0" VerticalAlignment="Stretch" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="100"/>
+		
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="{m:Exp Str=$\{persongo1.qils\}}" HorizontalAlignment="Right" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" Width="120" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal"/>
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="方" HorizontalAlignment="Left" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" Width="50"/>
+					
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="加气站:" HorizontalAlignment="Left" Height="Auto" Margin="0" VerticalAlignment="Stretch" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal" d:LayoutOverrides="Height" Width="100"/>
+	
+	
+						<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="{m:Exp Str=$\{persongo1.baoql+persongo1.jinxl+persongo1.wenll+persongo1.shijdd\}}" HorizontalAlignment="Right" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" Width="120" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle4}" FontWeight="Normal" d:LayoutOverrides="Height"/>
+		<sdk:Label FontSize="32" FontFamily="Microsoft YaHei"  Content="方" HorizontalAlignment="Left" Height="Auto" Margin="10,0,0,0" VerticalAlignment="Stretch" RenderTransformOrigin="0.448,0.08" Foreground="#FFCDE8FF" Style="{StaticResource TopLabelStyle3}" FontWeight="Normal"/>
+					
+					</StackPanel>
+		<Button Content="Button" Grid.Column="1"  Click="{m:Exp Str=window.DoJs()}"  HorizontalAlignment="Right" Height="48" Margin="0,8,0,0" VerticalAlignment="Top" Width="176" Background="#FFF1F3F5" Opacity="0"/>
+											
+				</Grid>
+			</Border>
+		</Grid>
+	 
+	</Viewbox>
+	 
+</UserControl>

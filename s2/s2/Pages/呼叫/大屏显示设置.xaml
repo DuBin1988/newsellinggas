@@ -1,0 +1,168 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
+	mc:Ignorable="d" Width="995" Height="611"
+	x:Class="Com.Aote.Pages.大屏显示设置"
+	>
+
+	<Grid x:Name="LayoutRoot" >
+				<Grid.RowDefinitions>
+				<RowDefinition Height="28"/>
+				<RowDefinition Height="0.775*"/>
+			</Grid.RowDefinitions>
+		<m:ResourceLoad Margin="0,0,0,0">
+		
+		</m:ResourceLoad>
+	<Border BorderThickness="0" Margin="0" CornerRadius="3,3,0,0" Background="{StaticResource MainRightTitleColorBrush1}">
+				<Grid Margin="10,4">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="27"/>
+					</Grid.ColumnDefinitions>
+					<sdk:Label Content="大屏显示设置" Foreground="{StaticResource TopCloseFontBrush1}" VerticalAlignment="Center" FontSize="14.667" d:LayoutOverrides="Width" Grid.ColumnSpan="2" Style="{StaticResource TopLabelStyle1}" HorizontalAlignment="Left"/>
+				</Grid>
+			</Border>
+	<Border BorderThickness="0" Margin="0" Grid.Row="1" CornerRadius="0,0,3,3" Background="{StaticResource MainSubContentBrush1}">
+
+	<Grid HorizontalAlignment="Stretch" Height="Auto" Margin="0" VerticalAlignment="Stretch" Width="Auto">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.3*"/>
+			<ColumnDefinition Width="0.7*"/>
+		</Grid.ColumnDefinitions>
+		<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}" Grid.ColumnSpan="1" Margin="0" d:LayoutOverrides="Width" >
+			<toolkit:DockPanel  Margin="0" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+				<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom"  >
+					<TextBlock Height="23" TextWrapping="Wrap" Text="{m:Exp Str=$共\{persons.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" Margin="0,0,5,0"/>
+				</toolkit:DockPanel>
+				<StackPanel x:Name="personsearch" toolkit:DockPanel.Dock="Top" Margin="5,0,0,0" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+					<a:Data.Context>
+						<o:SearchObject  />         	
+					</a:Data.Context>
+					<TextBlock TextWrapping="Wrap" Text="操作人：" d:IsLocked="True"/>
+					<TextBox TextWrapping="Wrap" Text="{m:Bind Path=czr}" a:ControlAttach.DefaultButton="searchbutton" Margin="0,0,5,0" >
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="czr" Operator="czr like 'this%'"/>               
+						</a:Data.Prop>
+					</TextBox>
+					<TextBlock TextWrapping="Wrap" Text="操作日期：" Margin="5,0,0,0"/>
+					<sdk:DatePicker SelectedDate="{m:Bind Path=czrq}" Grid.Column="3" Margin="0,0,8,0" Grid.Row="5" VerticalAlignment="Center">
+						<a:Data.Prop>
+							<o:PropertySetter PropertyName="czrq" Operator="to_char(czrq, 'yyyy-mm-dd')=substring('this',1,10)" />
+						</a:Data.Prop>
+					</sdk:DatePicker>
+					<Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="0"/>
+				</StackPanel>
+				<sdk:DataGrid x:Name="persons" Margin="5,0,0,4" IsReadOnly="True"  
+					AutoGenerateColumns="False" SelectedItem="{m:Exp Str=main.DataContext.IsInit:null\,persons.SelectedItem}" Width="Auto" HorizontalAlignment="Stretch">
+					<a:Data.Items>
+						<o:ObjectList x:Name="personslist" WebClientInfo="{StaticResource dbclient}"
+							Path="{m:Exp Str=$from t_screenset where \{personsearch.DataContext.Condition\}}"
+							IsOld="{m:Exp Str= main.DataContext.State\=\=$End$}"/>
+					</a:Data.Items>
+					<sdk:DataGrid.Columns>
+						<sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+						<sdk:DataGridTextColumn Header="省末路" Binding="{Binding shengml}"/>
+						<sdk:DataGridTextColumn Header="门站：" Binding="{Binding menz}"/>
+						<sdk:DataGridTextColumn Header="彩虹" Binding="{Binding caih}"/>
+						<sdk:DataGridTextColumn Header="底张" Binding="{Binding diz}"/>
+						<sdk:DataGridTextColumn Header="七0四" Binding="{Binding qils}"/>
+						<sdk:DataGridTextColumn Header="机场" Binding="{Binding jic}"/>
+						<sdk:DataGridTextColumn Header="金旭路" Binding="{Binding jinxl}"/>
+						<sdk:DataGridTextColumn Header="文林路" Binding="{Binding wenll}"/>
+						<sdk:DataGridTextColumn Header="世纪大道" Binding="{Binding shijdd}"/>
+						<sdk:DataGridTextColumn Header="宝泉路" Binding="{Binding baoql}"/>
+						<sdk:DataGridTextColumn Header="操作人" Binding="{Binding czr}"/>
+						<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding czrq}"/>
+							
+					</sdk:DataGrid.Columns>
+				</sdk:DataGrid>
+                 <!--提交按钮-->
+			</toolkit:DockPanel>
+		</toolkit:BusyIndicator>
+		<toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=main.DataContext.IsBusy}" Margin="5,0,0,0" Width="Auto" Grid.ColumnSpan="1" Grid.Column="1">
+			<toolkit:DockPanel  x:Name="main" Margin="0" HorizontalAlignment="Stretch" >
+				<a:Data.Context>
+					<o:GeneralObject Name="persongo" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_screenset" Source="{m:Exp Str=persons.SelectedItem}"
+						IsInit="{m:Exp Str=this.State\=\=$End}"/>
+				</a:Data.Context>
+				<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+					<Button x:Name="save" Content="保 存" Margin="5,5,0,5" 
+						IsEnabled="{m:Exp Str='main.DataContext.IsModified and !main.DataContext.HasErrors'}"
+						Click="{m:Exp Str=main.DataContext.Save()}"/>
+					<Button Content="撤 销" Margin="5" Click="{m:Exp Str=main.DataContext.New()}"/>
+					
+				</toolkit:DockPanel>
+				<StackPanel>
+				 	<!--民用主操作区-->
+					 		<Grid HorizontalAlignment="Stretch" Width="Auto" Height="350" >
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="110"/>
+									<ColumnDefinition Width="0.284*"/>
+									<ColumnDefinition Width="0.249*"/>
+									<ColumnDefinition Width="125"/>
+									<ColumnDefinition Width="0.466*"/>
+									<ColumnDefinition Width="0"/>
+									<ColumnDefinition Width="0*"/>
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="37"/>
+									<RowDefinition Height="34"/>
+									<RowDefinition Height="35"/>
+									<RowDefinition Height="35"/>
+									<RowDefinition Height="41"/>
+									<RowDefinition Height="41"/>
+									<RowDefinition Height="118"/>
+								</Grid.RowDefinitions>
+								<TextBlock Margin="0" TextWrapping="Wrap" Text="省末路：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Text="机场：" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25"/>
+								<TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="门站：" HorizontalAlignment="Right" Height="25" VerticalAlignment="Center"/>
+								<TextBlock Margin="0,10,4,7" Grid.Row="3" TextWrapping="Wrap" Text="底张：" HorizontalAlignment="Right" d:LayoutOverrides="Height"/>
+								<TextBlock Margin="0,5,0,3" Grid.Row="2" TextWrapping="Wrap" Text="彩虹：" HorizontalAlignment="Right"/>
+								<TextBlock Grid.Column="2" Margin="0" Grid.Row="3" TextWrapping="Wrap" Text="世纪大道：" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25"/>
+								<TextBox Text="{m:Bind Path=shengml}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=menz}" Grid.ColumnSpan="1" Grid.Column="1" Margin="0,5,0,4" Grid.Row="1" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=caih}" Grid.ColumnSpan="1" Grid.Column="1" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch"/>
+								<TextBlock Grid.Column="2" Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="金旭路：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="2" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="文林路：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBox Text="{m:Bind Path=jic}" Grid.Column="3" Margin="0,6" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=jinxl}" Grid.Column="3" Margin="0,5,0,4" Grid.Row="1" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=wenll}" Grid.Column="3" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=diz}" Grid.Column="1" Margin="0,5" Grid.Row="3" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=shijdd}" Grid.Column="3" Margin="0,5" Grid.Row="3" TextWrapping="Wrap" Height="25"/>
+								<TextBlock Margin="0" Grid.Row="4" TextWrapping="Wrap" Text="七0四：" HorizontalAlignment="Right" Height="25" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="2" Margin="0" Grid.Row="4" TextWrapping="Wrap" Text="宝泉路：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBox Text="{m:Bind Path=qils}" Grid.Column="1" Margin="0,8" Grid.Row="4" TextWrapping="Wrap" Height="25"/>
+								<TextBox Text="{m:Bind Path=baoql}" Grid.Column="3" Margin="0,8" Grid.Row="4" TextWrapping="Wrap" Height="25"/>
+								<TextBlock Margin="0" Grid.Row="5" TextWrapping="Wrap" Text="操作人：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="2" Margin="0" Grid.Row="5" TextWrapping="Wrap" Text="操作日期：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								<TextBox Text="{m:Bind Path=czr}" Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" Height="25">
+								<a:Data.Prop>
+												<o:PropertySetter PropertyName="czr" NotNull="True" Default="{m:Exp Str=LoginUser.name}" />
+											</a:Data.Prop>
+								</TextBox>
+								<sdk:DatePicker SelectedDate="{m:Bind Path=czrq}" Grid.Column="3" Margin="0" Grid.Row="5" Height="25" Width="Auto" VerticalAlignment="Stretch" d:LayoutOverrides="GridBox">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="czrq" Default="{m:Exp Str=SysTime.Now}" />
+									</a:Data.Prop>
+								</sdk:DatePicker>
+							</Grid>
+				 		</StackPanel>
+			</toolkit:DockPanel>
+		</toolkit:BusyIndicator>
+	</Grid>
+	</Border>
+	</Grid>
+</UserControl>

@@ -1,0 +1,29 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:type="clr-namespace:voice_card.converter"
+        xmlns:state="clr-namespace:voice_card.converter"
+    x:Class="voice_card.Window1"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    Title="语音卡监听" Height="400" Width="550" Loaded="Window_Loaded" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Background="#FFC3D5DE">
+    <Window.Resources>
+        <state:StateConverter x:Key="stateConverter"/>
+        <state:TypeConverter x:Key="typeConverter"/>
+    </Window.Resources>
+    <Grid Height="361" Width="550">
+    	<Button Height="25" HorizontalAlignment="Left" Margin="156,0,0,17" x:Name="button1" VerticalAlignment="Bottom" Width="62" Click="button1_Click" d:LayoutOverrides="VerticalAlignment" Content="运行"/>
+        <Button Height="25" HorizontalAlignment="Right" Margin="0,0,202,17" x:Name="button2" VerticalAlignment="Bottom" Width="62" Click="button2_Click" d:LayoutOverrides="VerticalAlignment" Content="退出" AllowDrop="True" />
+        <ListView     HorizontalAlignment="Left" Margin="27.5,8,0,66" x:Name="lv" ItemsSource="{Binding Path=ObColl}" d:LayoutOverrides="VerticalAlignment" BorderThickness="2,2,2,2" Width="478"  >
+            <ListView.View>
+                <GridView  >
+                    <GridViewColumn  Width="100" Header="通道号码" DisplayMemberBinding="{Binding Path=number}" />
+                    <GridViewColumn Width="100" Header="通道类型"  DisplayMemberBinding="{Binding Path=type, Converter={StaticResource typeConverter}}" />
+                    <GridViewColumn Width="100" Header="通道状态" DisplayMemberBinding="{Binding Path=state, Converter={StaticResource stateConverter}}" />
+                    <GridViewColumn Width="120" Header="主叫" DisplayMemberBinding="{Binding Path=callerPhone}" />
+                </GridView>
+                </ListView.View>   
+            
+        </ListView>
+        <Button Content="Button" HorizontalAlignment="Left" Height="32" Margin="409.433,319,0,0" VerticalAlignment="Top" Width="49.254" Click="Button_Click"/>
+    </Grid>
+</Window>

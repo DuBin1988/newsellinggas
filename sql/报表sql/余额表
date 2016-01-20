@@ -1,0 +1,61 @@
+1. 需要的内容有：用户编号，用户名称，期初余额，应收，已缴，期末余额，最新余额。
+
+2. 条件有：时间段（必选），用户类型，用户编号，用户姓名，用户性质，用户状态，气表类型
+
+2. SQL语句产生分析：
+
+2.1 由用户档案中的最新余额，进行倒推，计算出期末余额，用期末余额倒推，计算出期初余额。
+2.1 根据用户编号，汇总出期末以后的应交以及已交、期间应交、期间已缴、用户欠费等数据。
+2.2 以用户档案为主，关联计算出所需数据。
+
+3. SQL语句如下：
+
+select u.f_userid,
+	--期末余额-期间已交+期间应交=期初余额
+	u.f_zhye-isnull(q.oughtfee,0)-ISNULL(s.fee,0)+isnull(h.oughtfee,0)
+	-isnull(s1.fee,0)+isnull(h1.oughtfee,0) remain, 
+	--期间应交
+	isnull(h1.oughtfee,0), 
+	--期间已交
+	ISNULL(s1.fee,0), 
+	--最新余额-期末后已交+期末后应交=期末余额
+	u.f_zhye-isnull(q.oughtfee,0)-ISNULL(s.fee,0)+isnull(h.oughtfee,0),
+	--档案余额-欠费=最新余额
+	u.f_zhye-isnull(q.oughtfee,0) f_zhye
+from t_userfiles u left join
+(
+	--期末后所有应交
+	select f_userid,SUM(oughtfee) oughtfee from t_handplan
+	where f_inputdate>'2014-03-01' and f_state\=\'已抄表\'
+	group by f_userid
+) h on u.f_userid=h.f_userid left join
+(
+	--期末后所有已交
+	select f_userid,SUM(f_grossproceeds)-sum(f_zhinajin) fee from t_sellinggas
+	where f_deliverydate>'2014-03-01' and f_payfeevalid\=\'有效\'
+	group by f_userid
+) s on u.f_userid=s.f_userid left join
+(
+	--期间所有应交
+	select f_userid,SUM(oughtfee) oughtfee from t_handplan
+	where f_inputdate>='2013-02-01' and f_inputdate<='2014-03-01' and f_state\=\'已抄表\'
+	group by f_userid
+) h1 on u.f_userid=h1.f_userid left join
+(
+	--期间所有已交
+	select f_userid,SUM(f_grossproceeds)-sum(f_zhinajin) fee from t_sellinggas
+	where f_deliverydate>='2013-02-01' and f_deliverydate<='2014-03-01' and f_payfeevalid\=\'有效\'
+	group by f_userid
+) s1 on u.f_userid=s1.f_userid left join
+(
+	--目前欠费
+	select f_userid,SUM(oughtfee) oughtfee from t_handplan
+	where f_state='已抄表' and shifoujiaofei='否'
+	group by f_userid
+) q on u.f_userid=q.f_userid
+
+注意：
+
+1. 数据中没有操作日期，用下面的更新操作日期：
+
+update t_handplan set f_inputdate=lastinputdate where f_inputdate is null

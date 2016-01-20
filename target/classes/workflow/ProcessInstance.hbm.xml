@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="com.browsesoft.workflow.perform.ProcessInstance" table="processins">
+        <id name="id" column="id" type="string">
+        </id>
+        <set name="activities" >
+            <key column="processid"/>
+            <one-to-many class="com.browsesoft.workflow.perform.ActivityInstance"/>
+        </set>
+        <set name="vars">
+            <key column="processid"/>
+            <one-to-many class="com.browsesoft.workflow.perform.VarInstance"/>
+        </set>
+        <property name="name" />
+        <property name="state" />
+        <property name="handUpReason" column="handupreason" />
+    </class>
+</hibernate-mapping>

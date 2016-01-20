@@ -1,0 +1,413 @@
+unit ZhengTai;
+
+interface
+uses SysUtils,Forms,Windows;
+//读卡信息
+type
+  CardInfo = Record
+     Port : smallint;            //串口
+     Baud : longint;             //波特率
+     IndustryorCivil : smallint; //返回0：工业表卡；返回1：民用表卡
+     CardCode :smallint;         //返回33：用户卡34：转移卡35：管理卡36：备用卡(民用表无)
+     boolCard :boolean;          //用户卡：true代表新卡（未经过燃气表验证）；false代表旧卡（经过验证）转移卡：true代表有气量未转出；对其他卡，无效，返回false；
+     UserID :array[0..10]of char;             //用户编号
+     CardId :array[0..8]of char;             //卡编号
+     EnableUseGas : longint;           //用户卡、备用卡、管理卡：可用气量；转移卡：允许使用次数；
+     ReturnGas :longint;         //仅对用户卡有效，插卡时从燃气表返回的气量，如其他函数可用于近似统计用气。对其他卡，无效，返回0；
+     BuyGasNumber : longint;     //用户卡购气序号；其他卡无效，返回0
+     AlarmGas : longint;         //用户卡，备用卡：报警气量；其他卡无效，返回0
+     CardNumber : longint;       //对用户卡，代表补卡次数。对备用卡，代表增备用卡次数。 对其他卡，无效，返回0；
+     RandomData:longint;         //用户卡、备用卡：购气密码；其他卡，返回0。
+     ReturnResult:integer;       //放回函数调用结果
+     FactryInfo:integer;
+end;
+
+
+//制卡信息
+type
+  CN_MakeCardInfo = Record
+     Port : smallint;          //串口
+     Baud : longint;           //波特率
+     UserID :array[0..10]of char;             //用户编号
+     CardId :array[0..8]of char;             //卡编号
+     BuyGas:longint;           //开户时候所购买气量
+     MeterAlarmGas:longint;    //报警气量
+     RandomData:longint;       //返回加密随机数据
+     CardPassword:array[0..6]of char;     //卡密码
+     CheckErrorNumber:smallint; //返回数据，卡密码还允许验证次数。
+     ReturnResult:integer;     //放回函数调用结果
+     factryflag:integer;       //0：苍南1：新奥4:weixing
+     MeterType :integer;       //1:民用 2：工业
+     buyCount :integer;
+end;
+//补卡信息
+type
+  CN_ReplenishCardInfo = Record
+     Port : smallint;                   //串口
+     Baud : longint;                   //波特率
+     UserID :array[0..10]of char;             //用户编号
+     CardId :array[0..8]of char;             //卡编号
+     EnableUseGas:longint;             //丢失的用户卡最后一次购气后卡内允许使用气量
+     CustomerCircleNumber:longint;     //丢失卡原购气序号
+     MeterAlarmGas:longint;            //报警气量
+     ReplenishCardCircleNumber:longint;//补卡序号
+     RandomData:longint;              //返回加密随机数据
+     CardPassword:array[0..6]of char;  //卡密码
+     CheckErrorNumber:smallint;       //返回数据，卡密码还允许验证次数。
+     ReturnResult:integer;           //放回函数调用结果
+     factryflag:integer;       //0：苍南1：新奥
+     MeterType :integer;       //1:民用 2：工业
+end;
+//售气信息
+type
+  CN_SaleInfo = Record
+     Port : smallint;                    //串口
+     Baud : longint;                     //波特率
+     UserID :array[0..10]of char;             //用户编号
+     CardId :array[0..8]of char;             //卡编号
+     BuyGas : longint;                   //用户购气量
+     ReturnGas:longint;                  //返回用户卡上次插卡是表内气量（不算卡上新加入的）
+     CustomerCircleNumber:longint;       //数据库中原购气序号
+     MeterAlarmGas : longint;            //燃气表报警气量
+     ReplenishCardCircleNumber :longint; //数据库中补卡序号
+     RandomData:longint;                 //获得加密购气数据， 返回加密随机数据
+     CardPassword:array[0..6]of char;                //卡密码
+     CheckErrorNumber:smallint;           //返回数据，卡密码还允许验证次数
+     ReturnResult:integer;               //放回函数调用结果
+end;
+//清除卡气量信息
+type
+  CN_EreseInfo = Record
+     Port : smallint;                    //串口
+     Baud : longint;                     //波特率
+     UserID :array[0..10]of char;        //用户编号
+     CardId :array[0..8]of char;         //卡编号
+     CardCircleNumber : longint;         //数据库中补卡序号
+     CardPassword :array[0..6]of char;   //卡密码
+     CardBuyGasCircleNumber : longint;   //上次购气序号
+     RandomData             : longint;   // 随机数
+     CheckErrorNumber:smallint;          //返回数据，卡密码还允许验证次数
+     ReturnResult:integer;               //放回函数调用结果
+end;
+
+
+type
+  CN_BulidCardInfo = Record
+     s_Port : smallint;                    //串口
+     s_PstrCardId :array[0..11]of char;
+     s_CardSort : byte;
+     s_BuyWaterMoney:longint;
+     s_BuyMode : byte;
+     s_AlarmMoney:longint;
+     s_GradientInf :array[0..5]of char;
+     s_GradientCon:array[0..11]of longint;
+end;
+
+type
+  CN_MendCardInfo = Record
+     s_Port : smallint;                    //串口
+     s_PstrCardId :array[0..11]of char;
+     s_BuyWaterNum:longint;
+     s_BuyWaterMoney:longint;
+     s_BuyMode : byte;
+     s_AlarmMoney:longint;
+     s_GradientInf :array[0..5]of char;
+     s_GradientCon:array[0..11]of longint;
+end;
+
+type
+  CN_TestCardInfo = Record
+     s_Port : smallint;                    //串口
+     s_PstrCardId :array[0..11]of char;
+     s_CardSort :byte;
+     s_BuyWaterNum:byte;
+     s_EnableMoney:longint;
+     s_BuyMode : byte;
+     s_ReturnMoney:longint;
+     s_AlarmMoney:longint;
+     s_GradientInf :array[0..5]of char;
+     s_GradientCon:array[0..11]of longint;
+     s_GdUseMoney:array[0..5]of longint;
+     s_GdUseNum:longint;
+     s_WMStatus :array[0..11]of char;
+end;
+
+type
+  CN_BuyWaterInfo = Record
+     s_Port : smallint;                    //串口
+     s_PstrCardId :array[0..11]of char;
+     s_BuyWaterNum:longint;
+     s_BuyWaterMoney:longint;
+     s_BuyMode : byte;
+     s_AlarmMoney:longint;
+     s_GradientInf :array[0..5]of char;
+     s_GradientCon:array[0..11]of longint;
+end;
+
+type
+  CN_ClearWaterInfo = Record
+     s_Port : smallint;                    //串口
+     s_PstrCardId :array[0..11]of char;
+     s_BuyWaterNum:longint;
+     s_BuyWaterMoney:longint;
+end;
+
+{function DC_BulidCard(port: smallint;   //取值为0～19时，表示串口1～20；为100时，表示USB口通讯。
+                        PstrCardId:pchar; //卡编号（00000001-99999999，当为用户卡的时候则此卡号也被作为表编号,8字节ASCII码）
+                        CardSort:byte; //类型标志（1：新用户卡，2：旧用户卡，3：生产工具卡
+                                        // 4：恢复卡，5：清零卡，6：回收转移卡，7：查询卡）
+                        BuyWaterMoney:longint;//购水金额（用户卡时为0-999999分，生成工具卡时为1-999分，其他无效）
+                        BuyMode : byte; //卡上水水金额来源（仅用户卡时为0-15，其他无效，自定义参数，比如说1：购水，2：补水等）
+                        AlarmMoney:longint; //（用户卡时为报警水量金额1-99元，其他无效）
+                        GradientInf:pchar;//阶梯收费的梯度数（当ChargeMode＝0x01此参数有效。取值范围1-3,仅限于用户卡，其他无效）
+                        GradientCon:array of longint
+                        ): longint; stdcall;  //阶梯收费内容（当ChargeMode＝0x01此参数有效。每一阶梯包括：最大用水量1-9999方，每方水价格1-9999分/方，
+                                            //有多少梯则包含多少个相关内容。仅限于用户卡，其他无效）
+                        far;external 'CF_ICWM.dll' name 'DC_BulidCard' ;
+function DC_ClearCard(port: smallint): longint; stdcall;//取值为0～19时，表示串口1～20；为100时，表示USB口通讯。
+                        far;external 'CF_ICWM.dll' name 'DC_ClearCard' ;
+
+
+  function DC_MendCard(port: smallint;   //取值为0～19时，表示串口1～20；为100时，表示USB口通讯。
+                        PstrCardId:pchar; //卡编号（00000001-99999999，当为用户卡的时候则此卡号也被作为表编号,8字节ASCII码）
+                        BuyWaterNum:byte;//用户购水次数（数据库中读出）
+                        BuyWaterMoney:longint;//购水金额（0-999999分）
+                        BuyMode : byte; //卡上水水金额来源（仅用户卡时为0-15，其他无效，自定义参数，比如说1：购水，2：补水等）
+                        AlarmMoney:longint; //（报警水量金额1-99元，\）
+                        GradientInf:pchar;//阶梯收费的梯度数（当ChargeMode＝0x01此参数有效。取值范围1-3,仅限于用户卡，其他无效）
+                        GradientCon:array of longint): longint; stdcall;  //阶梯收费内容（当ChargeMode＝0x01此参数有效。每一阶梯包括：最大用水量1-9999方，每方水价格1-9999分/方，
+                                            //有多少梯则包含多少个相关内容。仅限于用户卡，其他无效）
+                        far;external 'CF_ICWM.dll' name 'DC_MendCard' ;
+
+
+
+  function DC_TestCard(port: smallint;   //取值为0～19时，表示串口1～20；为100时，表示USB口通讯。
+                        PstrCardId:pchar; //卡编号（00000001-99999999，当为用户卡的时候则此卡号也被作为表编号,8字节ASCII码）
+                        var CardSort:byte; //类型标志（1：新用户卡，2：旧用户卡，3：生产工具卡
+                                        // 4：恢复卡，5：清零卡，6：回收转移卡，7：查询卡）
+                        var BuyWaterNum:byte;//用户购水次数（用户卡，查询卡，转移卡。其他卡无效，返回0）
+                        var EnableMoney:longint;//卡上可用水金额（用户卡时为0-999999分，生成工具卡时为1-999分，查询卡和转移卡代表可使用次数。其他无效返回0）
+                        var BuyMode : byte; //卡上水水金额来源（仅用户卡时为0-15，其他无效，自定义参数，比如说1：购水，2：补水等）
+                        var ReturnMoney:longint;//从水表返回的剩余水量金额。（用户卡，查询卡和转移，他无效，返回0）；
+                        var AlarmMoney:longint; //（用户卡、查询卡和转移报警水量金额1-99元，\）
+                        GradientInf:pchar;//阶梯收费的梯度数（取值范围1-3,用户卡，查询卡，转移卡,其他无效）
+                        //阶梯收费内容（当ChargeMode＝0x01此参数有效。每一阶梯包括：最大用水量1-9999方，每方水价格1-9999分/方，
+                        var GradientCon;  //有多少梯则包含多少个相关内容。用户卡，查询卡，转移卡，其他无效）
+                        var GdUseMoney;//每一阶梯使用累计金额(有多少梯，则有多少个累计金额，用户卡，查询卡，转移卡，其他无效)
+                        var GdUseNum:longint; //（水表累计使用水量
+                        WMStatus :pchar ): longint; stdcall;  //		水表状态字（用户卡、查询卡和转移卡，其他无效）
+                        far;external 'CF_ICWM.dll' name 'DC_TestCard' ;
+
+  function DC_BuyWater(port: smallint;   //取值为0～19时，表示串口1～20；为100时，表示USB口通讯。
+                        PstrCardId:pchar; //卡编号（00000001-99999999，当为用户卡的时候则此卡号也被作为表编号,8字节ASCII码）
+                        BuyWaterNum:byte;//用户购水次数（数据库中原购气序号，同时返回此次序号）
+                        BuyWaterMoney:longint;//购水金额，0-999999分
+                        BuyMode : byte; //卡上水水金额来源（仅用户卡时为0-15，其他无效，自定义参数，比如说1：购水，2：补水等）
+                        AlarmMoney:longint;//报警水量金额1-99元
+                        GradientInf:pchar;//阶梯收费的梯度数（取值范围1-3）
+                        GradientCon:array of longint): longint; stdcall;//阶梯收费内容（每一阶梯包括：最大用水量1-9999方，每方水价格1-9999分/方，
+                                            //有多少梯则包含多少个相关内容。）
+                        far;external 'CF_ICWM.dll' name 'DC_BuyWater' ;   }
+
+
+  function CheckErr(ErrNum: longint):   string;//函数错误检测
+
+/////////////////////////ic卡燃气表操作函数///////////////////////////////////////////
+  function QF_TestCard(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    var CardSort:byte;
+                    var BuyCnt:longint;
+                    var PEnableGas:longint;
+                    var CumGas:longint;
+                    var lastGas:longint;
+                    var AlarmGas:longint;
+                    var BigMeter:byte;
+                    MeterStu:pchar;
+                    var fg:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_TestCard';
+  
+  function QF_NewCard(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    BuyGas:longint;
+                    AlarmGas:longint;
+                    BigMeter:byte;
+                    Passn:byte;
+                    fg:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_NewCard';
+
+  function QF_NewCard30(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    BuyGas:longint;
+                    AlarmGas:longint;
+                    BigMeter:byte;
+                    Passn:byte;
+                    fg:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_NewCard30';
+
+  function QF_MendCard(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    BuyCnt:longint;
+                    BuyGas:longint;
+                    AlarmGas:longint;
+                    BigMeter:byte;
+                    Passn:byte;
+                    fg:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_MendCard';
+
+  function QF_BulidCard(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    CardSort:byte;
+                    BuyGas:longint;
+                    AlarmGas:longint;
+                    Passn:byte;
+                    Passn_New:byte;
+                    fg:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_BulidCard';
+
+  function QF_ClearCard(Port:smallint;
+                    Baud:longint):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_ClearCard';
+
+  function QF_BuyGas(Port:smallint;
+                    Baud:longint;
+                    PstrCardId:pchar;
+                    BuyCnt:longint;
+                    BuyGas:longint;
+                    AlarmGas:longint;
+                    fg:longint;
+                    BigMeter:byte):longint;stdcall;
+  far;external 'QFIC_316B.dll'name 'QF_BuyGas';
+
+//////////////////////////////////////////////////////////////////////////////////
+
+function TestCard(Port:smallint;
+                    Baud:longint;
+                    var intIndustryOrCivil:smallint;
+                    var intCardCode:smallint;
+                    var boolCard:boolean;
+                    strCustomerId:pchar;
+                    strCardId:pchar;
+                    var longEnableUseGas:longint;
+                    var longReturnGas:longint;
+                    var longBuyGasNumber:longint;
+                    var longAlarmGas:longint;
+                    var longCardNumber:longint;
+                    var longRandomData:longint
+                    ):smallint;stdcall;
+  far;external 'QF_IcCard.dll'name 'TestCard';
+  //制卡
+function AddCustomerCard(Port:smallint;
+                           Baud:longint;
+                           strCustomerId:ansistring;
+                           strCardId:ansistring;
+                           longBuyGas:longint;
+                           longMeterAlarmGas:longint;
+                           var longRandomData:longint;
+                           strCardPassword:pchar;
+                           var intCheckErrorNumber:Smallint
+                           ):smallint;stdcall;
+  far;external'QF_IcCard.dll'name 'AddCustomerCard';
+ //恢复IC卡为空白卡
+ function QF_EraseCard(Port:smallint;
+                        Baud:longint
+                        ):smallint;stdcall;
+  far;external 'QF_IcCard.dll' name 'QF_ClearCard';
+  //擦除卡内气量
+function CardNoGasOther(Port:smallint;
+                          Baud:longint;
+                          strCustomerId:ansistring;
+                          strCardId:ansistring;
+                          longCardCircleNumber:longint;
+                          var longCustomerCircleNumber:longint;
+                          var longRandomData:longint;
+                          strCardPassword:pchar;
+                          var intCheckErrorNumber:Smallint
+                          ):smallint;stdcall;
+  far;external'QF_IcCard.dll'name 'CareNoGasOther';
+  //补卡
+function ReplenishCustomerCard(Port:smallint;
+                                 Baud:longint;
+                                 strCustomerId:ansistring;
+                                 strCardId:ansistring;
+                                 longEnableUseGas:longint;
+                                 longCustomerCircleNumber:longint;
+                                 longAlarmGas:longint;
+                                 var longReplenishCardCircleNumber:longint;
+                                 var longRandomData:longint;
+                                 strCardPassword:pchar;
+                                 var intCheckErrorNumber:Smallint
+                                 ):smallint;stdcall;
+  far;external'QF_IcCard.dll'name 'ReplenishCustomerCard';
+  //购气
+  function CustomerCardBuyGas(Port:smallint;
+                              Baud:longint;
+                              strCustomerId:ansistring;
+                              strCardId:ansistring;
+                              longBuyGas:longint;
+                              var longReturnGas:longint;
+                              var longCustomerCircleNumber:longint;
+                              longAlarmGas:longint;
+                              longReplenishCardCircleNumber:longint;
+                              var longRandomData:longint;
+                              strCardPassword:pchar;
+                              var intCheckErrorNumber:Smallint
+                              ):smallint;stdcall;
+  far;external'QF_IcCard.dll'name 'CustomerCardBuyGas';
+implementation
+
+function CheckErr(ErrNum: longint):   string;
+begin
+    case ErrNum of
+    0:
+        Result := '成功!';
+    1:
+        Result := '检测硬件加密设备失败!';
+    2:
+        Result := '购气量过大或者错误!';
+    3:
+        Result := '连接读卡器失败!';
+    4:
+        Result := '读卡器中无卡或IC卡插反!';
+    5:
+        Result := '卡型不正确!';
+    6:
+        Result := '不是新卡!';
+    7:
+        Result := '校验卡密码失败!';
+    8:
+        Result := '读卡失败!';
+    9:
+        Result := '写卡失败!';
+    10:
+        Result := '写卡数据校验失败!';
+    11:
+        Result := '修改卡密码失败!';
+    12:
+        Result := '空卡!';
+    13:
+        Result := '用户卡气量区与备份气量区不等!';
+    14:
+        Result := '非用户卡!';
+    15:
+        Result := '卡编号不正确!';
+    16:
+        Result := '********!';
+    17:
+        Result := '********!';
+    18:
+        Result := '********!';
+    19:
+        Result := '********!';
+    20:
+        Result := '不是本系统的卡!';
+    else
+        Result := '系统错误!';
+    end; 
+end;
+
+end.

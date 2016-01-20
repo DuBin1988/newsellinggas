@@ -1,0 +1,117 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.退押金查询" d:DesignWidth="1024" d:DesignHeight="768">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+            
+
+
+        </m:ResourceLoad>
+        <Grid>
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" Grid.ColumnSpan="1" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+                <toolkit:DockPanel>
+                    <StackPanel Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" Orientation="Horizontal" >
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="28"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock TextWrapping="Wrap" Text="小区名称："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <!-- -->
+                            <TextBlock TextWrapping="Wrap" Text="地址："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="2" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="3" Text="{m:Bind Path=f_address}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_address" Operator="f_address like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="用户编号："  Margin="0" Height="25" TextAlignment="Right" Grid.Row="0" Grid.Column="4" />
+                            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="5" Text="{m:Bind Path=f_userid}" Width="160" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userid" Operator="f_userid = 'this'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
+
+                            <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="7" IsEnabled="{m:Exp Str=!daninfosearch.DataContext.HasErrors}" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" FontSize="14" HorizontalAlignment="Left" Margin="10,23,-55,5" Grid.Row="0" Grid.RowSpan="2"  />
+
+
+                            
+                        </Grid>
+                    </StackPanel>
+
+
+
+                    <!----><toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0" PageSize="40" d:LayoutOverrides="Width" toolkit:DockPanel.Dock="Top"   />
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="868" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+                    <c:CustomDataGrid x:Name="daninfos"    toolkit:DockPanel.Dock="Top"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                        <!--
+        					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","-->
+                    <a:Data.Items>
+                        <o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"  EntityType="t_userfiles"
+        					Path="{m:Exp Str=$from t_yajin where \{daninfosearch.DataContext.Condition\} }"
+        					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+                    </a:Data.Items>
+                    <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}" d:IsLocked="True" />
+                        <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" d:IsLocked="True" />
+                        <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True"/>
+                        <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}" d:IsLocked="True"/>
+                        <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_districtname}" d:IsLocked="True" />
+                        <sdk:DataGridTextColumn Header="原有结余" Binding="{Binding f_zhye}" />
+                        <sdk:DataGridTextColumn Header="退还押金金额" Binding="{Binding f_tuiyajin}" />
+                        <sdk:DataGridTextColumn Header="退还押金后结余" Binding="{Binding f_xyzhye}" />
+                        <sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_sgoperator}" />
+                        <sdk:DataGridTextColumn Header="操作时间" Binding="{Binding f_deliverydate}" />
+                        <sdk:DataGridTextColumn Header="网点" Binding="{Binding f_sgnetwork}" />
+                    </sdk:DataGrid.Columns>
+                    </c:CustomDataGrid>
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+        </Grid>
+    </Grid>
+</UserControl>

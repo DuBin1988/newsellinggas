@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="test">
+	<!--表达式表-->
+	<class entity-name="t_actor" table="t_actor">
+	    <id name="id" column="id" type="string"/>   
+      	<!--对应的人员集合--> 
+	   	<set name="f_person" cascade="all-delete-orphan">
+          <key column="actorid" on-delete="noaction" /> 
+          <one-to-many entity-name="t_actorperson" not-found="exception" /> 
+        </set>
+	</class>
+	<!-- 表达式对应的人员 -->
+	<class entity-name="t_actorperson" table="t_actorperson">
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+		<property name="userid" type="string"/>
+	</class>
+</hibernate-mapping>

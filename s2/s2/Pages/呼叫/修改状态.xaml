@@ -1,0 +1,69 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	mc:Ignorable="d"
+	x:Class="Com.Aote.Pages.修改状态"
+	d:DesignWidth="640" d:DesignHeight="480">
+ 
+<Grid x:Name="LayoutRoot" Margin="59,38,63,76">
+	<m:ResourceLoad>
+			<o:ObjectList Name="jiedanrenlist" WebClientInfo="{StaticResource dbclient}"  Path="from repairsman" IsOld="{m:Exp Str=repairman.State\=\=$End}"/>
+			<b:HQLAction Name="repairman"   WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$update repairsman set f_repairsmanstate\=\'\{state.DataContext.f_repairsmanstate\}\' where man\=\'\{jiedanren.SelectedValue\}\'}"/> 
+		
+  </m:ResourceLoad>
+	<Grid>
+		
+	     <Grid  Grid.Column="0" x:Name="user"   d:LayoutOverrides="GridBox"> 
+	     	<a:Data.Context>
+            		<o:GeneralObject Name="applygo" WebClientInfo="{StaticResource saveuser}" EntityType="t_repairsman" 
+						 
+						IsInit="{m:Exp Str=repairman.State\=\=$End}" >
+            			
+			</o:GeneralObject>
+			</a:Data.Context>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="150"/>
+				<ColumnDefinition Width="180"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="0.18*"/>
+				<RowDefinition Height="0.115*"/>
+				<RowDefinition Height="0.112*"/>
+				<RowDefinition Height="0.109*"/>
+				<RowDefinition Height="0.189*"/>
+				<RowDefinition Height="0.295*"/>
+			</Grid.RowDefinitions>
+			<TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="接单人状态" Height="25" TextAlignment="Right" FontSize="12">
+				
+			</TextBlock>
+			  <TextBlock TextWrapping="Wrap"  Text="接 单 人：" Margin="0,21,0,20" TextAlignment="Right" HorizontalAlignment="Right" Width="69" FontSize="12"/>
+					<ComboBox Name="jiedanren" DisplayMemberPath="man" SelectedValuePath="man" ItemsSource="{m:Exp Str=jiedanrenlist}" SelectedValue="{m:Bind Path=man}"   Grid.Column="1" Margin="0,21,0,20"   Height="25" HorizontalAlignment="Stretch">
+										      <!--a:Data.Items>
+            						            <o:ObjectList WebClientInfo="{StaticResource dbclient}"  />
+            					             </a:Data.Items-->
+										</ComboBox>
+					<TextBox Name="state" Text="{m:Bind Path=f_repairsmanstate}" Grid.Column="1" Margin="0,9,0,8" Grid.Row="1"  Height="25" HorizontalAlignment="Left" Width="180">
+				 <a:Data.Prop>
+                    	<o:PropertySetter PropertyName="f_repairsmanstate" Value="{m:Exp Str=jiedanren.SelectedItem.f_repairsmanstate}" NotNull="True"/>
+         		 </a:Data.Prop> 
+			</TextBox>
+			<Button Content="确定" Click="{m:Exp Str=repairman.Invoke()}"  Grid.Column="1" HorizontalAlignment="Left" Margin="8,32,0,12" Grid.Row="4" Width="60" Height="25" d:LayoutOverrides="HorizontalAlignment"/>
+			<Button Content="取消" Click="{m:Exp Str=state.DataContext.f_repairsmanstate\=null;jiedanren.DataContext.man\=null}" Grid.Column="1" HorizontalAlignment="Right" Margin="0,32,8,12" Grid.Row="4" Width="60" Height="25" d:LayoutOverrides="HorizontalAlignment"/>
+		</Grid>
+	</Grid>
+	</Grid>
+</UserControl>

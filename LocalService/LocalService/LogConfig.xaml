@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:log="clr-namespace:Com.Aote.Logs"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <log:FileAppender x:Key="FileAppender"></log:FileAppender>
+    <log:LogConfigs x:Key="LogConfigs">
+        <log:LogConfig Appender="{StaticResource FileAppender}" Name="service" Level="Debug"></log:LogConfig>
+        <log:LogConfig Appender="{StaticResource FileAppender}" Name="Card" Level="Debug"></log:LogConfig>
+    </log:LogConfigs>
+</ResourceDictionary>

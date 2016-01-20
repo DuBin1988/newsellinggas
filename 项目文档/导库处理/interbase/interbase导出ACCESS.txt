@@ -1,0 +1,64 @@
+ InterBase数据库打开方法（.GDB文件）
+Step1： 进入“控制面板”，双击“InterBase Manager”，点击“Start”开启服务器。
+
+Step2：进入“开始”，点击“InterBase”，点击“IBConsole”程序；
+
+Step3：右键单击“InterBase Servers”，选择“Register”，选择“Local Server”，
+
+在“Login Information”中，“User Name：SYSDBA； Password：masterkey”；点击“OK”;
+
+Step4：右键单击“Database”，选择“Register”，选择要打开的“.GDB”数据库文件；
+
+Step5：点击“Tables”在右边双击相应的表，选择“Data”选项卡； 
+
+
+------------------------------
+ 第二步，将GDB转换为Access 。
+首先，需要安装Borland Delphi 7 Studio Enterprise，软件里面有数据转换工具，比较直观。
+
+1、打开DBE Administrator
+
+
+2、打开程序后，点左边的IBLocal，然后注意看右边的server name 后面的路径：C:\Program Files\Common Files\Borland Shared\Data\employee.gdb
+
+
+3、这个路径很重要，我们将需要转换的数据库文件复制到这个目录下，并改成employee.gdb（原来的文件先改其它名字）
+
+
+4、回到DBE Administrator，在左边空白点右键，选择ODBC Administrator. 
+
+
+5、在ODBC窗口中点击添加，然后选择Microsoft Access Driver。我们要创建一个Access数据库。
+
+
+6、点击创建，在C盘新建一个数据库，名字随便，本例使用a
+
+
+7、创建完成后点高级，然后增加登录名称和密码，用户名：a  密码：a 然后点确定。
+
+
+8、最后，添加数据源名，a 然后点确定，这时，Access 数据库已经建立好了。下面进入转换过程。
+
+----------------------------------------
+1、打开Datapump
+
+
+2、打开程序后，第一是要选择源数据，双击右面的IBLocal，然后输入密码：masterkey
+
+
+3、第二个是要选择我们转换后的数据库，就是我们刚才创建的a，那个Access数据库。输入用户名和密码。
+
+
+4、这个时候我们可以看到我们GDB数据库中的表单项，选择我们需要转换的项目，双击后会出现在右边窗口，然后点next，
+
+
+5、点击右下的Upsize，开始转换。
+
+
+6、转换的时间根据数据库的大小不等，有可能出现假死状态，请耐心等待。
+
+
+7、转换完成！现在打开C盘的a.mdb，再导出EXCEL就方便多了，并且数据是按列分开的是完整的。
+
+
+这是一个笨方法，但可以将数据完整的导出EXCEL。使用IBConsole可以导出TXT文本，但那样的数据不好按列分开。

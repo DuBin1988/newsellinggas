@@ -1,0 +1,92 @@
+﻿<UserControl 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    x:Class="Com.Aote.Pages.抄表撤销查询" FontSize="13"
+    mc:Ignorable="d"  FontFamily="Microsoft YaHei">
+
+    <Grid x:Name="LayoutRoot" Background="White">
+        <m:ResourceLoad Margin="1,1,1,1">
+            <!--用户类型查询用-->
+            <o:ObjectList Name="payfeevalid" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用'"/>
+
+        </m:ResourceLoad>
+        <c:MessageTipObj Tip="{m:Exp Str=$导出完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"></c:MessageTipObj>
+        <c:MessageTipObj Tip="{m:Exp Str=$导出失败\,请先查询$}" IsShow="{m:Exp Str=toExcel\=>CompletedError!\=null}"/>
+        <c:BusyIndicatorEx x:Name="ui_userBusy" BusyContent="正在工作，请稍等！">
+            <toolkit:DockPanel>
+                <StackPanel x:Name="ui_setSearch" Orientation="Horizontal" Height="30" toolkit:DockPanel.Dock="Top">
+                    <a:Data.Context>
+                        <o:SearchObject />
+                    </a:Data.Context>
+                    <TextBlock Text="用户编号:" VerticalAlignment="Center"></TextBlock>
+                    <TextBox Width="100" Text="{Binding Path=f_userid, Mode=TwoWay}" Margin="0,0,0,5">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="撤销日期：" Width="90"/>
+                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate1}" Width="150" Margin="0,0,0,5" Height="25" HorizontalAlignment="Stretch" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_yytdate1" Operator="f_canceldate &gt;= substring('this',1,10)"/>
+                        </a:Data.Prop>
+                    </sdk:DatePicker>
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="到：" Width="80"/>
+                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate2}" Width="150" Margin="0,0,0,5" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_yytdate2" Operator="f_canceldate ^= substring('this',1,10)"/>
+                        </a:Data.Prop>
+                    </sdk:DatePicker>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="ui_SearchButton" Width="75" Margin="10,0,0,0"  Click="{m:Exp Str=ui_setSearch.DataContext.Search()}" >查询</Button>
+                        <Button Width="70" Content="置空" Click="{m:Exp Str=ui_setSearch.DataContext.f_userid\=null;ui_setSearch.DataContext.f_yytdate1\=null;ui_setSearch.DataContext.f_yytdate2\=null}" FontSize="14" HorizontalAlignment="Left"/>
+                        <Button Width="70" Click="{m:Exp Str=toExcel.ToExcel()}">导出Excel</Button>
+                        <c:Excel Name="toExcel" HQL="{m:Exp Str=$\{ui_gqdDataGrid.ItemsSource.Path\}}" 
+   							 Completed="{m:Exp Str=downLoad.Down()}"
+   							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{ui_gqdDataGrid.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_cancelname:撤销人|f_cancelreason:撤销原因|f_canceldate:撤销日期|f_recordid:抄表编号$}"/>
+                        <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls"></c:DownLoad>
+                    </StackPanel>
+                </StackPanel>
+                <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="50">
+                    <sdk:DataPager x:Name="ui_pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=ui_gqdDataGrid}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                    <TextBlock  TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{ui_gqdDataGrid.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                    <TextBlock x:Name="ui_pagedcount" Text="{m:Exp Str=$\{ui_gqdDataGrid.ItemsSource.Count\}}"  Visibility="Collapsed"></TextBlock>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                </toolkit:DockPanel>
+                <toolkit:DockPanel >
+                    <sdk:DataGrid x:Name="ui_gqdDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                        <a:Data.Items>
+                            <o:PagedObjectList  WebClientInfo="{StaticResource dbclient}"
+                    MultiPath="{m:Exp Str=$from t_recordcancel where \{ui_setSearch.DataContext.Condition\}  }"
+					Path="{m:Exp Str=$from t_recordcancel where \{ui_setSearch.DataContext.Condition\} order by id desc}"
+                     PageIndex="{m:Exp Str=ui_pager.PageIndex}" PageSize="{m:Exp Str=ui_pager.PageSize}" 
+									SumNames=","/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="编号" Binding="{Binding Index}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="姓名" Binding="{Binding f_username}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="撤销人" Binding="{Binding f_cancelname}"></sdk:DataGridTextColumn>                           
+                            <sdk:DataGridTextColumn Header="撤销抄表编号" Binding="{Binding f_recordid}"></sdk:DataGridTextColumn>
+                            <sdk:DataGridTextColumn Header="撤销原因" Binding="{Binding f_cancelreason}"></sdk:DataGridTextColumn>                           
+                            <sdk:DataGridTextColumn Header="撤销日期" Binding="{Binding f_canceldate,StringFormat=yyyy-MM-dd}"></sdk:DataGridTextColumn>
+
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>
+            </toolkit:DockPanel>
+        </c:BusyIndicatorEx>
+    </Grid>
+</UserControl>

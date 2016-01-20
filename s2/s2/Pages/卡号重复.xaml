@@ -1,0 +1,168 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.卡号重复">
+
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-101,0">
+            <!--档案列表-->
+            <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
+                Path="{m:Exp Str=$from t_userfiles t where \{userfilesearch.DataContext.Condition\} and f_cardid in (select f_cardid from t_userfiles as userfiles group by f_cardid having COUNT(f_cardid)>1) order by t.f_cardid $}"
+                MultiPath="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_cardid in (select f_cardid from t_userfiles as userfiles group by f_cardid having COUNT(f_cardid)>1)$}"
+				IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}" SumNames="," PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>
+            <!--档案对象-->
+            <o:GeneralObject Name="userfile" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+                Path="{m:Exp Str=$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'}" IsInit="{m:Exp Str='SaveAction.State==$End'}"/>
+            <!--默认值设定-->
+            <o:GeneralObject Name="cardrepeatset" WebClientInfo="{StaticResource dbclient}" EntityType="t_cardrepeat" IsInit="{m:Exp Str=SaveAction.State\=\=$End}"></o:GeneralObject>
+            <b:SyncActionFactory Name="SaveAction">
+                <!--保存数据-->
+                <b:CallMethodAction Name="saveu" TargetObject="{m:Exp Str=cardrepeat.DataContext}" MethodName="Save"/>
+            </b:SyncActionFactory>
+        </m:ResourceLoad>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"/>
+                <ColumnDefinition Width="0.75*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" >
+                <Border BorderThickness="1" BorderBrush="#FF9AA2AB" Margin="0" Padding="2" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
+                    <toolkit:DockPanel Width="Auto"   >
+                        <toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5" Height="22">
+                            <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Right" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,1"/>
+                            <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="0,0,0,-2" PageSize="20"/>
+                        </toolkit:DockPanel>
+                        <toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top"  Margin="0,0,0,5" Background="#FFEAF8FF"  >
+                            <a:Data.Context>
+                                <o:SearchObject />
+                            </a:Data.Context>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="50*"/>
+                                    <ColumnDefinition Width="50*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="28"/>
+                                    <RowDefinition Height="28"/>
+                                    <RowDefinition Height="28"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,4,0,4" />
+                                <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Height="25" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_userid"  Operator="f_userid='this'"/>
+                                    </a:Data.Prop>
+                                </TextBox>
+                                <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="卡    号：" Margin="5,4,0,4" />
+                                <TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_cardid}" Width="Auto" Margin="0" Height="25" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid='this'"/>
+                                    </a:Data.Prop>
+                                </TextBox>
+                                <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="用户姓名：" Margin="5,4,0,4" />
+                                <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0" Height="25" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
+                                    </a:Data.Prop>
+                                </TextBox>
+                                <Button Content="查  询" x:Name="usersearchbutton" Grid.Column="2" Grid.Row="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,-2" HorizontalAlignment="Right" d:LayoutOverrides="Height" Width="50"/>
+                            </Grid>
+                        </toolkit:DockPanel>
+                        <sdk:DataGrid x:Name="userfiles" Margin="0" ItemsSource="{m:Exp Str=userfileslist}" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+                            <sdk:DataGrid.Columns>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+                                <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+                                <sdk:DataGridTextColumn Header="卡    号" Binding="{Binding f_cardid}"/>
+                                <sdk:DataGridTextColumn Header="地    址" Binding="{Binding f_address}"/>
+                            </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+                    </toolkit:DockPanel>
+                </Border>
+            </c:BusyIndicatorEx>
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=userfile.DataContext.IsBusy or SaveAction.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
+                <toolkit:DockPanel>
+                    <!--按钮-->
+                    <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                        <Button x:Name="save" Content="保  存" Margin="5" 
+							IsEnabled="{m:Exp Str=userfiles.SelectedItem!\=null and !cardrepeatset.HasErrors }" 
+							Click="{m:Exp Str='SaveAction.Invoke()'}" Width="50" />
+                        <Button x:Name="cancel" Content="撤  销" Margin="5" Click="{m:Exp Str=cardrepeat.DataContext.New();userfiles.SelectedItem\=null}" Width="50"/>
+                    </toolkit:DockPanel>
+                    <Grid x:Name="cardrepeat" DataContext="{m:Exp Str=cardrepeatset}" Margin="0,0,0,20" >
+                        <!--非民用主操作区-->
+                        <sdk:TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <sdk:TabItem Header="基本信息">
+                                <!--非民用主操作区-->
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="Auto">
+                                    <Grid Margin="0" HorizontalAlignment="Stretch"  >
+                                        <Grid.Background>
+                                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                                <GradientStop Color="#FFF2F8FF" Offset="0"/>
+                                                <GradientStop Color="#FFDDF2FD" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Grid.Background>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="0.1*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="0.1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="用户id：" Grid.Column="0" Margin="0" Grid.Row="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.RowSpan="2" VerticalAlignment="Top"/>
+                                        <TextBox Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0,1,0,4" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_userid"  Value="{m:Exp Str=userfiles.SelectedItem.f_userid}" />
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                        <TextBlock Text="用户姓名：" Grid.Column="2" Margin="0" Grid.Row="0" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                                        <TextBox Text="{m:Bind Path=f_username}"  Grid.Column="3" Margin="0,1,0,4" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_username"  Value="{m:Exp Str=userfiles.SelectedItem.f_username}" />
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                        <TextBlock Text="卡号：" Grid.Column="0" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.RowSpan="2" VerticalAlignment="Top"/>
+                                        <TextBox Text="{m:Bind Path=f_cardid}"  Grid.Column="1" Margin="0,1,0,4" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_cardid"  Value="{m:Exp Str=userfiles.SelectedItem.f_cardid}" />
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                        <TextBlock Text="地址：" Grid.Column="2" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                                        <TextBox Text="{m:Bind Path=f_address}"  Grid.Column="3" Margin="0,1,0,4" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_address"  Value="{m:Exp Str=userfiles.SelectedItem.f_address}" />
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                    </Grid>
+                                </ScrollViewer>
+                            </sdk:TabItem>
+                        </sdk:TabControl>
+                    </Grid>
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+        </Grid>
+        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{cardrepeat.DataContext.f_userid}的卡操作成功成功!$'}" IsShow="{m:Exp Str=SaveAction.State\=\=$End$}"/>
+    </Grid>
+</UserControl>

@@ -1,0 +1,201 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:b1="clr-namespace:Com.Aote.Behaviors"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.稽查结果批量录入">
+
+	<Grid x:Name="LayoutRoot">
+		<m:ResourceLoad Margin="0,0,-12,0">
+			<!--稽查结果选项-->
+			<o:ObjectList Name="jichaxxlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='稽查结果选项'"/>
+			<!--分公司列表对象 HasEmpty="True"-->
+			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id">
+			</o:ObjectList>
+			<!--总公司名称-->
+		    <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+			<!--稽查条件列表-->
+			 <o:ObjectList Name="jicha" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_inspect where \{daninfosearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_inspect where  \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+									/>
+		    <!--稽查信息列表-->
+			 <!--o:ObjectList Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail as jicha left join fetch jicha.users where parentid\=\{jichatj.SelectedItem.id\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail as jicha left join fetch jicha.users where parentid\=\{jichatj.SelectedItem.id\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+									/-->
+			<!--
+			MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail where parentid\=\{jichatj.SelectedItem.id\} and f_result\=null$\, LoginUser.f_fengongsi \!\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail where parentid\=\{jichatj.SelectedItem.id\} and f_result\=null and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+								Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail as jicha left join fetch jicha.users where parentid\=\{jichatj.SelectedItem.id\} and jicha.f_result\=null$\, LoginUser.f_fengongsi \!\= zonggongsi.value and jichatj.SelectedItem!\=null:$from t_inspectdetail as jicha left join fetch jicha.users where parentid\=\{jichatj.SelectedItem.id\} and jicha.f_result\=null and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+			-->			
+			 <o:PagedObjectList Name="jichalist" WebClientInfo="{StaticResource dbclient}"
+								 MultiPath="{m:Exp Str=jichatj.SelectedItem!\=null:$from t_inspectdetail where parentid\=\{jichatj.SelectedItem.id\} and f_result\=null$\,$abc$}" 
+								Path="{m:Exp Str=jichatj.SelectedItem!\=null:$from t_inspectdetail as jicha left join fetch jicha.users where parentid\=\{jichatj.SelectedItem.id\} and jicha.f_result\=null$\,$abc$}" 
+									PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="id" 	
+			 />
+									
+		    <!--稽查对象-->
+			<o:GeneralObject Name="jc" EntityType="t_inspect" WebClientInfo="{StaticResource dbclient}" 
+			 Path="{m:Exp Str=$one/from t_inspect where id\=\'\{jichatj.SelectedItem.id\}\'}" 
+			IsInit="{m:Exp Str=jc.State\=\=$End$}" CanSave="{m:Exp Str='saveButton=>Click!=null'}">
+				<!--稽查明细-->
+				<o:PropertySetter PropertyName="jichalist" Default="{m:Exp Str=jichalist}"/>
+			</o:GeneralObject>
+		
+		
+			<!--稽查列表保存动作-->
+			<b1:SaveForUserAction Name="savelist" ListName="jichalist" UserName="users" ReturnName="f_result=>f_result" SaveObj="{m:Exp Str=jc}"/>
+		</m:ResourceLoad>
+		<!--sdk:TabControl Margin="0" >
+					
+			<sdk:TabItem Header="民用档案" Height="Auto" Width="Auto" Margin="0,2,0,0"DataContext="{m:Res Key=jicha}"-->
+				<Grid>
+					<!--Grid.ColumnDefinitions>
+						<ColumnDefinition Width="10*"/>
+						<ColumnDefinition Width="0*"/>
+					</Grid.ColumnDefinitions-->
+					<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=jicha.IsBusy or jichalist.IsBusy or jc.IsBusy}">
+						<toolkit:DockPanel>
+							<Grid Name="daninfosearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+						    <RowDefinition Height="1"/>
+							<RowDefinition Height="1"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="90"/>
+								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="0.593*"/>
+							</Grid.ColumnDefinitions>
+								<a:Data.Context>
+									<o:SearchObject />        	
+								</a:Data.Context>
+						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="5" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="5,-2,65,-2" FontSize="14" Width="80" Grid.RowSpan="2"  />
+						
+								<TextBlock TextWrapping="Wrap" Text="所属公司："  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+								<sdk:DatePicker   SelectedDate="{m:Bind Path=f_inspectdate}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_inspectdate"  
+											Operator="f_inspectdate = substring('this',1,10)"/>               
+									</a:Data.Prop>
+								</sdk:DatePicker>
+								<TextBlock TextWrapping="Wrap" Text="生成日期：" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" />
+								<ComboBox  Name="Comboxfx" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="1" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>          
+									</a:Data.Prop>
+								</ComboBox>
+								<Button Content=" 保  存" x:Name="saveButton" Grid.Column="5" IsEnabled="{m:Exp Str='jichalist.Count>0'}" Click="{m:Exp Str=savelist.Invoke()}" Margin="0,0,-19,-4" FontSize="14" Width="80" Grid.RowSpan="2" HorizontalAlignment="Right" d:LayoutOverrides="Width"  />
+								
+							</Grid>
+							
+					<sdk:DataGrid x:Name="jichatj"  Margin="0,1,0,2" toolkit:DockPanel.Dock="Top"  IsReadOnly="True" MaxHeight="150" 
+								AutoGenerateColumns="False" Background="{x:Null}" ItemsSource="{m:Exp Str=jicha}" Grid.Row="2">
+					
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
+									<sdk:DataGridTextColumn  Header="开户日期从" Binding="{Binding f_dateofopeningfrom,StringFormat=yyyy-MM-dd}"/>
+									<sdk:DataGridTextColumn Header="到" Binding="{Binding f_dateofopeningto,StringFormat=yyyy-MM-dd}"/>
+									<sdk:DataGridTextColumn  Header="最后购气日期小于" Binding="{Binding f_zuihoudate,StringFormat=yyyy-MM-dd}"/>
+									<sdk:DataGridTextColumn Header="未购气月数" Binding="{Binding f_nosellgastime}"/>
+									<sdk:DataGridTextColumn Header="平均用气量小于" Binding="{Binding f_average}"/>
+									<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+									<sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
+									<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+									<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_operator}"/>
+									<sdk:DataGridTextColumn Header="日期" Binding="{Binding f_inspectdate,StringFormat=yyyy-MM-dd}"/>
+									
+									
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+								<sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="50" toolkit:DockPanel.Dock="Top" Height="24"   />
+								<TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+							</toolkit:DockPanel>
+					
+							
+					      <sdk:DataGrid x:Name="daninfos"  toolkit:DockPanel.Dock="Bottom"  Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" ItemsSource="{m:Exp Str=jichalist}">
+								<!--a:Data.Items>
+									<o:PagedObjectList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
+									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_userfiles where \{daninfosearch.DataContext.Condition\} and f_userstate \!\=\'销户\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_userfiles where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_userstate \!\=\'销户\'$\,$abc$}"
+										 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="f_times"/>
+								</a:Data.Items-->
+								<sdk:DataGrid.Columns>
+									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+									<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+									<sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
+									<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
+									<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+									<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+									<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+									<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+									<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
+									<sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/>
+									<sdk:DataGridTextColumn Header="总购气量" Binding="{Binding f_cumulativepurchase}"/>
+									<sdk:DataGridTextColumn Header="当前表购气量" Binding="{Binding f_metergasnums}"/>
+									<sdk:DataGridTextColumn Header="开户日期" Binding="{Binding f_dateofopening,StringFormat=yyyy-MM-dd}"/>
+									<sdk:DataGridTextColumn Header="最后购气量" Binding="{Binding f_finallybought}"/>
+									<sdk:DataGridTextColumn Header="最后购气日期" Binding="{Binding f_finabuygasdate,StringFormat=yyyy-MM-dd}"/>
+									<sdk:DataGridTemplateColumn Header="稽查结果">
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_result}"  Margin="0,0,0,0"   >	
+														<a:Data.Items>
+															<o:ObjectList Name="jichaxxlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='稽查结果选项'"/>
+														</a:Data.Items>
+													</ComboBox>
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+									<sdk:DataGridTemplateColumn Header="稽查气量">
+											<sdk:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBox TextWrapping="Wrap" Padding="2" Text="{m:Bind Path=f_jichagas}"/> 
+												</DataTemplate>
+											</sdk:DataGridTemplateColumn.CellTemplate>
+									</sdk:DataGridTemplateColumn>
+							        <sdk:DataGridTemplateColumn Header="日期" IsReadOnly="False" Width="150">
+								         <!--sdk:DataGridTemplateColumn.CellTemplate>
+									         <DataTemplate>
+										         <TextBlock TextWrapping="Wrap" Padding="2" Text="{Binding f_date, Mode=TwoWay, StringFormat=yyyy-MM-dd}"/> 
+									         </DataTemplate>
+								         </sdk:DataGridTemplateColumn.CellTemplate-->
+								         <sdk:DataGridTemplateColumn.CellEditingTemplate>
+									           <DataTemplate>
+										            <sdk:DatePicker  VerticalAlignment="Top" SelectedDate="{Binding f_date, Mode=TwoWay, StringFormat=yyyy-MM-dd}"/> 
+									           </DataTemplate>
+								         </sdk:DataGridTemplateColumn.CellEditingTemplate>
+							        </sdk:DataGridTemplateColumn>
+								</sdk:DataGrid.Columns>
+							</sdk:DataGrid>
+							
+						</toolkit:DockPanel>
+					</toolkit:BusyIndicator>
+					
+				</Grid>
+				
+				
+			<!--/sdk:TabItem>
+		</sdk:TabControl-->
+	</Grid>
+</UserControl>

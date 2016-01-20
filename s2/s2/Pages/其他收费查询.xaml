@@ -1,0 +1,136 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.其他收费查询">
+
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-12,0">
+        </m:ResourceLoad>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0*"/>
+            </Grid.ColumnDefinitions>
+            <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+                <toolkit:DockPanel>
+                    <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="0.647*"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                        <TextBox Name="tj1"  TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户姓名："  Grid.Column="2" Margin="0,0,0,3" Height="25" TextAlignment="Right"/>
+                        <TextBox Name="tj7" TextWrapping="Wrap"  Grid.Column="3" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,0,0,3" Height="25" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="1" Margin="0,0,0,3" Height="25" TextAlignment="Right" Text="操作日期："/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="1" Grid.Column="1" Width="Auto" Margin="0,0,0,3" Height="25" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate1" Operator="f_sellinggasdate >= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="1" Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Column="2" Text="到："/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="1" Grid.Column="3" Width="Auto" Margin="0,0,0,3" Height="25" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_yytdate2" Operator="f_sellinggasdate ^= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="1" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="20,0,0,0" FontSize="14"  />
+                        <Button Content=" 置  空"  Grid.Row="1" Grid.Column="7" Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null}" FontSize="14" HorizontalAlignment="Left" Width="60"  />
+                       <Button Content="导出Excel" Grid.Row="1" Grid.Column="7" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel4.ToExcel()}" Margin="60,0,0,2" HorizontalAlignment="Left" Width="67"/>
+								<c:Excel x:Name="toExcel4" HQL="{m:Exp Str=daninfos.ItemsSource.Path}" 
+   							 Completed="{m:Exp Str=downLoad4.Down()}"
+   							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_usertype:用户类型|f_sellid:其他收费编号|f_feetype:修改前收费类型|f_newfeetype:修改后收费类型|f_fee:修改前收费金额|f_newfee:修改后收费金额|f_payfeevalid:修改前收费有效类型|f_newpayfeevalid:修改后收费有效类型|f_updatenote:修改原因$}"/>
+					    <c:DownLoad x:Name="downLoad4" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel4.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" ></c:DownLoad>
+						</Grid>
+
+                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
+                        <sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                        <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="605" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </toolkit:DockPanel>
+
+                    <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
+                    Path="{m:Exp Str=$from t_updateotherfee where \{daninfosearch.DataContext.Condition\}}"
+                     PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" 
+									SumNames=","/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="其他收费编号" Binding="{Binding f_sellid}"/>
+                            <sdk:DataGridTextColumn Header="修改前收费类型" Binding="{Binding f_feetype}"/>
+                            <sdk:DataGridTemplateColumn Header="修改后收费类型">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_newfeetype}"  Foreground="{m:Exp Str=data.f_newfeetype !\= data.f_feetype :Red \,Black}" IsReadOnly="True"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTextColumn Header="修改前收费金额" Binding="{Binding f_fee}"/>
+                            <sdk:DataGridTemplateColumn Header="修改后收费金额">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_newfee}"  Foreground="{m:Exp Str=data.f_newfee !\= data.f_fee :Red \,Black}" IsReadOnly="True"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTextColumn Header="修改前收费有效类型" Binding="{Binding f_payfeevalid}"/>
+                            <sdk:DataGridTemplateColumn Header="修改后收费有效类型">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_newpayfeevalid}"  Foreground="{m:Exp Str=data.f_newpayfeevalid !\= data.f_payfeevalid :Red \,Black}" IsReadOnly="True"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_sellinggasoperator}"/>
+                            <sdk:DataGridTextColumn Header="修改原因" Binding="{Binding f_updatenote}"/>
+                            <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_sellinggasdate,StringFormat=yyyy-MM-dd}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>
+            </toolkit:BusyIndicator>
+        </Grid>
+        <c:MessageTipObj Tip="{m:Exp Str=$导出完成$}" IsShow="{m:Exp Str=downLoad4\=>Completed!\=null}"/>
+    </Grid>
+</UserControl>

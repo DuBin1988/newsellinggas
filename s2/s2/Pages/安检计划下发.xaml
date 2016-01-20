@@ -1,0 +1,235 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="16"
+	x:Class="Com.Aote.Pages.安检计划下发">
+
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-101,0">
+            <!--安检计划编辑对象-->
+            <o:GeneralObject Name="ybuserfilego" WebClientInfo="{StaticResource dbclient}" 
+			EntityType="T_CHECKPLAN"
+			IsInit="{m:Exp Str=this.State\=\=$End$ or SaveAction.State\=\=$End$}"/>
+            <!--查询出的地址列表-->
+            <o:PagedObjectList Name="planslist" WebClientInfo="{StaticResource dbclient}"
+            IsOld="{m:Exp Str='userfilesearch.DataContext.Condition\=\=$End$ or DeleteAction.State==$End$'}"                  
+			Path="{m:Exp Str=userfiles.SelectedItem.id!\=null:$from T_IC_SAFECHECK_PAPER  where CHECKPLANID \= \'\{userfiles.SelectedItem.id\}\'$\,$null$}"
+			PageIndex="{m:Exp Str=pager1.PageIndex}" PageSize="{m:Exp Str=pager1.PageSize}" SumNames=","/>
+
+
+            <!--查询出的计划列表-->
+            <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+			Path="{m:Exp Str=$from T_CHECKPLAN where \{userfilesearch.DataContext.Condition\}$}"
+			IsOld="{m:Exp Str='userfilesearch.DataContext.Condition\=\=$End$ or DeleteAction.State==$End$ |or| SaveAction.State==$End$'}"
+			PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+
+            <!--用SQL语句生成安检单-->
+            <b:HQLAction Name="MakeCheck" Type="sql"
+			HQL="{m:Exp Str=$
+			insert into T_IC_SAFECHECK_PAPER(id\, checkplanid \, UNIT_NAME \, ROAD \, CUS_DOM \, CUS_DY \, CUS_FLOOR \, CUS_ROOM)
+			select newid()\, \'\{ybuserfilego.id\}\'\, f_districtname \,f_road \, f_cusDom \, f_cusDy \, f_cusFloor \, f_apartment from t_gasaddress
+			where \{userfilesearch.DataContext.Condition\}}"
+		/>
+            <b:HQLAction Name="DeleteCheckPlan"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from T_CHECKPLAN where id \= \'\{userfiles.SelectedItems.ToString(id)\=>SelectionChanged\}\'}">
+            </b:HQLAction>
+            <b:HQLAction Name="DeleteCheckPaper"  WebClientInfo="{StaticResource dbclient}" 
+             Type="sql"
+			HQL="{m:Exp Str=$delete from T_IC_SAFECHECK_PAPER where CHECKPLANID \= \'\{userfiles.SelectedItems.ToString(id)\=>SelectionChanged\}\'}">
+            </b:HQLAction>
+            <b:HQLAction Name="DeleteInspection"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from T_INSPECTION where CHECKPLAN_ID \= \'\{userfiles.SelectedItems.ToString(id)\=>SelectionChanged\}\'}">
+            </b:HQLAction>
+            <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=DeleteInspection}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=DeleteCheckPaper}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=DeleteCheckPlan}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+
+            <b:HQLAction Name="UpdateUserFile" Type="sql"
+			HQL="{m:Exp Str=$update t_userfiles set  f_toBeInspected\=\'\{ybuserfile.DataContext.f_issued\}\' where f_userid in (select f_userid from T_IC_SAFECHECK_PAPER where CHECKPLANID \= \'\{ybuserfile.DataContext.id\}\')}"
+		    />
+
+            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=ybuserfile.DataContext}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=UpdateUserFile}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+
+        </m:ResourceLoad>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5.5*"/>
+                <ColumnDefinition Width="4.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" Grid.Column="1" >
+                <toolkit:DockPanel >
+                    <!--提交按钮-->
+                    <toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,10" Height="33" Width="717">
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$户数合计:\{userfiles.ItemsSource.Count\}}" Width="258" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Stretch" Margin="100,2,0,3" FontSize="13.333" RenderTransformOrigin="0.5,0.5" Height="Auto">
+                            <TextBlock.RenderTransform>
+                                <CompositeTransform ScaleY="1"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+
+                    </toolkit:DockPanel>
+                    <toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,0"  Background="#FFDBE4F3"  >
+
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock TextWrapping="Wrap" Text="计划名称：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_name}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_name"  Operator="f_name like 'this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.Column="2" Text="是否下发：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+
+                            <ComboBox Name="shifuxiafa"   SelectedValue="{m:Bind Path=f_issued}" Grid.Row="0" Grid.Column="3" ItemsSource="{m:Exp Str=yesornolist}" SelectedValuePath="name"  Margin="0" DisplayMemberPath="name"   Height="25" >
+
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_issued"  Operator="f_issued like 'this%'"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="从：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_startedate}" Margin="0"  Height="25" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_startedate" Value="{m:Exp Str=SysTime.MonthsBeforeToday(1)}"
+								Operator=" substring(f_date,1,10) >= substring('this',1,10)"/>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+                            <TextBlock TextWrapping="Wrap" Grid.Row="1" Grid.Column="2" Text="到：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_enddate}" Margin="0"  Height="25" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="3" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_enddate" Value="{m:Exp Str=SysTime.Today}"
+								Operator=" substring(f_date,1,10) ^= substring('this',1,10)"/>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+                            <Button Content="查询" x:Name="searchbutton" Grid.Row="1" Grid.Column="4" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="8,0,0,2" HorizontalAlignment="Left" Width="70"  FontSize="13.333" d:LayoutOverrides="Height" />
+                        </Grid>
+                    </toolkit:DockPanel>
+                    <sdk:DataGrid x:Name="userfiles" Margin="0,0,0,0"  FontSize="13.333"
+						ItemsSource="{m:Exp Str=userfileslist}"  
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="计划名称" Binding="{Binding f_name}"/>
+                            <sdk:DataGridTextColumn Header="是否下发" Binding="{Binding f_issued}"/>
+                            <sdk:DataGridTextColumn Header="开始时间" Binding="{Binding f_date}"/>
+                            <sdk:DataGridTextColumn Header="结束时间" Binding="{Binding f_enddate}"/>
+                            <sdk:DataGridTextColumn Header="计划类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="安 检 员" Binding="{Binding f_checkman}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                    <!--提交按钮-->
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=ybuserfile.DataContext.IsBusy or SaveAction.IsBusy}" Margin="0,0,3,0"  >
+                <toolkit:DockPanel x:Name="ybuserfile"  HorizontalAlignment="Stretch" Height="Auto" LastChildFill="False" VerticalAlignment="Stretch" Width="Auto" >
+                    <a:Data.Context>
+                        <o:GeneralObject Name="PlanItem" WebClientInfo="{StaticResource dbclient}" 
+					EntityType="T_CHECKPLAN" Source="{m:Exp Str=userfiles.SelectedItem}" NotEmpty="True"
+					IsInit="{m:Exp Str='this.State\=\=$End$ |or| DeleteAction.State \=\= $End$ |or| SaveAction.State \=\= $End$'}"/>
+
+                    </a:Data.Context>
+                    <Grid  Margin="0,0,6,0" HorizontalAlignment="Stretch" Height="Auto" Width="Auto"  Background="#FFDBE4F3" toolkit:DockPanel.Dock="Top">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="0"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="85"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="名称：" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+
+                        <TextBox Text="{m:Bind Path=f_name}" IsReadOnly="False" Grid.Column="1" Margin="1,1,0,4"  Grid.Row="0" TextWrapping="Wrap"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="25" FontSize="13.333" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_name" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <Button x:Name="save" Content="保存" Grid.Row="2" Grid.Column="2" FontSize="14" IsEnabled="{m:Exp Str=!ybuserfile.DataContext.HasErrors}" VerticalAlignment="Bottom"  
+							Click="{m:Exp Str=SaveAction.Invoke()}" Width="70" HorizontalAlignment="center" Height="25" Margin="50,0,0,0" />
+                        <Button Content="删除" x:Name="delete"  Grid.Row="2"  IsEnabled="{m:Exp Str=userfiles.SelectedItem!\=null}" VerticalAlignment="Top" Click="{m:Exp Str=deletettip.Show()}" Grid.Column="2" Width="70" HorizontalAlignment="right" Margin="0,5,20,0"  Height="25" />
+
+                        <!--<TextBlock Text="日期：" Grid.Row="1" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+						<TextBox Text="{m:Bind Path=f_date}" IsReadOnly="False" Grid.Row="1" Grid.Column="1" Margin="1,1,0,4"   TextWrapping="Wrap"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="25" FontSize="13.333" Grid.ColumnSpan="3" >
+							
+						</TextBox>	-->
+
+                        <TextBlock Text="是否下发：" Margin="0,1,-0.25,4" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+
+                        <ComboBox Name="searchxiafa"   SelectedValue="{m:Bind Path=f_issued}" Grid.Row="2" Grid.Column="1" ItemsSource="{m:Exp Str=yesornolist}" SelectedValuePath="name"  Margin="0" DisplayMemberPath="name"   Height="25" >
+
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_issued"  />
+                            </a:Data.Prop>
+                        </ComboBox>
+
+                    </Grid>
+                    <StackPanel toolkit:DockPanel.Dock="Top">
+                        <sdk:DataGrid x:Name="plans" Margin="0,0,5,25"  FontSize="13.333" 
+						ItemsSource="{m:Exp Str=planslist}"
+						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+                            <sdk:DataGrid.Columns>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                                <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                                <sdk:DataGridTextColumn Header="街    道" Binding="{Binding ROAD}"/>
+                                <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding UNIT_NAME}"/>
+                                <sdk:DataGridTextColumn Header="楼    号" Binding="{Binding CUS_DOM}"/>
+                                <sdk:DataGridTextColumn Header="单    元" Binding="{Binding CUS_DY}"/>
+                                <sdk:DataGridTextColumn Header="楼    层" Binding="{Binding CUS_FLOOR}"/>
+                                <sdk:DataGridTextColumn Header="房    号" Binding="{Binding CUS_ROOM}"/>
+                            </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom" Height="40">
+                        <TextBlock Text="{m:Exp Str=$户数合计:\{plans.ItemsSource.Count\}}" Width="120" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="top" Margin="80,2,0,3" FontSize="13.333" RenderTransformOrigin="0.5,0.5" Height="30" >
+                            <TextBlock.RenderTransform>
+                                <CompositeTransform ScaleY="1"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+
+                    </StackPanel>
+
+
+                </toolkit:DockPanel>
+
+            </c:BusyIndicatorEx>
+            <sdk:DataPager x:Name="pager1" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=plans}"  Margin="0,0,8,43" PageSize="15" Height="24" VerticalAlignment="Bottom" Grid.Column="0" FontSize="13.333"/>
+            <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="0,0,0,43" PageSize="15" Height="24" VerticalAlignment="Bottom" Grid.Column="1" FontSize="13.333"/>
+        </Grid>
+        <c:MessageTipObj  Name="deletettip" Tip="这将删除安检计划的所有安检计划项和上传的所有安检单，确认吗？" OK="{m:Exp Str=DeleteAction.Invoke()}" />
+
+    </Grid>
+</UserControl>

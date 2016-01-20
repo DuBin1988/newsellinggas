@@ -1,0 +1,65 @@
+一、登录过程
+
+1. 在t_user表中添加第二个密码
+
+2. 登录页面为pages/login.html, model为com.browsesoft.LoginModel, LoginModel从认证模式
+AuthenticationMode中获取用户。认证模式在propeties.xml中定义，可定义多个，其中一个为默认，
+格式为：
+
+	<AuthenticationMode name="simple" class="com.browsesoft.authentication.SimpleAuthentication" default="default" />
+	
+3. 参考SimpleAuthentication认证模式做双密码认证TwoPasswordAuthentication，SimpleAuthentication工作原理：
+从request里获取参数，调用EntityManager.getInstance().getUser方法。
+
+4. EntityManager增加双密码获取用户的方法, EntityManager获取用户的工作原理，由加密器对密码进行加密，加密器在
+properties.xml里定义，格式为：
+
+    <Encrypt item="userpassword" encryptmachine="com.browsesoft.oa.FlaseSimpleEncryptMachine" />
+    
+FlaseSimpleEncryptMachine不做任何密码加密工作，如果要对密码进行加密，需要用com.browsesoft.oa.SimpleEncryptMachine
+加密机。
+
+5. 修改登录界面，login.html, 增加第二个密码的输入框，名称为password2。login.html在newsellinggas里进行管理。
+
+二、修改密码过程
+
+1. 修改密码界面为pages/passwordedittemplate.html，model为com.browsesoft.oa.UserChangePassModel
+
+2. 参考UserChangePassModel做UserChangeTwoPassModel, UserChangePassModel的工作原理是从请求里获取数据，调用用户对象的
+user.modifyPassword(oldPass, newPass, affirmPass)方法进行修改。
+
+3. 给用户对象添加新的modifyPassword2方法，对第二个密码进行修改。
+
+4. 参考passwordedittemplate.html, 做password2edittemplate.html，替换里面的model，用于修改密码2
+
+5. 在系统管理中，添加新页面，用于修改密码2
+
+6. 密码修改有samepassword校验器, 类为com.browsesoft.oa.SamePassWithLoginUserVerifyTool，仿照
+SamePassWithLoginUserVerifyTool做samepassword2校验器，并在password2edittemplate.html中使用。
+名称：SamePass2WithLoginUserVerifyTool
+
+7. 在属性文件里添加samepassword2的配置
+		<samepassword2 classname="com.browsesoft.oa.SamePass2WithLoginUserVerifyTool" hint=" errorneous" />
+
+
+三、 开发环境，直接在yulinggas里修改，把生成的class程序放到产品资源服务部分。
+
+四、 部署：
+部署com.browsesoft.EntityManager，com.browsesoft.user.User,
+    com.browsesoft.authentication.TwoPasswordAuthentication
+    com.browsesoft.oa.SamePass2WithLoginUser
+    com.browsesoft.oa.UserChangeTwoPassModel类到相应目录下。
+修改propeties.xml的默认认证方式为：
+	<AuthenticationMode name="simple" class="com.browsesoft.authentication.TwoPasswordAuthentication" default="default" />
+给properties.xml添加密码2校验：
+		<samepassword2 classname="com.browsesoft.oa.SamePass2WithLoginUserVerifyTool" hint=" errorneous" />
+
+把新的login.html替换原来login.html
+把新的password2edittemplate.html放到pages下
+在功能管理里添加辅助密码修改功能，用于修改第二个密码。
+
+五、注意：
+如果无法修改密码，先执行密码设置即可。
+
+六、遗留问题：
+每次重启服务后，必须进行密码设置，然后才可以修改密码。
