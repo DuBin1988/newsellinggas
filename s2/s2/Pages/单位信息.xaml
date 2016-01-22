@@ -34,13 +34,13 @@
 							<TextBlock TextWrapping="Wrap" Text="单位名称：" Margin="5,4,0,4" FontSize="13.333" />
 							<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_unitname}" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_unitname"  Operator="f_unitname like 'this%'"/>          
+									<o:PropertySetter PropertyName="f_unitname"  Operator="f_unitname like '%this%'"/>          
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="地址：" Margin="5,4,0,4" FontSize="13.333" />
 							<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>          
+									<o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>          
 								</a:Data.Prop>
 							</TextBox>
 							<Button Content="查  询" x:Name="searchbutton" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="5,0,5,-2" HorizontalAlignment="Left" d:LayoutOverrides="Height" Width="70"/>
@@ -85,7 +85,7 @@
 								EntityType="t_unit" Source="{m:Exp Str=userfiles.SelectedItem}"
 								IsInit="{m:Exp Str=this.State\=\=$End}"        	/>
 						</a:Data.Context>
-						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" toolkit:DockPanel.Dock="Top" >
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" toolkit:DockPanel.Dock="Top" >
 							<Grid Margin="0" HorizontalAlignment="Stretch" >
 								<Grid.Background>
 									<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
