@@ -76,6 +76,8 @@ import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.aote.expression.ExpressionGenerator;
+import com.aote.expression.upkeep.UpkeepFactory;
+import com.aote.expression.upkeep.UpkeepInterface;
 import com.aote.helper.Util;
 import com.aote.rs.util.FileHelper;
 import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
@@ -1560,5 +1562,51 @@ public class DBService {
 		bulkSqlUpdate(sessionFactory.getCurrentSession(),
 				"delete from t_test where id=2");
 		return "";
+	}
+	
+	// 根据开始日期和结束日期获得维护费金额
+	@GET
+	@Path("upkeep/{userid}/{usertype}/{metertype}/{startmonth}/{endmonth}/{oughtamount}")
+	public JSONObject upfee(@PathParam("userid") String userid,
+	@PathParam("usertype") String usertype,
+	@PathParam("metertype") String metertype,
+	@PathParam("startmonth") String startmonth,
+	@PathParam("endmonth") String endmonth,
+	@PathParam("oughtamount") String oughtamount) {
+	JSONObject result = new JSONObject();
+	String value = "";
+	try {
+	UpkeepInterface upkeep = UpkeepFactory.getInstance()
+	.getUpkeepComputer(usertype);
+	Map map = new HashMap();
+	map.put("userid", userid);
+	map.put("metertype", metertype);
+	map.put("consumertype", usertype);
+
+	// 获取用户资料，把最后购气日期找出来
+	Session session = sessionFactory.openSession();
+	session.beginTransaction();
+
+	String sql = "select f_finabuygasdate from t_userfiles where f_userid='"
+	+ userid + "'";
+	HibernateSQLCall sqlCall = new HibernateSQLCall(sql, 0, 10);
+	List<Object> list = (List<Object>) sqlCall.doInHibernate(session);
+	String f_finabuygasdate = list.get(0) + "";
+	session.getTransaction().commit();
+	session.close();
+	if (f_finabuygasdate != null && !f_finabuygasdate.equals("")
+	&& !f_finabuygasdate.equals("null")) {
+	map.put("f_finabuygasdate", f_finabuygasdate.substring(0, 10));
+	}
+	map.put("startmonth", startmonth);
+	map.put("endmonth", endmonth);
+	map.put("oughtamount", oughtamount);
+	value = upkeep.computeUpkeep(map, this.sessionFactory);
+	result.put("upkeep", value);
+
+	} catch (Exception e) {
+	throw new RuntimeException(e);
+	}
+	return result;
 	}
 }
