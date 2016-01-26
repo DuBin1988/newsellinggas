@@ -39,6 +39,148 @@ public class SellSer {
 	static Logger log = Logger.getLogger(SellSer.class);
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+	
+	//查询欠费信息
+		// 获取某个编号基本信息及欠费数据
+			@GET
+			@Path("bill/{userid}")
+			public String getUserBill(@PathParam("userid") String userid) {
+				try {
+					String result = "{";
+
+					// 获取所有单值
+					Map<String,String> singles = getSingles();
+					
+					// 获取用户档案及抄表记录情况
+					String sql = "select "
+							+ "ui.f_zhye f_zhye,ui.f_username f_username,u.f_usertype f_usertype,"
+							+ "u.f_districtname f_districtname,u.f_address f_address,"
+							+ "u.f_gasproperties f_gasproperties,u.f_gaspricetype f_gaspricetype,"
+							+ "ui.f_userid infoid,u.f_gasprice f_gasprice,u.f_dibaohu f_dibaohu,"
+							+ "u.f_payment f_payment,u.f_stairtype f_stairtype,ui.f_userstate f_userstate," // ui t_userinfo
+							+ "" // u t_userfiles
+							+ "h.days days,h.f_userid f_userid,h.oughtamount oughtamount,"
+							+ "h.oughtfee oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
+							+ "h.lastrecord lastrecord,h.f_endjfdate f_endjfdate,h.f_operator f_operator,"
+							+ "h.f_inputdate f_inputdate,h.f_network f_network,h.f_handdate f_handdate,"
+							+ "h.id handId "
+							+ // h t_handplan
+							"from (select * from t_userinfo where f_userid='"
+							+ userid
+							+ "') ui join t_userfiles u on ui.f_userid=u.f_userinfoid "
+							+ "left join (select datediff(day,f_endjfdate,GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
+							+ "on u.f_userid=h.f_userid "
+							+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
+					List<Map<String, Object>> list = this.hibernateTemplate.executeFind(new HibernateSQLCall(sql));
+					// 从第一条获取户数据
+					Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
+					result += "infoid:" + userinfo.get("infoid") + "";
+					result += ",f_username:'" + (String) userinfo.get("f_username") + "'";
+					result += ",f_address:'" + (String) userinfo.get("f_address") + "'";
+					
+					// 用户结余
+					BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye").toString());
+					result += ",f_zhye:" + f_zhye;
+					String f_usertype=(String) userinfo.get("f_usertype");
+					result += ",f_usertype:'" + f_usertype + "'";
+					result += ",f_districtname:'" + (String) userinfo.get("f_districtname")
+							+ "'";
+					result += ",f_gasproperties:'"
+							+ (String) userinfo.get("f_gasproperties") + "'";
+					result += ",f_gaspricetype:'" + (String) userinfo.get("f_gaspricetype")
+							+ "'";
+					result += ",f_gasprice:" + userinfo.get("f_gasprice");
+					result += ",f_dibaohu:" + userinfo.get("f_dibaohu");
+					result += ",f_payment:'" + (String) userinfo.get("f_payment") + "'";
+					result += ",f_userstate:'" + (String) userinfo.get("f_userstate") + "'";
+					result += ",f_stairtype:'" + (String) userinfo.get("f_stairtype") + "'"; 
+					result += ", f_hands:[";
+					// 欠费表的数据
+					String hands = "";
+					
+					// 取滞纳金比率
+					BigDecimal scale = null;
+					/*
+					if(f_usertype.equals("民用")) {
+						scale = new BigDecimal(singles.get("民用滞纳金比率"));
+					} else {
+						scale = new BigDecimal(singles.get("非民用滞纳金比率"));			
+					}*/
+					
+					// 循环获取欠费数据
+					for (Map<String, Object> hand : list) {
+						if (!hands.equals("")) {
+							hands += ",";
+						}
+						// 如果没有欠费数据，继续
+						Object handId = hand.get("handId");
+						if (handId == null) {
+							continue;
+						}
+						hands += "{";
+						//
+						hands += "f_userid:'" + hand.get("f_userid") + "'";
+						// 用气量
+						hands += ",oughtamount:" + hand.get("oughtamount");
+						// 气费
+						hands += ",oughtfee:" + hand.get("oughtfee");
+						// 滞纳金金额=气费*比例*天数
+						BigDecimal oughtfee = new BigDecimal(hand.get("oughtfee").toString());
+						int days = Integer.parseInt(hand.get("days") + "");
+						days = days > 0 ? days : 0;
+						
+						BigDecimal f_zhinajin = new BigDecimal("0");
+						// 如果有滞纳金，计算基数去掉结余
+						int equals=f_zhye.compareTo(new BigDecimal("0"));//比较余额是否大于0
+						if(equals > 0) {
+							int bigDec=f_zhye.compareTo(oughtfee);//判断余额是否大余气费
+							oughtfee = bigDec>0 ? new BigDecimal("0") : oughtfee.subtract(f_zhye);
+							f_zhye = bigDec>0 ? f_zhye.subtract(oughtfee) : new BigDecimal("0");
+						}
+						//f_zhinajin=oughtfee.multiply(new BigDecimal(days+"")).multiply(scale);
+						//f_zhinajin=f_zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP);
+						hands += ",f_zhinajin:" + f_zhinajin;
+						
+						// 抄表日期
+						hands += ",lastinputdate:'" + hand.get("lastinputdate") + "'";
+						// 上期抄表底数
+						hands += ",lastinputgasnum:" + hand.get("lastinputgasnum");
+						// 本期抄表底数
+						hands += ",lastrecord:" + hand.get("lastrecord");
+						// 交费截止日期
+						hands += ",f_endjfdate:'" + hand.get("f_endjfdate") + "'";
+						// 滞纳金天数
+						hands += ",days:" + days;
+						// 网点
+						hands += ",f_network:'" + hand.get("f_network") + "'";
+						// 操作员
+						hands += ",f_operator:'" + hand.get("f_operator") + "'";
+						// 录入日期
+						hands += ",f_inputdate:'" + hand.get("f_inputdate") + "'";
+						hands += "}";
+					}
+			
+					result = result + hands + "]}";
+					return result;
+					
+				} catch (Exception ex) {
+					// 登记异常信息
+					log.error(ex.getMessage());
+					throw new WebApplicationException(401);
+				}
+			}
+			
+			// 获取所有单值，转换成Map
+			private Map<String, String> getSingles() {
+				Map result = new HashMap<String, String>();
+				
+				String sql = "select name,value from t_singlevalue";
+				List<Map<String, Object>> list = this.hibernateTemplate.executeFind(new HibernateSQLCall(sql));
+				for (Map<String, Object> hand : list) {
+					result.put(hand.get("name"), hand.get("value"));
+				}
+				return result;
+			}
 
 	// 定义sell方法，处理交费
 	@GET
