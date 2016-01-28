@@ -18,11 +18,10 @@
 	x:Class="Com.Aote.Pages.售气收费信息">
 
     <Grid x:Name="LayoutRoot">
-        <m:ResourceLoad Margin="0,0,-12,0">
+        <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
             <o:ExcelObj Name="excel" Bind="Index,f_userid,f_username,f_districtname,f_apartment,f_usertype,f_cardid,f_gaswatchbrand,f_gaspricetype,f_gasprice,f_pregas,f_preamount,f_beginfee,f_endfee,f_amountmaintenance,f_totalcost,f_comtype,f_invoicenum,f_payfeevalid,f_payfeetype,f_filiale,f_sgnetwork,f_sgoperator,f_deliverydate" Source="{m:Exp Str=daninfos}"/>
             <!--操作员列表对象-->
             <o:ObjectList Name="czylist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'  order by id"/>
-            <o:ObjectList Name="czylistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用' " HasEmptyRow="True"/>
             <!--o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from paramvalue where param.name\=\'操作员查询用\' }" 
 			   IsOld="{m:Exp Str=wangdianlist.State\=\=$End$}"/-->
             <!--公司类型列表对象-->
@@ -58,6 +57,11 @@
             <o:ObjectList Name="youxiaolistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' " HasEmptyRow="True"/>
             <o:ObjectList Name="yinhanglist1"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名'"/>
             <o:ObjectList Name="yinhanglistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名' " HasEmptyRow="True"/>
+            <o:ObjectList Name="SecondStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 2:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,1)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.FirstStair\}\'$}" />
+            <o:ObjectList Name="ThirdStairStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 3:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,2)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.SecondStair\}\'$}" />
+            <o:ObjectList Name="FourthStairlist"  WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 4:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,3)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.ThirdStair\}\'$}" />
+            <o:ObjectList Name="czylistnull" EntityType="t_user" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=LoginUser.character >\= 5:$from t_user where NAME\=\'\{LoginUser.name\}\'$\,$from t_user where f_parentname\=\'\{daninfosearch.DataContext.FourthStair\}\'$}"/>
+
         </m:ResourceLoad>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -72,7 +76,7 @@
                             <RowDefinition Height="28"/>
                             <RowDefinition Height="28"/>
                             <RowDefinition Height="28"/>
-                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="28"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="90"/>
@@ -83,7 +87,9 @@
                             <ColumnDefinition Width="150"/>
                             <ColumnDefinition Width="80"/>
                             <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="0.647*"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <a:Data.Context>
                             <o:SearchObject />
@@ -101,23 +107,54 @@
                                 <o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid='this'"/>
                             </a:Data.Prop>
                         </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <TextBox Name="FirstStair" TextWrapping="Wrap" Grid.Row="4" Grid.Column="1" Text="{m:Bind Path=FirstStair}" IsEnabled="False"  Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="FirstStair" NoDependValue="{m:Exp Str= zonggongsi.value}" Operator="1 = 1"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="2" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="4" Grid.Column="3" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
+
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="SecondStair"  Operator="1=1"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="4" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="4" Grid.Column="5" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="ThirdStair"  Operator="1=1"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="6" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="4" Grid.Column="7" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="FourthStair"  Operator="1=1"/>
+                            </a:Data.Prop>
+                        </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
                         <TextBox Name="tj7" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
+                                <o:PropertySetter PropertyName="f_username"   Operator="f_username like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="org"   Operator="f_OrgStr like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <ComboBox Name="tj9" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
-                           <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-						    <a:Data.Prop>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="6" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="18,0,11,0" FontSize="14"  />
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="6"  Margin="18,0,11,0" FontSize="14" Click="dansearchbutton_Click"  />
                         <StackPanel Grid.Row="3" Grid.Column="6" Orientation="Horizontal"  Margin="69,0,0,0" Grid.ColumnSpan="2">
                             <Button Content=" 置  空"  Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_cardid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null;tj5.SelectedValue\=null;tj6.SelectedValue\=null;tj9.SelectedValue\=null;tja.SelectedValue\=null;tjb.SelectedValue\=null;tjc.SelectedValue\=null;tjwangdian.SelectedValue\=null;tjczy.SelectedValue\=null;tjczy_Copy.SelectedValue\=null;daninfosearch.DataContext.startinvoicenum\=null;daninfosearch.DataContext.endinvoicenum\=null;daninfosearch.DataContext.f_districtname\=null;tjc_Copy.SelectedValue\=null}" FontSize="14" HorizontalAlignment="Left" Width="54" />
                             <Button Content="打印" Click="{m:Exp Str=print.Print()}"/>
@@ -135,22 +172,22 @@
                         <TextBlock TextWrapping="Wrap" Text="气表品牌：" Grid.Column="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
                         <ComboBox Name="tj5" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="3" ItemsSource="{m:Exp Str=qblistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_gaswatchbrand"  Operator="f_gaswatchbrand = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="气价类型：" Grid.Column="2" Grid.Row="1"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
                         <ComboBox Name="tj6" Grid.Row="1" SelectedValue="{m:Bind Path=f_gaspricetype}" Grid.Column="3" ItemsSource="{m:Exp Str=qjlistnull}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_gaspricetype"  Operator="f_gaspricetype = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
@@ -172,96 +209,92 @@
                         <TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
                         <ComboBox x:Name="tja"  SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="1" Grid.Column="5" ItemsSource="{m:Exp Str=usertypelistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="收费类型：" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" />
-                        <ComboBox x:Name="tjb"  SelectedValue="{m:Bind Path=f_payfeetype}" Grid.Row="2" Grid.Column="3" ItemsSource="{m:Exp Str=payfeetypelistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                        <TextBlock TextWrapping="Wrap" Text="收费类型：" Grid.Column="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="2" />
+                        <ComboBox x:Name="tjb"  SelectedValue="{m:Bind Path=f_payfeetype}" Grid.Row="2" Grid.Column="3" ItemsSource="{m:Exp Str=payfeetypelistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_payfeetype"  Operator="f_payfeetype = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="是否有效：" Grid.Column="4"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="2" />
-                        <ComboBox x:Name="tjc"  SelectedValue="{m:Bind Path=f_payfeevalid}" Grid.Row="2" Grid.Column="5" ItemsSource="{m:Exp Str=youxiaolistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                        <TextBlock TextWrapping="Wrap" Text="是否有效：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="2" />
+                        <ComboBox x:Name="tjc"  SelectedValue="{m:Bind Path=f_payfeevalid}" Grid.Row="2" Grid.Column="5" ItemsSource="{m:Exp Str=youxiaolistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_payfeevalid"  Operator="f_payfeevalid = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="网　　点：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" />
-                        <ComboBox x:Name="tjwangdian"  SelectedValue="{m:Bind Path=f_sgnetwork}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=wangdianlistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                        <TextBlock TextWrapping="Wrap" Text="网　　点：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                        <ComboBox x:Name="tjwangdian"  SelectedValue="{m:Bind Path=f_sgnetwork}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=wangdianlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_sgnetwork"  Operator="f_sgnetwork = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="操 作 员：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
-                        <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_sgoperator}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=czylistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
-                            <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                        <TextBlock TextWrapping="Wrap" Text="操 作 员：" Grid.Column="8"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="4"  />
+                        <ComboBox x:Name="tjczy" DisplayMemberPath="name" IsEnabled="{m:Exp Str=LoginUser.character ^ 5}" SelectedValue="{m:Bind Path=f_sgoperator}" Grid.Row="4" Grid.Column="9" ItemsSource="{m:Exp Str=czylistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_sgoperator"  Operator="f_sgoperator = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="付款方式：" Grid.Column="4"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="3" />
+                        <TextBlock TextWrapping="Wrap" Text="付款方式：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="3" />
 
-                        <TextBlock TextWrapping="Wrap" Text="公司类型：" Grid.Column="6"  Margin="0,-1,0,4" Height="25" TextAlignment="Right" Grid.Row="2" />
-                        <ComboBox x:Name="tjczy_Copy"  SelectedValue="{m:Bind Path=f_comtype}" ItemsSource="{m:Exp Str=gongsitypelistnull}" Grid.Row="2" Grid.Column="7"   Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                        <TextBlock TextWrapping="Wrap" Text="公司类型：" Grid.Column="6"  Margin="0,27,0,4" Height="25" TextAlignment="Right" Grid.Row="1" Grid.RowSpan="2" />
+                        <ComboBox x:Name="tjczy_Copy"  SelectedValue="{m:Bind Path=f_comtype}" ItemsSource="{m:Exp Str=gongsitypelistnull}" Grid.Row="2" Grid.Column="7"   Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_comtype"  Operator="f_comtype = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Grid.Column="8" Margin="-1,2,0,1" Height="25" TextAlignment="Right" Text="发票号 从：" HorizontalAlignment="Left" Width="90"/>
-                        <TextBox x:Name="tj4_Copy" Text="{m:Bind Path=startinvoicenum}" Grid.Row="0" Grid.Column="8" a:ControlAttach.DefaultButton="searchbutton" Width="150" Margin="89,2,0,1" Height="25" HorizontalAlignment="Left" >
+                        <TextBlock TextWrapping="Wrap" Grid.Column="8"  Height="25" TextAlignment="Right" Text="发票号 从：" HorizontalAlignment="Left" Width="80" Margin="0,2,0,1"/>
+                        <TextBox x:Name="tj4_Copy" Text="{m:Bind Path=startinvoicenum}" Grid.Row="0" Grid.Column="9" a:ControlAttach.DefaultButton="searchbutton" Width="150" Margin="0,2,0,1" Height="25" HorizontalAlignment="Left" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="startinvoicenum"  Operator="f_invoicenum >= this"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox x:Name="tj8_Copy" Text="{m:Bind Path=endinvoicenum}" Grid.Row="1" Grid.Column="8" a:ControlAttach.DefaultButton="searchbutton" Width="150" Margin="89,2,0,1" Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Left" >
+                        <TextBox x:Name="tj8_Copy" Text="{m:Bind Path=endinvoicenum}" Grid.Row="1" Grid.Column="9" a:ControlAttach.DefaultButton="searchbutton" Width="150" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Left" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="endinvoicenum"  Operator="f_invoicenum ^= this"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="8" Margin="0,2,0,1" Height="25" TextAlignment="Right" RenderTransformOrigin="2.625,1.32" HorizontalAlignment="Left" Width="80" Grid.Row="1"/>
-                        <TextBlock TextWrapping="Wrap" Text="小区名称：" Grid.Column="8"  Margin="9,3,0,0" Height="25" TextAlignment="Right" Grid.Row="2" HorizontalAlignment="Left" Width="80" />
-                        <TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Grid.Row="2" Grid.Column="8" Text="{m:Bind Path=f_districtname}" Width="150" Margin="89,3,0,0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
+                        <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="8"  Height="25" TextAlignment="Right" RenderTransformOrigin="2.625,1.32" HorizontalAlignment="Left" Width="80" Grid.Row="1" Margin="0,2,0,1"/>
+                        <TextBlock TextWrapping="Wrap" Text="小区名称：" Grid.Column="8"   Height="25" TextAlignment="Right" Grid.Row="2" HorizontalAlignment="Left" Width="80" Margin="0,2,0,1" />
+                        <TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Grid.Row="2" Grid.Column="9" Text="{m:Bind Path=f_districtname}" Width="150" Margin="0,3,0,0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like '%this%'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <ComboBox x:Name="tjc_Copy"  SelectedValue="{m:Bind Path=f_payment}" Grid.Row="3" Grid.Column="5" ItemsSource="{m:Exp Str=fukuanfangshinull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                        <ComboBox x:Name="tjc_Copy"  SelectedValue="{m:Bind Path=f_payment}" Grid.Row="3" Grid.Column="5" ItemsSource="{m:Exp Str=fukuanfangshinull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							<a:Data.Prop>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_payment"  Operator="f_payment = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
@@ -378,7 +411,7 @@ Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_sellinggas 
 
         </Grid>
         <c:PrintPageObj x:Name="print" ListNameInArea="selllist" Area="{m:Res Key=sqprint1}" 
-      List="{m:Exp Str=daninfos.ItemsSource}" PageRow="42"  />
+      List="{m:Exp Str=daninfos.ItemsSource}" PageRow="30"  />
 
         <Grid  x:Name="sqprint1" VerticalAlignment="Bottom" Margin="-1355,0,0,25" HorizontalAlignment="Left" Width="1227" >
             <Grid.RowDefinitions>
@@ -404,13 +437,13 @@ Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_sellinggas 
                     <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
                     <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                     <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
-                    <sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
+
                     <sdk:DataGridTextColumn Header="气量" Binding="{Binding f_pregas}"/>
                     <sdk:DataGridTextColumn Header="金额" Binding="{Binding f_preamount}"/>
-                    <sdk:DataGridTextColumn Header="违约金" Binding="{Binding f_zhinajin}"/>
-                    <sdk:DataGridTextColumn Header="发卡费" Binding="{Binding f_cardfees}"/>
+
                     <sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_sgoperator}"/>
                     <sdk:DataGridTextColumn Header="收费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
+                    <sdk:DataGridTextColumn Header="收费时间" Binding="{Binding f_deliverytime,StringFormat=HH:mm:ss}"/>
                 </sdk:DataGrid.Columns>
             </sdk:DataGrid>
 
