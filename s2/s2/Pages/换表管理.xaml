@@ -52,6 +52,14 @@
 			IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}"
             Path="{m:Exp Str=
 			card.CardId\=>ReadCompleted!\=null and card.Factory!\=null:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,pipelines.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userfiles where f_userid\=\'\{pipelines.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}">
+
+                <!--上上上次购气量-->
+                <o:PropertySetter PropertyName="f_LastLastPreGas" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:0\,0}"/>
+                <!--上上次购气量-->
+                <o:PropertySetter PropertyName="f_LastPreGas"  NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:0\,0}"/>
+                <!--上次购气量-->
+                <o:PropertySetter PropertyName="f_ThePreGas"  NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:0\,0}"/>
+
                 <!--换表回写-->
                 <o:PropertySetter PropertyName="f_buka" Value="{m:Exp Str=pipeline.DataContext.f_buka}"/>
                 <o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=pipeline.DataContext.f_cmnewgaswatchbrand}"/>
@@ -114,6 +122,7 @@
 		     NewPrice="{m:Exp Str='pipelinego != null\:pipelinego.f_gasprice*100\,0'}"
 		     Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		     Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+             MeterId="{m:Exp Str='pipelinego != null \:pipelinego.f_meternumber\,null'}"
 		    >
             </oo:NewGeneralICCard>
 

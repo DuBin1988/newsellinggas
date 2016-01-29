@@ -40,7 +40,7 @@
 		 Yhh="{m:Exp Str='userfiles1 != null \:userfiles1.yhh\,null'}"
 		 Tm="0"
 		 Ljgql="{m:Exp Str='userfiles1 != null \:userfiles1.f_metergasnums\,null'}"
-		 Bkcs="0"
+		 Bkcs="{m:Exp Str='userfiles1=>DataLoaded!=null:userfile.DataContext.f_PatchCard.ToInt()\,null'}"
 		 Bjql="{m:Exp Str='userfiles1 != null \:userfiles1.bjql\,null'}"
 		 Czsx="{m:Exp Str='userfiles1 != null \:userfiles1.czsx\,null'}"
 		 Tzed="{m:Exp Str='userfiles1 != null \:userfiles1.tzed\,null'}"	
@@ -50,6 +50,9 @@
 		 NewPrice="{m:Exp Str='userfiles1 != null\:userfiles1.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         MeterId="{m:Exp Str='userfiles1 != null \:userfiles1.f_meternumber\,null'}"      
+         Scql="{m:Exp Str='userfiles1!=null\:userfiles1.f_ThePreGas\,null'}"
+         Sscql="{m:Exp Str='userfiles1!=null\:userfiles1.f_LastPreGas\,null'}"
 		>
 		</oo:NewGeneralICCard>
 
@@ -76,6 +79,8 @@
 			IsInit="{m:Exp Str=print1.State\=\=$End$ or print1.State\=\=$Cancle$}">
 			<!--初始化卡标记-->
 			<o:PropertySetter PropertyName="f_initcardsellgas" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$补卡$\,null}"/>
+                <!--补卡次数-->
+                <o:PropertySetter PropertyName="f_PatchCard" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfile.DataContext.f_PatchCard\,null}"/>
 		</o:GeneralObject>
 		
 		<!--保存对象 -->	
@@ -129,7 +134,13 @@
     						<ColumnDefinition Width="110"/>
     						<ColumnDefinition Width="1.333*"/>
     					</Grid.ColumnDefinitions>
-						<TextBlock Text="小区名称：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+                            <TextBlock Grid.Column="3" Margin="38.6,5,0,5" Grid.Row="7" Text="补卡次数：" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.ColumnSpan="2"/>
+                            <TextBox Text="{m:Bind Path=f_PatchCard}" IsReadOnly="False" Grid.Column="5" Margin="0,4,0,6" Grid.Row="7" TextWrapping="Wrap" IsEnabled="True" Height="25" Grid.RowSpan="1"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_PatchCard" NoDependValue="{m:Exp Str='userfiles1.f_PatchCard.ToInt()\=&gt;Completed+1,null'}" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="小区名称：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
     					<TextBox Text="{m:Bind Path=f_districtname}" Grid.Column="3" Margin="0" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
 									<a:Data.Prop>
 										<o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=userfiles1.f_districtname}"/>

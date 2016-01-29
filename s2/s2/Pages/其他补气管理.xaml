@@ -31,7 +31,7 @@
 		 Yhh="{m:Exp Str='users != null \:users.yhh\,null'}"
 		 Tm="{m:Exp Str='users != null \:users.f_meternumber\,null'}"
 		 Ljgql="{m:Exp Str='users != null \:users.f_cumulativepurchase\,null'}"
-		 Bkcs="{m:Exp Str=users.f_times.ToInt()}"
+		 Bkcs="{m:Exp Str=users.f_PatchCard.ToInt()}"
 		 Bjql="{m:Exp Str='users != null \:users.bjql\,null'}"
 		 Czsx="{m:Exp Str='users != null \:users.czsx\,null'}"
 		 Tzed="{m:Exp Str='users != null \:users.tzed\,null'}"	
@@ -41,6 +41,8 @@
 		 NewPrice="{m:Exp Str='users != null\:users.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         Scql="{m:Exp Str='users=>DataLoaded!=null:userfile.DataContext.f_ThePreGas\,null'}" 
+         Sscql="{m:Exp Str='users=>DataLoaded!=null:userfile.DataContext.f_LastPreGas\,null'}"
 		>
 		</oo:NewGeneralICCard>		
 			
@@ -169,7 +171,7 @@
 						<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" >
 							<Button x:Name="save" Content="保  存" Margin="5" 
 								IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
-								Click="{m:Exp Str=users.f_times\=userfile.DataContext.f_times.ToInt() +1;card.BuyTimes\=users.f_times.ToInt(); users.f_metergasnums\=userfile.DataContext.f_metergasnums;users.f_cumulativepurchase\=userfile.DataContext.f_cumulativepurchase;card.Sqrq\=userfilego.f_date.ToString($yyyyMMdd$);card.SellGas()}" Width="50" />
+								Click="{m:Exp Str=users.f_times\=userfile.DataContext.f_times.ToInt() +1;card.BuyTimes\=users.f_times.ToInt(); users.f_metergasnums\=userfile.DataContext.f_metergasnums;users.f_cumulativepurchase\=userfile.DataContext.f_cumulativepurchase;card.Sqrq\=userfilego.f_date.ToString($yyyyMMdd$);users.f_ThePreGas\=userfile.DataContext.f_cmaddgas;users.f_LastPreGas\=userfile.DataContext.f_ThePreGas;users.f_LastLastPreGas\=userfile.DataContext.f_LastPreGas; card.SellGas()}" Width="50" />
 							<Button Content="撤  销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();users.New()}" Width="50"/>
 						</toolkit:DockPanel>
 					<!--非民用主操作区-->
@@ -200,6 +202,25 @@
 								<ColumnDefinition Width="110"/>
 								<ColumnDefinition Width="1*"/>
 							</Grid.ColumnDefinitions>
+                            <TextBlock Margin="0,5" Grid.Row="9" TextWrapping="Wrap" Text="上次购气量：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_ThePreGas}"  x:Name="f_ThePreGas"  Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_ThePreGas" NoDependValue="{m:Exp Str=users.f_ThePreGas\=&gt;Completed}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
+                            <TextBlock Margin="0" Grid.Row="9" Grid.Column="2" TextWrapping="Wrap" Text="上上次购气量：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_LastPreGas}"  x:Name="f_LastPreGas"  Grid.Column="3" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_LastPreGas" NoDependValue="{m:Exp Str=users.f_LastPreGas\=&gt;Completed}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Margin="0,6,0,4" Grid.Row="9" Grid.Column="4" TextWrapping="Wrap" Text="上上上次购气量：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_LastLastPreGas}"  x:Name="f_LastLastPreGas"  Grid.Column="5" Margin="0,6,0,4" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_LastLastPreGas" NoDependValue="{m:Exp Str=users.f_LastLastPreGas\=&gt;Completed}"/>
+                                </a:Data.Prop>
+                            </TextBox>
 							<TextBlock Margin="0" TextWrapping="Wrap" Text="用户编号：" Height="25" TextAlignment="Right"/>
 							<TextBlock Grid.Column="2" Margin="0" TextWrapping="Wrap" Text="用户姓名：" Height="25" TextAlignment="Right"/>
 							<TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="用户地址：" Height="25" TextAlignment="Right"/>

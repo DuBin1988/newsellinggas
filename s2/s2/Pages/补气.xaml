@@ -40,6 +40,10 @@
 		 NewPrice="{m:Exp Str='user != null\:user.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         MeterId="{m:Exp Str='user != null \:user.f_meternumber\,null'}" 
+         Scql="{m:Exp Str='user=>DataLoaded!=null:user.f_ThePreGas\,null'}" 
+         Sscql="{m:Exp Str='user=>DataLoaded!=null:user.f_LastPreGas\,null'}"  
+        
 		>
 		</oo:NewGeneralICCard>
 		
@@ -69,8 +73,17 @@
 				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$$\,null}"></o:PropertySetter>   		
 				<!--最后一次写入卡里的气量-->
 				<o:PropertySetter PropertyName="f_finallygas" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:card.Gas\,null}"></o:PropertySetter>   		
-		</o:GeneralObject>
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:card.Gas\,null}"></o:PropertySetter>
+                <!--上上上次购气量f_LastLastPreGas-->
+                <o:PropertySetter PropertyName="f_LastLastPreGas"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:apply.DataContext.f_LastPreGas\,null}"/>
+                <!--上上次购气量f_LastPreGas-->
+                <o:PropertySetter PropertyName="f_LastPreGas"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:apply.DataContext.f_ThePreGas\,null}"/>
+                <!--上次购气量f_ThePreGas-->
+                <o:PropertySetter PropertyName="f_ThePreGas"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:apply.DataContext.f_pregas\,null}"/>
+            </o:GeneralObject>
 
 		<!--保存对象-->
 		<b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=card.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
@@ -113,7 +126,23 @@
 					<a:Data.Context>
 						<o:SearchObject  />        	
 					</a:Data.Context>
-					<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
+                        <TextBox Text="{m:Bind Path=f_ThePreGas}" Visibility="Collapsed" x:Name="f_ThePreGas"  Grid.Column="3" Margin="0" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_ThePreGas" NoDependValue="{m:Exp Str=user.f_ThePreGas\=&gt;Completed}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=f_LastPreGas}" Visibility="Collapsed" x:Name="f_LastPreGas"  Grid.Column="5" Margin="0" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_LastPreGas" NoDependValue="{m:Exp Str=user.f_LastPreGas\=&gt;Completed}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=f_LastLastPreGas}" Visibility="Collapsed" x:Name="f_LastLastPreGas"  Grid.Column="5" Margin="0" Grid.Row="13" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_LastLastPreGas" NoDependValue="{m:Exp Str=user.f_LastLastPreGas\=&gt;Completed}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                    
+                        <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
 					<TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" a:ControlAttach.DefaultButton="searchbutton" Grid.Column="1" Height="25" >
 						<a:Data.Prop>
 							<o:PropertySetter PropertyName="f_userid" Operator="f_userid = 'this'"/>               

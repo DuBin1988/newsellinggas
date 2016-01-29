@@ -99,6 +99,19 @@
             <o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
              Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and card.Factory \=\=$jinka$ :$one/from t_userfiles where f_userstate !\=\'注销\' and f_cardid\=\'\{card.CardId\}\' and dqdm \= \'\{card.Dqdm\}\' and f_aliasname\=\'\{card.Factory\}\'$\,card.CardId !\= null and card.Factory !\=null:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\'$\,$null$}" 
 			 IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$}">
+
+                <!--表号f_meternumber-->
+                <o:PropertySetter PropertyName="f_meternumber"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_meternumber\,null}"/>
+                <!--上上上次购气量f_LastLastPreGas-->
+                <o:PropertySetter PropertyName="f_LastLastPreGas"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_LastPreGas\,null}"/>
+                <!--上上次购气量f_LastPreGas-->
+                <o:PropertySetter PropertyName="f_LastPreGas"   
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_ThePreGas\,null}"/>
+                <!--上次购气量f_ThePreGas-->
+                <o:PropertySetter PropertyName="f_ThePreGas"  NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_pregas\,null}"/>
+
                 <!--折子号-->
                 <o:PropertySetter PropertyName="f_zherownum" 
 				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_zherownum.ToInt()\,0}"></o:PropertySetter>
@@ -217,7 +230,7 @@
 		 Yhh="{m:Exp Str='kbusers != null \:kbusers.yhh\,null'}"
 		 Tm="0"
 		 Ljgql="{m:Exp Str='kbusers != null \:kbusers.f_cumulativepurchase\,null'}"
-		 Bkcs="0"
+		 Bkcs="{m:Exp Str='kbusers != null \:kbusers.f_PatchCard\,null'}"
 		 Bjql="{m:Exp Str='kbusers != null \:kbusers.bjql\,null'}"
 		 Czsx="{m:Exp Str='kbusers != null \:kbusers.czsx\,null'}"
 		 Tzed="{m:Exp Str='kbusers != null \:kbusers.tzed\,null'}"	
@@ -226,6 +239,8 @@
 	 	 NewPrice="{m:Exp Str='kbusers != null\:kbusers.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         Scql="{m:Exp Str='kbusers=>DataLoaded!=null:kbfeel.DataContext.f_ThePreGas\,null'}"
+         Sscql="{m:Exp Str='kbusers=>DataLoaded!=null:kbfeel.DataContext.f_LastPreGas\,null'}"                        
 		 Completed = "NewGeneralICCard_Completed"
 		>
             </oo:NewGeneralICCard>
@@ -342,6 +357,33 @@
                                 <TextBlock Text="限购气量：" Margin="0,6" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Grid.Column="4" Height="25" HorizontalAlignment="Right" Width="130"/>
                                 <TextBlock Text="混合气价：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4"  Height="25" Visibility="Collapsed"/>
                                 <StackPanel Grid.ColumnSpan="4" Grid.Column="1" Visibility="Collapsed" Margin="0,2,-11,2" Grid.Row="4" Orientation="Horizontal" Height="25"  >
+                                    <TextBox Text="{m:Bind Path=f_meternumber}"  Grid.Column="3" Margin="0" Grid.Row="13" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_meternumber" NoDependValue="{m:Exp Str=card.MeterId\=&gt;ReadCompleted}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock Margin="0" Grid.Row="12" Grid.Column="2" TextWrapping="Wrap" Text="上次购气量：" TextAlignment="Right" Height="25"/>
+                                    <TextBox Text="{m:Bind Path=f_ThePreGas}"  x:Name="f_ThePreGas"  Grid.Column="3" Margin="0" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_ThePreGas" NoDependValue="{m:Exp Str=kbusers.f_ThePreGas\=&gt;Completed}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock Margin="0" Grid.Row="12" Grid.Column="4" TextWrapping="Wrap" Text="上上次购气量：" TextAlignment="Right" Height="25"/>
+                                    <TextBox Text="{m:Bind Path=f_LastPreGas}"  x:Name="f_LastPreGas"  Grid.Column="5" Margin="0" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_LastPreGas" NoDependValue="{m:Exp Str=kbusers.f_LastPreGas\=&gt;Completed}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock Margin="0" Grid.Row="13" Grid.Column="4" TextWrapping="Wrap" Text="上上上次购气量：" TextAlignment="Right" Height="25"/>
+                                    <TextBox Text="{m:Bind Path=f_LastLastPreGas}"  x:Name="f_LastLastPreGas"  Grid.Column="5" Margin="0" Grid.Row="13" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_LastLastPreGas" NoDependValue="{m:Exp Str=kbusers.f_LastLastPreGas\=&gt;Completed}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
                                     <TextBlock Text="民用气价" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,2" />
                                     <TextBox Text="{m:Bind Path=f_myprice}" Margin="5,0,0,0" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
                                         <a:Data.Prop>

@@ -50,6 +50,10 @@
 		NewPrice="{m:Exp Str='userfiles != null\:userfiles.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+                MeterId="{m:Exp Str='userfiles != null \:userfiles.f_meternumber\,null'}"
+                Scql="{m:Exp Str='userfiles != null \:userfiles.f_LastPreGas\,null'}"
+                Sscql="{m:Exp Str='userfiles != null \:userfiles.f_LastLastPreGas\,null'}"
+                Bkcs="{m:Exp Str='userfiles != null \:userfiles.f_PatchCard\,null'}"
 		>
             </oo:NewGeneralICCard>
 
