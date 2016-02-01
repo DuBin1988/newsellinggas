@@ -161,22 +161,34 @@
             <c:BusyIndicatorEx x:Name="kbsellgasbusy" BusyContent="正在查询，请稍等" Grid.Row="1" Grid.ColumnSpan="2" >
                 <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="240" VerticalAlignment="Top" Margin="0">
                     <sdk:DataGrid SelectionMode="Extended" AutoGenerateColumns="False" x:Name="dataGrid1" 
-            			ItemsSource="{m:Exp Str=kbsellgas}"                         
-						
+            			ItemsSource="{m:Exp Str=kbsellgas}"                         						
 	 
             			IsReadOnly="True" CanUserSortColumns="False" IsHitTestVisible="False"
             			ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridCheckBoxColumn Binding="{Binding IsChecked}"/>
-                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-                            <sdk:DataGridTextColumn Header="用气量" Binding="{Binding oughtamount, StringFormat=0.#}"/>
-                            <sdk:DataGridTextColumn Header="本月金额" Binding="{Binding oughtfee, StringFormat=0.##}"/>
-                            <sdk:DataGridTextColumn Header="违约金" Binding="{Binding f_zhinajin, StringFormat=0.##}"/>
+                            <sdk:DataGridTextColumn Header="编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="气量" Binding="{Binding oughtamount, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="金额" Binding="{Binding oughtfee, StringFormat=0.##}"/>
+
+                            <sdk:DataGridTextColumn Header="1阶气量" Binding="{Binding f_stair1amount, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="1阶单价" Binding="{Binding f_stair1price, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="1阶金额" Binding="{Binding f_stair1fee, StringFormat=0.#}"/>
+
+                            <sdk:DataGridTextColumn Header="2阶气量" Binding="{Binding f_stair2amount, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="2阶单价" Binding="{Binding f_stair2price, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="2阶金额" Binding="{Binding f_stair2fee, StringFormat=0.#}"/>
+
+                            <sdk:DataGridTextColumn Header="3阶气量" Binding="{Binding f_stair3amount, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="3阶单价" Binding="{Binding f_stair3price, StringFormat=0.#}"/>
+                            <sdk:DataGridTextColumn Header="3阶金额" Binding="{Binding f_stair3fee, StringFormat=0.#}"/>
+
                             <sdk:DataGridTextColumn Header="抄表日期" Binding="{Binding lastinputdate, StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="上次抄表底数" Binding="{Binding lastinputgasnum, StringFormat=0.#}"/>
                             <sdk:DataGridTextColumn Header="本次抄表底数" Binding="{Binding lastrecord, StringFormat=0.#}"/>
-                            <sdk:DataGridTextColumn Header="交费截止日期" Binding="{Binding f_endjfdate, StringFormat=yyyy-MM-dd}"/>
-                            <sdk:DataGridTextColumn Header="违约金天数" Binding="{Binding f_zhinajintianshu}"/>
+
+
+
                             <sdk:DataGridTextColumn Header="网　　点" Binding="{Binding f_network}"/>
                             <sdk:DataGridTextColumn Header="操 作 员" Binding="{Binding f_operator}"/>
                             <sdk:DataGridTextColumn Header="录入日期" Binding="{Binding f_inputdate, StringFormat=yyyy-MM-dd}"/>
@@ -384,7 +396,7 @@ Margin="18.667,158.706,381.139,0"/>
             <TextBlock Text="{m:Exp Str=kbfee.f_zhye}" Margin="652,357,0,0" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="89"/>
             <TextBlock Text="{m:Exp Str=kbfee.f_grossproceeds.ToChinaMoney()}"  HorizontalAlignment="Left" Margin="135,384,0,155" TextWrapping="Wrap" Width="384" Height="20"/>
             <TextBlock Text="{m:Exp Str=kbfee.f_username}"  HorizontalAlignment="Right" Margin="0,89,391,0"  Width="348" Height="20" VerticalAlignment="Top"/>
-            <TextBlock Text="{m:Exp Str=kbfee.f_address}"  HorizontalAlignment="Stretch" Margin="385,113,381,0"  Width="Auto" Height="20" VerticalAlignment="Top"/>
+            <TextBlock Text="{m:Exp Str='kbfee.f_districtname\!\=null:$\{kbfee.f_districtname\}\{kbfee.f_address\}$ \,kbfee.f_address'}"  HorizontalAlignment="Stretch" Margin="385,113,381,0"  Width="Auto" Height="20" VerticalAlignment="Top"/>
             <TextBlock Text="{m:Exp Str=kbfee.f_userid}"  HorizontalAlignment="Left" Margin="132,89,0,0"  Width="141" Height="20" VerticalAlignment="Top" Padding="0,2,0,0" d:LayoutOverrides="Height, GridBox"/>
             <TextBlock Text="{m:Exp Str=kbfee.f_stairtype}"  HorizontalAlignment="Left" Margin="142,114,0,0"  Width="133" Height="20" VerticalAlignment="Top" Padding="0,2,0,0"/>
             <TextBlock x:Name="ui_oneprice1"  HorizontalAlignment="Left" Margin="347,190,0,0"  Width="54" Height="20" VerticalAlignment="Top" Padding="0,2,0,0"/>

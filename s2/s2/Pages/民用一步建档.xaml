@@ -382,7 +382,7 @@
                                             </a:Data.Prop>
                                         </TextBox>
 
-                                        <TextBox Text="{m:Bind Path=f_username, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}"  Grid.Column="1" Margin="0,0,0,2" Grid.Row="2" TextWrapping="Wrap"  Height="Auto" VerticalAlignment="Stretch"  >
+                                        <TextBox Text="{m:Bind Path=f_username}"  Grid.Column="1" Margin="0,0,0,2" Grid.Row="2" TextWrapping="Wrap"  Height="Auto" VerticalAlignment="Stretch"  >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_username" NotNull="True"  Value="{m:Exp Str=temp.f_username}"  Default="{m:Exp Str=userfilego.f_username\=>Completed}"  />
                                             </a:Data.Prop>
@@ -631,7 +631,7 @@
                                                 <o:PropertySetter PropertyName="f_payment"  Value="{m:Exp Str=userfilego.f_payment}"  Default="{m:Exp Str=jiaofeilist.Count &gt; 0 :jiaofeilist.First().name\,null}" NotNull="True"/>
                                             </a:Data.Prop>
                                         </ComboBox>
-                                        <TextBox Text="{m:Bind Path=f_phone1, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}"  Grid.Column="3" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="False" Grid.ColumnSpan="1" FontFamily="Portable User Interface" >
+                                        <TextBox Text="{m:Bind Path=f_phone1}"  Grid.Column="3" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="False" Grid.ColumnSpan="1" FontFamily="Portable User Interface" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_phone1" Value="{m:Exp Str=temp.f_phone1}"/>
                                             </a:Data.Prop>
@@ -647,25 +647,25 @@
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Text="街      道：" Margin="1,3,0,2" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-                                        <TextBox Text="{m:Bind Path=f_road, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}" x:Name="f_road"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="1"  Grid.ColumnSpan="1"  TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <TextBox Text="{m:Bind Path=f_road}" x:Name="f_road"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="1"  Grid.ColumnSpan="1"  TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_road" Value="{m:Exp Str=temp.f_road}"  Default="{m:Exp Str=userfilego.f_road}"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_cusDom, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}" x:Name="f_cusDom" Grid.Column="1" Margin="1,3,0,2" Grid.Row="3"  Grid.ColumnSpan="1"  TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1">
+                                        <TextBox Text="{m:Bind Path=f_cusDom}" x:Name="f_cusDom" Grid.Column="1" Margin="1,3,0,2" Grid.Row="3"  Grid.ColumnSpan="1"  TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_cusDom" Value="{m:Exp Str=temp.f_cusDom}" NotNull="True" />
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Text="单     元：" Margin="2,2,0,3" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
-                                        <TextBox Text="{m:Bind Path=f_cusDy, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}" x:Name="f_cusDy" Grid.Column="3" Margin="1,3,186,2" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_cusDy}" x:Name="f_cusDy" Grid.Column="3" Margin="1,3,186,2" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_cusDy"  Value="{m:Exp Str=temp.f_cusDy}"  NotNull="True"/>
                                             </a:Data.Prop>
                                             <!-- Value="{m:Exp Str=$\{userfilego.f_districtname\}\{userfilego.f_address\}$}"/-->
                                         </TextBox>
                                         <TextBlock Text="楼    层：" Margin="119,2,114,3" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="3"/>
-                                        <TextBox Text="{m:Bind Path=f_cusFloor, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}" x:Name="f_cusFloor" Grid.Column="3" Margin="191,3,1,2" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_cusFloor}" x:Name="f_cusFloor" Grid.Column="3" Margin="191,3,1,2" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_cusFloor"  Value="{m:Exp Str=temp.f_cusFloor}"  NotNull="True"/>
                                             </a:Data.Prop>
@@ -677,7 +677,7 @@
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Text="电        话：" Margin="1,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25" />
-                                        <TextBox Text="{m:Bind Path=f_phone, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="False" Grid.ColumnSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_phone}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="False" Grid.ColumnSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_phone" Value="{m:Exp Str=temp.f_phone}"/>
                                             </a:Data.Prop>
@@ -794,7 +794,7 @@
                                         <RowDefinition Height="Auto" MinHeight="42"/>
                                         <RowDefinition Height="Auto" MinHeight="321"/>
                                     </Grid.RowDefinitions>
-                                    <TextBox Text="{m:Bind Path=f_usermc, UpdateOnChange=True,Filter=$！￥ `~!@#$%\*$^}"  Grid.Column="3" Margin="8,8,223,0" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Top" IsReadOnly="False" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height" />
+                                    <TextBox Text="{m:Bind Path=f_usermc}"  Grid.Column="3" Margin="8,8,223,0" Grid.Row="0" TextWrapping="Wrap" Height="25" VerticalAlignment="Top" IsReadOnly="False" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height" />
                                     <!--TextBox Text="{m:Bind Path=f_bankname}" Grid.Column="4" Margin="-29,0,0,9" Grid.Row="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" RenderTransformOrigin="-1.739,-0.923" HorizontalAlignment="Left" Width="159" Grid.ColumnSpan="1" d:LayoutOverrides="Height" -->
                                     <ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_bankname}"  Grid.Column="3" Margin="8,0,0,9" Grid.Row="1"  Height="25" VerticalAlignment="Bottom" RenderTransformOrigin="-1.739,-0.923" HorizontalAlignment="Left" Width="159" Grid.ColumnSpan="1" d:LayoutOverrides="Height">
                                         <a:Data.Items>

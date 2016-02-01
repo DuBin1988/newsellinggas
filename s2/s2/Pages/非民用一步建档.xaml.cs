@@ -10,13 +10,13 @@ using System.Windows.Shapes;
 
 namespace Com.Aote.Pages
 {
-	public partial class 非民用一步建档 : UserControl
-	{
-		public 非民用一步建档()
-		{
-            
-			// Required to initialize variables
-			InitializeComponent();
-		} 
-	}
+    public partial class 非民用一步建档 : UserControl
+    {
+        public 非民用一步建档()
+        {
+
+            // Required to initialize variables
+            InitializeComponent();
+        }
+    }
 }

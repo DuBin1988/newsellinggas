@@ -96,16 +96,24 @@ namespace Com.Aote.Pages
                 ui_minnum1.Text = item["minnum1"].ToString();
                 ui_maxnum1.Text = item["maxnum1"].ToString();
                 ui_minyue1.Text = item["minyue1"].ToString();
-                ui_minyue1.Text = ui_minyue1.Text.Replace(@"""", "");
+                string my1 = ui_minyue1.Text.Replace(@"""", "");
                 if (item["minyue1"].ToString().Equals("0"))
                 {
                     ui_minyue1.Text = "";
                 }
+                else
+                {
+                    ui_minyue1.Text = my1.Substring(0, 7);
+                }
                 ui_maxyue1.Text = item["maxyue1"].ToString();
-                ui_maxyue1.Text = ui_maxyue1.Text.Replace(@"""", "");
+                string mxy1 = ui_maxyue1.Text.Replace(@"""", "");
                 if (item["maxyue1"].ToString().Equals("0"))
                 {
                     ui_maxyue1.Text = "";
+                }
+                else
+                {
+                    ui_maxyue1.Text = mxy1.Substring(0, 7);
                 }
                 ui_userid1.Text = item["userid1"].ToString();
                 ui_userid1.Text = ui_userid1.Text.Replace(@"""", "");
@@ -119,6 +127,8 @@ namespace Com.Aote.Pages
                 {
                     ui_mterid1.Text = "";
                 }
+
+                /*
                 ui_onegas2.Text = item["f_stair1amount2"].ToString();
                 ui_oneprice2.Text = item["f_stair1price"].ToString();
                 ui_onefee2.Text = item["f_stair1fee2"].ToString();
@@ -154,6 +164,7 @@ namespace Com.Aote.Pages
                 {
                     ui_meterid2.Text = "";
                 }
+                 * */
                 // 调用打印
                 print.Print();
             }
@@ -362,7 +373,7 @@ namespace Com.Aote.Pages
 
             if (e.Error != null)
             {
-                MessageBox.Show(e.Error.Message);
+                MessageBox.Show("未找到用户的表具信息，请去表具建档！");
                 return;
             }
 
@@ -448,6 +459,18 @@ namespace Com.Aote.Pages
                 go.SetPropertyValue("f_operator", (string)json["f_operator"], false);
                 go.SetPropertyValue("f_inputdate", DateTime.Parse(json["f_inputdate"]), false);
                 go.SetPropertyValue("f_userid", (string)json["f_userid"], false);
+
+                go.SetPropertyValue("f_stair1amount", (decimal)json["f_stair1amount"], false);
+                go.SetPropertyValue("f_stair1price", (decimal)json["f_stair1price"], false);
+                go.SetPropertyValue("f_stair1fee", (decimal)json["f_stair1fee"], false);
+
+                go.SetPropertyValue("f_stair2amount", (decimal)json["f_stair2amount"], false);
+                go.SetPropertyValue("f_stair2price", (decimal)json["f_stair2price"], false);
+                go.SetPropertyValue("f_stair2fee", (decimal)json["f_stair2fee"], false);
+
+                go.SetPropertyValue("f_stair3amount", (decimal)json["f_stair3amount"], false);
+                go.SetPropertyValue("f_stair3price", (decimal)json["f_stair3price"], false);
+                go.SetPropertyValue("f_stair3fee", (decimal)json["f_stair3fee"], false);
 
                 list.Add(go);
             }

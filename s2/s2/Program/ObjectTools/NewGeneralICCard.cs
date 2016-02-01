@@ -384,6 +384,20 @@ namespace Com.Aote.ObjectTools
         }
         #endregion
 
+        #region MeterId 表号
+        //单价生效标记 
+        public string meterid;
+        public string MeterId
+        {
+            get { return meterid; }
+            set
+            {
+                this.meterid = value;
+                OnPropertyChanged("MeterId");
+            }
+        }
+        #endregion
+
         private bool init = false;
         public bool Init
         {
@@ -529,11 +543,12 @@ namespace Com.Aote.ObjectTools
                     //获取卡上内容
                     Factory = (string)go.GetPropertyValue("Factory");
                     CardId = (string)go.GetPropertyValue("CardID");
-                    Gas = double.Parse(go.GetPropertyValue("Gas").ToString()) ;
+                    Gas = double.Parse(go.GetPropertyValue("Gas").ToString());
                     Money = double.Parse(go.GetPropertyValue("Money").ToString());
                     BuyTimes = int.Parse(go.GetPropertyValue("Times").ToString());
                     Bkcs = int.Parse(go.GetPropertyValue("RenewTimes").ToString());
                     Dqdm = (string)go.GetPropertyValue("Dqdm");
+                    MeterId = (string)go.GetPropertyValue("Yhh");
                     State = State.Loaded;
                 }
             }
@@ -546,7 +561,7 @@ namespace Com.Aote.ObjectTools
         //气量大于0代表购气，气量等于0代表退气
         public void SellGas()
         {
-           
+
             //通知写卡开始
             OnWriting(null);
             IsBusy = true;
@@ -555,7 +570,7 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(WriteCard_DownloadStringCompleted);
-            client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/WriteGasCard" + 
+            client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/WriteGasCard" +
                             "?factory=" + Factory +     //厂家
                             "&kmm=" + Kmm +     //卡密码，写卡后返回新密码
                             "&kh=" + CardId +          //卡号
@@ -614,9 +629,10 @@ namespace Com.Aote.ObjectTools
                             "&newprice=" + NewPrice +     //新单价，价格管理中取
                             "&sxrq=" + Sxrq +        //生效日期，价格管理中取
                             "&sxbj=" + Sxbj +        //生效标记，0不生效，1生效，价格管理中取
-                             "&klx=" + klx   //区分民用非民用
+                             "&klx=" + klx +   //区分民用非民用
+                             "&meterid=" + MeterId
                             ));
-                    }
+        }
         #endregion
 
         #region ReWriteCard 重新初始化，直接调用初始化方法
@@ -677,7 +693,7 @@ namespace Com.Aote.ObjectTools
                 }
                 else
                 {
-                    Kmm = (string)go.GetPropertyValue("Kmm");
+                    // Kmm = (string)go.GetPropertyValue("Kmm");
                     State = State.End;
                 }
             }
