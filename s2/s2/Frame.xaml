@@ -32,11 +32,17 @@
 			<!--当前登录用户-->
 	        <o:GeneralObject Name="LoginUser" 
 			IsInit="{m:Exp Str='this.State==$LoadError'}" 
-			Path="{m:Exp Str='$user/{this.ename}/{this.password}/营收系统'}"
+			Path="{m:Exp Str='$user/{this.ename}/{this.password}/营收系统/Ip'}"
 			LoadOnPathChanged="False" WebClientInfo="{StaticResource ldapaddress}">
 	            <o:PropertySetter PropertyName="ename" Type="string" NotNull="True"/>
 	            <o:PropertySetter PropertyName="password" Type="string" NotNull="True"/>
 	        </o:GeneralObject>
+
+			   <!--ip与语音通道号-->
+			<o:GeneralObject Name="IpTongDao" EntityType="iptongdao" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=$one/from iptongdao where loginip\=\'\{LoginUser.loginip\}\'}" 
+                             >
+			</o:GeneralObject>	
 			
 			<o:GeneralObject Name="Organization" 
 			Path="{m:Exp Str='$Organization/{this.name}/{this.number}/统一资源管理(网络)'}"
@@ -193,11 +199,7 @@
 			
 			<!--客服系统来电报修编号-->
 			<o:SeriaNumber Name="Seriabx" Length="4"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyyMMdd$)}'}"/>
-			<!--ip与语音通道号-->
-			<o:GeneralObject Name="IpTongDao" EntityType="iptongdao" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=$one/from iptongdao where loginip\=\'\{LoginUser.loginip\}\'}" 
-                             >
-			</o:GeneralObject>	
+		 
 			
 			<o:Timer Name="Timer" Interval="60000"/>
 			 <!--o:Timer Name="SecRefresh" Interval="1000"/-->

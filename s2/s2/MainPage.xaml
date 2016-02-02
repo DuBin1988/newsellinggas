@@ -55,8 +55,8 @@
                 </DataTemplate>
             </a:TabControlAttach.ContentTempalte>
         </sdk:TabControl>
-        <Grid Name="waitGrid" Margin="8,8,8,65" Width="1000" Height="640" Visibility="{m:Exp Str='selected.Count ==0:$Visible$,$Collapsed$'}">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Name="waitGrid"     Margin="8,8,8,65" Width="1000" Height="640" Visibility="{m:Exp Str='(waitFunctions.Count > 0)  and (selected.Count ==0):$Visible$\,$Collapsed$'}">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
                 <ListBox ItemsSource="{m:Exp Str=waitFunctions}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 			    Name="waitList" Style="{StaticResource MainMenuListBoxStyle1}" FontWeight="Normal" FontSize="12">
                     <ListBox.ItemTemplate>
@@ -145,14 +145,25 @@
 			Content="" HorizontalAlignment="Left" Height="53" Margin="6,0,0,0" VerticalAlignment="Bottom" Width="132"/>
             <TextBlock Height="22" Text="{m:Exp Str=LoginUser.name}" Margin="180,0,0,8" TextWrapping="Wrap"  VerticalAlignment="Bottom" FontWeight="Bold" FontSize="13.333" HorizontalAlignment="Left" Width="52" Foreground="#FFD7D7D7" TextAlignment="Center" />
             <TextBlock Height="22" Text="欢迎" Margin="151,0,0,8" TextWrapping="Wrap"  VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Left" Width="29" FontSize="13.333" Foreground="#FFD7D7BC"/>
-            <TextBlock Height="22" Text="使用报建系统！" Margin="236,0,0,8" TextWrapping="Wrap"  VerticalAlignment="Bottom" FontWeight="Bold" FontSize="13.333" HorizontalAlignment="Left" Foreground="#FFD7D7D7"/>
+            <TextBlock Height="22" Text="使用！" Margin="236,0,0,8" TextWrapping="Wrap"  VerticalAlignment="Bottom" FontWeight="Bold" FontSize="13.333" HorizontalAlignment="Left" Foreground="#FFD7D7D7"/>
             <Button x:Name="visiColl" Visibility="Collapsed" />
-            <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,4">
+            <StackPanel Visibility="{m:Exp Str='(waitFunctions.Count > 0)  and (selected.Count ==0):$Visible$\,$Collapsed$'}"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="356,0,482,4">
                 <!---->	<Button Click="{m:Exp Str='tab.Visibility=this.Visibility;waitGrid.Visibility=visiColl.Visibility'}" Style="{StaticResource 已办NewBtn}"
 				IsEnabled="{m:Exp Str='tab.Visibility==$Visible$:False,True'}" Height="26" Width="84" />
 	            <Button  Click="{m:Exp Str='waitGrid.Visibility=this.Visibility;tab.Visibility=visiColl.Visibility'}" Style="{StaticResource 待办NewBtn}"
 				IsEnabled="{m:Exp Str='waitGrid.Visibility==$Visible$:False,True'}" Margin="10,0,0,0" Height="26" Width="84" />
 			</StackPanel>
+			<StackPanel VerticalAlignment="Bottom"  Visibility="{m:Exp Str=LoginUser.functions[data.name\=\=$呼叫中心$].ToObjectList().Count > 0\:$Visible$\,$Collapsed$}" HorizontalAlignment="Right" Orientation="Horizontal" Width="452" >
+                <Button Content="置闲"    Click="{m:Exp Str=Phone.ConfirmHandUp()}" HorizontalAlignment="Right" Height="30" Margin="0,10,20,0" Style="{StaticResource TopCloseButtonStyle}" VerticalAlignment="Top" Width="73" Foreground="{StaticResource TopCloseFontBrush1}" />
+                <Button Content="置忙"     Click="{m:Exp Str=Phone.SetBusy()}" Height="30" Margin="0,10,20,0" Style="{StaticResource TopCloseButtonStyle}" VerticalAlignment="Top" Foreground="{StaticResource TopCloseFontBrush1}" Width="73" HorizontalAlignment="Right" d:LayoutOverrides="Width" />
+                <TextBlock Text="{m:Exp Str='$电话状态: {Phone.PhoneState}'}" FontSize="20" Foreground="Red" Margin="0,10,20,0" Height="30" VerticalAlignment="Top"/>
+                <TextBlock Text="{m:Exp Str='$来电号码: {Phone.CallNumber}'}" FontSize="20" Foreground="Red" Margin="0,10,20,0" Height="30" VerticalAlignment="Top"/>
+                <sdk:Label Content="欢迎您：" Foreground="{StaticResource TopCloseFontBrush1}" FontSize="13.333" d:LayoutOverrides="Width" Style="{StaticResource TopLabelStyle1}" Margin="0,10,0,0"/>
+                <sdk:Label Content="{m:Exp Str=LoginUser.name}" FontSize="13.333" d:LayoutOverrides="Width" Foreground="{StaticResource TopFontClorBrush1}" Style="{StaticResource TopLabelStyle2}" Margin="0,10,0,0"/>
+                <sdk:Label Content="当前登录时间：" Foreground="{StaticResource TopCloseFontBrush1}" FontSize="13.333" d:LayoutOverrides="Width" Margin="20,10,0,0" Style="{StaticResource TopLabelStyle1}"/>
+                <sdk:Label Content="{m:Exp Str='SecRefresh=>TimeEvent!=null:SysTime.Now.ToString($yyyy-MM-dd HH\:mm\:ss$),$$'}" Foreground="{StaticResource TopCloseFontBrush1}" Margin="0,10,0,0" FontSize="13.333" d:LayoutOverrides="Width" Style="{StaticResource TopLabelStyle1}"/>
+            </StackPanel>
+        
         </Grid>
         <c:ImageView x:Name="PictureWindow" Visibility="Collapsed"></c:ImageView>
     </Grid>

@@ -5295,7 +5295,134 @@ StrokeThickness="1" Fill="Black"/>
             </Setter.Value>
         </Setter>
     </Style>
-	<LinearGradientBrush x:Key="MainMenuTitleBrush6" EndPoint="0.5,1" StartPoint="0.5,0">
+    <Style x:Key="TopCloseButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Cursor="Hand">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver"/>
+                                    <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.3" To="Normal"/>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Disabled"/>
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <ColorAnimation Duration="0" To="#FF313946" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Duration="0" To="#FF463617" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF9F7C2F" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF22242A" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF313946" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF3E4B5F" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <DoubleAnimation Duration="0" To="0.53" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Offset)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF795C25" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Duration="0" To="#FF22242A" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF313946" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF3E4B5F" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="path1" d:IsOptimized="True"/>
+                                        <DoubleAnimation Duration="0" To="0.587" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[2].(GradientStop.Offset)" Storyboard.TargetName="path2" d:IsOptimized="True"/>
+                                        <DoubleAnimation Duration="0" To="0.491" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[0].(GradientStop.Offset)" Storyboard.TargetName="path2" d:IsOptimized="True"/>
+                                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Offset)" Storyboard.TargetName="path2" d:IsOptimized="True"/>
+                                        <ColorAnimation Duration="0" To="#FF313946" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="path" d:IsOptimized="True"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused"/>
+                                <VisualState x:Name="Focused"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Path x:Name="path" Data="M0,4 C0,1.790861 1.790861,0 4,0 L97,0 C99.209137,0 101,1.790861 101,4 L101,18.916506 C101,21.125645 99.209137,22.916506 97,22.916506 L4,22.916506 C1.790861,22.916506 0,21.125645 0,18.916506 z" Stretch="Fill" Margin="0,0,0,1.67" UseLayoutRounding="False">
+                            <Path.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF222429" Offset="0"/>
+                                    <GradientStop Color="#FF3E495D" Offset="1"/>
+                                    <GradientStop Color="#FF342D1F" Offset="0.496"/>
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                        <Path x:Name="path1" Data="M-3.3333051,2 C-3.3333051,0.89543051 -2.4378746,0 -1.3333051,0 L16,0 C17.10457,0 18,0.89543051 18,2 L18,16 C18,17.10457 17.10457,18 16,18 L-1.3333051,18 C-2.4378746,18 -3.3333051,17.10457 -3.3333051,16 z" HorizontalAlignment="Right" Margin="0,2.833,4,4.167" Stretch="Fill" Width="21.334" UseLayoutRounding="False" >
+                            <Path.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF3F4B5E" Offset="0"/>
+                                    <GradientStop Color="#FF222529" Offset="1"/>
+                                    <GradientStop Color="#FF2F3642" Offset="0.504"/>
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                        <Path x:Name="path2" Data="M0.5,18.479345 L8,-9.4922419 M8.000001,18.479345 L0.75000125,-9.4922419" HorizontalAlignment="Right" Margin="0,4.828,10.003,6.162" Stretch="Fill" UseLayoutRounding="False" Width="8.5" StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF7E7E7E" Offset="0.561"/>
+                                    <GradientStop Color="White"/>
+                                    <GradientStop Color="#FFFBF9F9" Offset="0.465"/>
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                            <Path.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF283E7A" Offset="0"/>
+                                    <GradientStop Color="#FF182449" Offset="1"/>
+                                    <GradientStop Color="#FF223467" Offset="0.504"/>
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                        <ContentPresenter Margin="10,2,0,3" d:LayoutOverrides="Height"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TopLabelStyle2" TargetType="sdk:Label">
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="sdk:Label">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ValidationStates">
+                                <VisualState x:Name="Valid"/>
+                                <VisualState x:Name="Invalid"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="RequiredStates">
+                                <VisualState x:Name="NotRequired"/>
+                                <VisualState x:Name="Required">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetProperty="FontWeight" Storyboard.TargetName="ContentControl">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="SemiBold"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="2" Padding="{TemplateBinding Padding}">
+                            <ContentControl x:Name="ContentControl" Cursor="{TemplateBinding Cursor}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" FontWeight="{TemplateBinding FontWeight}" FontStretch="{TemplateBinding FontStretch}" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsTabStop="False" VerticalAlignment="{TemplateBinding VerticalAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{StaticResource TopFontClorBrush1}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+    <LinearGradientBrush x:Key="TopFontClorBrush1" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFD1556D"/>
+        <GradientStop Color="#FF97111E" Offset="0.875"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MainMenuTitleBrush6" EndPoint="0.5,1" StartPoint="0.5,0">
 		<GradientStop Color="#FF05114A" Offset="0"/>
 		<GradientStop Color="#FF2964B3" Offset="1"/>
 	</LinearGradientBrush>
