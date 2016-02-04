@@ -83,6 +83,12 @@ public class CardCharge {
 			double stair1num = 0;
 			double stair2num = 0;
 			double stair3num = 0;
+			//一阶梯剩余可购
+			double stair1surplus = 0;
+			//二阶梯剩余可购
+			double stair2surplus = 0;
+			//三阶梯剩余可购
+			double stair3surplus = 0;
 			double stair4num = 0;
 			double stair1fee = 0;
 			double stair2fee = 0;
@@ -97,6 +103,7 @@ public class CardCharge {
 				// 当前购气量在第一阶梯
 				if (sumamont < stair1amount) {
 					if (allamont < stair1amount) {
+						stair1surplus = stair1amount-allamont;
 						stair1num = pregas;
 						stair1fee = pregas * stair1price;
 						chargenum = pregas * stair1price;
