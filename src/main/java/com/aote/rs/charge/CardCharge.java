@@ -83,11 +83,11 @@ public class CardCharge {
 			double stair1num = 0;
 			double stair2num = 0;
 			double stair3num = 0;
-			//一阶梯剩余可购
+			// 一阶梯剩余可购
 			double stair1surplus = 0;
-			//二阶梯剩余可购
+			// 二阶梯剩余可购
 			double stair2surplus = 0;
-			//三阶梯剩余可购
+			// 三阶梯剩余可购
 			double stair3surplus = 0;
 			double stair4num = 0;
 			double stair1fee = 0;
@@ -103,12 +103,16 @@ public class CardCharge {
 				// 当前购气量在第一阶梯
 				if (sumamont < stair1amount) {
 					if (allamont < stair1amount) {
-						stair1surplus = stair1amount-allamont;
+						stair1surplus = stair1amount - allamont;
+						stair2surplus = stair2amount-stair1amount;
+						stair3surplus = stair3amount-stair2amount;
 						stair1num = pregas;
 						stair1fee = pregas * stair1price;
 						chargenum = pregas * stair1price;
 					} else if (allamont >= stair1amount
 							&& allamont < stair2amount) {
+						stair2surplus = stair2amount - allamont;
+						stair3surplus = stair3amount-stair2amount;
 						stair1num = stair1amount - sumamont;
 						stair1fee = (stair1amount - sumamont) * stair1price;
 						stair2num = allamont - stair1amount;
@@ -116,6 +120,7 @@ public class CardCharge {
 						chargenum = stair1fee + stair2fee;
 					} else if (allamont >= stair2amount
 							&& allamont < stair3amount) {
+						stair3surplus = stair3amount - allamont;
 						stair1num = stair1amount - sumamont;
 						stair1fee = (stair1amount - sumamont) * stair1price;
 						stair2num = stair2amount - stair1amount;
@@ -138,11 +143,14 @@ public class CardCharge {
 					// 当前已购气量在阶梯二内
 				} else if (sumamont >= stair1amount && sumamont < stair2amount) {
 					if (allamont < stair2amount) {
+						stair2surplus = stair2amount - allamont;
+						stair3surplus = stair3amount-stair2amount;
 						stair2num = pregas;
 						stair2fee = pregas * stair2price;
 						chargenum = stair2fee;
 					} else if (allamont >= stair2amount
 							&& allamont < stair3amount) {
+						stair3surplus = stair3amount - allamont;
 						stair2num = stair2amount - sumamont;
 						stair2fee = (stair2amount - sumamont) * stair2price;
 						stair3num = allamont - stair2amount;
@@ -150,6 +158,7 @@ public class CardCharge {
 						chargenum = stair2fee + stair3fee;
 					} else {
 						stair2num = stair2amount - sumamont;
+						stair3surplus = stair3amount-stair2amount;
 						stair2fee = (stair2amount - sumamont) * stair2price;
 						stair3num = stair3amount - stair2amount;
 						stair3fee = (stair3amount - stair2amount) * stair3price;
@@ -160,6 +169,7 @@ public class CardCharge {
 					// 当前已购气量在阶梯三内
 				} else if (sumamont >= stair2amount && sumamont < stair3amount) {
 					if (allamont < stair3amount) {
+						stair3surplus = stair3amount - allamont;
 						stair3num = pregas;
 						stair3fee = pregas * stair3price;
 						chargenum = stair3fee;
@@ -186,6 +196,9 @@ public class CardCharge {
 			sell.put("f_stair2amount", stair2num);
 			sell.put("f_stair3amount", stair3num);
 			sell.put("f_stair4amount", stair4num);
+			sell.put("f_stair1surplus", stair1surplus);
+			sell.put("f_stair2surplus", stair2surplus);
+			sell.put("f_stair3surplus", stair3surplus);
 			sell.put("f_stair1fee", stair1fee);
 			sell.put("f_stair2fee", stair2fee);
 			sell.put("f_stair3fee", stair3fee);
