@@ -17,5 +17,10 @@ namespace Com.Aote.Pages
 			// Required to initialize variables
 			InitializeComponent();
 		}
+
+        private void fpinfossearchbutton_Copy_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 	}
 }

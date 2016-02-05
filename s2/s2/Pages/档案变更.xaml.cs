@@ -48,5 +48,16 @@ namespace Com.Aote.Pages
             save.Invoke();
             //updatehandplan.New();
         }
+
+        private void ui_phonechange_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string strPatern = @"(^1[3-8]\d{9}$|^\d{3}-\d{8}$|^\d{4}-\d{7}$)";
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(strPatern);
+
+            //if (reg.IsMatch())
+            //{
+            //    MessageBox.Show("正确的");
+            //} 
+        }
 	}
 }

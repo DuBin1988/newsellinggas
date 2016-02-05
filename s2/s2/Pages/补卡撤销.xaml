@@ -33,28 +33,24 @@
 		<o:ChildWindowObj Name="openxiangou" CWName="/Pages/管理员登录" />
 		<!--补卡对象  and SaveAction.State==$End-->
             <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
-    		EntityType="t_renewalcardcancel"
-			
+    		EntityType="t_renewalcardcancel"	
     		IsInit="{m:Exp Str='SaveAction.State\=\=$End$'}" >
             <o:PropertySetter PropertyName="f_comtype" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null\:$天然气公司$\,null}"/>
     	</o:GeneralObject>
 		
 		 
-
 		  <!--更新补卡记录为无效-->
 		   <b:HQLAction Name="updatebuka"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_renewalcard set f_payfeevalid\= \'无效\' where id \=\'\{users.SelectedItem.id\}\'}">
 			</b:HQLAction>
 
-		<!--保存对象 -->	
-		<b:BatchExcuteAction Name="SaveAction"   WebClientInfo="{StaticResource dbclient}">
-		 	<b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
-		 	<b:BatchInfo Source="{m:Exp Str=updatebuka}" MethodName="InvokeToJson"/>
-		</b:BatchExcuteAction>
+		<!--保存对象 -->
+            <b:BatchExcuteAction Name="SaveAction"   WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=updatebuka}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
 
-		 
-		
-	</m:ResourceLoad>
+        </m:ResourceLoad>
     <Grid >
     	<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="0.3*"/>
@@ -145,7 +141,7 @@
     							<o:PropertySetter PropertyName="f_gaswatchbrand"  NoDependValue="{m:Exp Str=users.SelectedItem.f_gaswatchbrand}"  />
     						</a:Data.Prop>
     					</TextBox>
-    					<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+    					<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" IsReadOnly="True" TextChanged="TextBox_TextChanged_1">
     						<a:Data.Prop>
     							<o:PropertySetter PropertyName="f_metertype"   NoDependValue="{m:Exp Str=users.SelectedItem.f_metertype}"  />
     						</a:Data.Prop>
@@ -172,7 +168,7 @@
     							<o:PropertySetter PropertyName="f_meternumber"  NoDependValue="{m:Exp Str=users.SelectedItem.f_meternumber}"  />
     						</a:Data.Prop>
     					</TextBox>
-    					<TextBox Text="{m:Bind Path=f_cardid}" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="3" TextWrapping="Wrap" IsEnabled="True" Height="25"  >
+    					<TextBox Text="{m:Bind Path=f_cardid}" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="3" TextWrapping="Wrap" IsEnabled="True" Height="25" TextChanged="TextBox_TextChanged_2"  >
     						<a:Data.Prop>
     							<o:PropertySetter PropertyName="f_cardid"   NoDependValue="{m:Exp Str=users.SelectedItem.f_cardid}"   />
     						</a:Data.Prop>
@@ -246,7 +242,7 @@
     						</a:Data.Prop>
     					</TextBox>
     					<TextBlock Margin="0" TextWrapping="Wrap" Text="次　　数：" TextAlignment="Right" Grid.Column="2" Grid.Row="4" Height="25"/>
-    					<TextBox Text="{m:Bind Path=f_times}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsEnabled="True" Height="25" VerticalAlignment="Stretch"  >
+    					<TextBox Text="{m:Bind Path=f_times}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsEnabled="True" Height="25" VerticalAlignment="Stretch" TextChanged="TextBox_TextChanged_4"  >
     						<a:Data.Prop>
     							<o:PropertySetter PropertyName="f_times"   NoDependValue="{m:Exp Str=users.SelectedItem.f_times}" />
     						</a:Data.Prop>
@@ -334,9 +330,9 @@
     					</a:Data.Context>
     				
     						<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" TextAlignment="Right" />
-    						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="Auto" >
+    						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="Auto" TextChanged="TextBox_TextChanged_3" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+    								<o:PropertySetter PropertyName="f_userid"  Operator="u.f_userid = 'this'"/>          
     							</a:Data.Prop>
     						</TextBox>
     					
@@ -354,13 +350,13 @@
     								<o:PropertySetter PropertyName="f_username"  Operator="f_username = 'this'"/>          
     							</a:Data.Prop>
     						</TextBox>
-    						<TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="0,2,0,1" TextAlignment="Right" Grid.Row="1" />
-    						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,2,0,1" Height="Auto" Grid.Row="1" >
-    							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname = 'this'"/>          
-    							</a:Data.Prop>
-    						</TextBox>
-    						<TextBlock TextWrapping="Wrap" Text="楼    号：" Margin="0,2,0,1" TextAlignment="Right" Grid.Column="2" Grid.Row="1" />
+                            <TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="0,2,0,1" TextAlignment="Right" Grid.Row="1" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,2,0,1" Height="Auto" Grid.Row="1" TextChanged="TextBox_TextChanged" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname = 'this'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock TextWrapping="Wrap" Text="楼    号：" Margin="0,2,0,1" TextAlignment="Right" Grid.Column="2" Grid.Row="1" />
     						<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=f_cusDom}" Width="Auto" Margin="0,2,0,1" Height="Auto" Grid.Row="1" >
     							<a:Data.Prop>
     								<o:PropertySetter PropertyName="f_cusDom"  Operator="f_cusDom = 'this'"/>          
@@ -381,13 +377,15 @@
     					
     				</Grid>
     				<sdk:DataGrid x:Name="users" Margin="0"  IsReadOnly="True"
-    					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" Height="332" >
+    					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" Height="332" SelectionChanged="users_SelectionChanged" >
     					<a:Data.Items>
     						<!--userfile.DataContext.State\=\=$End$ or SaveAction.State\=\=$End$-->
-    						<o:PagedObjectList x:Name="userslist" WebClientInfo="{StaticResource dbclient}"
-    							Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'  $\,LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\}     and f_payfeevalid\=\'有效\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-    							IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
-    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+                               <o:PagedList x:Name="userslist" WebClientInfo="{StaticResource dbclient}"
+    							Path="sql"
+    							HQL="{m:Exp Str=$select r.f_userid\,u.f_username\,u.f_districtname\,u.f_cusDom\,u.f_cusDy\,r.f_address\,r.f_cardid\,u.f_metertype\,u.f_apartment\,r.f_usertype\,r.f_gaswatchbrand\,u.f_phone from t_renewalcard r\,t_userfiles u where r.f_userid\=u.f_userid and \{usersearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'$}"
+                                IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=",">
+                               </o:PagedList>
     					</a:Data.Items>
     					<sdk:DataGrid.Columns>
     						<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
@@ -399,7 +397,7 @@
 							<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
     						<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
 							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-							<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_meternumber}"/>
+                                <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
     						
     						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
     					</sdk:DataGrid.Columns>

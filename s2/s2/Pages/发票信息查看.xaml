@@ -106,7 +106,7 @@
 							</a:Data.Prop>
 						</sdk:DatePicker>
 						<TextBlock TextWrapping="Wrap" Text="到" Margin="8,1,0,2" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="2"/>
-						<Button Content="查  询" x:Name="fpinfossearchbutton_Copy" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.Search()}" Margin="143,0,0,-1" FontSize="14" HorizontalAlignment="Left" Width="50"  />
+						<Button Content="查  询" x:Name="fpinfossearchbutton_Copy" Grid.Column="2" Grid.Row="3" Click="fpinfossearchbutton_Copy_Click" Margin="143,0,0,-1" FontSize="14" HorizontalAlignment="Left" Width="50"  />
 						<TextBlock TextWrapping="Wrap" Text="发票状态：" Margin="5,1,0,2" Height="25" Grid.Row="3"/>
 						<ComboBox x:Name="fpzt" Grid.Column="1"  SelectedValue="{m:Bind Path=f_fapiaostatue}" ItemsSource="{m:Exp Str=fpztlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" >
 							<a:Data.Prop>
