@@ -47,7 +47,32 @@ public class FileHelper {
 	}
 	
 	
+	/*╤анд╪Ч
+	 */
 	
+	public static String readToEnd(String fn) throws Exception
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fn)));
+		int numRead = 0;
+		StringBuffer sb = new StringBuffer();
+		while(true){
+			String line = in.readLine();
+			if(line == null)
+				break;
+			else
+			{
+				if(line.trim().length() == 0)
+					continue;
+				sb.append(line);
+			}
+		}
+		
+		
+		
+		in.close();
+		return sb.toString();
+
+	}
 
 	
 
