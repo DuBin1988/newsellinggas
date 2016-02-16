@@ -46,7 +46,7 @@
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="用户编号：" Grid.Row="1"/>
                         <TextBox Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid" Operator="f_userid >= this"/>
+                                <o:PropertySetter PropertyName="f_userid" Operator="u.f_userid >= this"/>
                             </a:Data.Prop>
                         </TextBox>
                         <StackPanel Grid.ColumnSpan="8" Margin="0,0,3,0" Orientation="Horizontal" Grid.RowSpan="3" d:LayoutOverrides="Width" Grid.Row="2" Grid.Column="7">
@@ -59,7 +59,7 @@
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="到：" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Text="{m:Bind Path=f_userid2}" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.Column="3" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid2" Operator="f_userid ^= this"/>
+                                <o:PropertySetter PropertyName="f_userid2" Operator="u.f_userid ^= this"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="用户类型：" Grid.Row="1" Grid.Column="4"/>
@@ -141,26 +141,31 @@
                         <a:Data.Items>
                             <!--substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'   substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'-->
                             <o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
-                                         Names="f_handdate,f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_gasprice,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_zerenbumen"
+                                         Names="f_handdate,f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_gasprice,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_phone"
 SumHQL="{m:Exp Str=$
-                                    select h.f_handdate\,h.f_userid\,h.f_username \,h.f_address \,h.lastinputgasnum\,
+                                    select CONVERT(varchar(12)\, h.f_handdate\, 111 ) f_handdate \,h.f_userid\,h.f_username \,h.f_address \,h.lastinputgasnum\,
 h.lastrecord \,h.oughtamount\,h.f_gasprice \,h.f_bczhye \,u.f_zhye \,CONVERT(varchar(12)\, h.f_endjfdate\, 111 ) f_endjfdate \,
-h.f_inputtor\,h.f_zerenbumen 
+h.f_inputtor\,i.f_phone
  from t_handplan h 
 left join t_userfiles u
 on h.f_userid \= u.f_userid  
+left join t_inputtor i
+on u.f_inputtor \= i.f_inputtor
 where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosearch.DataContext.Condition\}
                                     }"
 
 HQL="{m:Exp Str=$
-                                    select h.f_handdate\,h.f_userid\,h.f_username \,h.f_address \,h.lastinputgasnum\,
+                                    select  CONVERT(varchar(12)\, h.f_handdate\, 111 ) f_handdate \,h.f_userid\,h.f_username \,h.f_address \,h.lastinputgasnum\,
 h.lastrecord \,h.oughtamount\,h.f_gasprice \,h.f_bczhye \,u.f_zhye \,CONVERT(varchar(12)\, h.f_endjfdate\, 111 ) f_endjfdate \,
-h.f_inputtor\,h.f_zerenbumen 
+h.f_inputtor\,i.f_phone
  from t_handplan h 
 left join t_userfiles u
 on h.f_userid \= u.f_userid  
-where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosearch.DataContext.Condition\} 
-                                    order by h.id desc
+left join t_inputtor i
+on u.f_inputtor \= i.f_inputtor
+where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosearch.DataContext.Condition\}
+
+                                    order by h.f_userid
                                     }"
                                    
                                          Path="sql"
@@ -169,7 +174,6 @@ where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosea
                         </a:Data.Items>
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-                            <sdk:DataGridTextColumn  Header="计划月份" Binding="{Binding f_handdate,StringFormat=yyyy-MM}"/>
                             <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="用户地址" Binding="{Binding f_address}"/>
@@ -182,7 +186,8 @@ where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosea
                             <sdk:DataGridTextColumn  Header="上次余额" Binding="{Binding f_zhye}"/>
                             <sdk:DataGridTextColumn Header="限定交费日期" Binding="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_inputtor}"/>
-                            <sdk:DataGridTextColumn Header="抄表员电话" Binding="{Binding f_zerenbumen}"/>
+                            <sdk:DataGridTextColumn Header="抄表员电话" Binding="{Binding f_phone}"/>
+                            <sdk:DataGridTextColumn  Header="抄表日期" Binding="{Binding f_handdate,StringFormat=yyyy-MM-dd}"/>
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
@@ -236,7 +241,7 @@ where h.f_state \= \'已抄表\' and h.shifoujiaofei \= \'否\' and \{daninfosea
             <TextBlock Text="{m:Bind Path=aughtamount}" Grid.Column="4" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
             <TextBlock Text="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"  Grid.Column="5" FontSize="18" HorizontalAlignment="Left" Margin="-78,0,0,5" Grid.Row="6" TextWrapping="Wrap" Width="276" Height="30" VerticalAlignment="Bottom" Grid.RowSpan="1"/>
             <TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
-            <TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_phone}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
         </Grid>
         <!--/sdk:TabItem>
 		</sdk:TabControl-->

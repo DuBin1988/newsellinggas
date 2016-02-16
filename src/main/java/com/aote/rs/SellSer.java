@@ -205,7 +205,7 @@ public class SellSer {
 			double lastrecord = 0;
 			Date lastinputdate = null;
 			BigDecimal debts = new BigDecimal(0);
-			BigDecimal debtGas = new BigDecimal(0);
+ 			BigDecimal debtGas = new BigDecimal(0);
 			for (int i = 0; i < hands.size(); i++) {
 				Map<String, Object> hand = (Map<String, Object>) hands.get(i);
 				BigDecimal d = new BigDecimal(hand.get("oughtfee").toString());
