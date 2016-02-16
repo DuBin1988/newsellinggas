@@ -22,5 +22,20 @@ namespace Com.Aote.Pages
         {
             f_address.Text = f_road.Text + f_districtname.Text + f_cusDom.Text + "号楼" + f_cusDy.Text + "单元" + f_cusFloor.Text + "楼" + f_apartment.Text;
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void f_cusDom_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
