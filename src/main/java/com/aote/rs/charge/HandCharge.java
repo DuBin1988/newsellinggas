@@ -29,11 +29,15 @@ import org.hibernate.collection.PersistentSet;
 import org.hibernate.proxy.map.MapProxy;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.aote.listener.ContextListener;
+import com.aote.rs.charge.countdate.ICountDate;
 import com.aote.rs.util.RSException;
 
 @Path("handcharge")
@@ -63,6 +67,7 @@ public class HandCharge {
 	BigDecimal stair2fee = new BigDecimal(0);
 	BigDecimal stair3fee = new BigDecimal(0);
 	BigDecimal stair4fee = new BigDecimal(0);
+	private int stairmonths;
 	
 	// 抄表单下载，返回JSON串
 	// operator 抄表员中文名
@@ -529,7 +534,7 @@ public class HandCharge {
 			BigDecimal stair4price) {
 		BigDecimal chargenum = new BigDecimal(0);
 		// 针对设置阶梯气价的用户运算
-		CountDate(cal, stairmonths);
+		CountDate(userid, hibernateTemplate);
 		if (!stairtype.equals("未设")) {
 			final String gassql = " select isnull(sum(oughtamount),0)oughtamount from t_handplan "
 					+ "where f_userid='"
@@ -806,9 +811,19 @@ public class HandCharge {
 	}
 
 	// 计算开始时间方法
-	private void CountDate(Calendar cal, int stairmonths) {
+	private void CountDate(String userid, HibernateTemplate hibernateTemplate) {
+		// 判断是否配置了接口，如果有执行接口，如果没有按默认计算。
+		ApplicationContext applicationContext = WebApplicationContextUtils
+				.getWebApplicationContext(ContextListener.getContext());
+		if (applicationContext.containsBean("CountDate")) {
+			ICountDate icount = (ICountDate) applicationContext
+					.getBean("CountDate");
+			stardate = icount.startdate(userid, hibernateTemplate);
+			enddate = icount.enddate(userid, hibernateTemplate);
+			return;
+		}
 		// 计算当前月在哪个阶梯区间
-		//Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance();
 		int thismonth = cal.get(Calendar.MONTH) + 1;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		if (stairmonths == 1) {
