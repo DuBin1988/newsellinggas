@@ -465,12 +465,12 @@ namespace Com.Aote.ObjectTools
         /// </summary>
         public void ReadCard()
         {
-            //IsBusy = true;
+            IsBusy = true;
             Error = "";
             State = State.StartLoad;
             //卡上信息初始化
-            CardId = "11055555";
-            Factory = "JinKaRC";
+            CardId = "";
+            Factory = "";
             Gas = 0;
             BuyTimes = 0;
             Klx = -1;
@@ -489,10 +489,10 @@ namespace Com.Aote.ObjectTools
             OldPrice = 0;
             NewPrice = 0;
             Sxbj = "";
-            ////读卡
-            //WebClient client = new WebClient();
-            //client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ReadCard_DownloadStringCompleted);
-            //client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/ReadCard"));
+            //读卡
+            WebClient client = new WebClient();
+            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ReadCard_DownloadStringCompleted);
+            client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/ReadCard"));
         }
 
         void ReadCard_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
