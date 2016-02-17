@@ -32,7 +32,8 @@
 				IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}" SumNames="," PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>
             <!--档案对象-->
             <o:GeneralObject Name="userfile" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-                Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,$aaa$}">
+                Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,$aaa$}"
+				IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
                 <!--需要修改到t_userfiles表的字段对应界面上的字段-->
                 <!--用户姓名-->
                 <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=userfileschangeset.f_usernamechange}"/>
