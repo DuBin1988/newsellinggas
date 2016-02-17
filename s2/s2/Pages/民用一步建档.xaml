@@ -20,6 +20,9 @@
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-101,0">
 
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+
             <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
             <!--阶梯气价信息列表-->
@@ -31,7 +34,7 @@
 
             <!--用气性质列表-->
             <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\=\'民用\'}"/>
-            <o:ObjectList Name="chaobiaoyuanlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'"/>
+            <!--<o:ObjectList Name="chaobiaoyuanlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'"/>-->
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
             <o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用'"/>
             <o:ObjectList Name="kaipiaolist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='开票类型'"/>
@@ -733,6 +736,13 @@
                                                 <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=temp.f_cardid}"/>
                                             </a:Data.Prop>
                                         </TextBox>
+                                        <TextBlock Grid.Row="9" TextWrapping="Wrap" Text="抄表员电话：" TextAlignment="Right" Height="25" Margin="0,4,0,1" Grid.Column="4"/>
+                                        <TextBox Text="{m:Bind Path=f_phone2}"  Grid.Column="5" Margin="0,5,0,0" Grid.Row="9" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_phone2" Value="{m:Exp Str=CoboxInputtor.SelectedItem.f_phone}" Default=""/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+
                                         <TextBlock Grid.Row="10" TextWrapping="Wrap" Text="气表类型：" TextAlignment="Right" Height="25" Margin="0,4,0,1" Grid.Column="4"/>
                                         <!--<ComboBox x:Name="Coboxqblx" DisplayMemberPath="name"  SelectedValuePath="name" ItemsSource="{m:Exp Str=qblxlist}" SelectedValue="{m:Bind Path=f_gasmeterstyle}" Grid.Column="5" Margin="0,2,0,3" Grid.Row="12" Height="25" VerticalAlignment="Stretch"   >
                                         	<a:Data.Prop>
@@ -745,9 +755,14 @@
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Grid.Column="4" Margin="0" TextWrapping="Wrap" Text="抄表员：" TextAlignment="Right" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                        <ComboBox x:Name="CoboxPinp_Copy1" ItemsSource="{m:Exp Str=chaobiaoyuanlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="5" Margin="0" Grid.Row="7" Height="25" IsEnabled="true" FontSize="13.333">
+                                        <ComboBox x:Name="CoboxInputtor" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="5" Margin="0" Grid.Row="7" Height="25" IsEnabled="true" FontSize="13.333">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Height="20" Text="{Binding f_inputtor}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_inputtor"  />
+                                                <o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" NotNull="True"/>
                                             </a:Data.Prop>
                                         </ComboBox>
                                         <Border  Grid.Row="15" Margin="5,0,0,0" BorderThickness="0,0,0,3"  Grid.ColumnSpan="6" >
