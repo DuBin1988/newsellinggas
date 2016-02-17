@@ -30,6 +30,11 @@
 				IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}" />
             <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
+
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+
+
             <!--用气性质列表-->
             <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\!\=\'民用用气\'}"/>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
@@ -792,17 +797,28 @@
                                                 </a:Data.Prop>
                                             </sdk:DatePicker>
                                             <TextBlock Grid.Column="4" Margin="0,5,0,6" TextWrapping="Wrap" Text="抄表员：" TextAlignment="Right" Grid.Row="4" HorizontalAlignment="Right" d:LayoutOverrides="Height"/>
-                                            <ComboBox x:Name="CoboxPinp_Copy1" ItemsSource="{m:Exp Str=chaobiaoyuanlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="5" Margin="0,2,1,3" Grid.Row="4" Height="25" IsEnabled="true" FontSize="13.333">
+                                            <ComboBox x:Name="CoboxInputtor" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="5" Margin="0" Grid.Row="4" Height="25" IsEnabled="true" FontSize="13.333">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Height="20" Text="{Binding f_inputtor}"/>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
                                                 <a:Data.Prop>
-                                                    <o:PropertySetter PropertyName="f_inputtor"  />
+                                                    <o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" NotNull="True"/>
                                                 </a:Data.Prop>
                                             </ComboBox>
-                                            <TextBlock Grid.Column="4" Margin="1,1,0,4" Grid.Row="5" TextWrapping="Wrap" Text="交费类型：" TextAlignment="Right" Height="25"/>
+                                            <TextBlock Grid.Column="4" Margin="0,5,0,6" TextWrapping="Wrap" Text="抄表员电话：" TextAlignment="Right" Grid.Row="5" HorizontalAlignment="Right" d:LayoutOverrides="Height"/>
+                                            <TextBox Text="{m:Bind Path=f_phone2}"  Grid.Column="5" Margin="0,5,0,0" Grid.Row="5" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" >
+                                                <a:Data.Prop>
+                                                    <o:PropertySetter PropertyName="f_phone2" Value="{m:Exp Str=CoboxInputtor.SelectedItem.f_phone}" Default=""/>
+                                                </a:Data.Prop>
+                                            </TextBox>
+                                            <TextBlock Grid.Column="4" Margin="1,1,0,4" Grid.Row="6" TextWrapping="Wrap" Text="交费类型：" TextAlignment="Right" Height="25"/>
                                             <!--TextBox Text="{m:Bind Path=f_payment}" IsReadOnly="True" Grid.Column="5" Margin="2,3,-1,2" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch"  Grid.ColumnSpan="1" >
 													<a:Data.Prop>
 														<o:PropertySetter PropertyName="f_payment" Default="现金" NotNull="True"/>
 													</a:Data.Prop-->
-                                            <ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="4,1,-4,4" Grid.Row="5" Height="25">
+                                            <ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="4,1,-4,4" Grid.Row="6" Height="25">
                                                 <a:Data.Prop>
                                                     <o:PropertySetter PropertyName="f_payment"  Value="{m:Exp Str=userfilego.f_payment}" NotNull="True"/>
                                                 </a:Data.Prop>
