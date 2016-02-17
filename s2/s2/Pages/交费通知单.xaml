@@ -53,7 +53,6 @@
                             <Button Content=" 查  询" x:Name="dansearchbutton" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" FontSize="14"  Width="60" Height="30" VerticalAlignment="Bottom" RenderTransformOrigin="0.483,0.679"  />
                             <Button Content=" 置  空" Click="{m:Exp Str=daninfosearch.DataContext.f_districtname\=null;daninfosearch.DataContext.f_handdate\=null;daninfosearch.DataContext.f_handdate1\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_menzhan\=null;daninfosearch.DataContext.f_zerenbumen\=null}" FontSize="14" HorizontalAlignment="Right" Width="60" Height="30" VerticalAlignment="Bottom"  />
                             <Button Content=" 打  印" Click="{m:Exp Str=print.PrintD()}" Height="30" VerticalAlignment="top" Width="60"/>
-                            <Button Content=" 单条打印" Click="{m:Exp Str=printL.PrintD()}" Height="30" VerticalAlignment="Top" Width="60"/>
                         </StackPanel>
                         <TextBlock TextWrapping="Wrap" Margin="0,2,0,3" Height="25" TextAlignment="Right" Text="小区名称"/>
                         <TextBlock TextWrapping="Wrap" Margin="0,3,0,2" Height="25" TextAlignment="Right" Text="计划截止月份：" Grid.Column="2"/>
@@ -142,9 +141,9 @@
                         <a:Data.Items>
                             <!--substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'   substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'-->
                             <o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
-                                         Names="f_userid,f_username,f_address,lastinputgasnum, lastrecord ,oughtamount,f_bczhye,f_zhye ,f_endjfdate, f_inputtor,f_phone"
+                                         Names="f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_phone"
 SumHQL="{m:Exp Str=$
-select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee-u.f_zhye f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
 from 
 (
 select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
@@ -158,7 +157,7 @@ on u.f_inputtor \= i.f_inputtor
                                     }"
 
 HQL="{m:Exp Str=$
-select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee-u.f_zhye f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
 from 
 (
 select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
