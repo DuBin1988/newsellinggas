@@ -166,7 +166,7 @@ namespace Com.Aote.Pages
                 }
                  * */
                 // 调用打印
-                print.Print();
+                print.TipPrint();
             }
             else
             {
