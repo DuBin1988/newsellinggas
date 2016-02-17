@@ -53,6 +53,7 @@
                             <Button Content=" 查  询" x:Name="dansearchbutton" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" FontSize="14"  Width="60" Height="30" VerticalAlignment="Bottom" RenderTransformOrigin="0.483,0.679"  />
                             <Button Content=" 置  空" Click="{m:Exp Str=daninfosearch.DataContext.f_districtname\=null;daninfosearch.DataContext.f_handdate\=null;daninfosearch.DataContext.f_handdate1\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_menzhan\=null;daninfosearch.DataContext.f_zerenbumen\=null}" FontSize="14" HorizontalAlignment="Right" Width="60" Height="30" VerticalAlignment="Bottom"  />
                             <Button Content=" 打  印" Click="{m:Exp Str=print.PrintD()}" Height="30" VerticalAlignment="top" Width="60"/>
+                            <Button Content=" 打印此项" Click="{m:Exp Str=print1.Print()}" Height="30" VerticalAlignment="top" Width="60" IsEnabled="{m:Exp Str='daninfos.SelectedItem!\=null'}"/>
                         </StackPanel>
                         <TextBlock TextWrapping="Wrap" Margin="0,2,0,3" Height="25" TextAlignment="Right" Text="小区名称"/>
                         <TextBlock TextWrapping="Wrap" Margin="0,3,0,2" Height="25" TextAlignment="Right" Text="计划截止月份：" Grid.Column="2"/>
@@ -234,10 +235,9 @@ on u.f_inputtor \= i.f_inputtor
             <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}"  Grid.Column="5" FontSize="18" Margin="0,0,453,17" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" Grid.RowSpan="2"/>
             <TextBlock Text="{m:Bind Path=f_gasprice}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
             <TextBlock Text="{m:Bind Path=f_bczhye}" Grid.Column="3" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
-            <!-- 
-            <TextBlock Text="{m:Bind Path=f_zhye}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
-            -->
+            <TextBlock Text="{m:Bind Path=f_zhye}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>        
             <TextBlock  Text="{m:Bind Path=f_username}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock  Text="{m:Bind Path=f_address}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
             <TextBlock Text="{m:Bind Path=f_userid}" Grid.Column="1"  FontSize="18" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="-52,0,5,-13" Grid.Row="4"  Width="Auto" Height="29" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Padding="0,2,0,0" Grid.RowSpan="1"/>
             <TextBlock Text="{m:Bind Path=lastinputgasnum}" Grid.Column="0" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
             <TextBlock Text="{m:Bind Path=lastrecord}" Grid.Column="2" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
@@ -248,7 +248,57 @@ on u.f_inputtor \= i.f_inputtor
         </Grid>
         <!--/sdk:TabItem>
 		</sdk:TabControl-->
+
+        <Grid x:Name="handprint1" DataContext="{m:Exp Str=daninfos.SelectedItem}" Background="White" Height="420" HorizontalAlignment="Left" Width="1125"  VerticalAlignment="Stretch" Margin="-1989,-111,0,-190"  Grid.Row="0" d:LayoutOverrides="HorizontalAlignment, Height"  Grid.RowSpan="1">
+            <Grid.RowDefinitions >
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="112"/>
+                <ColumnDefinition Width="0.142*"/>
+                <ColumnDefinition Width="0.045*"/>
+                <ColumnDefinition Width="0.11*"/>
+                <ColumnDefinition Width="0.205*"/>
+                <ColumnDefinition Width="0.498*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}"  Grid.Column="4" FontSize="18" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" Width="68" Height="26" VerticalAlignment="Bottom" Margin="51,0,0,-13" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}"  Grid.Column="4" FontSize="18" Margin="0,0,35,-12" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}"  Grid.Column="5" FontSize="18" Margin="0,0,453,17" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_gasprice}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_bczhye}" Grid.Column="3" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_zhye}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock  Text="{m:Bind Path=f_username}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock  Text="{m:Bind Path=f_address}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_userid}" Grid.Column="1"  FontSize="18" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="-52,0,5,-13" Grid.Row="4"  Width="Auto" Height="29" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Padding="0,2,0,0" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=lastinputgasnum}" Grid.Column="0" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=lastrecord}" Grid.Column="2" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=aughtamount}" Grid.Column="4" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"  Grid.Column="5" FontSize="18" HorizontalAlignment="Left" Margin="-78,0,0,5" Grid.Row="6" TextWrapping="Wrap" Width="276" Height="30" VerticalAlignment="Bottom" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_phone}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+        </Grid>
+
+
         <c:PrintPageObj x:Name="print" DataArea="{m:Res Key=handprint}" List="{m:Exp Str=daninfoslist}" PageRow="1" />
+
+        <c:PrintObj x:Name="print1" Area="{m:Res Key=handprint1}" UseDefaultPrinter="False"/>
+        
 
 
     </Grid>
