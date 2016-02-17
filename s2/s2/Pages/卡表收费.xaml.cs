@@ -13,6 +13,7 @@ using System.Net;
 using System.Json;
 using Com.Aote.Behaviors;
 using Com.Aote.Controls;
+using System.Collections.Generic;
 
 namespace Com.Aote.Pages
 {
@@ -21,6 +22,17 @@ namespace Com.Aote.Pages
         GeneralObject goPopup = new GeneralObject();
 
         PagedList listwh = new PagedList();
+        private void save12_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralObject go = kbfee1.DataContext as GeneralObject;
+            Dictionary<String, String> dict = go._errors;
+            String err = "";
+            foreach (String key in dict.Keys)
+            {
+                err += key + ":" + dict[key] + "\n";
+            }
+            MessageBox.Show(err);
+        }
 
         public 卡表收费()
         {
@@ -311,7 +323,7 @@ namespace Com.Aote.Pages
         {
             (sender as WebClient).UploadStringCompleted -= wc_UploadStringCompleted;
             print.State = State.Start;
-            print.Print();
+            print.TipPrint();
             VerificationPopUp.Visibility = Visibility.Collapsed;
         }
 

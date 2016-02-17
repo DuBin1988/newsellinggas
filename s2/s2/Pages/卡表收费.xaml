@@ -882,12 +882,7 @@
 										Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
                                     </a:Data.Prop>
                                 </TextBox>
-                                <TextBox Text="{m:Bind Path=f_OrgStr}"  Grid.Column="5" Margin="0,4,77,1" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="25" Width="4" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_OrgStr" NotNull="True"
-										Default="{m:Exp Str=LoginUser.orgpathstr}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
+                              
                                 <TextBlock Text="卡　　号：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                                 <CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Margin="0,6,25,6" Grid.Row="0" Grid.Column="4" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" IsEnabled="False">
                                     <a:Data.Prop>
@@ -1060,7 +1055,8 @@
                                 <Button x:Name="save2" Content="写  卡" Margin="5" 
 									IsEnabled="{m:Exp Str=!kbfee.HasErrors}"		
 									Click="{m:Exp Str=kbfee.f_sgoperator\=LoginUser.name;kbusers.f_times\=kbfee.f_times;card.BuyTimes\=kbfee.f_times.ToInt();card.Sqrq\=kbfee.f_deliverydate.ToString($yyyyMMdd$);kbusers.f_finabuygastime\=kbfee.f_deliverytime;kbusers.f_finabuygasdate\=kbfee.f_deliverydate;fpinfosobj.f_fapiaotype\=$购气$;fpinfosobj.f_fapiaostatue\=$已用$;fpinfosobj.f_sgnetwork\=kbfee1.DataContext.f_sgnetwork;fpinfosobj.f_fapiaodate\=kbfee1.DataContext.f_deliverydate;checkcardid.ReadCard()}" Width="65" />
-                                <Button x:Name="ButtonCancel" Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=kbfee1.DataContext.New();kbusers.New();kbsellgas.New();kbbysellgas.New()}" Width="50"/>
+                                <Button x:Name="ButtonCancel" Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=.DataContext.New();kbusers.New();kbsellgas.New();kbbysellgas.New()}" Width="50"/>
+                                <Button Content=" 显示error" Margin="5"  Click="save12_Click" IsEnabled="{m:Exp Str=kbfee1.DataContext.HasErrors}" Width="80"/>
                             </StackPanel>
                         </toolkit:DockPanel>
                         <sdk:DataGrid Grid.Row="1"  AutoGenerateColumns="False" x:Name="kbgaslist" ItemsSource="{m:Exp Str=kbsellgas}" Margin="0" IsReadOnly="True">

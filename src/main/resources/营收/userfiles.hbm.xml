@@ -1,4 +1,4 @@
-<?xml version="1.0"  encoding='utf-8'?>
+﻿<?xml version="1.0"  encoding='utf-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC 
 	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
@@ -9,7 +9,8 @@
 			<generator class="identity"></generator>
 		</id>
 			<version name="version"></version>
-	 	<!--用户编号-->
+	 	
+		<!--用户编号-->
 		<property name="f_userinfoid" type="string" />
 		<!--用户档案 -->
 		<!--many-to-one name="f_userinfoid" entity-name="t_userinfo"/-->
@@ -156,6 +157,8 @@
 		<property name="f_gasmeteraccomodations" type="double"/>
 		<!--表号-->
 		<property name="f_meternumber" type="string"/>
+		<!--假表号-->
+		<property name="f_meternumber1" type="string"/>
 		<!--表 封 号-->
 		<property name="f_metertitles" type="string"/>
 		<!--卡号-->
@@ -439,6 +442,9 @@
 		<property name="f_PatchCard" type="int"/>
 		<!--组织代码-->
 		<property name="f_OrgStr" type="string"/>
-		<property name="f_OrgStr2" type="string"/>
+		<!--暗码-->
+		<property name="f_secretcode" type="string"/>
+		<!--明码-->
+		<property name="f_plaincode" type="string"/>
 </class>
 </hibernate-mapping>

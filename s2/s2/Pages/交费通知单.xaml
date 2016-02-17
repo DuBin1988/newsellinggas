@@ -141,9 +141,9 @@
                         <a:Data.Items>
                             <!--substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'   substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'-->
                             <o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
-                                         Names="f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_phone"
+                                         Names="f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_stair1price,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_phone"
 SumHQL="{m:Exp Str=$
-select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,u.f_stair1price\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
 from 
 (
 select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
@@ -157,7 +157,7 @@ on u.f_inputtor \= i.f_inputtor
                                     }"
 
 HQL="{m:Exp Str=$
-select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,u.f_stair1price\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
 from 
 (
 select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
@@ -183,9 +183,7 @@ on u.f_inputtor \= i.f_inputtor
                             <sdk:DataGridTextColumn Header="上月表数" Binding="{Binding lastinputgasnum}"/>
                             <sdk:DataGridTextColumn Header="本月表数" Binding="{Binding lastrecord}"/>
                             <sdk:DataGridTextColumn Header="本月用量" Binding="{Binding oughtamount}"/>
-                            <!-- 
-                            <sdk:DataGridTextColumn Header="单  价" Binding="{Binding f_gasprice}"/>
-                            -->
+                            <sdk:DataGridTextColumn Header="单  价" Binding="{Binding f_stair1price}"/>
                             <sdk:DataGridTextColumn  Header="本次金额" Binding="{Binding f_bczhye}"/>
                             <sdk:DataGridTextColumn  Header="上次余额" Binding="{Binding f_zhye}"/>
                             <sdk:DataGridTextColumn Header="限定交费日期" Binding="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"/>
