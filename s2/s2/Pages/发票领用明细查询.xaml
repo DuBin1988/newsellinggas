@@ -101,7 +101,7 @@
 								<a:Data.Items>
 									<o:PagedObjectList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
 									Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_invoicewith where \{daninfosearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_invoicewith where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-										 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames="f_times"/>
+										 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames=","/>
 								</a:Data.Items>
 								<sdk:DataGrid.Columns>
 									<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号"  Binding="{Binding Index}"/>
