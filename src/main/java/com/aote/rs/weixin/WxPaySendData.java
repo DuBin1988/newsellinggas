@@ -8,10 +8,25 @@ public class WxPaySendData {
 	private String nonce_str; 
 	private String notify_url; 
 	private String out_trade_no; 
-	private String total_fee;//单位：分 
+	private int total_fee;//单位：分 
 	private String trade_type; 
 	private String spbill_create_ip; 
 	private String openid;
+	private String device_info;
+	private String sign;
+	
+	public String getSign() {
+		return sign;
+	}
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+	public String getDevice_info() {
+		return device_info;
+	}
+	public void setDevice_info(String device_info) {
+		this.device_info = device_info;
+	}
 	public String getAppid() {
 		return appid;
 	}
@@ -54,14 +69,14 @@ public class WxPaySendData {
 	public void setOut_trade_no(String out_trade_no) {
 		this.out_trade_no = out_trade_no;
 	}
-	public String getTotal_fee() {
-		return total_fee;
-	}
-	public void setTotal_fee(String total_fee) {
-		this.total_fee = total_fee;
-	}
 	public String getTrade_type() {
 		return trade_type;
+	}
+	public int getTotal_fee() {
+		return total_fee;
+	}
+	public void setTotal_fee(int total_fee) {
+		this.total_fee = total_fee;
 	}
 	public void setTrade_type(String trade_type) {
 		this.trade_type = trade_type;
