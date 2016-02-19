@@ -163,8 +163,8 @@ public class SellSer {
 			String updateUserinfo = "update t_userfiles set f_zhye=" + total
 					+ " ,f_metergasnums=" + f_metergasnums
 					+ " ,f_cumulativepurchase=" + f_cumulativepurchase
-					+ ",f_zherownum=" + (zherownum + 1) + " where f_userid='"
-					+ userid + "'";
+					+ ",f_zherownum=" + (zherownum + 1)
+					+ ",version=version+1 where f_userid='" + userid + "'";
 			log.debug("更新用户的档案sql：" + updateUserinfo);
 			hibernateTemplate.bulkUpdate(updateUserinfo);
 			// 产生交费记录
