@@ -143,8 +143,7 @@
 							IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
 							Click="{m:Exp Str=users.f_recoverypassbookdate\=userfile.DataContext.f_recoverypassbookdate;users.f_zherownum\=13;users.f_whethergivepassbook\=$已发$;users.f_foldnum\=userfile.DataContext.f_foldnum;SaveAction.Invoke()}" Width="98"/>
 						<Button Content="清空" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();users.New();userfiles.SelectedItem \= null}" Width="50"/>
-						<Button Content="." Margin="5" Click="{m:Exp Str=userfile.DataContext.TipError()}" Width="50"/>
-					</toolkit:DockPanel>
+				 	</toolkit:DockPanel>
 					
 					<Grid toolkit:DockPanel.Dock="Top" Margin="0,0,0,20"  >
 						<Grid.Background>
