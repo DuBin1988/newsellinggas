@@ -73,6 +73,9 @@ namespace Com.Aote.Pages
                 ui_stair1amont.Text = items["f_stair1amount"].ToString();
                 ui_stair2amont.Text = items["f_stair2amount"].ToString();
                 ui_stair3amont.Text = items["f_stair3amount"].ToString();
+                ui_stair1surplus.Text = items["f_stair1surplus"].ToString();
+                ui_stair2surplus.Text = items["f_stair2surplus"].ToString();
+                ui_stair3surplus.Text = items["f_stair3surplus"].ToString();
                 ui_stair4amont.Text = items["f_stair4amount"].ToString();
                 ui_stair1fee.Text = items["f_stair1fee"].ToString();
                 ui_stair2fee.Text = items["f_stair2fee"].ToString();

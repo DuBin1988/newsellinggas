@@ -44,6 +44,9 @@
 				LoadOnPathChanged="False"  Path="{m:Exp Str=$sernum/from t_singlevalue where name \= \'\{userfile.DataContext.f_filiale\}\用\户\编\号\' /value$}" 
 			>
 			</o:GeneralObject>
+			  <!--判断是否重复档案-->
+            <o:ObjectList Name="relist" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"  
+			Path="{m:Exp Str=userfilego.f_userid!\=null and userfilego.f_userid!\=$$:$from t_userfiles where f_userid\=\'\{userfilego.f_userid\}\'$\,$abc$}"/>
 
             <!--阶梯气价信息列表-->
             <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice"  HasEmptyRow="True" />
@@ -75,12 +78,14 @@
 			<o:PropertySetter PropertyName="f_accountzhye" Default="0"/>
 			<o:PropertySetter PropertyName="f_state" Default="正常"/>
 			<o:PropertySetter  PropertyName="f_substate" Default="完成"/>
+            <o:PropertySetter PropertyName="f_whethergivepassbook" Default="未发"  />
+            <o:PropertySetter PropertyName="f_zherownum" Default="13"  />
 			<o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist}"></o:PropertySetter>
 		</o:GeneralObject>
 
 		 <b:SyncActionFactory Name="SaveAction"   >
 		 	<!--获取编号-->
-		 	<b:CallMethodAction    Name="getbianhao" TargetObject="{m:Exp Str=ksnumobj1}"    MethodName="Load"/>
+		 	<b:CallMethodAction    Name="getbianhao" CanSave="{m:Exp Str=userfile.DataContext.f_userid\=\=null or userfile.DataContext.f_userid\=\=$$}" TargetObject="{m:Exp Str=ksnumobj1}"    MethodName="Load"/>
             <!--保存数据-->
 		    <b:CallMethodAction    Name="saveu" TargetObject="{m:Exp Str=userfile.DataContext}"    MethodName="Save"/>  
          
@@ -401,10 +406,10 @@
 												<TextBlock Margin="0,6,0,-1" Grid.Row="21" TextWrapping="Wrap" Text="最后购气日期：" TextAlignment="Right" Grid.Column="2" Height="25" />
 												<TextBox Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="2"  >
 													<a:Data.Prop>
-										<!--o:PropertySetter PropertyName="f_userid" 
-											Default="{m:Exp Str=$\{LoginUser.f_fengongsinum\}\{Seriab.Value\}}" /-->
-														<o:PropertySetter PropertyName="f_userid" 
-															Value="{m:Exp Str=ksnumobj1.State \=\= $Loaded$ :   $\{LoginUser.f_fengongsinum\}\{ksnumobj1.value.ToInt().Format($0|D6$)\}$\,null}" />
+														<!--用户编号手动填写
+															<o:PropertySetter PropertyName="f_userid"   ValidationVal="{m:Exp Str=relist.State\=\=$Loaded$ and relist.Count\=\=0}" ErrorMessage="用户编号重复！"	/>-->
+														<!--用户编号自动获取-->
+														<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=ksnumobj1.State \=\= $Loaded$ :   $\{LoginUser.f_fengongsinum\}\{ksnumobj1.value.ToInt().Format($0|D6$)\}$\,null}" />
 													</a:Data.Prop>
 												</TextBox>
 												<TextBox Text="{m:Bind Path=f_userstate}" Grid.Column="3" Margin="0" Grid.Row="9" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto"  >
@@ -705,7 +710,7 @@
 														<o:PropertySetter PropertyName="f_feiweihufei" Default="0" NotNull="True"/>
 													</a:Data.Prop>
 												</TextBox>
-												<TextBox Text="{m:Bind Path=f_comtype}" Grid.Column="2" Margin="0,3,0,2" Grid.Row="25" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="12">
+												<TextBox Text="{m:Bind Path=f_comtype}" Grid.Column="2" Margin="0,3,0,2" Grid.Row="25" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="41">
 													<a:Data.Prop>
 														<o:PropertySetter PropertyName="f_comtype" NotNull="True" 
 															Default="天然气公司"/>
@@ -767,7 +772,7 @@
 													</a:Data.Prop>
 												</TextBox>
 												<TextBlock Margin="0,3,0,2" Grid.Row="18" TextWrapping="Wrap" Text="气表位置：" TextAlignment="Right" Grid.Column="4" Height="25" HorizontalAlignment="Left" Width="125" />
-												<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_neiwaibiao}" Grid.Column="5" Margin="1.5,3,0,2" Grid.Row="18" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1"  >
+												<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_neiwaibiao}" Grid.Column="5" Margin="0" Grid.Row="18" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1"  >
 													<a:Data.Items>
 														<o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='内外表'"/>
 													</a:Data.Items>
@@ -802,7 +807,7 @@
 													<a:Data.Prop>
 														<o:PropertySetter PropertyName="f_payment" Default="现金" NotNull="True"/>
 													</a:Data.Prop-->
-											<ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="4,1,-4,4" Grid.Row="5" Height="25">
+											<ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="0" Grid.Row="5" Height="25">
 											<a:Data.Prop>
 												<o:PropertySetter PropertyName="f_payment"  Value="{m:Exp Str=userfilego.f_payment}" NotNull="True"/>
 											</a:Data.Prop> 

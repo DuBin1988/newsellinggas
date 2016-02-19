@@ -17,7 +17,7 @@ namespace Com.Aote.Pages
 {
     public partial class 民用抄表批量录入 : UserControl
     {
-        PagedList list = new PagedList();
+        ObjectList list = new ObjectList();
         public 民用抄表批量录入()
         {
             // Required to initialize variables
@@ -114,6 +114,10 @@ namespace Com.Aote.Pages
 
                 //上期底数从数据对象取
                 double lastinputgasnum = double.Parse(go.GetPropertyValue("lastinputgasnum").ToString());
+                if (box.Text == null || box.Text == "")
+                {
+                    go.SetPropertyValue("oughtamount", null, false);
+                }
                 //由于焦点离开时，数据未传递到对象中，从界面取
                 double lastrecord = double.Parse(box.Text);
 
@@ -166,9 +170,6 @@ namespace Com.Aote.Pages
                     try
                     {
                         go.EntityType = "t_handplan";
-
-
-
                         string f_userid = (string)json["f_userid"];//用户编号
                         go.SetPropertyValue("f_userid", f_userid, false);
                         string f_username = (string)json["f_username"];//用户名
