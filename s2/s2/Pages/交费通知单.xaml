@@ -16,6 +16,11 @@
 	mc:Ignorable="d"
 	x:Class="Com.Aote.Pages.交费通知单">
     <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-101,0">
+
+        <!--抄表员列表-->
+        <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+        </m:ResourceLoad>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*"/>
@@ -79,13 +84,13 @@
                             </a:Data.Prop>
                         </ComboBox>
 
-                        <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25" IsEnabled="true" Grid.ColumnSpan="1" FontSize="13.333">
+                        <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25" IsEnabled="true" Grid.ColumnSpan="1" FontSize="13.333">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_inputtor" Operator="f_inputtor='this'"/>
+                                <o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" Operator="f_inputtor='this'"/>
                             </a:Data.Prop>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                    <TextBlock Height="20" Text="{Binding f_inputtor}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
