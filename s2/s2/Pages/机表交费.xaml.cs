@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Linq;
 using Com.Aote.Utils;
+using Com.Aote.Controls;
 
 namespace Com.Aote.Pages
 {
@@ -66,18 +67,8 @@ namespace Com.Aote.Pages
                    return;
                }
                // 调用打印
-				MessageBoxResult mbr = MessageBox.Show("是否打印","提示", MessageBoxButton.OKCancel);
-                if (mbr == MessageBoxResult.OK)
-                {
-                      print.Print();
-                     print.Completed+=print_Completed;
-             
-                }
-                else
-                {
-					GeneralObject kbfee = (GeneralObject)(from r in loader.Res where r.Name.Equals("kbfee") select r).First();
-					kbfee.New();
-                }
+               print.Completed += print_Completed;
+               print.TipPrint();
 			
            }
            else
@@ -92,8 +83,21 @@ namespace Com.Aote.Pages
 
         private void print_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
+            print.Completed -= print_Completed;
+            //打印折子
+            PrintObj zzprint = FrameworkElementExtension.FindResource(this.save2, "zzprint") as PrintObj;
+            zzprint.Completed += zzprint_Completed;
+            zzprint.TipPrint();
+        }
+
+        void zzprint_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            PrintObj zzprint = sender as PrintObj;
+            zzprint.Completed -= zzprint_Completed;
+            //打印完成清空
             GeneralObject kbfee = (GeneralObject)(from r in loader.Res where r.Name.Equals("kbfee") select r).First();
             kbfee.New();
+            MessageBox.Show("交费完成！");
         }
         #endregion
 

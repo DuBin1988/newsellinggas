@@ -81,14 +81,23 @@ public class SellSer {
 			money.subtract(zhinajin);
 			// 拿余额+实际收费金额-滞纳金 再和应交金额比较，判断未交费的抄表记录是否能够交费
 			BigDecimal total = f_zhye.add(money).subtract(zhinajin);
-			//  上期指数
+			// 上期指数
 			BigDecimal lastqinum = new BigDecimal("0");
-			//   本期指数
+			// 本期指数
 			BigDecimal benqinum = new BigDecimal("0");
 			// 总气量
 			BigDecimal gasSum = new BigDecimal("0");
 			// 总气费
 			BigDecimal feeSum = new BigDecimal("0");
+			// 折子行号
+			String f_zherownum = userinfo.get("f_zherownum") + "";
+			if (f_zherownum == "") {
+				f_zherownum = "13";
+			}
+			//折子行号为24，换行
+			if(f_zherownum=="24"){
+				f_zherownum="0";
+			}
 			// 抄表记录id
 			String handIds = "";
 			// 账户实际结余,实际收款（收款-滞纳金)
@@ -97,7 +106,7 @@ public class SellSer {
 			BigDecimal accReceMoney = money.subtract(zhinajin);
 			for (int i = 0; i < list.size(); i++) {
 				Map<String, Object> map = (Map) list.get(i);
-			 	// 取出应交金额
+				// 取出应交金额
 				String h = (map.get("oughtfee") + "");
 				if (h.equals("null")) {
 					h = "0.0";
@@ -121,7 +130,7 @@ public class SellSer {
 					}
 					// 扣费，并产生本次余额
 					total = total.subtract(oughtfee);
-				 	// 气量相加
+					// 气量相加
 					String oughtamount1 = (map.get("oughtamount") + "");
 					if (oughtamount1.equals("null"))
 						oughtamount1 = "0.0";
@@ -152,6 +161,7 @@ public class SellSer {
 			String updateUserinfo = "update t_userfiles set f_zhye=" + total
 					+ " ,f_metergasnums=" + f_metergasnums
 					+ " ,f_cumulativepurchase=" + f_cumulativepurchase
+					+ ",f_zherownum=" + (Integer.parseInt(f_zherownum)+1)
 					+ " where f_userid='" + userid + "'";
 			log.debug("更新用户的档案sql：" + updateUserinfo);
 			hibernateTemplate.bulkUpdate(updateUserinfo);
@@ -160,7 +170,8 @@ public class SellSer {
 
 			sell.put("f_userid", userid); // 户的id
 			sell.put("lastinputgasnum",
-					lastqinum.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue()); // 上期指数
+					lastqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
+							.doubleValue()); // 上期指数
 			sell.put("lastrecord",
 					benqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
 							.doubleValue()); // 本期指数
@@ -248,8 +259,8 @@ public class SellSer {
 				return ret;
 			}
 			// 清欠费处理
-			financedetailDisp(loginUser,list,accReceMoney,sellId);
- 			// 抓取自定义异常
+			financedetailDisp(loginUser, list, accReceMoney, sellId);
+			// 抓取自定义异常
 		} catch (RSException e) {
 			log.debug("售气交费 失败!");
 			ret = e.getMessage();
@@ -288,7 +299,7 @@ public class SellSer {
 	 *            收款
 	 */
 	private void financedetailDisp(Map<String, Object> loginUser,
-		 List<Map<String,Object>> hands,	   BigDecimal shoukuan, int sellid)
+			List<Map<String, Object>> hands, BigDecimal shoukuan, int sellid)
 			throws Exception {
 		// 否则，根据收款逐条处理抄表记录欠款，产生清欠费记录，并计算最新余额最后写入档案
 		for (Map<String, Object> hand : hands) {
@@ -301,8 +312,8 @@ public class SellSer {
 			String sgoperator = loginUser.get("name").toString();
 			BigDecimal debtM = new BigDecimal(hand.get("f_debtmoney")
 					.toString());
-			//原来结余
-			BigDecimal oldAccountzhye= shoukuan;
+			// 原来结余
+			BigDecimal oldAccountzhye = shoukuan;
 			// 实收
 			BigDecimal realMoney = new BigDecimal(0);
 			// 新欠款
@@ -326,7 +337,7 @@ public class SellSer {
 				newaccountzhye = new BigDecimal(0);
 				shoukuan = new BigDecimal(0);
 			}
-			//存清欠记录
+			// 存清欠记录
 			this.financedetailSave(handId, userId, debtM, oldAccountzhye,
 					realMoney, unitPrice, newdebtmoney, newaccountzhye,
 					sgnetwork, sgoperator, sellid, hand.get("lastinputdate"));
@@ -398,7 +409,7 @@ public class SellSer {
 	private List<Map<String, Object>> findHanplans(String userid) {
 		String sql = " select u.f_zhye f_zhye, u.f_accountzhye f_accountzhye, u.f_username f_username,u.f_cardid f_cardid, u.f_address f_address,u.f_districtname f_districtname,u.f_cusDom f_cusDom,u.f_cusDy f_cusDy,u.f_beginfee f_beginfee, u.f_metergasnums f_metergasnums, u.f_cumulativepurchase f_cumulativepurchase,"
 				+ "u.f_idnumber f_idnumber, u.f_gaspricetype f_gaspricetype, u.f_gasprice f_gasprice, u.f_usertype f_usertype,"
-				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
+				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid,u.f_zherownum f_zherownum, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord, h.shifoujiaofei shifoujiaofei, h.oughtfee oughtfee,h.f_debtmoney  f_debtmoney ,h.lastinputdate from t_userfiles u "
 				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否') h on u.f_userid = h.f_userid where u.f_userid = '"
 				+ userid
