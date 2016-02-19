@@ -27,8 +27,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="mysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mysfbzInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| mysfbzPager.DataContext.State==$End$ |or| mysfbzBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 

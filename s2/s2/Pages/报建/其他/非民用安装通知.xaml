@@ -57,9 +57,9 @@
 							  </a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
 		                    <Button Content="查 询" Name="searchbutton" Click="{m:Exp Str=applysearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Right" Width="60" >
@@ -185,9 +185,9 @@
 					  </a:Data.Prop>
 					</TextBox>	
 					<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     <Button Content=" 查  询 "  Click="{m:Exp Str=yijingchaxue.DataContext.Search()}"  Width="60" Margin="3,0,0,0"/>
@@ -377,9 +377,9 @@
 									<o:PropertySetter PropertyName="f_area" />
 								</a:Data.Prop>
 							</TextBox>
-							<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="1" Margin="0,1" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">
+							<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="1" Margin="0,1" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_applydept" />
+									<o:PropertySetter PropertyName="f_minyongdept" />
 								</a:Data.Prop>		
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_payfeenum}" d:LayoutOverrides="Width" Grid.Column="3" Margin="0,1" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">
@@ -500,7 +500,9 @@
 			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="35.091,390.995,23.333,0" Grid.Row="1" Grid.Column="1"/>
 			<Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="35.091,114.584,23.333,0" Grid.Row="1" Grid.Column="1"/>
 			<Path Data="M17,183 L492.26941,183" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="34.622,192.83,23.333,0" Grid.Row="1" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
-			<TextBlock Grid.Column="1" Margin="41,8,0,0" TextWrapping="Wrap" Grid.Row="1" FontSize="21.333" FontWeight="Bold" TextAlignment="Center" Height="93" VerticalAlignment="Top" Text=" 工程安装通知单 "/>
+			<TextBlock Grid.Column="1" Margin="41,8,0,0" TextWrapping="Wrap" Grid.Row="1" FontSize="21.333" FontWeight="Bold" TextAlignment="Center" Height="93" VerticalAlignment="Top" Text="
+工程安装通知单
+"/>
 			<Path Data="M17,224 L492.26941,224" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="35.091,152.584,23.333,0" Grid.Row="1" Grid.Column="1"/>
 			<Path Data="M17,183 L492.26941,183" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="34.622,231.83,23.333,0" Grid.Row="1" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
 			<Path Data="M17,183 L492.26941,183" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="34.622,271.83,23.333,0" Grid.Row="1" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
@@ -550,7 +552,7 @@
 			<TextBlock x:Name="报建编号1" Text="{m:Exp Str=apply.DataContext.f_code}" Grid.Column="1" Height="25" Margin="157,121,398,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto"/>
 			<TextBlock x:Name="安装通知备注1" Text="{m:Exp Str=apply.DataContext.f_aznoticebz}" Grid.Column="1" Height="Auto" Margin="41,416,28,369" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
 			<TextBlock x:Name="合同编号1" Text="{m:Exp Str=apply.DataContext.f_htnum}" Grid.Column="1" Height="25" Margin="157,160,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
-			<TextBlock x:Name="用户单位1" Text="{m:Exp Str=apply.DataContext.f_applydept}" Grid.Column="1" Height="25" Margin="156,241,271,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
+			<TextBlock x:Name="用户单位1" Text="{m:Exp Str=apply.DataContext.f_minyongdept}" Grid.Column="1" Height="25" Margin="156,241,271,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 			<TextBlock x:Name="房屋类型" Text="{m:Exp Str=apply.DataContext.f_usertypepro}" Grid.Column="1" Height="25" Margin="0,239,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124" RenderTransformOrigin="0.484,2.24"/>
 			<TextBlock x:Name="交费户数" Text="{m:Exp Str=apply.DataContext.f_payfeenum}" Grid.Column="1" Height="25" Margin="0,279,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124" RenderTransformOrigin="0.484,2.24"/>
 			<TextBlock x:Name="合同约定" Text="{m:Exp Str=apply.DataContext.f_htyuding}" Grid.Column="1" Height="25" Margin="156,360,271,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>

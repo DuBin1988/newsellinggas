@@ -60,9 +60,10 @@
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Height="22" Margin="3,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="60" Width="Auto" Height="25">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="60" Width="Auto" Height="25">
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>                        	</a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>    
+                    	</a:Data.Prop>
                     </TextBox>
 						 <TextBlock TextWrapping="Wrap" Text="地址：" Margin="5,0,0,0"/>
                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Height="22">
@@ -91,7 +92,8 @@
 		    <!--  
 			<a:TabControlAttach.ContentTempalte>
                 <DataTemplate>
-                	<ContentControl a:ControlAttach.Source="m:Exp Str='selectItem[attr]=myxianchangkancha?民用
+                	<ContentControl a:ControlAttach.Source="m:Exp Str='selectItem[attr]=myxianchangkancha?民用
+
 pagey:feimyxianchangkancha?非民用'{Binding navigate}"/>
                 </DataTemplate>
             </a:TabControlAttach.ContentTempalte>
@@ -102,7 +104,7 @@ pagey:feimyxianchangkancha?非民用'{Binding navigate}"/>
 			                       	<sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
 			                       	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
 			                      	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-								   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+								   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 									<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
 			                       	
 			                    </sdk:DataGrid.Columns>
@@ -130,9 +132,9 @@ pagey:feimyxianchangkancha?非民用'{Binding navigate}"/>
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Height="22" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="60" Height="25">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="60" Height="25">
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>          
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>          
                     	</a:Data.Prop>
                     </TextBox>
 						 <TextBlock TextWrapping="Wrap" Text="地址：" Margin="5,0,0,0"/>
@@ -157,7 +159,7 @@ pagey:feimyxianchangkancha?非民用'{Binding navigate}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="报建状态" Binding="{Binding f_state}"/>
 					   	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                        	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 						<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
                        	<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
                        	<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
@@ -256,9 +258,9 @@ pagey:feimyxianchangkancha?非民用'{Binding navigate}"/>
 							</a:Data.Prop>
 						</TextBox>		 
 						<TextBlock Grid.Column="2" Margin="0,8,0,1" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" Height="25" TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0,8,0,1" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+						<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,8,0,1" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
 							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_applydept"/>
+								<o:PropertySetter PropertyName="f_minyongdept"/>
 							</a:Data.Prop>
 						</TextBox>	
 						<TextBlock Grid.Column="4" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" Height="25" TextAlignment="Right"/>

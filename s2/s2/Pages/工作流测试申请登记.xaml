@@ -51,9 +51,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 					<TextBlock TextWrapping="Wrap" Text="用气单位：" Margin="3,0,0,0" VerticalAlignment="Center"/>
-                    <TextBox TextWrapping="Wrap" MinWidth="60" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0">
+                    <TextBox TextWrapping="Wrap" MinWidth="60" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0">
                       <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like 'this%'"/>               
+                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like 'this%'"/>               
 					  </a:Data.Prop>
 					</TextBox>
                     <Button Content="  查  询  " x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="2,0,0,0" />
@@ -76,7 +76,7 @@
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
 						<sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                        <sdk:DataGridTextColumn Header="报建编号" Visibility="Collapsed" Binding="{Binding f_code}"/>
-					   <sdk:DataGridTextColumn Header="用户单位" Binding="{Binding f_applydept}"/>
+					   <sdk:DataGridTextColumn Header="用户单位" Binding="{Binding f_minyongdept}"/>
 					    <sdk:DataGridTextColumn d:IsLocked="True" Header="联系人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="联系电话" Binding="{Binding f_phone}"/>
                         <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>

@@ -55,9 +55,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 											<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     <Button Content="  查 询  " x:Name="searchbutton" Click="{m:Exp Str=applylist.DataContext.Search()}" Margin="3,0,0,0"/>
@@ -186,9 +186,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 											<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     <Button Content="  查 询  " x:Name="ybsearchbutton" Click="{m:Exp Str=ybapplysearch.DataContext.Search()}" Margin="3,0,0,0"/>
@@ -365,9 +365,9 @@
         										<o:PropertySetter PropertyName="f_area" />
         									</a:Data.Prop>
         								</TextBox>
-        								<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">
+        								<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">
         									<a:Data.Prop>
-        										<o:PropertySetter PropertyName="f_applydept" />
+        										<o:PropertySetter PropertyName="f_minyongdept" />
         									</a:Data.Prop>		
         								</TextBox>
         								<TextBox Text="{m:Bind Path=f_payfeenum}" d:LayoutOverrides="Width" Grid.Column="3" Margin="0" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25">

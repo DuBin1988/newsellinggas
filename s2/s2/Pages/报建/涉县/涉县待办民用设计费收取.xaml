@@ -29,8 +29,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="mysjfsq" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mysjfsqInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| mysjfsqPager.DataContext.State==$End$ |or| mysjfsqBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -253,14 +253,16 @@
                                 <ComboBox x:Name="CoboxPinps" ItemsSource="{m:Exp Str=mygastype}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}" 
 								Grid.Column="1" Margin="0,5,0,1" Grid.Row="4" Height="Auto" IsEnabled="False" Width="Auto" HorizontalAlignment="Stretch">
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_gasproperties"									Default="{m:Exp Str='mygastype[data.f_gasproperties==$民用$].ToObjectList().Count > 0 :$民用$,null'}" />
+                                		<o:PropertySetter PropertyName="f_gasproperties"
+									Default="{m:Exp Str='mygastype[data.f_gasproperties==$民用$].ToObjectList().Count > 0 :$民用$,null'}" />
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock Grid.Column="2" Margin="0,8,0,28" Grid.Row="4" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right" Grid.RowSpan="2"/>
                                 <ComboBox  x:Name="pricetype1" ItemsSource="{m:Exp Str=mypricetype}" DisplayMemberPath="f_gaspricetype"  SelectedValuePath="f_gaspricetype" SelectedValue="{m:Bind Path=f_gaspricetype}"  
 								Grid.Column="3" Margin="0,5,0,1" Grid.Row="4" Height="Auto" IsEnabled="False" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_gaspricetype"									Value="{m:Exp Str='mypricetype[data.f_gaspricetype==$民用气价$].ToObjectList().Count > 0 :$民用气价$,null'}" />
+                                		<o:PropertySetter PropertyName="f_gaspricetype"
+									Value="{m:Exp Str='mypricetype[data.f_gaspricetype==$民用气价$].ToObjectList().Count > 0 :$民用气价$,null'}" />
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock Grid.Column="4" Margin="0,8,0,28" Grid.Row="4" TextWrapping="Wrap" Text="气价：" TextAlignment="Right" Grid.RowSpan="2"/>

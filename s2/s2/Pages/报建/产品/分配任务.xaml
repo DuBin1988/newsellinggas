@@ -35,8 +35,8 @@
 							    (designersAction.State\=\=$Free$ or designersAction.State\=\=$End$) and 
 								(undesignersAction.State\=\=$Free$ or undesignersAction.State\=\=$End$)) or
                 myqrzbPager.DataContext.State==$End$'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_designers,f_survey,f_designersdate,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_designers\,apply.f_survey\,CONVERT(varchar\, apply.f_designersdate\,23)f_designersdate\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_designers,f_survey,f_designersdate,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_designers\,apply.f_survey\,CONVERT(varchar\, apply.f_designersdate\,23)f_designersdate\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 

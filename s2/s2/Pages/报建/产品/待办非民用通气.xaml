@@ -29,8 +29,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="fmytq" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmytqInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| fmytqPager.DataContext.State==$End$ |or| fmytqBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -51,7 +51,7 @@
             <o:ObjectList Name="devicelist_fmytq" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmytqInfo.DataContext.State==$End$ or fmytqBack=>Click!=null'}"
             Path="{m:Exp Str='fmytqInfo.DataContext.id!=null:$from t_device where applyid={fmytqInfo.DataContext.id} and f_noanzhuang is null$,null'}" EntityType="t_device" HasEmptyRow="False" />
         
-		    <o:ObjectList Name="printdevicecount" EntityType="t_device" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str='$select new map(convert.f_suoxie as f_suoxie,cast(year(apply.f_transgasdate) as string)+cast(month( apply.f_transgasdate) as string) + cast(day(apply.f_transgasdate) as string) as f_tqexamdate, apply.f_constructionunit as f_constructionunit,   device.f_deviceno as  f_deviceno,device.f_dijichu as  f_dijichu,device.f_name as f_name,device.f_usegasnum as f_usegasnum,device.f_count as f_count,device.f_gaswatchbrand as f_gaswatchbrand,device.f_metertype as f_metertype,apply.f_code as f_code,apply.f_username as f_username,apply.f_phone as f_phone,apply.f_applydept as f_applydept,apply.f_address as f_address,apply.f_installnum as f_installnum) from t_device  device,t_apply apply ,t_sgdwconvert convert where device.applyid in  (\{fmytqList.SelectedItems.ToString(id)\=>SelectionChanged\}) and device.f_noanzhuang \= null and apply.id=device.applyid and apply.f_constructionunit=convert.f_quancheng order by  apply.f_transgasdate'}" />
+		    <o:ObjectList Name="printdevicecount" EntityType="t_device" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str='$select new map(convert.f_suoxie as f_suoxie,cast(year(apply.f_transgasdate) as string)+cast(month( apply.f_transgasdate) as string) + cast(day(apply.f_transgasdate) as string) as f_tqexamdate, apply.f_constructionunit as f_constructionunit,   device.f_deviceno as  f_deviceno,device.f_dijichu as  f_dijichu,device.f_name as f_name,device.f_usegasnum as f_usegasnum,device.f_count as f_count,device.f_gaswatchbrand as f_gaswatchbrand,device.f_metertype as f_metertype,apply.f_code as f_code,apply.f_username as f_username,apply.f_phone as f_phone,apply.f_minyongdept as f_minyongdept,apply.f_address as f_address,apply.f_installnum as f_installnum) from t_device  device,t_apply apply ,t_sgdwconvert convert where device.applyid in  (\{fmytqList.SelectedItems.ToString(id)\=>SelectionChanged\}) and device.f_noanzhuang \= null and apply.id=device.applyid and apply.f_constructionunit=convert.f_quancheng order by  apply.f_transgasdate'}" />
 			
 			        
 			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
@@ -73,9 +73,9 @@
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="30" Margin="5,0,0,0" Height="22">
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_applydept"  Operator="f_applydept like 'this%'"/>
+                                <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="片区：" Margin="5,0,0,0"/>
@@ -117,7 +117,7 @@
                     	<sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                     	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                     	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                    	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                    	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
                     	<sdk:DataGridTextColumn Header="安装几处" Binding="{Binding f_installnum}"/>
                     	<sdk:DataGridTextColumn Header="已通气几处" Binding="{Binding f_ventilausernum}"/>
                     	<sdk:DataGridTextColumn Header="未通气几处" Binding="{Binding f_notventilausernum}"/>
@@ -140,13 +140,13 @@
                         <sdk:DataGrid.Columns>
                           <sdk:DataGridTextColumn   Header="申请人" Binding="{Binding f_username}"/>
 	                       	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-							<!--<sdk:DataGridTextColumn Header="申请单位-地址" Binding="{Binding f_applydept}"/> -->
+							<!--<sdk:DataGridTextColumn Header="申请单位-地址" Binding="{Binding f_minyongdept}"/> -->
 							<!--  	<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>-->
 					 	   	<sdk:DataGridTemplateColumn Header="申请单位-地址">
             							<sdk:DataGridTemplateColumn.CellTemplate>
             								<DataTemplate>
             									<StackPanel Orientation="Horizontal">
-            									<TextBlock  Text="{m:Bind Path=f_applydept}"   /> 
+            									<TextBlock  Text="{m:Bind Path=f_minyongdept}"   /> 
 												<TextBlock  Text="-"   /> 
 												<TextBlock Text="{m:Bind Path=f_address}"    /> 
 																						
@@ -242,9 +242,9 @@
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_applydept"/>
+                                            <o:PropertySetter PropertyName="f_minyongdept"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="安装用气点数：" TextAlignment="Right"/>

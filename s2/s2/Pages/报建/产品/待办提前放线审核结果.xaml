@@ -45,9 +45,10 @@
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="30" Margin="5,0,0,0" Height="22">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_applydept"  Operator="f_applydept like 'this%'"/>                        </a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
+                        </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_phone}" MinWidth="30" Margin="5,0,0,0" Height="22">
@@ -224,9 +225,9 @@
 
                                 </TextBox>
                                 <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="申请单位：" Grid.Row="1"/>
-                                <TextBox Text="{m:Bind Path=f_applydept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
+                                <TextBox Text="{m:Bind Path=f_minyongdept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_applydept"  />
+                                        <o:PropertySetter PropertyName="f_minyongdept"  />
                                     </a:Data.Prop>
                                 </TextBox>
                             </Grid>

@@ -88,9 +88,9 @@
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock TextWrapping="Wrap" Text="单位："  Height="25"/>
-                                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" >
+                                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" >
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>
+                                            <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock TextWrapping="Wrap" Text="电话："  Height="25"/>
@@ -120,7 +120,7 @@
                                         <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
                                         <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                                         <sdk:DataGridTextColumn Header="报建编号" Binding="{Binding f_code}"/>
-                                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
                                         <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
                                         <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
@@ -146,9 +146,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 										<TextBlock TextWrapping="Wrap" Text="单位："  Height="25"/>
-                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" >
+                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" >
                       <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 					  </a:Data.Prop>
 					</TextBox>
 					<TextBlock TextWrapping="Wrap" Text="电话："  Height="25"/>
@@ -171,7 +171,7 @@
                         <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
 						<sdk:DataGridTextColumn d:IsLocked="True" Header="报建状态" Binding="{Binding f_state}"/>
                          <sdk:DataGridTextColumn Header="报建编号" Binding="{Binding f_code}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 						<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
                         <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
@@ -505,9 +505,9 @@
                                         <sdk:DataGridTemplateColumn Header="申请单位"  >
                                             <sdk:DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <TextBox Text="{Binding Path=f_applydept,Mode=OneWay}" IsReadOnly="True">
+                                                    <TextBox Text="{Binding Path=f_minyongdept,Mode=OneWay}" IsReadOnly="True">
                                                         <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_applydept"  Default="{m:Exp Str=main.DataContext.f_applydept}"/>
+                                                            <o:PropertySetter PropertyName="f_minyongdept"  Default="{m:Exp Str=main.DataContext.f_minyongdept}"/>
                                                         </a:Data.Prop>
                                                     </TextBox>
                                                 </DataTemplate>

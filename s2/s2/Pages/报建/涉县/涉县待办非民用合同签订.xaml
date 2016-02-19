@@ -28,8 +28,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="fmyhtqd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyhtqdInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| fmyhtqdPager.DataContext.State==$End$ |or| fmyhtqdBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -74,9 +74,9 @@
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="30" Margin="5,0,0,0" Height="22">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_applydept"  Operator="f_applydept like 'this%'"/>
+                            <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
@@ -277,9 +277,9 @@
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
                                     <TextBlock Margin="39,4,0,2" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" HorizontalAlignment="Left"/>
-                                    <TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="4" Margin="97,0,75,4" TextWrapping="Wrap" Grid.Row="0" IsReadOnly="True" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="4" Margin="97,0,75,4" TextWrapping="Wrap" Grid.Row="0" IsReadOnly="True" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_applydept" />
+                                            <o:PropertySetter PropertyName="f_minyongdept" />
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Margin="0,4,0,2" TextWrapping="Wrap" Text="片区：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="1"/>
@@ -300,9 +300,9 @@
                                             <o:PropertySetter PropertyName="f_gastype" NotNull="True"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBox Text="{m:Bind Path=f_applydept}" Visibility="Collapsed" Grid.Column="4" Margin="95.5,8,76,-3" TextWrapping="Wrap" Grid.Row="17" IsReadOnly="True" Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" d:LayoutOverrides="VerticalAlignment">
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" Visibility="Collapsed" Grid.Column="4" Margin="95.5,8,76,-3" TextWrapping="Wrap" Grid.Row="17" IsReadOnly="True" Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" d:LayoutOverrides="VerticalAlignment">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_applydept"/>
+                                            <o:PropertySetter PropertyName="f_minyongdept"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBox Text="{m:Bind Path=f_dunweiheji}" Grid.Column="4" Margin="4,0,0,4" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="25" HorizontalAlignment="Left" Width="146" >
@@ -549,7 +549,7 @@
                                 <RowDefinition Height="515.5"/>
                             </Grid.RowDefinitions>
                             <TextBlock x:Name="用气人1" Grid.Column="2" Margin="4,14,-18.889,4" Grid.Row="3" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_username}" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2" FontSize="12"/>
-                            <TextBlock x:Name="用气人单位1" Grid.Column="4" Margin="6.889,14,8.389,4" Grid.Row="3" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_applydept}" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="5" FontSize="12" HorizontalAlignment="Stretch"/>
+                            <TextBlock x:Name="用气人单位1" Grid.Column="4" Margin="6.889,14,8.389,4" Grid.Row="3" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_minyongdept}" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="5" FontSize="12" HorizontalAlignment="Stretch"/>
                             <TextBlock x:Name="合同编号1" Grid.ColumnSpan="2" Grid.Column="2" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_htnum}" Margin="-22,-7,-18.889,0" Grid.RowSpan="1" Grid.Row="2" Height="30" VerticalAlignment="Top" FontSize="12" RenderTransformOrigin="0.511,-0.5"/>
                             <TextBlock x:Name="用气地址1" Grid.ColumnSpan="7" Grid.Column="2" Margin="4,2,-3.611,7" Grid.Row="4" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_address}" HorizontalAlignment="Stretch" Width="Auto" FontSize="12" Height="25"/>
                             <TextBlock x:Name="采暖炉台数1" Grid.Column="5" Margin="44.333,0,-11.111,12" Grid.Row="5" TextWrapping="Wrap" Text="{m:Exp Str=fmyhtqdInfo.DataContext.f_cnnum}" Height="22" FontSize="12" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Bottom" d:LayoutOverrides="Height" RenderTransformOrigin="0.467,1.045"/>

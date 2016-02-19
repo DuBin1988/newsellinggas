@@ -56,9 +56,10 @@
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="30" Margin="5,0,0,0" Height="22">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_applydept"  Operator="f_applydept like 'this%'"/>                        </a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
+                        </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_phone}" MinWidth="30" Margin="5,0,0,0" Height="22">
@@ -91,7 +92,7 @@
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
                         <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
                         <sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
                     </sdk:DataGrid.Columns>
@@ -182,9 +183,9 @@
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
+                                <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_applydept"/>
+                                        <o:PropertySetter PropertyName="f_minyongdept"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" TextAlignment="Right"/>
@@ -255,14 +256,16 @@
                                 <ComboBox x:Name="CoboxPinpl" ItemsSource="{m:Exp Str=fmygastype}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}" 
 								Grid.Column="1" Margin="0,3" Grid.Row="7" Height="Auto" IsEnabled="true" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" RenderTransformOrigin="1.139,4.36">
                                     <a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_gasproperties"									Default="{m:Exp Str='fmygastype[data.f_gasproperties==$非民用$].ToObjectList().Count > 0 :$非民用$,null'}" />
+                                		<o:PropertySetter PropertyName="f_gasproperties"
+									Default="{m:Exp Str='fmygastype[data.f_gasproperties==$非民用$].ToObjectList().Count > 0 :$非民用$,null'}" />
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right"/>
                                 <ComboBox x:Name="pricetype" ItemsSource="{m:Exp Str=fmypricetype}" DisplayMemberPath="f_gaspricetype"  SelectedValuePath="f_gaspricetype" SelectedValue="{m:Bind Path=f_gaspricetype}"  
 								Grid.Column="3" Margin="0,3" Grid.Row="7" Height="Auto" IsEnabled="true" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_gaspricetype"									Default="{m:Exp Str='fmypricetype[data.f_gaspricetype==$餐饮气价$].ToObjectList().Count > 0 :$餐饮气价$,null'}" />
+                                		<o:PropertySetter PropertyName="f_gaspricetype"
+									Default="{m:Exp Str='fmypricetype[data.f_gaspricetype==$餐饮气价$].ToObjectList().Count > 0 :$餐饮气价$,null'}" />
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" Text="气价：" TextAlignment="Right"/>

@@ -58,9 +58,9 @@
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" Width="Auto" Height="22" Margin="3,0,0,0">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" Width="Auto" Height="22" Margin="3,0,0,0">
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>          
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>          
                     	</a:Data.Prop>
                     </TextBox>
 					<TextBlock TextWrapping="Wrap" Text="地址：" Margin="3,0,0,0"/>
@@ -100,7 +100,7 @@
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 					   	<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
 						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
                        	<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
@@ -131,9 +131,9 @@
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" Width="Auto" Height="22" Margin="3,0,0,0">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" Width="Auto" Height="22" Margin="3,0,0,0">
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>          
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>          
                     	</a:Data.Prop>
                     </TextBox>
 					<TextBlock TextWrapping="Wrap" Text="地址：" Margin="3,0,0,0"/>
@@ -166,7 +166,7 @@
                        <sdk:DataGridTextColumn d:IsLocked="True" Header="报建状态" Binding="{Binding f_state}"/>
 					   	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 					   	<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
 						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
                        	<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
@@ -272,9 +272,9 @@
 							</a:Data.Prop>
 						</TextBox>		 
 						<TextBlock Grid.Column="2" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" Height="25" TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+						<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
 							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_applydept"/>
+								<o:PropertySetter PropertyName="f_minyongdept"/>
 							</a:Data.Prop>
 						</TextBox>	
 						<TextBlock Grid.Column="4" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" Height="25" TextAlignment="Right"/>
@@ -759,7 +759,7 @@
 			<TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="41,0,0,370" Grid.Row="1" TextWrapping="Wrap" Text="本工程相关要求：" Width="117" TextAlignment="Center" Height="25" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="本工程相关要求1" Text="{m:Exp Str=apply.DataContext.f_gongchengyaoqiu}" Grid.Column="1" Height="64" Margin="41,0,28,304" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="合同编号1" Text="{m:Exp Str=apply.DataContext.f_htnum}" Grid.Column="1" Height="25" Margin="0,121,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
-			<TextBlock x:Name="用户单位1" Text="{m:Exp Str=apply.DataContext.f_applydept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
+			<TextBlock x:Name="用户单位1" Text="{m:Exp Str=apply.DataContext.f_minyongdept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 			
 		</Grid>
 		<!--餐饮庭院打印-->
@@ -875,7 +875,7 @@
 			<TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="41,0,0,352" Grid.Row="1" TextWrapping="Wrap" Text="本工程相关要求：" Width="117" TextAlignment="Center" Height="25" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="本工程相关要求2" Text="{m:Exp Str=apply.DataContext.f_gongchengyaoqiu}" Grid.Column="1" Height="62" Margin="41,0,28,288" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="合同编号2" Text="{m:Exp Str=apply.DataContext.f_htnum}" Grid.Column="1" Height="25" Margin="0,121,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
-			<TextBlock x:Name="用户单位2" Text="{m:Exp Str=apply.DataContext.f_applydept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
+			<TextBlock x:Name="用户单位2" Text="{m:Exp Str=apply.DataContext.f_minyongdept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 			
 		</Grid>
 		<!--锅炉户内打印-->
@@ -992,7 +992,7 @@
 			<TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="41,0,0,360" Grid.Row="1" TextWrapping="Wrap" Text="本工程相关要求：" Width="117" TextAlignment="Center" Height="25" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="本工程相关要求3" Text="{m:Exp Str=apply.DataContext.f_gongchengyaoqiu}" Grid.Column="1" Height="70" Margin="41,0,28,288" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="合同编号3" Text="{m:Exp Str=apply.DataContext.f_htnum}" Grid.Column="1" Height="25" Margin="0,121,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
-			<TextBlock x:Name="用户单位3" Text="{m:Exp Str=apply.DataContext.f_applydept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
+			<TextBlock x:Name="用户单位3" Text="{m:Exp Str=apply.DataContext.f_minyongdept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 			
 		</Grid>
 		<!--锅炉庭院打印-->
@@ -1108,7 +1108,7 @@
 			<TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="41,0,0,338" Grid.Row="1" TextWrapping="Wrap" Text="本工程相关要求：" Width="117" TextAlignment="Center" Height="25" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="本工程相关要求4" Text="{m:Exp Str=apply.DataContext.f_gongchengyaoqiu}" Grid.Column="1" Height="64" Margin="41,0,28,274" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
 			<TextBlock x:Name="合同编号4" Text="{m:Exp Str=apply.DataContext.f_htnum}" Grid.Column="1" Height="25" Margin="0,121,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
-			<TextBlock x:Name="用户单位4" Text="{m:Exp Str=apply.DataContext.f_applydept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
+			<TextBlock x:Name="用户单位4" Text="{m:Exp Str=apply.DataContext.f_minyongdept}" Grid.Column="1" Height="25" Margin="148,279,279,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 			
 		</Grid>
 	<c:MessageTipObj  Name="submittip" Tip="您确认要提交施工吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />

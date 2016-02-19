@@ -30,8 +30,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="fmyxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyxckcInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| fmyxckcPager.DataContext.State==$End$ |or| fmyxckcBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -85,9 +85,9 @@
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" MinWidth="30" Margin="5,0,0,0" Height="22">
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_applydept"  Operator="f_applydept like 'this%'"/>
+                                <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
@@ -123,7 +123,7 @@
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="申请用气点数" Binding="{Binding f_applycount}"/>
-                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
                         <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>
                         <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
@@ -149,7 +149,7 @@
                             <sdk:DataGridTextColumn Header="类型" Binding="{Binding f_usertype}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                            <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                            <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
                             <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
                             <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>
                             <sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
@@ -227,9 +227,9 @@
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_applydept"/>
+                                            <o:PropertySetter PropertyName="f_minyongdept"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" TextAlignment="Right"/>

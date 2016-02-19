@@ -27,8 +27,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="myjgd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myjgdInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| myjgdPager.DataContext.State==$End$ |or| myjgdBack=>Click!=null'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid,f_processid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -189,7 +189,7 @@
                                     <TextBlock Grid.Column="4" Margin="0,6,0,0" TextWrapping="Wrap" Text="申 请 人：" TextAlignment="Right"/>
                                     <TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch"/>
                                     <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="用气单位：" Grid.Row="1"/>
-                                    <TextBox Text="{m:Bind Path=f_applydept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto"/>
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto"/>
                                     <TextBlock Margin="0,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" Grid.Column="4"/>
                                     <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="True" Grid.Column="5" Margin="0,2" Grid.Row="1" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch"/>
                                     <TextBlock Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right"/>
@@ -872,7 +872,7 @@
                             <!--  -->
             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,90,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_buildunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="26"/>
             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,90,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_constructionunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,125,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_applydept}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,125,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_minyongdept}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,125,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_address}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
             
                         </Grid>

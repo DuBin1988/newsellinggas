@@ -36,9 +36,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 					<TextBlock TextWrapping="Wrap" Text="用户单位：" Height="25"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Height="22">
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Height="22">
                       <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 					  </a:Data.Prop>
 					</TextBox>
 					
@@ -117,7 +117,7 @@
             			
 						<sdk:DataGridTextColumn Header="合同编号" Binding="{Binding f_htnum}"/>
 						<sdk:DataGridTextColumn Header="申请人" Binding="{Binding f_username}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 						<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
 						
 						

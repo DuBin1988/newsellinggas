@@ -61,9 +61,9 @@
 					   </a:Data.Prop>
                     </TextBox>
 					<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="25" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="25" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     <Button Content="查 询" x:Name="searchbutton" Click="{m:Exp Str=applysearch.DataContext.Search()}" Margin="3,0,0,0" HorizontalAlignment="Left" Width="60"/>
@@ -97,7 +97,7 @@
 <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
-                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 						
 						<sdk:DataGridTemplateColumn Header="户内施工">
             			<sdk:DataGridTemplateColumn.CellTemplate>
@@ -157,9 +157,9 @@
 					            </a:Data.Prop>
                            </TextBox>
 						   <TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="apply.f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     		<Button Content="查 询" x:Name="ybbutton" Click="{m:Exp Str=ybsearch.DataContext.Search()}" Margin="3,0,0,0" Width="60" HorizontalAlignment="Left"/>
@@ -203,7 +203,7 @@
             				</sdk:DataGridTemplateColumn.CellTemplate>
             			</sdk:DataGridTemplateColumn>
 						
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
 						<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
 						<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
@@ -304,9 +304,9 @@
 							</a:Data.Prop>
 						</TextBox>		 
 						<TextBlock Grid.Column="2" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" Height="25" TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+						<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
 							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_applydept"/>
+								<o:PropertySetter PropertyName="f_minyongdept"/>
 							</a:Data.Prop>
 						</TextBox>	
 						<TextBlock Grid.Column="4" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" Height="25" TextAlignment="Right"/>

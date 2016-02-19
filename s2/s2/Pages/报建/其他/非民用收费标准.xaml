@@ -64,9 +64,9 @@
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" Width="Auto" Height="22" >
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" Width="Auto" Height="22" >
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>          
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>          
                     	</a:Data.Prop>
                     </TextBox>
                     <Button Content="  查 询  " x:Name="searchbutton" Click="{m:Exp Str=applysearch.DataContext.Search()}" Margin="2,0,0,0"/>
@@ -105,7 +105,7 @@
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                        	<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                        	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-					   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+					   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 					   	<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
 						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
                      </sdk:DataGrid.Columns>
@@ -132,9 +132,9 @@
 					   </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
-                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_applydept}" Width="Auto" Height="22" >
+                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" Width="Auto" Height="22" >
                     	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_applydept"  Operator="apply.f_applydept like 'this%'"/>          
+                    		<o:PropertySetter PropertyName="f_minyongdept"  Operator="apply.f_minyongdept like 'this%'"/>          
                     	</a:Data.Prop>
                     </TextBox>
                     <Button Content="  查 询  " x:Name="ybsearchbutton" Click="{m:Exp Str=ybapplysearch.DataContext.Search()}" Margin="2,0,0,0"/>
@@ -164,7 +164,7 @@
                        	 <sdk:DataGridTextColumn d:IsLocked="True" Header="报建状态" Binding="{Binding f_state}"/>
 						<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                        	<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-					   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_applydept}"/>
+					   	<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
 					   	<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
 						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
                      </sdk:DataGrid.Columns>
@@ -257,9 +257,9 @@
 							</a:Data.Prop>
 						</TextBox>		 
 						<TextBlock Grid.Column="2" Margin="0,8,0,7" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" Height="25" TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+						<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" IsReadOnly="True">
 							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_applydept"/>
+								<o:PropertySetter PropertyName="f_minyongdept"/>
 							</a:Data.Prop>
 						</TextBox>
 						<TextBlock Grid.Column="4" Margin="0,8,0,7" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" Height="25" TextAlignment="Right"/>
