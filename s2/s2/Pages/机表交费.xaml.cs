@@ -56,7 +56,6 @@ namespace Com.Aote.Pages
         void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
            busy.IsBusy = false;
-
            // 没有出错
            if (e.Error == null)
            {
