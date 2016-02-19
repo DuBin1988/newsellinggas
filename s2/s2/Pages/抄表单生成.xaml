@@ -52,8 +52,8 @@
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				f_phone\, lastinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
 				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'
-			from t_userfiles where f_userstate\=\'正常\' and \{search.Condition\} and f_userid not in
-			(select distinct f_userid from t_handplan where f_state\=\'未抄表\')}"/>
+			from t_userfiles u where f_userstate\=\'正常\' and \{search.Condition\} and not exists
+			(select id from t_handplan h where h.f_userid\=u.f_userid and f_state\=\'未抄表\')}"/>
             <!--生成抄表单-->
             <b:BatchExcuteAction Name="CreateHandplan" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=DeleteHandplan}" MethodName="InvokeToJson"/>
@@ -182,6 +182,7 @@
                             <sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="用户地址" Binding="{Binding f_address}"/>
                             <sdk:DataGridTextColumn  Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="气表类型" Binding="{Binding f_gasmeterstyle}"/>
                             <sdk:DataGridTextColumn Header="气表编号" Binding="{Binding f_meternumber}"/>
                             <sdk:DataGridTextColumn Header="表安装位置" Binding="{Binding f_weizhi}"/>
                             <sdk:DataGridTextColumn  Header="抄表底数" Binding="{Binding lastinputgasnum}"/>

@@ -94,10 +94,7 @@ public class SellSer {
 			if (f_zherownum == "") {
 				f_zherownum = "13";
 			}
-			//折子行号为24，换行
-			if(f_zherownum=="24"){
-				f_zherownum="0";
-			}
+
 			// 抄表记录id
 			String handIds = "";
 			// 账户实际结余,实际收款（收款-滞纳金)
@@ -157,17 +154,22 @@ public class SellSer {
 					}
 				}
 			}
+			int zherownum = Integer.parseInt(f_zherownum);
+			// 折子行号为24，换行
+			if (zherownum >= 24) {
+				zherownum = 0;
+			}
 			// 更新用户档案
 			String updateUserinfo = "update t_userfiles set f_zhye=" + total
 					+ " ,f_metergasnums=" + f_metergasnums
 					+ " ,f_cumulativepurchase=" + f_cumulativepurchase
-					+ ",f_zherownum=" + (Integer.parseInt(f_zherownum)+1)
-					+ " where f_userid='" + userid + "'";
+					+ ",f_zherownum=" + (zherownum + 1) + " where f_userid='"
+					+ userid + "'";
 			log.debug("更新用户的档案sql：" + updateUserinfo);
 			hibernateTemplate.bulkUpdate(updateUserinfo);
 			// 产生交费记录
 			Map<String, Object> sell = new HashMap<String, Object>();
-
+			sell.put("f_zherownum", Integer.parseInt(f_zherownum));
 			sell.put("f_userid", userid); // 户的id
 			sell.put("lastinputgasnum",
 					lastqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
@@ -175,8 +177,14 @@ public class SellSer {
 			sell.put("lastrecord",
 					benqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
 							.doubleValue()); // 本期指数
-			sell.put("f_totalcost", zhinajin.add(feeSum).subtract(f_zhye)
-					.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()); // 应交金额
+			// 应交金额
+			BigDecimal totalcost = new BigDecimal(0);
+			if (zhinajin.add(feeSum).compareTo(f_zhye) > 0) {
+				totalcost = zhinajin.add(feeSum).subtract(f_zhye);
+			}
+			sell.put("f_totalcost",
+					totalcost.setScale(2, BigDecimal.ROUND_HALF_UP)
+							.doubleValue()); // 应交金额
 			sell.put("f_grossproceeds",
 					money.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()); // 收款
 			sell.put("f_zhinajin",

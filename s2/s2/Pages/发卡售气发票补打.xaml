@@ -865,61 +865,60 @@
 			<c:PrintObj Name="printjtgs" Message="是否打印阶梯发票" Area="{m:Res Key=guoshuiprint_Copy}" UseDefaultPrinter="False"/>
 
 	<!--	<c:PrintObj Name="printzz" Message="是否打印购气证" Area="{m:Res Key=zheziprint}"  UseDefaultPrinter="False"/>-->
-	    <c:PrintObj Name="printzz" Message="是否打印购气证"  Area="{m:Res Key=zheziprint}" MessWindowName="/Pages/折子/折子打印提示界面" ParamObj="{m:Exp Str=sellinggas}" UseDefaultPrinter="False"/>
+	   <c:PrintObj Name="printzz" Message="是否打印购气证"	 Area="{m:Res Key=zheziprint}" />
+		<Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-310,0,0,-703">
+			<a:Data.Context>
+				<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
+					EntityType="t_myfaka"  />
+			</a:Data.Context>
+			<Grid.RowDefinitions >
+				<RowDefinition Height="50"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="80"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="16*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+				</Grid.ColumnDefinitions>
 
-
-
-	    <Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-487,0,0,-613" d:LayoutOverrides="VerticalAlignment">
-	    	<a:Data.Context>
-	    		<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
-	    			EntityType="t_myfaka"  />
-	    	</a:Data.Context>
-	    	<Grid.RowDefinitions >
-	    		<RowDefinition Height="50"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="80"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    	</Grid.RowDefinitions>
-	    	<Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}">
-	    		<Grid.ColumnDefinitions>
-	    			<ColumnDefinition Width="16*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    		</Grid.ColumnDefinitions>
-			
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyy-MM-dd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_gasmeterstyle\=\=$卡表$:$卡$\,$机$}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.lastrecord}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_pregas}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_preamount}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_source !\=null and sellinggas.f_source \=\=$旧数据$ \:sellinggas.f_pregas+sellinggas.f_metergasnums\, sellinggas.f_metergasnums}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_sgoperator}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    	</Grid>
+				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+				<TextBlock Text="{m:Exp Str=sellinggas.lastrecord\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_pregas\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+				<TextBlock Text="{m:Exp Str=sellinggas.f_totalcost\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_grossproceeds\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_benqizhye\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_zhinajin\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+			</Grid>
 	    </Grid>
 	    <Grid x:Name="aofengprint" Background="b" Margin="-1630,0,0,-320"  Width="1125" Height="346" VerticalAlignment="Bottom" HorizontalAlignment="Left">
 	    	<Grid.ColumnDefinitions>

@@ -352,6 +352,7 @@ public class HandCharge {
 			sell.put("f_totalcost", chargenum.doubleValue()); // 应交金额
 			sell.put("f_grossproceeds", grossproceeds); // 收款
 			sell.put("f_deliverydate", new Date()); // 交费日期
+			sell.put("f_deliverytime", new Date()); // 交费时间
 			sell.put("f_zhye", f_zhye.doubleValue()); // 上期结余
 			sell.put("f_benqizhye", f_zhye.subtract(chargenum).doubleValue()); // 本期结余
 			sell.put("f_gasmeterstyle", map.get("f_gasmeterstyle")); // 气表类型

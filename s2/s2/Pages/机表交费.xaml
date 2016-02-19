@@ -54,9 +54,7 @@
 			<!--机表收费对象-->
         	<o:GeneralObject Name="kbfee" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
             IsInit="{m:Exp Str=
-			nouser\=>OK!\=null |or|
-			cancle\=>Click!\=null |or|
-			print.State\=\=$End$ or print.State\=\=$Cancle$}">
+			nouser\=>OK!\=null |or|	cancle\=>Click!\=null}">
         		<!--上期指数-->
 				<o:PropertySetter PropertyName="lastinputgasnum" NoDependValue="{m:Exp Str=kbsellgas.First().lastinputgasnum\=>DataLoaded}"/>
 				<!--本期指数-->
