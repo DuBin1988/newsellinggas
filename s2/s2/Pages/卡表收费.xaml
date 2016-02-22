@@ -882,7 +882,14 @@
 										Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
                                     </a:Data.Prop>
                                 </TextBox>
-                              
+
+                                <TextBox Text="{m:Bind Path=f_OrgStr}"  Grid.Column="5" Margin="0,4,77,1" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="25" Width="4" d:LayoutOverrides="HorizontalAlignment" Visibility="Collapsed" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_OrgStr" NotNull="True"
+										Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+                                    </a:Data.Prop>
+                                </TextBox>
+
                                 <TextBlock Text="卡　　号：" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                                 <CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Margin="0,6,25,6" Grid.Row="0" Grid.Column="4" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" IsEnabled="False">
                                     <a:Data.Prop>

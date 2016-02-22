@@ -13,30 +13,30 @@ using System.Linq;
 
 namespace Com.Aote.Pages
 {
-	public partial class 档案变更 : UserControl
-	{
-		public 档案变更()
-		{
-			InitializeComponent();
-		}
+    public partial class 档案变更 : UserControl
+    {
+        public 档案变更()
+        {
+            InitializeComponent();
+        }
         private void save_Click(object sender, RoutedEventArgs e)
         {
-            String sql="update t_handplan set f_username='"+ui_usernamechange.Text+"'"+
-                ",lastinputdate='"+ui_lastinputdatechange.Text+"'"+
-                ",lastinputgasnum='"+ui_lastinputgasnumchange.Text+"'"+
-                ",f_inputtor='"+ui_inputtorchange.SelectedValue+"'"+
-                ",f_phone='"+ui_phonechange.Text+"'"+
-                ",f_address='"+ui_addresschange.Text+"'"+
-                ",f_usertype='"+ui_usertypechange.Text+"'"+
-                ",f_weizhi='"+ui_weizhichange.Text+"'"+
+            String sql = "update t_handplan set f_username='" + ui_usernamechange.Text + "'" +
+                ",lastinputdate='" + ui_lastinputdatechange.Text + "'" +
+                ",lastinputgasnum='" + ui_lastinputgasnumchange.Text + "'" +
+                ",f_inputtor='" + ui_inputtorchange.SelectedValue + "'" +
+                ",f_phone='" + ui_phonechange.Text + "'" +
+                ",f_address='" + ui_addresschange.Text + "'" +
+                ",f_usertype='" + ui_usertypechange.Text + "'" +
+                ",f_weizhi='" + ui_weizhichange.Text + "'" +
                 ",f_gasproperties='" + CoboxGasPro.SelectedValue + "'" +
                 ",f_gaspricetype='" + CoboxGas.SelectedValue + "'" +
-                ",f_gasprice='"+ui_gaspricechange.Text+"'"+
+                ",f_gasprice='" + ui_gaspricechange.Text + "'" +
                 ",f_metertype='" + ui_metertypechange.SelectedValue + "'" +
-                ",f_gasmetermanufacturers='"+ui_gasmetermanufacturerschange.Text+"'"+
-                ",f_gasmeterstyle='"+ui_gasmeterstylechange.Text+"'"+
-                ",f_meternumber='"+ui_meternumberchange.Text+"'"+
-                ",f_aliasname='"+ui_aliasnamechange.Text+"' where f_state='未抄表' and f_userid='"+ui_userid.Text+"'";
+                ",f_gasmetermanufacturers='" + ui_gasmetermanufacturerschange.Text + "'" +
+                ",f_gasmeterstyle='" + ui_gasmeterstylechange.Text + "'" +
+                ",f_meternumber='" + ui_meternumberchange.Text + "'" +
+                ",f_aliasname='" + ui_aliasnamechange.Text + "' where f_state='未抄表' and f_userid='" + ui_userid.Text + "'";
             HQLAction action = new HQLAction();
             action.HQL = sql;
             action.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
@@ -48,5 +48,5 @@ namespace Com.Aote.Pages
             save.Invoke();
             //updatehandplan.New();
         }
-	}
+    }
 }

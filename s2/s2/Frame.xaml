@@ -66,8 +66,10 @@
 			<o:SeriaNumber Name="Seriabj" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}M'}"/>
 			<!--报建编号工商-->
 			<o:SeriaNumber Name="Seriabjf" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}F'}"/>
-			
-			<!--民用合同编号-->
+            <!--银行名称-->
+            <o:ObjectList Name="banknamelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名' order by id"/>
+
+            <!--民用合同编号-->
 			<o:SeriaNumber Name="Seriahtm" Length="5"  Key="{m:Exp Str='$A{SysTime.Now.ToString($yyyy$)}'}"/>
 			<!--非民用餐饮合同编号-->
 			<o:SeriaNumber Name="Seriahtfmc" Length="5"  Key="{m:Exp Str='$C{SysTime.Now.ToString($yyyy$)}'}"/>

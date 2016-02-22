@@ -95,7 +95,9 @@ namespace Com.Aote.Pages
                     MessageBox.Show("无法获取当前登陆用户信息,请重新登陆后操作!");
                     return;
                 }
+                string orgpathstr = loginUser.GetPropertyValue("orgpathstr").ToString();
                 GeneralObject go = (GeneralObject)(from r in loader.Res where r.Name.Equals("sellgasobj") select r).First();
+                go.SetPropertyValue("f_OrgStr", orgpathstr, false);
                 go.SetPropertyValue("f_stair1amount", items["f_stair1amount"].ToString(), false);
                 go.SetPropertyValue("f_stair2amount", items["f_stair2amount"].ToString(), false);
                 go.SetPropertyValue("f_stair3amount", items["f_stair3amount"].ToString(), false);
@@ -114,6 +116,7 @@ namespace Com.Aote.Pages
 
                 //给发卡对象赋值userfilego
                 GeneralObject faka = (GeneralObject)(from r in loader.Res where r.Name.Equals("userfilego") select r).First();
+                faka.SetPropertyValue("f_OrgStr", orgpathstr, false);
                 faka.SetPropertyValue("f_stair1amount", items["f_stair1amount"].ToString(), false);
                 faka.SetPropertyValue("f_stair2amount", items["f_stair2amount"].ToString(), false);
                 faka.SetPropertyValue("f_stair3amount", items["f_stair3amount"].ToString(), false);

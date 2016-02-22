@@ -16,18 +16,18 @@
     mc:Ignorable="d"
     x:Class="Com.Aote.Pages.阶梯气价批量变更" FontSize="13"
     d:DesignHeight="768" d:DesignWidth="1024">
-    
+
     <Grid x:Name="LayoutRoot" Background="White">
         <m:ResourceLoad>
             <!--阶梯气价信息列表-->
-            <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice"/>
+            <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice where (f_OrgStr  like  \'%\{LoginUser.f_parentname\}\{$%$\}\')"/>
             <!--用户类型查询用-->
             <o:ObjectList Name="usertypelistnull"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
             <!--气表类型查询用-->
             <o:ObjectList Name="qibiaoleixinglistnull"  EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
             <!--气价类型-->
             <o:ObjectList Name="qjlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
-            
+
             <!--变更对象-->
             <o:GeneralObject Name="change" WebClientInfo="{StaticResource dbclient}" 
 					EntityType="t_changestairprice"   
@@ -83,17 +83,6 @@
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock Text="用户编号：" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5.545,0,5.455" Grid.Row="1"/>
-                    <CheckBox x:Name="dbcheck" IsChecked="{m:Bind Path=f_wallhangboiler}" Content="有无壁挂炉" Margin="9,0,0,0"  Grid.Row="1" Grid.Column="2" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment">
-                        <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_wallhangboiler"  Operator="{m:Exp Str=dbcheck.IsChecked \:$f_wallhangboiler \= 1$ \,$(f_wallhangboiler\=0 or f_wallhangboiler is null)$}" />
-                        </a:Data.Prop>
-                    </CheckBox>
-                    <CheckBox x:Name="dbhheck" IsChecked="{m:Bind Path=f_dibaohu}" Content="低保户" Margin="0"  Grid.Row="1" Grid.Column="3" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right"  Grid.RowSpan="1" Width="75">
-                        <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_dibaohu"  Operator="{m:Exp Str=dbhheck.IsChecked \:$f_dibaohu \= 1$ \,$(f_dibaohu\=0 or f_dibaohu is null)$}" />
-                        </a:Data.Prop>
-                    </CheckBox>
-
                 </Grid>
                 <Grid toolkit:DockPanel.Dock="Bottom" DataContext="{m:Res Key=change}">
                     <Grid.RowDefinitions>

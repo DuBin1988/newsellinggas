@@ -79,7 +79,7 @@ namespace Com.Aote.Pages
                 go.Completed += obj_Completed;
                 go.Save();
             }
-            else 
+            else
             {
                 MessageBox.Show("请输入阶梯气价类型！");
                 ui_searchBusy.IsBusy = false;
