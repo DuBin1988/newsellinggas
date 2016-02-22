@@ -80,6 +80,7 @@ import com.aote.expression.upkeep.UpkeepFactory;
 import com.aote.expression.upkeep.UpkeepInterface;
 import com.aote.helper.Util;
 import com.aote.rs.util.FileHelper;
+import com.aote.rs.util.SynchronizedTools;
 import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 /**
@@ -103,23 +104,23 @@ public class DBService {
 	public JSONObject getMetas(@QueryParam("tables") String tables) {
 		String[] sTables = null;
 		// 不为空，是要取的表数据名称
-		if(tables != null) {
+		if (tables != null) {
 			sTables = tables.split(",");
 			Arrays.sort(sTables);
 		}
-		
+
 		JSONObject result = new JSONObject();
 		// 获取所有实体
 		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
 		for (Map.Entry<String, ClassMetadata> entry : map.entrySet()) {
 			try {
 				String key = entry.getKey();
-				
+
 				// 如果key不在所需表名里面
-				if(sTables != null && Arrays.binarySearch(sTables, key) == -1) {
+				if (sTables != null && Arrays.binarySearch(sTables, key) == -1) {
 					continue;
 				}
-				
+
 				JSONObject attrs = new JSONObject();
 				for (String name : entry.getValue().getPropertyNames()) {
 					Type type = entry.getValue().getPropertyType(name);
@@ -249,19 +250,21 @@ public class DBService {
 			@PathParam("attrname") String attrname) {
 		log.debug(query);
 		JSONObject result = new JSONObject();
-		// 单次查询加记录数限制
-		List list = executeFind(sessionFactory.getCurrentSession(),
-				new HibernateCall(query, 0, 10000));
-		if (list.size() != 1) {
-			// 查询到多条数据，跑出异常
-			throw new WebApplicationException(500);
-		}
-		// 把单个map转换成JSON对象
-		Map<String, Object> map = (Map<String, Object>) list.get(0);
-		result = (JSONObject) new JsonTransfer().MapToJson(map);
-		long attrVal = Long.parseLong(map.get(attrname).toString());
-		map.put(attrname, attrVal + 1 + "");
-		sessionFactory.getCurrentSession().update(map);
+		// // 单次查询加记录数限制
+		// List list = executeFind(sessionFactory.getCurrentSession(),
+		// new HibernateCall(query, 0, 10));
+		// if (list.size() != 1) {
+		// // 查询到多条数据，跑出异常
+		// throw new WebApplicationException(500);
+		// }
+		// // 把单个map转换成JSON对象
+		// Map<String, Object> map = (Map<String, Object>) list.get(0);
+		// result = (JSONObject) new JsonTransfer().MapToJson(map);
+		// long attrVal = Long.parseLong(map.get(attrname).toString());
+		// map.put(attrname, attrVal + 1 + "");
+		// sessionFactory.getCurrentSession().update(map);
+		result = SynchronizedTools.getSerialNumber(sessionFactory, query,
+				attrname);
 		log.debug(result.toString());
 		return result;
 	}
@@ -583,13 +586,17 @@ public class DBService {
 				if (!key.equals("id")) {
 					map.put(key, null);
 				}
-			} else if (value instanceof JSONArray && propType instanceof SetType) {
+			} else if (value instanceof JSONArray
+					&& propType instanceof SetType) {
 				// Json数组转换成一对多关系的Set
-				Set<Map<String, Object>> set = saveSet(session, (JSONArray) value);
+				Set<Map<String, Object>> set = saveSet(session,
+						(JSONArray) value);
 				map.put(key, set);
-			} else if (value instanceof JSONArray && propType instanceof ListType) {
+			} else if (value instanceof JSONArray
+					&& propType instanceof ListType) {
 				// Json数组转换成一对多关系的Set
-				List<Map<String, Object>> set = saveList(session, (JSONArray) value);
+				List<Map<String, Object>> set = saveList(session,
+						(JSONArray) value);
 				map.put(key, set);
 			} else if (value instanceof JSONObject) {
 				JSONObject obj = (JSONObject) value;
@@ -642,8 +649,8 @@ public class DBService {
 	}
 
 	// 保存JsonObject，并转换为Map，保存时，不做后台表达式运算，用于一对多关系中的子的保存
-	private Map<String, Object> saveWithoutExp(Session session,String entityName,
-			JSONObject object) throws JSONException {
+	private Map<String, Object> saveWithoutExp(Session session,
+			String entityName, JSONObject object) throws JSONException {
 		// 根据实体名字去除配置属性信息
 		ClassMetadata classData = sessionFactory.getClassMetadata(entityName);
 		// 把json对象转换成map
@@ -666,7 +673,8 @@ public class DBService {
 				}
 			} else if (value instanceof JSONArray) {
 				// Json数组转换成一对多关系的Set
-				Set<Map<String, Object>> set = saveSet(session, (JSONArray) value);
+				Set<Map<String, Object>> set = saveSet(session,
+						(JSONArray) value);
 				map.put(key, set);
 			} else if (propType != null
 					&& (propType instanceof DateType || propType instanceof TimeType)) {
@@ -686,7 +694,7 @@ public class DBService {
 			} else if (value instanceof JSONObject) {
 				JSONObject obj = (JSONObject) value;
 				String type = (String) obj.get("EntityType");
-				Map<String, Object> set = saveWithoutExp(session,type,
+				Map<String, Object> set = saveWithoutExp(session, type,
 						(JSONObject) value);
 				map.put(key, set);
 			} else {
@@ -722,8 +730,7 @@ public class DBService {
 		}
 		return set;
 	}
-	
-	
+
 	@GET
 	@Path("/one/{hql}/{attrname}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1005,9 +1012,8 @@ public class DBService {
 					} else if (value instanceof PersistentSet) {
 						PersistentSet set = (PersistentSet) value;
 						value = ToJson(set);
-					}
-					 else if (value instanceof PersistentList) {
-						 PersistentList set = (PersistentList) value;
+					} else if (value instanceof PersistentList) {
+						PersistentList set = (PersistentList) value;
 						value = ToJson(set);
 					}
 					// 如果是$type$，表示实体类型，转换成EntityType
@@ -1053,15 +1059,15 @@ public class DBService {
 			}
 			JSONArray array = new JSONArray();
 			for (Object obj : list) {
-				if(obj == null)
+				if (obj == null)
 					continue;
 				Map<String, Object> map = (Map<String, Object>) obj;
-				JSONObject json = (JSONObject)MapToJson(map);
+				JSONObject json = (JSONObject) MapToJson(map);
 				array.put(json);
 			}
 			return array;
 		}
-		
+
 		// 判断已经转换过的内容里是否包含给定对象
 		public boolean contains(Map<String, Object> obj) {
 			for (Map<String, Object> map : this.transed) {
@@ -1147,27 +1153,26 @@ public class DBService {
 			// 获得文件名
 			String filename = (String) map.get("filename");
 			filename = URLEncoder.encode(filename, "UTF-8");
-			//获取存储的模式
-			String SaveMode=(String) map.get("saveMode");
-			//获取文件的路径
-			String fileFullPath=(String) map.get("filefullpath");
+			// 获取存储的模式
+			String SaveMode = (String) map.get("saveMode");
+			// 获取文件的路径
+			String fileFullPath = (String) map.get("filefullpath");
 			InputStream is;
 			// 文件保存模式
 			if (SaveMode != null && SaveMode.equals("file")) {
-			
-				is=new FileInputStream(fileFullPath);
-				
+
+				is = new FileInputStream(fileFullPath);
+
 			} else {
 				// 获得文件
 				Blob file = (Blob) map.get("blob");
 				is = file.getBinaryStream();
-				
+
 			}
-			
-			
+
 			// 把文件的内容送入响应流中
-			response.setHeader("Pragma","No-cache"); 
-			response.setHeader("Cache-Control","no-cache"); 
+			response.setHeader("Pragma", "No-cache");
+			response.setHeader("Cache-Control", "no-cache");
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition", "attachment;filename=\""
@@ -1563,50 +1568,50 @@ public class DBService {
 				"delete from t_test where id=2");
 		return "";
 	}
-	
+
 	// 根据开始日期和结束日期获得维护费金额
 	@GET
 	@Path("upkeep/{userid}/{usertype}/{metertype}/{startmonth}/{endmonth}/{oughtamount}")
 	public JSONObject upfee(@PathParam("userid") String userid,
-	@PathParam("usertype") String usertype,
-	@PathParam("metertype") String metertype,
-	@PathParam("startmonth") String startmonth,
-	@PathParam("endmonth") String endmonth,
-	@PathParam("oughtamount") String oughtamount) {
-	JSONObject result = new JSONObject();
-	String value = "";
-	try {
-	UpkeepInterface upkeep = UpkeepFactory.getInstance()
-	.getUpkeepComputer(usertype);
-	Map map = new HashMap();
-	map.put("userid", userid);
-	map.put("metertype", metertype);
-	map.put("consumertype", usertype);
+			@PathParam("usertype") String usertype,
+			@PathParam("metertype") String metertype,
+			@PathParam("startmonth") String startmonth,
+			@PathParam("endmonth") String endmonth,
+			@PathParam("oughtamount") String oughtamount) {
+		JSONObject result = new JSONObject();
+		String value = "";
+		try {
+			UpkeepInterface upkeep = UpkeepFactory.getInstance()
+					.getUpkeepComputer(usertype);
+			Map map = new HashMap();
+			map.put("userid", userid);
+			map.put("metertype", metertype);
+			map.put("consumertype", usertype);
 
-	// 获取用户资料，把最后购气日期找出来
-	Session session = sessionFactory.openSession();
-	session.beginTransaction();
+			// 获取用户资料，把最后购气日期找出来
+			Session session = sessionFactory.openSession();
+			session.beginTransaction();
 
-	String sql = "select f_finabuygasdate from t_userfiles where f_userid='"
-	+ userid + "'";
-	HibernateSQLCall sqlCall = new HibernateSQLCall(sql, 0, 10);
-	List<Object> list = (List<Object>) sqlCall.doInHibernate(session);
-	String f_finabuygasdate = list.get(0) + "";
-	session.getTransaction().commit();
-	session.close();
-	if (f_finabuygasdate != null && !f_finabuygasdate.equals("")
-	&& !f_finabuygasdate.equals("null")) {
-	map.put("f_finabuygasdate", f_finabuygasdate.substring(0, 10));
-	}
-	map.put("startmonth", startmonth);
-	map.put("endmonth", endmonth);
-	map.put("oughtamount", oughtamount);
-	value = upkeep.computeUpkeep(map, this.sessionFactory);
-	result.put("upkeep", value);
+			String sql = "select f_finabuygasdate from t_userfiles where f_userid='"
+					+ userid + "'";
+			HibernateSQLCall sqlCall = new HibernateSQLCall(sql, 0, 10);
+			List<Object> list = (List<Object>) sqlCall.doInHibernate(session);
+			String f_finabuygasdate = list.get(0) + "";
+			session.getTransaction().commit();
+			session.close();
+			if (f_finabuygasdate != null && !f_finabuygasdate.equals("")
+					&& !f_finabuygasdate.equals("null")) {
+				map.put("f_finabuygasdate", f_finabuygasdate.substring(0, 10));
+			}
+			map.put("startmonth", startmonth);
+			map.put("endmonth", endmonth);
+			map.put("oughtamount", oughtamount);
+			value = upkeep.computeUpkeep(map, this.sessionFactory);
+			result.put("upkeep", value);
 
-	} catch (Exception e) {
-	throw new RuntimeException(e);
-	}
-	return result;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return result;
 	}
 }
