@@ -15,283 +15,283 @@
     xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
 	xmlns:System="clr-namespace:System;assembly=mscorlib"
     x:Class="Com.Aote.Pages.发票信息查看" FontSize="13"
-    mc:Ignorable="d" > 
-	
-	
-	<Grid>
-		
-		
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="7*"/>
-			<ColumnDefinition Width="3*"/>
-		</Grid.ColumnDefinitions>
-		<m:ResourceLoad Margin="0,0,-12,0">
-			<o:ExcelObj Name="excel" Bind="Index,f_invoicenum,f_userid,f_username,f_fapiaotype,f_gas,f_money,f_repairfee,f_totalfee,f_fapiaostatue,f_sgnetwork,f_sgoperator,f_fapiaodate,f_fapiaotime,f_filiale" Source="{m:Exp Str=fpinfos}"/>
-		<!--网点列表对象-->
-		<o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/>
-		<!--发票状态列表-->
-		<o:ObjectList Name="fpztlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票状态'"/>
-        <!--分公司列表-->
-		<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
-		<!--总公司名称-->
-		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+    mc:Ignorable="d" >
+
+
+    <Grid>
+
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <o:ExcelObj Name="excel" Bind="Index,f_invoicenum,f_userid,f_username,f_fapiaotype,f_gas,f_money,f_repairfee,f_totalfee,f_fapiaostatue,f_sgnetwork,f_sgoperator,f_fapiaodate,f_fapiaotime,f_filiale" Source="{m:Exp Str=fpinfos}"/>
+            <!--网点列表对象-->
+            <o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/>
+            <!--发票状态列表-->
+            <o:ObjectList Name="fpztlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票状态'"/>
+            <!--分公司列表-->
+            <o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
-        </o:GeneralObject>
-			
-			</m:ResourceLoad>
-		<c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fpinfos.ItemsSource.IsBusy}">
-			<toolkit:DockPanel   >
-				<toolkit:DockPanel x:Name="fpinfossearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
-					<a:Data.Context>
-						<o:SearchObject />        	
-					</a:Data.Context>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="28"/>
-							<RowDefinition Height="28"/>
-							<RowDefinition Height="28"/>
-							<RowDefinition Height="28"/>
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="50*"/>
-							<ColumnDefinition Width="50*"/>
-						</Grid.ColumnDefinitions>
-						<TextBlock TextWrapping="Wrap" Text="网　　点：" Margin="5,0,0,0" Height="25"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_invoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_invoicenum" Operator="f_invoicenum like 'this%'"/>               
-							</a:Data.Prop>
-						</TextBox>
-						<ComboBox x:Name="wangdian" Grid.Column="1" SelectedValue="{m:Bind Path=f_sgnetwork}" ItemsSource="{m:Exp Str=wangdianlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_sgnetwork" Operator="f_sgnetwork = 'this'"/>               
-							</a:Data.Prop>
-						</ComboBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期：　从" Margin="5,1,0,2" Height="25"/>
-						<sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate}" Grid.Column="1" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaodate" Value="{m:Exp Str=SysTime.Today}" 
-								  Operator=" f_fapiaodate >= substring('this',1,10)"/>    
-								</a:Data.Prop>
-							</sdk:DatePicker>
-						<Button Content="置  空" x:Name="zhikong" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="197,1,181,-2" FontSize="14"  />
-						<TextBlock TextWrapping="Wrap" Text="维护费&gt;=" Margin="10,2,0,1" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_repairfee}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,2,8,1" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_repairfee" Operator="f_repairfee >= 'this'"/>               
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock TextWrapping="Wrap" Text="发 票 号：　从" Margin="5,1,0,0" Height="25" Grid.Row="1" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="startinvoicenum"  Operator="f_invoicenum >= this"/>               
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,1,8,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="1" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="endinvoicenum"  Operator="f_invoicenum ^= this"/>               
-							</a:Data.Prop>
-						</TextBox>
-						<ComboBox x:Name="Comboxfx" Grid.Column="2" Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" ItemsSource="{m:Exp Str=fgslist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="100" Margin="5,2,0,1" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Left" >
-                    	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>          
-                    	</a:Data.Prop>
-						</ComboBox>
-						<TextBlock TextWrapping="Wrap" Text="到" Margin="8,-1,0,4" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="1"/>
-						<sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate2}" Grid.Column="2" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="106,1,8,2" Height="25" VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaodate2" Value="{m:Exp Str=SysTime.Today}" 
-									Operator=" f_fapiaodate ^= substring('this',1,10)"/>               
-							</a:Data.Prop>
-						</sdk:DatePicker>
-						<TextBlock TextWrapping="Wrap" Text="到" Margin="8,1,0,2" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="2"/>
-						<Button Content="查  询" x:Name="fpinfossearchbutton_Copy" Grid.Column="2" Grid.Row="3" Click="fpinfossearchbutton_Copy_Click" Margin="143,0,0,-1" FontSize="14" HorizontalAlignment="Left" Width="50"  />
-						<TextBlock TextWrapping="Wrap" Text="发票状态：" Margin="5,1,0,2" Height="25" Grid.Row="3"/>
-						<ComboBox x:Name="fpzt" Grid.Column="1"  SelectedValue="{m:Bind Path=f_fapiaostatue}" ItemsSource="{m:Exp Str=fpztlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaostatue"  Operator="f_fapiaostatue = 'this'"/>          
-							</a:Data.Prop>
-						</ComboBox>
-						<Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	Margin="0,-1,8,1" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
-						<HyperlinkButton x:Name="annex"  Content="导出xml格式" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/fapiao/\{fpinfos.ItemsSource.Path\}/\{fpinfos.ItemsSource.Count\}$}" TargetName="_self" 	Margin="0,2,97,1" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
-					</Grid>
-				</toolkit:DockPanel>
-					<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="28">
-						<TextBlock TextWrapping="Wrap" Margin="5,0,11,3" Text="{m:Exp Str=$金额小计:\{fpinfos.ItemsSource[True].Sum(f_money)\}$}" Width="440" HorizontalAlignment="Left" Foreground="#FF140000" Height="27"/>
-					</toolkit:DockPanel>
-				<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="48">
-					<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=fpinfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
-						<TextBlock TextWrapping="Wrap" Margin="5,0,50,3" Text="{m:Exp Str=$共\{fpinfos.ItemsSource.Count\}项}" Width="420" HorizontalAlignment="Left" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27">
-						</TextBlock>
-					</toolkit:DockPanel>
-					<sdk:DataGrid x:Name="fpinfos" Margin="0,0,0,2"  
+            </o:GeneralObject>
+
+        </m:ResourceLoad>
+        <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fpinfos.ItemsSource.IsBusy}">
+            <toolkit:DockPanel   >
+                <toolkit:DockPanel x:Name="fpinfossearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
+                    <a:Data.Context>
+                        <o:SearchObject />
+                    </a:Data.Context>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock TextWrapping="Wrap" Text="网　　  点："  Margin="5,0,0,0" Height="25"/>
+                        <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_invoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="0" Margin="-190,1,0,2"  Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_invoicenum" Operator="f_invoicenum like 'this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <ComboBox x:Name="wangdian" SelectedValue="{m:Bind Path=f_sgnetwork}" ItemsSource="{m:Exp Str=wangdianlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="200" Margin="-50,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_sgnetwork" Operator="f_sgnetwork = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期:  从" Margin="5,1,0,2" Height="25"/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate}" Grid.Column="1" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="200" Margin="-150,1,0,2" Height="25" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_fapiaodate" Value="{m:Exp Str=SysTime.Today}" 
+								  Operator=" f_fapiaodate >= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <Button Content="置  空" x:Name="zhikong" Grid.Column="2" Width="50" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="30,1,181,-2" FontSize="14"  />
+                        <TextBlock TextWrapping="Wrap" Text="维护费&gt;=" Margin="-100,2,0,1" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right"/>
+                        <TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_repairfee}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,8,1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_repairfee" Operator="f_repairfee >= 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="发 票 号:   从" Margin="5,1,0,0" Height="25" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="175"/>
+                        <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="200" Margin="-150,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="startinvoicenum"  Operator="f_invoicenum >= this"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,8,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="1">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="endinvoicenum"  Operator="f_invoicenum ^= this"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <ComboBox x:Name="Comboxfx" Grid.Column="2" Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" ItemsSource="{m:Exp Str=fgslist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="100" Margin="-120,2,0,1" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Left" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="到" Margin="-100,-1,0,4" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="1"/>
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate2}" Grid.Column="2" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,8,2" Height="25" VerticalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_fapiaodate2" Value="{m:Exp Str=SysTime.Today}" 
+									Operator=" f_fapiaodate ^= substring('this',1,10)"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="到" Margin="-100,1,0,2" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="2"/>
+                        <Button Content="查  询" x:Name="fpinfossearchbutton_Copy" Grid.Column="2" Grid.Row="3" Click="fpinfossearchbutton_Copy_Click" Margin="0,0,0,-1" FontSize="14" HorizontalAlignment="Left" Width="50"  />
+                        <TextBlock TextWrapping="Wrap" Text="发票状态：" Margin="5,1,0,2" Height="25" Grid.Row="3"/>
+                        <ComboBox x:Name="fpzt" Grid.Column="1"  SelectedValue="{m:Bind Path=f_fapiaostatue}" ItemsSource="{m:Exp Str=fpztlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="200"  Margin="-150,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_fapiaostatue"  Operator="f_fapiaostatue = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	Margin="0,-1,8,1" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
+                        <HyperlinkButton x:Name="annex"  Content="导出xml格式" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/fapiao/\{fpinfos.ItemsSource.Path\}/\{fpinfos.ItemsSource.Count\}$}" TargetName="_self" 	Margin="0,2,97,1" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
+                    </Grid>
+                </toolkit:DockPanel>
+                <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="28">
+                    <TextBlock TextWrapping="Wrap" Margin="5,0,11,3" Text="{m:Exp Str=$金额小计:\{fpinfos.ItemsSource[True].Sum(f_money)\}$}" Width="440" HorizontalAlignment="Left" Foreground="#FF140000" Height="27"/>
+                </toolkit:DockPanel>
+                <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="48">
+                    <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=fpinfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
+                    <TextBlock TextWrapping="Wrap" Margin="5,0,50,3" Text="{m:Exp Str=$共\{fpinfos.ItemsSource.Count\}项}" Width="420" HorizontalAlignment="Left" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27">
+                    </TextBlock>
+                </toolkit:DockPanel>
+                <sdk:DataGrid x:Name="fpinfos" Margin="0,0,0,2"  
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
-						<a:Data.Items>
-							<o:PagedObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
+                    <a:Data.Items>
+                        <o:PagedObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
                                 MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
 								Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} order by f_invoicenum$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'  order by f_invoicenum$\,$abc$}"
 								IsOld="{m:Exp Str=fpinfo.DataContext.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
-						</a:Data.Items>
-						<sdk:DataGrid.Columns>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-							<sdk:DataGridTextColumn Header="发票代码" Binding="{Binding f_invoiceid}"/>
-							<sdk:DataGridTextColumn Header="发票号" Binding="{Binding f_invoicenum}"/>
-							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
-							<sdk:DataGridTextColumn Header="业务类型" Binding="{Binding f_fapiaotype}"/>
-							<sdk:DataGridTextColumn Header="气　量" Binding="{Binding f_gas}"/>
-							<sdk:DataGridTextColumn Header="气　价" Binding="{Binding f_gasprice}"/>
-							<sdk:DataGridTextColumn Header="金　额" Binding="{Binding f_money}"/>
-							<sdk:DataGridTextColumn Header="维护费" Binding="{Binding f_repairfee}"/>
-							<sdk:DataGridTextColumn Header="合　计" Binding="{Binding f_totalfee}"/>
-							<sdk:DataGridTextColumn Header="发票状态" Binding="{Binding f_fapiaostatue}"/>
-							<sdk:DataGridTextColumn Header="网　点" Binding="{Binding f_sgnetwork}"/>
-							<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_sgoperator}"/>
-							<sdk:DataGridTextColumn Header="日　期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
-							<sdk:DataGridTextColumn Header="时　间" Binding="{Binding f_fapiaotime,StringFormat=hh:mm:ss tt}"/>
-							<sdk:DataGridTextColumn Header="分　公　司" Binding="{Binding f_filiale}"/>
-						</sdk:DataGrid.Columns>
-					</sdk:DataGrid>
-				</toolkit:DockPanel>
-			</c:BusyIndicatorEx>
-			<c:BusyIndicatorEx Grid.Column="1">
-				<Grid Background="{x:Null}" x:Name="fpinfo" >
-					<a:Data.Context>
-						<o:GeneralObject  Name="fpinfosgo" WebClientInfo="{StaticResource dbclient}" 
+                    </a:Data.Items>
+                    <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                        <sdk:DataGridTextColumn Header="发票代码" Binding="{Binding f_invoiceid}"/>
+                        <sdk:DataGridTextColumn Header="发票号" Binding="{Binding f_invoicenum}"/>
+                        <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+                        <sdk:DataGridTextColumn Header="业务类型" Binding="{Binding f_fapiaotype}"/>
+                        <sdk:DataGridTextColumn Header="气　量" Binding="{Binding f_gas}"/>
+                        <sdk:DataGridTextColumn Header="气　价" Binding="{Binding f_gasprice}"/>
+                        <sdk:DataGridTextColumn Header="金　额" Binding="{Binding f_money}"/>
+                        <sdk:DataGridTextColumn Header="维护费" Binding="{Binding f_repairfee}"/>
+                        <sdk:DataGridTextColumn Header="合　计" Binding="{Binding f_totalfee}"/>
+                        <sdk:DataGridTextColumn Header="发票状态" Binding="{Binding f_fapiaostatue}"/>
+                        <sdk:DataGridTextColumn Header="网　点" Binding="{Binding f_sgnetwork}"/>
+                        <sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_sgoperator}"/>
+                        <sdk:DataGridTextColumn Header="日　期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
+                        <sdk:DataGridTextColumn Header="时　间" Binding="{Binding f_fapiaotime,StringFormat=hh:mm:ss tt}"/>
+                        <sdk:DataGridTextColumn Header="分　公　司" Binding="{Binding f_filiale}"/>
+                    </sdk:DataGrid.Columns>
+                </sdk:DataGrid>
+            </toolkit:DockPanel>
+        </c:BusyIndicatorEx>
+        <c:BusyIndicatorEx Grid.Column="1">
+            <Grid Background="{x:Null}" x:Name="fpinfo" >
+                <a:Data.Context>
+                    <o:GeneralObject  Name="fpinfosgo" WebClientInfo="{StaticResource dbclient}" 
 							EntityType="t_fapiaoinfos" Source="{m:Exp Str=fpinfos.SelectedItem}" />
-					</a:Data.Context>
-				
-			<!--主操作区-->
-					<Grid Margin="0" HorizontalAlignment="Stretch"  >
-						<Grid.Background>
-							<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-								<GradientStop Color="#FFF2F8FF" Offset="0"/>
-								<GradientStop Color="#FFDDF2FD" Offset="1"/>
-							</LinearGradientBrush>
-						</Grid.Background>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>	
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="1*"/>
-						</Grid.ColumnDefinitions>
-						<TextBlock Text="发票编号：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>	
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Height="25" Text="名　　称："/>
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Height="25" Text="业务类型：" />
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" Text="金　　额："/>
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" Text="气　　量：" />
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Height="25" ><Run Text="维"/><Run Text=" "/><Run Text="护"/><Run Text=" "/><Run Text="费"/><Run Text="："/></TextBlock>
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25" Text="合　　计：" />
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="8" Height="25" ><Run Text="发票状态"/><Run Text="："/></TextBlock>
-						<TextBlock Text="网　　点：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="10" Height="25" />
-						<TextBlock Text="操  作  员：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="11" Height="25" />
-						<TextBlock Text="操作日期：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="13" Height="25" />
-						<TextBox Text="{m:Bind Path=f_invoicenum}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_invoicenum" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_username}"   Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch"  Grid.ColumnSpan="1" Height="25">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_username" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_fapiaotype}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaotype" />
-							</a:Data.Prop>
-						</TextBox>	
-						<TextBox Text="{m:Bind Path=f_gas}"   Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_gas"  />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_money}"  Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_money"  />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_sgoperator}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" Height="25">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_sgoperator"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_repairfee}"  Grid.Column="1" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_repairfee" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_totalfee}"  Grid.Column="1" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch"  Height="25" HorizontalAlignment="Stretch" Width="Auto"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_totalfee"  />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_fapiaostatue}"  Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaostatue"  />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_sgnetwork}"  Grid.Column="1" Margin="0" Grid.Row="10" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"   >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_sgnetwork"/>
-							</a:Data.Prop>
-						</TextBox>
-						<sdk:DatePicker Grid.Column="1" Margin="0" Grid.Row="13"  SelectedDate="{m:Bind Path=f_fapiaodate}" IsEnabled="False" Grid.ColumnSpan="1" BorderThickness="1,1,1,0" Height="25" d:LayoutOverrides="GridBox">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaodate"/>
-							</a:Data.Prop>
-						</sdk:DatePicker>
-						<TextBlock Text="分  公  司：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="12" Height="25" />
-						<TextBox Text="{m:Bind Path=f_filiale}"  Grid.Column="1" Margin="0" Grid.Row="12" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_filiale"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Text="分公司编号：" Visibility="Collapsed" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="9" Height="25" Grid.Column="2" />
-						<TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed"  Grid.Column="3" Margin="0,9" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fengongsinum"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Margin="0" Grid.Row="14" TextWrapping="Wrap" TextAlignment="Right" Height="25"><Run Text="操作"/><Run Text="时间："/></TextBlock>
-						<toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime}" IsEnabled="False" Grid.Column="1" Margin="0" Grid.Row="14"   IsDropDownOpen="False"  Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_fapiaotime" />
-							</a:Data.Prop>
-						</toolkit:TimePicker>
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="1"><Run Text="用户"/><Run Text="编号："/></TextBlock>
-						<TextBox Text="{m:Bind Path=f_userid}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_userid" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="9" Text="卡　　号："/>
-						<TextBox Text="{m:Bind Path=f_cardid}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_cardid" />
-							</a:Data.Prop>
-						</TextBox>
-					</Grid>
-				</Grid>
-			</c:BusyIndicatorEx>
-		</Grid>
+                </a:Data.Context>
+
+                <!--主操作区-->
+                <Grid Margin="0" HorizontalAlignment="Stretch"  >
+                    <Grid.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                            <GradientStop Color="#FFF2F8FF" Offset="0"/>
+                            <GradientStop Color="#FFDDF2FD" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="发票编号：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Height="25" Text="名　　称："/>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Height="25" Text="业务类型：" />
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" Text="金　　额："/>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" Text="气　　量：" />
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Height="25" ><Run Text="维"/><Run Text=" "/><Run Text="护"/><Run Text=" "/><Run Text="费"/><Run Text="："/></TextBlock>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25" Text="合　　计：" />
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="8" Height="25" ><Run Text="发票状态"/><Run Text="："/></TextBlock>
+                    <TextBlock Text="网　　点：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="10" Height="25" />
+                    <TextBlock Text="操  作  员：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="11" Height="25" />
+                    <TextBlock Text="操作日期：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="13" Height="25" />
+                    <TextBox Text="{m:Bind Path=f_invoicenum}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_invoicenum" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_username}"   Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch"  Grid.ColumnSpan="1" Height="25">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_username" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_fapiaotype}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_fapiaotype" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_gas}"   Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_gas"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_money}"  Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_money"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_sgoperator}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" Height="25">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_sgoperator"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_repairfee}"  Grid.Column="1" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_repairfee" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_totalfee}"  Grid.Column="1" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch"  Height="25" HorizontalAlignment="Stretch" Width="Auto"  >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_totalfee"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_fapiaostatue}"  Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_fapiaostatue"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_sgnetwork}"  Grid.Column="1" Margin="0" Grid.Row="10" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"   >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_sgnetwork"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <sdk:DatePicker Grid.Column="1" Margin="0" Grid.Row="13"  SelectedDate="{m:Bind Path=f_fapiaodate}" IsEnabled="False" Grid.ColumnSpan="1" BorderThickness="1,1,1,0" Height="25" d:LayoutOverrides="GridBox">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_fapiaodate"/>
+                        </a:Data.Prop>
+                    </sdk:DatePicker>
+                    <TextBlock Text="分  公  司：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="12" Height="25" />
+                    <TextBox Text="{m:Bind Path=f_filiale}"  Grid.Column="1" Margin="0" Grid.Row="12" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox"  >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_filiale"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="分公司编号：" Visibility="Collapsed" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="9" Height="25" Grid.Column="2" />
+                    <TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed"  Grid.Column="3" Margin="0,9" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_fengongsinum"/>
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Margin="0" Grid.Row="14" TextWrapping="Wrap" TextAlignment="Right" Height="25"><Run Text="操作"/><Run Text="时间："/></TextBlock>
+                    <toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime}" IsEnabled="False" Grid.Column="1" Margin="0" Grid.Row="14"   IsDropDownOpen="False"  Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox"  >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_fapiaotime" />
+                        </a:Data.Prop>
+                    </toolkit:TimePicker>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="1"><Run Text="用户"/><Run Text="编号："/></TextBlock>
+                    <TextBox Text="{m:Bind Path=f_userid}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_userid" />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="9" Text="卡　　号："/>
+                    <TextBox Text="{m:Bind Path=f_cardid}"  IsReadOnly="True"  Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_cardid" />
+                        </a:Data.Prop>
+                    </TextBox>
+                </Grid>
+            </Grid>
+        </c:BusyIndicatorEx>
+    </Grid>
 </UserControl>
