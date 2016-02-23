@@ -271,13 +271,13 @@
 							
 												<TextBox Text="{m:Bind Path=f_idnumber}"  Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="0.368,-0.68" HorizontalAlignment="Stretch" Width="Auto"  >
 													<a:Data.Prop>
-                                                    <o:PropertySetter PropertyName="f_idnumber" Regex="^{18}$|^{17}(^X|x)$" ErrorMessage="未正确填写证件号"  Value="{m:Exp Str=unitinfos.SelectedItem.f_idnumber}"/>
+                                                    <o:PropertySetter PropertyName="f_idnumber" Regex= "^(^\d{18}$|^\d{17}(^\d|X|x$)$)$"  ErrorMessage="未正确填写证件号"  Value="{m:Exp Str=unitinfos.SelectedItem.f_idnumber}"/>
 													</a:Data.Prop>
 												</TextBox>	
 							
 												<TextBox Text="{m:Bind Path=f_phone}"  Grid.Column="3" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="-1.435,0.56" Grid.RowSpan="1" >
 													<a:Data.Prop>
-                                                    <o:PropertySetter PropertyName="f_phone"  Regex="^1[34578][0-9]{8}$"  ErrorMessage="未正确填写手机号"   NotNull="True" Value="{m:Exp Str=unitinfos.SelectedItem.f_phone}"/>
+                                                    <o:PropertySetter PropertyName="f_phone"  Regex="^1[34578][0123456789]\d{8}$"   ErrorMessage="未正确填写手机号"   NotNull="True" Value="{m:Exp Str=unitinfos.SelectedItem.f_phone}"/>
 													</a:Data.Prop>
 												</TextBox>
 												<TextBox Text="{m:Bind Path=f_weizhi}"  Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" />

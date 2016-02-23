@@ -435,13 +435,13 @@
 
                                         <TextBox Text="{m:Bind Path=f_idnumberchange}"  Grid.Column="4" Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="0.368,-0.68" HorizontalAlignment="Stretch" Width="Auto"  >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_idnumberchange" Regex="^{18}$|^{17}(^X|x)$" ErrorMessage="未正确填写证件号"  Value="{m:Exp Str=userfiles.SelectedItem.f_idnumber}"/>
+                                                <o:PropertySetter PropertyName="f_idnumberchange"  Regex= "^(^\d{18}$|^\d{17}(^\d|X|x$)$)$"  ErrorMessage="未正确填写证件号"  Value="{m:Exp Str=userfiles.SelectedItem.f_idnumber}"/>
                                             </a:Data.Prop>
                                         </TextBox>
 
                                         <TextBox x:Name="ui_phonechange" Text="{m:Bind Path=f_phonechange}"  Grid.Column="4" Margin="0,3,0,2" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False" Height="Auto" VerticalAlignment="Stretch" RenderTransformOrigin="-1.435,0.56" Grid.RowSpan="1" TextChanged="ui_phonechange_TextChanged" HorizontalAlignment="Right" Width="115" >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_phonechange"  Regex="^1[34578][0-9]{8}$"  ErrorMessage="未正确填写手机号"   Value="{m:Exp Str=userfiles.SelectedItem.f_phone}"/>
+                                                <o:PropertySetter PropertyName="f_phonechange"  Regex="^1[34578][0123456789]\d{8}$"   ErrorMessage="未正确填写手机号"   Value="{m:Exp Str=userfiles.SelectedItem.f_phone}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBox x:Name="ui_weizhichange" Text="{m:Bind Path=f_weizhichange}" Grid.Column="2" Margin="0,0,0,2" Grid.Row="9" Height="25" VerticalAlignment="Bottom"  >
