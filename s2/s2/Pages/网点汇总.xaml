@@ -212,6 +212,24 @@
          group by f_payfeetype\, f_usertype
 		}">
             </o:ObjectList>
+
+			 <!--阶梯气价信息-->
+            <o:PagedList Name="stair" WebClientInfo="{StaticResource dbclient}"
+		            LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
+		            Path="sql"
+					HQL="{m:Exp Str=$(select 1 type1\, COUNT(*)count\,SUM(f_stair1amount)f_stair1amount\,SUM(f_stair1fee)f_stair1fee from t_sellinggas where f_stair1amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
+										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
+                                        UNION ALL
+                                        (select 2 type2\, COUNT(*)count\,SUM(f_stair2amount)f_stair2amount\,SUM(f_stair2fee)f_stair2fee from t_sellinggas where f_stair2amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
+										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
+                                        UNION ALL
+                                        (select 3 type3\, COUNT(*)count\,SUM(f_stair3amount)f_stair3amount\,SUM(f_stair3fee)f_stair3fee from t_sellinggas where f_stair3amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
+										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
+										 UNION ALL
+                                        (select 4 type4\, COUNT(*)count\,SUM(f_stair4amount)f_stair4amount\,SUM(f_stair4fee)f_stair4fee from t_sellinggas where f_stair4amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
+										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
+                                       }">
+            </o:PagedList>
         </m:ResourceLoad>
 
         <!--国税发票打印-->
@@ -234,7 +252,7 @@
             <a:Data.Context>
                 <o:SearchObject />
             </a:Data.Context>
-            <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="6" Margin="3,0,17,-1" FontSize="14" Height="28" VerticalAlignment="Bottom"  />
+            <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="6" Margin="3,0,17,0" FontSize="14" Height="28" VerticalAlignment="Bottom"  />
             <Button Grid.Column="7" Content="打印" Click="{m:Exp Str=print.Print()}" Height="28" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="64"/>
             <TextBlock TextWrapping="Wrap" Grid.Column="0" Margin="0,0,0,1" Height="25" TextAlignment="Right" Text="收费日期 从：" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
             <sdk:DatePicker x:Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,2" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" d:LayoutOverrides="Height" >
@@ -281,7 +299,7 @@
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
-
+                    <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
@@ -314,57 +332,57 @@
                 <TextBlock  Grid.Column="1" Margin="83,0,1,8" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
                 <!--<TextBlock Text="{m:Exp Str=whfdate.Text}" Grid.Column="4"  HorizontalAlignment="Stretch" Margin="0,1,48,1" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="20" VerticalAlignment="Stretch" Grid.ColumnSpan="1"/>-->
 
-                <sdk:Label Margin="-1,8,0,0" Content="财  务  报  表" FontSize="13.333" VerticalContentAlignment="Top" Grid.Column="2" Grid.Row="0" Height="26" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="175" HorizontalAlignment="Center"/>
-                <sdk:Label Margin="40,7,18,0" Content="机表收费笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="1" d:LayoutOverrides="Width"/>
-                <sdk:Label Margin="40,7,18,0" Content="卡表收费笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="2" d:LayoutOverrides="Width"/>
-                <sdk:Label Margin="67,7,18,0" Content="超用笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="3" d:LayoutOverrides="Width"/>
+                <sdk:Label Margin="23,8,24,0" Content="财  务  报  表" FontSize="13.333" VerticalContentAlignment="Top" Grid.Column="2" Grid.Row="0" Height="26" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="175" HorizontalAlignment="Center"/>
+                <sdk:Label Margin="40,7,18,0" Content="机表收费笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="1"/>
+                <sdk:Label Margin="40,7,18,0" Content="卡表收费笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="2"/>
+                <sdk:Label Margin="67,7,18,0" Content="超用笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="3"/>
                 <sdk:Label Margin="0,7,18,0" Content="机表预存笔数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="4" Width="80"/>
                 <sdk:Label Margin="0,7,18,0" Content="不收费补卡数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="5"/>
                 <sdk:Label Margin="0,7,13,0" Content="收费补卡数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="5" Grid.Column="2" Width="72"/>
-                <sdk:Label Margin="54,7,18,0" Content="民用发卡数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="9" d:LayoutOverrides="Width"/>
+                <sdk:Label Margin="54,7,18,0" Content="民用发卡数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="9"/>
                 <sdk:Label Margin="0,7,18,0" Content="非民用发卡数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="10"/>
                 <sdk:Label Margin="0,7,18,0" Content="过 户 数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="11"/>
                 <sdk:Label Margin="0,7,18,0" Content="其它收费笔数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="12"/>
-                <sdk:Label Margin="67,4,18,3" Content="换表笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="6" d:LayoutOverrides="Width"/>
-                <sdk:Label Margin="67,0,18,0" Content="合计气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="21"/>
-                <TextBlock Text="开户数" Margin="53,6,41,4" Grid.Row="18" TextWrapping="Wrap" Grid.Column="1"/>
-                <TextBlock Text="{m:Exp Str='sellgas[data.col0!=$超用收费$ and data.col7\=\=$机表$].Sum(col2)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,1,0"  Width="Auto" Height="20" Grid.Row="1"/>
-                <TextBlock Text="{m:Exp Str='sellgas[data.col0!=$超用收费$ and data.col7\=\=$卡表$].Sum(col2)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,1,0"  Width="Auto" Height="20" Grid.Row="2"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col2)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,0,4"  Width="Auto" Height="20" Grid.Row="3"/>
+                <sdk:Label Margin="67,4,18,3" Content="换表笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="6"/>
+                <sdk:Label Margin="67,0,18,0" Content="合计气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="22"/>
+                <TextBlock Text="开户数" Margin="53,6,41,4" Grid.Row="19" TextWrapping="Wrap" Grid.Column="1"/>
+                <TextBlock Text="{m:Exp Str='sellgas[data.col0!=$超用收费$ and data.col7\=\=$机表$].Sum(col2)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,1,20"  Width="Auto" Height="20" Grid.Row="1" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str='sellgas[data.col0!=$超用收费$ and data.col7\=\=$卡表$].Sum(col2)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,1,20"  Width="Auto" Height="20" Grid.Row="2" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col2)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,0,24"  Width="Auto" Height="20" Grid.Row="3" Grid.RowSpan="2"/>
                 <TextBlock Text="{m:Exp Str=sellyucun.Sum(col2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,8,1,0"  Width="Auto" Grid.Row="4"/>
-                <TextBlock Text="{m:Exp Str='renewcard[data.col2==$0$].Sum(col0)\=&gt;DataLoaded'}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="5"/>
-                <TextBlock Text="{m:Exp Str='renewcard[data.col2!=$0$].Sum(col0)\=&gt;DataLoaded'}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="5"/>
-                <TextBlock Text="{m:Exp Str='faka[data.col2==$民用$].Sum(col0)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="9"/>
+                <TextBlock Text="{m:Exp Str='renewcard[data.col2==$0$].Sum(col0)\=&gt;DataLoaded'}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="5" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str='renewcard[data.col2!=$0$].Sum(col0)\=&gt;DataLoaded'}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="5" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str='faka[data.col2==$民用$].Sum(col0)=>DataLoaded'}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="9" Grid.RowSpan="2"/>
                 <!--TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$发卡售气$ and data.col1\=\=$商用$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="10"/-->
-                <TextBlock Text="{m:Exp Str='faka[data.col2==$非民用$].Sum(col0)=>DataLoaded'}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="10"/>
-                <TextBlock Text="{m:Exp Str=guohu.Sum(col0)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="11"/>
-                <TextBlock Text="{m:Exp Str=qita.Sum(col0)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,0"  Width="Auto" Height="20" Grid.Row="12"/>
-                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col0)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,1,4"  Width="Auto" Height="20" Grid.Row="6"/>
-                <TextBlock Text="{m:Exp Str=sellgas.Sum(col3).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch"  Width="Auto" Grid.Row="21"/>
-                <TextBlock Text="民用" Margin="22,5,0,0" Grid.Row="18" TextWrapping="Wrap" HorizontalAlignment="Left" Width="36"/>
-                <TextBlock Text="非民用" Margin="22,10,0,51" Grid.Row="20" TextWrapping="Wrap" HorizontalAlignment="Left" Width="19" RenderTransformOrigin="0.421,1.293"/>
-                <TextBlock Text="普通" Margin="0,5,33,5" Grid.Row="18" TextWrapping="Wrap" HorizontalAlignment="Right" Width="32"/>
+                <TextBlock Text="{m:Exp Str='faka[data.col2==$非民用$].Sum(col0)=>DataLoaded'}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="10" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=guohu.Sum(col0)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="11" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=qita.Sum(col0)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,10,0,20"  Width="Auto" Height="20" Grid.Row="12" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col0)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,1,24"  Width="Auto" Height="20" Grid.Row="6" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas.Sum(col3).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch"  Width="Auto" Grid.Row="22"/>
+                <TextBlock Text="民用" Margin="22,5,0,0" Grid.Row="19" TextWrapping="Wrap" HorizontalAlignment="Left" Width="36"/>
+                <TextBlock Text="非民用" Margin="22,10,0,51" Grid.Row="21" TextWrapping="Wrap" HorizontalAlignment="Left" Width="19" RenderTransformOrigin="0.421,1.293"/>
+                <TextBlock Text="普通" Margin="0,5,33,5" Grid.Row="19" TextWrapping="Wrap" HorizontalAlignment="Right" Width="32"/>
 
                 <!--TextBlock Text="壁挂炉" Margin="0,10,22,0" Grid.Row="15" TextWrapping="Wrap" HorizontalAlignment="Right" Width="40"/-->
 
                 <sdk:Label Margin="0,0,17,3" Content="机表销售气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Width="80" VerticalAlignment="Bottom"/>
                 <sdk:Label Margin="0,0,17,3" Content="卡表销售气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" Width="80" VerticalAlignment="Bottom"/>
                 <sdk:Label Margin="0,0,12,2" Content="超用气量 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="3" Grid.Column="2" Width="67" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-                <sdk:Label Margin="0,0,17,0" Content="总 费 用 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="21" Grid.Column="4" HorizontalAlignment="Right"/>
-                <sdk:Label Margin="0,0,17,0" Content="总 卡 费 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="21" Grid.Column="2" HorizontalAlignment="Right"/>
-                <TextBlock Text="{m:Exp Str=(sellgas.Sum(col4)\=&gt;DataLoaded+    faka.Sum(col1)\=&gt;DataLoaded+    renewcard.Sum(col1)\=&gt;DataLoaded+    change[data.col3\=\=$换表$].Sum(col4)\=&gt;DataLoaded+     sellgas.Sum(col5)\=&gt;DataLoaded+    guohu.Sum(col1)\=&gt;DataLoaded+   baojian.Sum(col1)\=&gt;DataLoaded+    qita.Sum(col1)\=&gt;DataLoaded+    change[data.col3\=\=$换表$].Sum(col2)\=&gt;DataLoaded).MathRound(2)}"   Grid.Column="5"  HorizontalAlignment="Stretch" Margin="0,0,18,0"  Width="Auto" Grid.Row="21"/>
+                <sdk:Label Margin="0,0,17,0" Content="总 费 用 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="22" Grid.Column="4" HorizontalAlignment="Right"/>
+                <sdk:Label Margin="0,0,17,0" Content="总 卡 费 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="22" Grid.Column="2" HorizontalAlignment="Right"/>
+                <TextBlock Text="{m:Exp Str=(sellgas.Sum(col4)\=&gt;DataLoaded+    faka.Sum(col1)\=&gt;DataLoaded+    renewcard.Sum(col1)\=&gt;DataLoaded+    change[data.col3\=\=$换表$].Sum(col4)\=&gt;DataLoaded+     sellgas.Sum(col5)\=&gt;DataLoaded+    guohu.Sum(col1)\=&gt;DataLoaded+   baojian.Sum(col1)\=&gt;DataLoaded+    qita.Sum(col1)\=&gt;DataLoaded+    change[data.col3\=\=$换表$].Sum(col2)\=&gt;DataLoaded).MathRound(2)}"   Grid.Column="5"  HorizontalAlignment="Stretch" Margin="0,0,18,0"  Width="Auto" Grid.Row="22"/>
                 <sdk:Label Margin="0,5,12,2" Content="换表补气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Right" Width="72"/>
-                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Stretch" Margin="1,4,1,6"  Width="Auto" Height="20" Grid.Row="6"/>
-                <sdk:Label Margin="30,8,0,-1" Content="机表实收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="1" Grid.Column="4" HorizontalAlignment="Left"/>
-                <sdk:Label Margin="30,8,0,-1" Content="卡表实收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Left"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$机表$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,1,0"  Width="Auto" Height="20" Grid.Row="1"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$卡表$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,1,0"  Width="Auto" Height="20" Grid.Row="2"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,-1,0"  Width="Auto" Height="20" Grid.Row="3"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$机表$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,114,0"  Width="142" Height="20" Grid.Row="1"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$卡表$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,114,0"  Width="142" Height="20" Grid.Row="2"/>
+                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Stretch" Margin="1,4,1,1"  Width="Auto" Height="20" Grid.Row="6"/>
+                <sdk:Label Margin="30,8,0,24" Content="机表实收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="1" Grid.Column="4" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                <sdk:Label Margin="30,8,0,24" Content="卡表实收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$机表$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,1,20"  Width="Auto" Height="20" Grid.Row="1" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$卡表$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,1,20"  Width="Auto" Height="20" Grid.Row="2" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,10,120,20"  Width="Auto" Height="20" Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$机表$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,114,20"  Width="142" Height="20" Grid.Row="1" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0!\=$超用收费$ and data.col7\=\=$卡表$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,114,20"  Width="142" Height="20" Grid.Row="2" Grid.RowSpan="2"/>
                 <sdk:Label Margin="56,5,0,2" Content="超用金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Left"/>
                 <sdk:Label Margin="56,7,13,0" Content="补 卡 费" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="5" Grid.Column="4"/>
-                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,4,113,6"  Width="143" Height="20" Grid.Row="3"/>
+                <TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,4,113,1"  Width="143" Height="20" Grid.Row="3"/>
                 <sdk:Label Margin="31,6,13,1" Content="民用发卡费" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="9" Grid.Column="2"/>
                 <sdk:Label Margin="17,7,11,0" Content="非民用发卡费" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="10" Grid.Column="2" RenderTransformOrigin="0.463,1.652"/>
                 <sdk:Label Margin="50,4,0,3" Content="过 户 费" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="11" Grid.Column="2" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Left" Width="47"/>
@@ -374,18 +392,18 @@
                 <sdk:Label Margin="52,3,0,4" Content="清零笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="7" Grid.Column="0" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Left" Width="52"/>
                 <sdk:Label Margin="31,3,0,4" Content="清零补气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="7" Grid.Column="2" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Left" Width="73"/>
                 <sdk:Label Margin="39,3,0,4" Content="滞纳金金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="12" Grid.Column="4" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Left" Width="65"/>
-                <TextBlock Text="{m:Exp Str=chongzheng.Sum(col0)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,113,0"  Width="143" Height="20" Grid.Row="13"/>
-                <TextBlock Text="{m:Exp Str=renewcard[data.col2\!\=$0$].Sum(col1)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,113,0"  Width="143" Height="20" Grid.Row="5"/>
+                <TextBlock Text="{m:Exp Str=chongzheng.Sum(col0)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,113,20"  Width="143" Height="20" Grid.Row="13" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=renewcard[data.col2\!\=$0$].Sum(col1)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,113,20"  Width="143" Height="20" Grid.Row="5" Grid.RowSpan="2"/>
                 <TextBlock Text="{m:Exp Str='faka[data.col2==$民用$].Sum(col1)=>DataLoaded'}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,6,0,24"  Width="110" Height="20" Grid.Row="9" Grid.RowSpan="2"/>
-                <TextBlock Text="{m:Exp Str='faka[data.col2==$非民用$].Sum(col1)=>DataLoaded'}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,6,0,23"  Width="110" Height="20" Grid.Row="10" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str='faka[data.col2==$非民用$].Sum(col1)=>DataLoaded'}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,7,0,23"  Width="110" Height="20" Grid.Row="10" Grid.RowSpan="2"/>
                 <!--TextBlock Text="{m:Exp Str=sellgas[data.col0\=\=$发卡售气$ and data.col1\=\=$商用$].Sum(col5)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,10,117,0"  Width="146" Height="20" Grid.Row="10"/-->
                 <TextBlock Text="{m:Exp Str=guohu.Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,6,0,24"  Width="111" Height="20" Grid.Row="11" Grid.RowSpan="2"/>
                 <TextBlock Text="{m:Exp Str=qita.Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,6,0,24"  Width="111" Height="20" Grid.Row="12" Grid.RowSpan="2"/>
-                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col2)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,5"  Width="143" Height="20" Grid.Row="6"/>
-                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col4)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,5"  Width="143" Height="20" Grid.Row="7"/>
+                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col2)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,0"  Width="143" Height="20" Grid.Row="6"/>
+                <TextBlock Text="{m:Exp Str=change[data.col3\=\=$换表$].Sum(col4)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,0"  Width="143" Height="20" Grid.Row="7"/>
                 <TextBlock Text="{m:Exp Str=change[data.col3\=\=$清零$].Sum(col0)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Right" Margin="0,5,0,0"  Width="137" Height="20" Grid.Row="7"/>
                 <TextBlock Text="{m:Exp Str=change[data.col3\=\=$清零$].Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,5,0,0"  Width="110" Height="20" Grid.Row="7"/>
-                <TextBlock Text="{m:Exp Str=jieyu.Sum(col5)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,5"  Width="143" Height="20" Grid.Row="12"/>
+                <TextBlock Text="{m:Exp Str=jieyu.Sum(col5)\=&gt;DataLoaded}" Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,113,0"  Width="143" Height="20" Grid.Row="12"/>
                 <sdk:Label Margin="54,7,0,0" Content="冲 正  数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="13" Grid.Column="4" HorizontalAlignment="Left"/>
                 <TextBlock Text="{m:Exp Str=search.DataContext.f_sgnetwork}"  Grid.Column="3" Margin="2,0,107,0" Height="16" Grid.Row="0" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 <sdk:Label Content="日期 从：" FontSize="13.333" VerticalContentAlignment="Top" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,52,0" Grid.Row="0" Width="56" Height="16" VerticalAlignment="Bottom"/>
@@ -395,51 +413,69 @@
 
 
 
-                <TextBlock Text="卡费" Margin="23,4,27,6" Grid.Row="18" Grid.Column="2"/>
-                <TextBlock Text="售气笔数" Margin="0,5,32,5" Grid.Row="18"  Grid.Column="3" HorizontalAlignment="Right" Width="56"/>
-                <TextBlock Text="售气量" Margin="39,5,40,5" Grid.Row="18"  Grid.Column="4"/>
-                <TextBlock Text="售气金额" Margin="0,5,171,5" Grid.Row="18" Grid.Column="5" HorizontalAlignment="Right"/>
-                <TextBlock Text="小计" Margin="0,0,22,-1" Grid.Row="19" HorizontalAlignment="Right" Width="40" Height="20" VerticalAlignment="Bottom"/>
-                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col4).MathRound(2)\=&gt;DataLoaded}" Margin="30,6,19,4" Grid.Row="19" TextWrapping="Wrap" Grid.Column="1" TextAlignment="Center"/>
+                <TextBlock Text="卡费" Margin="23,4,27,6" Grid.Row="19" Grid.Column="2"/>
+                <TextBlock Text="售气笔数" Margin="0,5,32,5" Grid.Row="19"  Grid.Column="3" HorizontalAlignment="Right" Width="56"/>
+                <TextBlock Text="售气量" Margin="39,5,40,5" Grid.Row="19"  Grid.Column="4"/>
+                <TextBlock Text="售气金额" Margin="0,5,171,5" Grid.Row="19" Grid.Column="5" HorizontalAlignment="Right"/>
+                <TextBlock Text="小计" Margin="0,0,22,119" Grid.Row="20" HorizontalAlignment="Right" Width="40" Height="20" VerticalAlignment="Bottom" Grid.RowSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col4).MathRound(2)\=&gt;DataLoaded}" Margin="30,6,19,4" Grid.Row="20" TextWrapping="Wrap" Grid.Column="1" TextAlignment="Center"/>
 
                 <!--TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$ and data.col1\=\=$壁挂炉$].Sum(col4)\=&gt;DataLoaded}" Margin="30,10,24,0" Grid.Row="15" TextWrapping="Wrap" Grid.Column="1" TextAlignment="Center"/-->
-                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col7)\=&gt;DataLoaded}" Margin="3,6,2,4" Grid.Row="19" TextWrapping="Wrap" Grid.Column="2" TextAlignment="Center"/>
+                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col7)\=&gt;DataLoaded}" Margin="3,6,2,4" Grid.Row="20" TextWrapping="Wrap" Grid.Column="2" TextAlignment="Center"/>
                 <!--TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$ and data.col1\=\=$壁挂炉$].Sum(col7)\=&gt;DataLoaded}" Margin="3,9,0,1" Grid.Row="17" TextWrapping="Wrap" Grid.Column="2" TextAlignment="Center"/-->
-                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col3)\=&gt;DataLoaded}" Margin="2,5,1,5" Grid.Row="19" TextWrapping="Wrap" Grid.Column="3" TextAlignment="Center"/>
+                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col3)\=&gt;DataLoaded}" Margin="2,5,1,5" Grid.Row="20" TextWrapping="Wrap" Grid.Column="3" TextAlignment="Center"/>
                 <!--TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$ and data.col1\=\=$壁挂炉$].Sum(col3)\=&gt;DataLoaded}" Margin="2,10,-2,0" Grid.Row="17" TextWrapping="Wrap" Grid.Column="3" TextAlignment="Center"/-->
-                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col5)\=&gt;DataLoaded}" Margin="6,5,8,5" Grid.Row="19" TextWrapping="Wrap" Grid.Column="4" TextAlignment="Center"/>
+                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col5)\=&gt;DataLoaded}" Margin="6,5,8,5" Grid.Row="20" TextWrapping="Wrap" Grid.Column="4" TextAlignment="Center"/>
                 <!--TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$ and data.col1\=\=$壁挂炉$].Sum(col5)\=&gt;DataLoaded}" M9argin="3,9,8,1" Grid.Row="15" TextWrapping="Wrap" Grid.Column="4" TextAlignment="Center"/-->
 
-                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col6).MathRound(2)\=&gt;DataLoaded}" Margin="0,7,113,3" Grid.Row="19" TextWrapping="Wrap" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Right" Width="143"/>
+                <TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$].Sum(col6).MathRound(2)\=&gt;DataLoaded}" Margin="0,7,113,3" Grid.Row="20" TextWrapping="Wrap" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Right" Width="143"/>
 
                 <!--TextBlock Text="{m:Exp Str=sellgas1[data.col0\=\=$民用$ and data.col1\=\=$壁挂炉$].Sum(col6)\=&gt;DataLoaded}" Margin="0,9,73,1" Grid.Row="15" TextWrapping="Wrap" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Right" Width="142"/-->
-                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col4)\=&gt;DataLoaded}" Margin="19,0,17,1" Grid.Row="20" TextWrapping="Wrap" Grid.Column="1" Width="Auto" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" d:LayoutOverrides="HorizontalMargin"/>
-                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col7)\=&gt;DataLoaded}" Margin="13,0,7,1" Grid.Row="20" TextWrapping="Wrap" Grid.Column="2" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
+                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col4)\=&gt;DataLoaded}" Margin="19,0,17,1" Grid.Row="21" TextWrapping="Wrap" Grid.Column="1" Width="Auto" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" d:LayoutOverrides="HorizontalMargin"/>
+                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col7)\=&gt;DataLoaded}" Margin="13,0,7,1" Grid.Row="21" TextWrapping="Wrap" Grid.Column="2" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
 
-                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col3)\=&gt;DataLoaded}" Margin="2,0,-2,1" Grid.Row="20" TextWrapping="Wrap" Grid.Column="3" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
-                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col5).MathRound(2)\=&gt;DataLoaded}" Margin="3,0,8,1" Grid.Row="20" TextWrapping="Wrap" Grid.Column="4" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
-                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col6).MathRound(2)\=&gt;DataLoaded}" Margin="0,0,94,1" Grid.Row="20" TextWrapping="Wrap" Grid.Column="5" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" HorizontalAlignment="Right" Width="169"/>
-                <TextBlock Text="{m:Exp Str=renewcard.Sum(col1)\=&gt;DataLoaded+    sellgas.Sum(col5)\=&gt;DataLoaded+    faka.Sum(col1)\=&gt;DataLoaded+    change.Sum(col2)\=&gt;DataLoaded}" Grid.Row="21" TextWrapping="Wrap" Grid.Column="2" Height="35" VerticalAlignment="Bottom" TextAlignment="Center" HorizontalAlignment="Right" Width="115" Grid.ColumnSpan="2"/>
-                <TextBlock Text="交款人" Margin="13,0,7,1" Grid.Row="22" TextWrapping="Wrap" Grid.Column="1" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
-                <TextBlock Text="收款人" Margin="2,0,-2,1" Grid.Row="22" TextWrapping="Wrap" Grid.Column="4" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
-                <ListBox ItemsSource="{m:Exp Str=sellgas1[data.col0\=\=$商用$  or data.col0\=\=$商住$ ]}" Grid.ColumnSpan="6" Margin="41,2,65,35" Grid.Row="20"  ItemTemplate="{StaticResource DataTemplate1}"/>
+                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col3)\=&gt;DataLoaded}" Margin="2,0,119,1" Grid.Row="21" TextWrapping="Wrap" Grid.Column="3" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" Grid.ColumnSpan="2"/>
+                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col5).MathRound(2)\=&gt;DataLoaded}" Margin="3,0,8,1" Grid.Row="21" TextWrapping="Wrap" Grid.Column="4" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
+                <TextBlock Text="{m:Exp Str=sellgas1.Sum(col6).MathRound(2)\=&gt;DataLoaded}" Margin="0,0,94,1" Grid.Row="21" TextWrapping="Wrap" Grid.Column="4" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" HorizontalAlignment="Right" Width="169" Grid.ColumnSpan="2"/>
+                <TextBlock Text="{m:Exp Str=renewcard.Sum(col1)\=&gt;DataLoaded+    sellgas.Sum(col5)\=&gt;DataLoaded+    faka.Sum(col1)\=&gt;DataLoaded+    change.Sum(col2)\=&gt;DataLoaded}" Grid.Row="22" TextWrapping="Wrap" Grid.Column="2" Height="35" VerticalAlignment="Bottom" TextAlignment="Center" HorizontalAlignment="Right" Width="115" Grid.ColumnSpan="2"/>
+                <TextBlock Text="交款人" Margin="13,0,7,1" Grid.Row="23" TextWrapping="Wrap" Grid.Column="1" Height="20" VerticalAlignment="Bottom" TextAlignment="Center"/>
+                <TextBlock Text="收款人" Margin="2,0,254,1" Grid.Row="23" TextWrapping="Wrap" Grid.Column="4" Height="20" VerticalAlignment="Bottom" TextAlignment="Center" Grid.ColumnSpan="2"/>
+                <ListBox ItemsSource="{m:Exp Str=sellgas1[data.col0\=\=$商用$  or data.col0\=\=$商住$ ]}" Grid.ColumnSpan="6" Margin="41,2,65,35" Grid.Row="21"  ItemTemplate="{StaticResource DataTemplate1}"/>
                 <!--<ListBox ItemsSource="{m:Exp Str=sellgas1[data.col0\=\=$商用$]}" Grid.ColumnSpan="6" Margin="41,10,27,78" Grid.Row="17"  ItemTemplate="{StaticResource DataTemplate1}"/>-->
                 <sdk:Label Margin="0,0,8,6" Content="机表预存金额 " FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="4" Grid.Column="4" Width="88" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-                <TextBlock Text="{m:Exp Str=sellyucun[data.col0!\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,4,114,6"  Width="142" Height="20" Grid.Row="4"/>
-                <sdk:Label Margin="22,3,0,4" Content="机表自动下账笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="15"/>
-                <TextBlock Text="{m:Exp Str=autoclose.Sum(col2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,3,1,4"  Width="Auto" Grid.Row="15"/>
-                <sdk:Label Margin="23,3,0,4" Content="自动下账气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="15" Grid.Column="2"/>
-                <TextBlock Text="{m:Exp Str=autoclose[data.col0!\=$超用收费$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,6,1,4"  Width="Auto" Height="20" Grid.Row="15"/>
-                <sdk:Label Margin="30,3,1,4" Content="自动下账金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="15" Grid.Column="4"/>
-                <TextBlock Text="{m:Exp Str=autoclose[data.col0!\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,114,5"  Width="142" Height="20" Grid.Row="15"/>
+                <TextBlock Text="{m:Exp Str=sellyucun[data.col0!\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,4,114,1"  Width="142" Height="20" Grid.Row="4"/>
+                <sdk:Label Margin="22,3,0,4" Content="机表自动下账笔数" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="14"/>
+                <TextBlock Text="{m:Exp Str=autoclose.Sum(col2)\=&gt;DataLoaded}"  Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,3,1,4"  Width="Auto" Grid.Row="14"/>
+                <sdk:Label Margin="23,3,0,4" Content="自动下账气量" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="14" Grid.Column="2"/>
+                <TextBlock Text="{m:Exp Str=autoclose[data.col0!\=$超用收费$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="3"  HorizontalAlignment="Stretch" Margin="2,6,1,22"  Width="Auto" Height="20" Grid.Row="14" Grid.RowSpan="2"/>
+                <sdk:Label Margin="30,3,1,4" Content="自动下账金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="14" Grid.Column="4"/>
+                <TextBlock Text="{m:Exp Str=autoclose[data.col0!\=$超用收费$].Sum(col4).MathRound(2)\=&gt;DataLoaded}"  Grid.Column="5"  HorizontalAlignment="Right" Margin="0,5,114,0"  Width="142" Height="20" Grid.Row="14"/>
                 <!--<sdk:Label Margin="22,3,8,4" Content="机表用户上次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="14"/>
                 <TextBlock Text="{m:Exp Str=accountbalance.Sum(col3).MathRound(2)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,5"  Width="Auto" Height="20" Grid.Row="14"/>
                 <sdk:Label Margin="23,5,7,2" Content="机表本次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="14" Grid.Column="2"/>
                 <TextBlock Text="{m:Exp Str=accountbalance.Sum(col4).MathRound(2)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Stretch" Margin="0,5,1,5"  Width="Auto" Height="20" Grid.Row="14"/>-->
                 <sdk:Label Margin="0,3,18,4" Content="报建收费笔数" FontSize="13.333" VerticalContentAlignment="Top" HorizontalAlignment="Right" Grid.Row="13"/>
-                <TextBlock Text="{m:Exp Str=baojian.Sum(col0)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,0,4"  Width="Auto" Height="20" Grid.Row="13"/>
+                <TextBlock Text="{m:Exp Str=baojian.Sum(col0)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="0,6,0,24"  Width="Auto" Height="20" Grid.Row="13" Grid.RowSpan="2"/>
                 <sdk:Label Margin="0,4,17,3" Content="报建收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="13" Grid.Column="2" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Right" Width="68"/>
                 <TextBlock Text="{m:Exp Str=baojian.Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,5,0,0"  Width="110" Height="20" Grid.Row="13"/>
+                <sdk:Label Content="阶梯一售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="15" Width="133"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯一售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="15" Width="106"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯一售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" Margin="0,0,5,0" Grid.Row="15" Width="116" HorizontalAlignment="Right"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯二售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="16" Width="133"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯二售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="16" Width="105"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯二售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="16" Width="121"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯三售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="17" Width="133"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯三售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="17" Width="105"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="阶梯三售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="17" Width="122"/>
+                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
                 <!--sdk:Label Margin="48,3,10,4" Content="民用本次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="16" Grid.Column="0"/>
                 <TextBlock Text="{m:Exp Str=jieyu[data.col1\=\=$民用$].Sum(col4)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Right" Margin="0,5,0,5"  Width="139" Height="20" Grid.Row="16"/>
                 <sdk:Label Margin="10,3,7,4" Content="非民用本次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="16" Grid.Column="2"/>
