@@ -68,8 +68,8 @@ namespace Com.Aote.Pages
                 ui_chargeBusy.IsBusy = false;
                 return;
             }
-            WebClientInfo wci = (WebClientInfo)Application.Current.Resources["priceserver"];
-            string str = wci.BaseAddress + "/num/" + "2" + "/" + userid + "/" + pregas + "/" + usertype + "?uuid=" + System.Guid.NewGuid().ToString();
+            WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
+            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += client_DownloadStringCompleted;

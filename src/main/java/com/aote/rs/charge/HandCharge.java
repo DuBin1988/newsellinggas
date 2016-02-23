@@ -29,11 +29,16 @@ import org.hibernate.collection.PersistentSet;
 import org.hibernate.proxy.map.MapProxy;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.aote.listener.ContextListener;
+import com.aote.rs.charge.countdate.ICountDate;
+import com.aote.rs.charge.enddate.IEndDate;
 import com.aote.rs.util.RSException;
 
 @Path("handcharge")
@@ -63,11 +68,7 @@ public class HandCharge {
 	BigDecimal stair2fee = new BigDecimal(0);
 	BigDecimal stair3fee = new BigDecimal(0);
 	BigDecimal stair4fee = new BigDecimal(0);
-
-	// 各阶梯气价气量
-	BigDecimal stair1amount = new BigDecimal(0);
-	BigDecimal stair2amount = new BigDecimal(0);
-	BigDecimal stair3amount = new BigDecimal(0);
+	private int stairmonths;
 
 	// 抄表单下载，返回JSON串
 	// operator 抄表员中文名
@@ -139,15 +140,9 @@ public class HandCharge {
 			@PathParam("lastinputdate") String lastinputdate,
 			@PathParam("handdate") String handdate,
 			@PathParam("meterstate") String meterstate) {
-		log.debug("单块抄表开始用户编号："+userid+"本次读数："+reading+"网点"+sgnetwork+"操作员"+sgoperator+"抄表日期"+lastinputdate+"计划日期"+handdate+"表状态"+meterstate);
 		String ret = "";
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			if (lastinputdate.equals("yyyy-MM-dd")) {
-				lastinputdate = sdf.format(new Date());
-				handdate = lastinputdate;
-			}
-			ret = afrecordInput(userid, 0, reading, sgnetwork, sgoperator,
+			return afrecordInput(userid, 0, reading, sgnetwork, sgoperator,
 					lastinputdate, handdate, 0, meterstate, 1);
 		} catch (Exception e) {
 			log.debug(e.getMessage());
@@ -175,8 +170,7 @@ public class HandCharge {
 					public Object doInHibernate(Session session)
 							throws HibernateException {
 						Query q = session.createSQLQuery(usersql);
-						q
-								.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+						q.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 						List result = q.list();
 						return result;
 					}
@@ -245,6 +239,7 @@ public class HandCharge {
 		if (map == null) {
 			return "";
 		}
+		
 		Map user = this.findUser(userid);
 		
 		// 获取表类型
@@ -270,7 +265,8 @@ public class HandCharge {
 				.toString());
 		BigDecimal stair4price = new BigDecimal(map.get("f_stair4price")
 				.toString());
-		int stairmonths = Integer.parseInt(map.get("f_stairmonths").toString());
+		stairmonths = Integer.parseInt(map.get("f_stairmonths").toString());
+
 		BigDecimal gas = new BigDecimal(0);// 用气量
 		BigDecimal lrg = new BigDecimal(0);// 上次指数
 		if (1 == flag) {
@@ -285,13 +281,19 @@ public class HandCharge {
 			gas = new BigDecimal(reading).subtract(new BigDecimal(lastreading));
 			lrg = new BigDecimal(lastreading);
 		}
+		// 如果气量为负数抛出异常，主要针对其他抄表系统发来的数据
+		if (gas.compareTo(BigDecimal.ZERO) < 0) {
+			throw new RSException(map.get("f_userid") + "用气量为：" + gas.doubleValue()
+					+ ",不能录入!");
+		}
+
 		// 上期读数（上期的本次抄表底数）上期底数（）
 		// BigDecimal lastReading = new BigDecimal(map.get("lastinputgasnum") +
 		// "");
 		// 气量
 		// BigDecimal gas = new BigDecimal(reading).subtract(lastReading);
 		// 从户里取出余额(上期余额)
-		BigDecimal f_zhye = new BigDecimal(user.get("f_zhye") + "");
+		BigDecimal f_zhye = new BigDecimal(map.get("f_zhye") + "");
 		// 用户地址
 		String address = map.get("f_address").toString();
 		// 用户姓名
@@ -322,41 +324,38 @@ public class HandCharge {
 		int year = Integer.parseInt(handdatee.substring(0, 4));
 		cald.set(Calendar.YEAR,year);
 		// 最后一次抄表日期
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
 		// 取出抄表日期得到缴费截止日期DateFormat.parse(String s)
-		Date date = endDate(lastinputdate);// 缴费截止日期
+		Date date = endDate(lastinputdate, userid);// 缴费截止日期
 		// 录入日期
 		Date inputdate = new Date();
 		// 计划月份
 		DateFormat hd = new SimpleDateFormat("yyyy-MM");
 		String dateStr1 = handdate.substring(0, 7);
 		Date handDate = hd.parse(dateStr1);
-			
 		// 当前表累计购气量 （暂）
 		BigDecimal f_metergasnums = new BigDecimal(map.get("f_metergasnums")
 				+ "");
 		// f_cumulativepurchase 总累计购气量
-		BigDecimal f_cumulativepurchase = new BigDecimal(map
+		BigDecimal f_cumulativepurchase = new BigDecimal(
+				map.get("f_cumulativepurchase") + "");
+		// 户累计购气量 （暂）
+		BigDecimal f_metergasnumsu = new BigDecimal(user.get("f_metergasnums")
+				+ "");
+		// f_cumulativepurchase 总累计购气量
+		BigDecimal f_cumulativepurchaseu = new BigDecimal(user
 				.get("f_cumulativepurchase")
 				+ "");
-		// 户累计购气量 （暂）
-				BigDecimal f_metergasnumsu = new BigDecimal(user.get("f_metergasnums")
-						+ "");
-				// f_cumulativepurchase 总累计购气量
-				BigDecimal f_cumulativepurchaseu = new BigDecimal(user
-						.get("f_cumulativepurchase")
-						+ "");
 		// 表状态
 		String meterState = meterstate;
-		// 针对设置阶梯气价的用户运算, 调用前，处理阶梯量
-		ProcStairAmount(userid, stair1amount, stair2amount, stair3amount);
+		// 针对设置阶梯气价的用户运算
 		// 阶梯起价处理
-		BigDecimal chargenum = stair(userid, gas, cald,
-				stairtype, gasprice, stairmonths, 
-				this.stair1amount, this.stair2amount, this.stair3amount, 
-				stair1price, stair2price, stair3price, stair4price);
+		BigDecimal chargenum = stair(userid, gas, Calendar.getInstance(),
+				stairtype, gasprice, stairmonths, stair1amount, stair2amount,
+				stair3amount, stair1price, stair2price, stair3price,
+				stair4price);
 		// 气费大于0,结余够，前面无欠费，自动下账
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
@@ -412,9 +411,7 @@ public class HandCharge {
 			sell.put("f_enddate", enddate);
 			sell.put("f_allamont", sumamont.doubleValue());
 			int sellid = (Integer) hibernateTemplate.save("t_sellinggas", sell);
-			//更新户信息
-			this.updateUser(user, f_zhye.subtract(chargenum), f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
-			hql = "update t_userfiles set lastinputgasnum=?,"
+			hql = "update t_userfiles set f_zhye=?,lastinputgasnum=?,"
 					+
 					// 本次抄表日期
 					"  lastinputdate=? "
@@ -424,14 +421,16 @@ public class HandCharge {
 					// 最后购气量 最后购气日期 最后购气时间
 					+ "f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
 					+ "where f_userid=?";
-			hibernateTemplate.bulkUpdate(hql, new Object[] {
-					reading,
-					lastinputDate, f_metergasnums.add(gas).doubleValue(),
-					f_cumulativepurchase.add(gas).doubleValue(),
-					gas.doubleValue(), inputdate, inputdate, userid });
+			hibernateTemplate.bulkUpdate(
+					hql,
+					new Object[] { f_zhye.subtract(chargenum).doubleValue(),
+							reading, lastinputDate,
+							f_metergasnums.add(gas).doubleValue(),
+							f_cumulativepurchase.add(gas).doubleValue(),
+							gas.doubleValue(), inputdate, inputdate, userid });
 			String sellId = sellid + "";
 			// 更新抄表记录
-			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_stairtype='"
+			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate=?,f_stairtype='"
 					+ stairtype
 					+ "',lastinputdate=?,f_zerenbumen='"
 					+ zerenbumen
@@ -497,9 +496,11 @@ public class HandCharge {
 					+ "',f_operator='"
 					+ sgoperator
 					+ "'  "
-					+ "where f_userid='" + userid + "' and f_state='未抄表'";
-			hibernateTemplate.bulkUpdate(hql, new Object[] { lastinputDate,
-					inputdate, meterState });
+					+ "where f_userid='"
+					+ userid
+					+ "' and f_state='未抄表' and id=" + handid;
+			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
+					lastinputDate, inputdate, meterState });
 		} else {
 			// 更新用户档案
 			hql = "update t_userfiles " +
@@ -514,7 +515,8 @@ public class HandCharge {
 				shifoujiaofei = "是";
 			}
 			hql = "update t_handplan set f_state ='已抄表', shifoujiaofei='"
-					+ shifoujiaofei + "',lastinputdate=?,f_zerenbumen='"
+					+ shifoujiaofei
+					+ "',f_handdate=?,lastinputdate=?,f_zerenbumen='"
 					+ zerenbumen + "', f_menzhan='" + menzhan
 					+ "', f_inputtor='" + inputtor + "', lastrecord=" + reading
 					+ " ,f_stairtype='" + stairtype + "'," + "oughtamount="
@@ -535,9 +537,9 @@ public class HandCharge {
 					+ leftgas
 					+ ", lastinputgasnum=" // 上期指数
 					+ lrg + " where f_userid='" + userid
-					+ "' and f_state='未抄表'";
-			hibernateTemplate.bulkUpdate(hql, new Object[] { lastinputDate,
-					date, inputdate, meterState });
+					+ "' and f_state='未抄表' and id=" + handid;
+			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
+					lastinputDate, date, inputdate, meterState });
 		}
 		// 保存用户清欠账务,并更新档案中账户余额
 		if (meterType != null && meterType.equals("机表")
@@ -545,44 +547,6 @@ public class HandCharge {
 			financedetailDisp(map, gas, chargenum, sgnetwork, sgoperator);
 		}
 		return userid;
-	}
-
-	// 根据户的建档日期，调整各阶梯气量，强制按照12个月计算，返回结果在实例变量中
-	private void ProcStairAmount(String userid, BigDecimal stair1amount,
-			BigDecimal stair2amount, BigDecimal stair3amount) {
-		// 获取户里的建档年月，如果是本年建档，各阶段气量按照建档月份与当前月份差值计算
-		final String gassql = "select MIN(f_yytdate) f_yytdate, getdate() nowdate from t_userfiles where f_userinfoid=" + 
-			"(select f_userinfoid from t_userfiles where f_userid='" + userid + "')";
-		List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
-				.execute(new HibernateCallback() {
-					public Object doInHibernate(Session session)
-							throws HibernateException {
-						Query q = session.createSQLQuery(gassql);
-						q.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-						List result = q.list();
-						return result;
-					}
-				});
-		Map<String, Object> gasmap = (Map<String, Object>) gaslist.get(0);
-		String yytdate = gasmap.get("f_yytdate").toString();
-		int year = Integer.parseInt(yytdate.substring(0, 4));		
-		int month = Integer.parseInt(yytdate.substring(5, 7));
-		String nowdate = gasmap.get("nowdate").toString();
-		int nowyear = Integer.parseInt(nowdate.substring(0, 4));		
-		int nowmonth = Integer.parseInt(nowdate.substring(5, 7));		
-		// 不在本年度，值不变
-		if(year != nowyear) {
-			this.stair1amount = stair1amount;
-			this.stair2amount = stair2amount;
-			this.stair3amount = stair3amount;
-			return;
-		}
-
-		// 各阶段气量=原气量/(12-month+1)
-		int monthsub = 12 - month + 1;
-		this.stair1amount = stair1amount.divide(new BigDecimal(12)).multiply(new BigDecimal(monthsub));
-		this.stair2amount = stair2amount.divide(new BigDecimal(12)).multiply(new BigDecimal(monthsub));
-		this.stair3amount = stair3amount.divide(new BigDecimal(12)).multiply(new BigDecimal(monthsub));
 	}
 
 	// 计算阶梯气价，由于重构原因，会返回sumamont，放在全局变量里
@@ -596,7 +560,7 @@ public class HandCharge {
 			BigDecimal stair4price) {
 		BigDecimal chargenum = new BigDecimal(0);
 		// 针对设置阶梯气价的用户运算
-		CountDate(cal, stairmonths);
+		CountDate(userid, hibernateTemplate);
 		if (!stairtype.equals("未设")) {
 			final String gassql = " select isnull(sum(h.oughtamount),0)oughtamount "
 					+ "from t_handplan h left join t_userfiles u on u.f_userid=h.f_userid "
@@ -606,7 +570,6 @@ public class HandCharge {
 					+ " and h.f_handdate>='"
 					+ stardate
 					+ "' and h.f_handdate<='" + enddate + "'";
-			log.debug("查询已用气量sql:" + gassql);
 			List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)
@@ -663,8 +626,8 @@ public class HandCharge {
 					stair4num = allamont.subtract(stair3amount);
 					stair4fee = (allamont.subtract(stair3amount))
 							.multiply(stair4price);
-					chargenum = stair1fee.add(stair2fee).add(stair3fee).add(
-							stair4fee);
+					chargenum = stair1fee.add(stair2fee).add(stair3fee)
+							.add(stair4fee);
 				}
 				// 当前已购气量在阶梯二内
 			} else if (sumamont.compareTo(stair1amount) >= 0
@@ -856,7 +819,6 @@ public class HandCharge {
 				+ "') h "
 				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='已抄表' and shifoujiaofei='否' "
 				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid";
-		log.debug("查找用户未抄表记录sql" + sql);
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
 					public Object doInHibernate(Session session)
@@ -877,16 +839,26 @@ public class HandCharge {
 	}
 
 	// 计算开始时间方法
-	private void CountDate(Calendar cal, int stairmonths) {
+	private void CountDate(String userid, HibernateTemplate hibernateTemplate) {
+		// 判断是否配置了接口，如果有执行接口，如果没有按默认计算。
+		ApplicationContext applicationContext = WebApplicationContextUtils
+				.getWebApplicationContext(ContextListener.getContext());
+		if (applicationContext.containsBean("CountDate")) {
+			ICountDate icount = (ICountDate) applicationContext
+					.getBean("CountDate");
+			stardate = icount.startdate(userid, hibernateTemplate);
+			enddate = icount.enddate(userid, hibernateTemplate);
+			return;
+		}
 		// 计算当前月在哪个阶梯区间
-		// Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance();
 		int thismonth = cal.get(Calendar.MONTH) + 1;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		if (stairmonths == 1) {
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			stardate = format.format(cal.getTime());
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH,
+					cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			enddate = format.format(cal.getTime());
 		} else if (stairmonths == 0) {
 			stardate = "";
@@ -909,10 +881,9 @@ public class HandCharge {
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			stardate = format.format(cal.getTime());
 			cal.set(Calendar.MONTH, end - 1);
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH,
+					cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			enddate = format.format(cal.getTime());
-			log.debug("阶梯开始日期结束日期：" + stardate+"--"+enddate);
 		}
 	}
 
@@ -1037,7 +1008,14 @@ public class HandCharge {
 	}
 
 	// 产生交费截止日期
-	private Date endDate(String str) throws ParseException {
+	private Date endDate(String str, String userid) throws ParseException {
+		// 查找是否配置了截止日期处理类，如果有执行处理类
+		ApplicationContext applicationContext = WebApplicationContextUtils
+				.getWebApplicationContext(ContextListener.getContext());
+		if (applicationContext.containsBean("EndDate")) {
+			IEndDate end = (IEndDate) applicationContext.getBean("EndDate");
+			return end.enddate(userid, hibernateTemplate).getTime();
+		}
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String dateStr = str.substring(0, 10);
 		Date now = df.parse(dateStr);
@@ -1132,7 +1110,6 @@ public class HandCharge {
 			return result;
 		}
 	}
-
 	/**
 	 * 查找用户信息
 	 */
