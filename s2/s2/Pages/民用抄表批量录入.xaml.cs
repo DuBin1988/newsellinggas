@@ -114,6 +114,10 @@ namespace Com.Aote.Pages
 
                 //上期底数从数据对象取
                 double lastinputgasnum = double.Parse(go.GetPropertyValue("lastinputgasnum").ToString());
+                if (box.Text == null || box.Text == "")
+                {
+                    go.SetPropertyValue("oughtamount", null, false);
+                }
                 //由于焦点离开时，数据未传递到对象中，从界面取
                 double lastrecord = double.Parse(box.Text);
 

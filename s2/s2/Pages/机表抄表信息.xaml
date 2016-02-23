@@ -29,12 +29,11 @@
 									Path="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' $\,$abc$}"
 										PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_gasprice"
              />-->
-            <o:PagedList Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
-									LoadOnPathChanged="True"
-									SumHQL="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-									HQL="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-                                    Path="hql" PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=",">
-            </o:PagedList>
+            <o:PagedObjectList Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
+									MultiPath="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+									Path="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+                                    PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=",">
+            </o:PagedObjectList>
 
             <!--抄表员列表对象-->
             <o:ObjectList Name="czylist" EntityType="paramvalue" HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from paramvalue where param.name\=\'抄表员\'$}" 
@@ -388,6 +387,7 @@
                             <sdk:DataGridTextColumn Header="网　　点" Binding="{Binding f_network}"/>
                             <sdk:DataGridTextColumn Header="录 入 员" Binding="{Binding f_operator}"/>
                             <sdk:DataGridTextColumn Header="录入日期" Binding="{Binding f_inputdate, StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="交费截止日期" Binding="{Binding f_endjfdate, StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="阶段开始日期" Binding="{Binding f_stardate}"/>
                             <sdk:DataGridTextColumn Header="阶段结束日期" Binding="{Binding f_enddate}"/>
                             <sdk:DataGridTextColumn Header="阶梯一气量" Binding="{Binding f_stair1amount}"/>
