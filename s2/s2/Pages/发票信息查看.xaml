@@ -57,7 +57,7 @@
                             <ColumnDefinition Width="50*"/>
                             <ColumnDefinition Width="50*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock TextWrapping="Wrap" Text="网　　  点："  Margin="5,0,0,0" Height="25"/>
+                        <TextBlock TextWrapping="Wrap" Text="网     点："  Margin="5,0,0,0" Height="25"/>
                         <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_invoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="0" Margin="-190,1,0,2"  Height="25" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_invoicenum" Operator="f_invoicenum like 'this%'"/>
@@ -68,7 +68,7 @@
                                 <o:PropertySetter PropertyName="f_sgnetwork" Operator="f_sgnetwork = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期:  从" Margin="5,1,0,2" Height="25"/>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期:从" Margin="5,1,0,2" Height="25"/>
                         <sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate}" Grid.Column="1" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="200" Margin="-150,1,0,2" Height="25" VerticalAlignment="Stretch" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_fapiaodate" Value="{m:Exp Str=SysTime.Today}" 
@@ -82,7 +82,7 @@
                                 <o:PropertySetter PropertyName="f_repairfee" Operator="f_repairfee >= 'this'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock TextWrapping="Wrap" Text="发 票 号:   从" Margin="5,1,0,0" Height="25" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="175"/>
+                        <TextBlock TextWrapping="Wrap" Text="发 票 号:从" Margin="5,1,0,0" Height="25" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="175"/>
                         <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="200" Margin="-150,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="startinvoicenum"  Operator="f_invoicenum >= this"/>
