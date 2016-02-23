@@ -34,6 +34,11 @@ import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 @Component
 public class WeiXinService {
 
+	/**
+	 * ªÒµ√ ⁄»®code
+	 * @param response
+	 * @return
+	 */
 	@GET
 	@Path("getcode")
 	public String getcode(@Context HttpServletResponse response) {
