@@ -17,5 +17,10 @@ namespace Com.Aote.Pages
 			// Required to initialize variables
 			InitializeComponent();
 		}
+        public void change(object sender, RoutedEventArgs e)
+        {
+            bigscreen.Visibility = Visibility.Collapsed;
+            bigscreen1.Visibility = Visibility.Collapsed;
+        }
 	}
 }

@@ -23,7 +23,7 @@
 
             <!--单值对象-->
             <o:GeneralObject Name="gdms" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
-		  		Path="one/from t_singlevalue where name='工单模式'"   ></o:GeneralObject>
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'工单模式\'}"  ></o:GeneralObject>
 
             <o:ObjectList Name="jiedanbumenlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='接单部门'"/>
             <!--接单人对象列表 -->
@@ -65,8 +65,8 @@
             </b:SyncActionFactory>
             <!--短信对象-->
             <!--自动提交电话对象-->
-            <o:Phone Name="confirm" Confirm="{m:Exp Str=maingo1.State\=\=$End$}" LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.18:8000"/>
-            <o:Phone Name="wbPhone"  LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.18:8000"/>
+            <o:Phone Name="confirm" Confirm="{m:Exp Str=maingo1.State\=\=$End$}" LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.160:8000"/>
+            <o:Phone Name="wbPhone"  LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.160:8000"/>
 
 
             <!--来电短信保存对象 -->
@@ -172,7 +172,7 @@
                 <o:PropertySetter PropertyName="f_accepter" NoDependValue="{m:Exp Str=maingo2.f_accepter}"/>
                 <o:PropertySetter PropertyName="f_acceptertel" NoDependValue="{m:Exp Str=maingo2.f_acceptertel}"/>
                 <o:PropertySetter PropertyName="f_accepttime" NoDependValue="{m:Exp Str=maingo2.f_accepttime}"/>
-                <o:PropertySetter PropertyName="f_havacomplete" Default="{m:Exp Str=$二次新工单$}" />
+                <o:PropertySetter PropertyName="f_havacomplete" Default="{m:Exp Str=$二次派单$}" />
                 <o:PropertySetter PropertyName="f_beizhu" NoDependValue="{m:Exp Str=maingo2.f_beizhu}"/>
                 <!--<o:PropertySetter PropertyName="f_state" NoDependValue="$未派发$"/>-->
             </o:GeneralObject>
@@ -601,13 +601,14 @@
                                 <!-- gdms.value\=\=$班组长模式$:main.DataContext.f_state\=\'未派发\'\,main.DataContext.f_state\=\'已派发\';
 								<Button x:Name="save" Content=" 保 存 " Margin="0,14,18.5,20" 
 											IsEnabled="{m:Exp Str=main.DataContext.IsModified and !main.DataContext.HasErrors}"
-											Click="{m:Exp Str=main.DataContext.Save();consumer.New();lsld.ItemsSource.Clear();gqxx.ItemsSource.Clear();ajxx.ItemsSource.Clear();Phone.ConfirmHandUp()}" Grid.Column="6" Grid.Row="15" HorizontalAlignment="Right" d:LayoutOverrides="Height" />
+											Click="{m:Exp Str=main.DataContext.Save();consumer.New();lsld.ItemsSource.Clear();gqxx.ItemsSource.Clear();ajxx.ItemsSource.Clear();Phone.ConfirgdmsmHandUp()}" Grid.Column="6" Grid.Row="15" HorizontalAlignment="Right" d:LayoutOverrides="Height" />
                                 -->
                                 <TextBox Visibility="{m:Exp Str=gdms.value\=\=$直接派发到APP模式$:$Visible$\,$Collapsed$}" Text="{m:Bind Path=f_counts}"  Grid.Column="6" Margin="0.5,5,1.5,0" Grid.Row="11" TextWrapping="Wrap" Width="Auto" Height="25" HorizontalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1" Grid.RowSpan="1" RenderTransformOrigin="0.391,-0.44">
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_counts" Value="{m:Exp Str=jiedanren.SelectedItem.col2}" />
                                     </a:Data.Prop>
                                 </TextBox>
+
                             </Grid>
                         </sdk:TabItem>
                         <sdk:TabItem Header="用户历史信息" >
@@ -1136,13 +1137,14 @@
                                         </TextBox>
 
                                         <Button Content="重发任务" Click="{m:Exp Str=wxobj.DataContext.f_downloadstatus\=null;wxobj.DataContext.Save()}" Grid.Column="4" Margin="0,3,0,1" Grid.Row="6" RenderTransformOrigin="0.543,0.577"/>
-                                        <Button Content="二次派单（新）" Click="{m:Exp Str=maingo22.Save();maingo22.New();updaterepairsys.Invoke();maingo2.New()}" Width="80" Grid.Column="5" Margin="0,3,0,1" Grid.Row="6" RenderTransformOrigin="0.543,0.577"/>
-                                        <TextBlock Grid.Column="2" Grid.Row="6" TextWrapping="Wrap" Text="未处理任务数：" HorizontalAlignment="Right" Margin="0,6,0,5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{m:Bind Path=f_counts}"  Grid.Column="3" Margin="0.5,5,1.5,0" Grid.Row="6" TextWrapping="Wrap" Width="Auto" Height="25" HorizontalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1" Grid.RowSpan="1" RenderTransformOrigin="0.391,-0.44">
+                                        <Button Content="二次派单（新）" Click="{m:Exp Str=maingo22.Save();maingo22.New();updaterepairsys.Invoke();maingo2.New()}" Grid.Column="5" Margin="0.643,4,54,0" Grid.Row="6" RenderTransformOrigin="0.543,0.577"/>
+                                        <Button Content="撤回工单" Click="{m:Exp Str=wxobj.DataContext.f_downloadstatus\=$工单已撤销$;wxobj.DataContext.Save()}" Grid.Column="3" Margin="9.928,4,4.715,0" Grid.Row="6" RenderTransformOrigin="0.543,0.577"/>
+                                        <!--<TextBlock Grid.Column="2" Grid.Row="6" TextWrapping="Wrap" Text="未处理任务数：" HorizontalAlignment="Right" Margin="0,6,0,5" VerticalAlignment="Center"/>-->
+                                        <!--<TextBox Text="{m:Bind Path=f_counts}"  Grid.Column="3" Margin="0.5,5,1.5,0" Grid.Row="6" TextWrapping="Wrap" Width="Auto" Height="25" HorizontalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1" Grid.RowSpan="1" RenderTransformOrigin="0.391,-0.44">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_counts" Value="{m:Exp Str=wxjiedanren.SelectedItem.col2}" />
                                             </a:Data.Prop>
-                                        </TextBox>
+                                        </TextBox>-->
 
                                     </Grid>
                                 </StackPanel>

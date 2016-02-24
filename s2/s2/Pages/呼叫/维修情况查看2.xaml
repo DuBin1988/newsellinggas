@@ -29,6 +29,8 @@
             <o:ObjectList Name="wcqklist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='完成情况' order by id"/>
             <o:ObjectList Name="tdzxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='调度中心'"/>
             <o:ObjectList Name="ypdlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='呼叫已派单'"/>
+            <!--报修类型ItemsSource="{m:Exp Str=bxlxlist}"-->
+            <o:ObjectList Name="bxlxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='报修类型'"/>
             
             <!--接单人对象列表 -->
             <o:ObjectList Name="jiedanrenlist" WebClientInfo="{StaticResource dbclient}"  Path="from repairsman" />
@@ -72,10 +74,10 @@
                             <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=&gt;Completed!\=null}"/>
                             <Button Content="导出Excel" Click="{m:Exp Str=toExcel.ToExcel()}" Height="30" VerticalAlignment="top" Width="69" Margin="0,0,0,0"/>
                         </StackPanel>
-                        <TextBlock TextWrapping="Wrap" Text="派单情况："  Margin="6,0,4,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.Column="6" />
-                        <ComboBox SelectedValue="{m:Bind Path=ypd}" ItemsSource="{m:Exp Str=ypdlist}" DisplayMemberPath="name" SelectedValuePath="code" Margin="1,2,0,1" Height="25" Grid.Column="7" >
+                        <TextBlock TextWrapping="Wrap" Text="报修类型："  Margin="6,0,4,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.Column="6" />
+                        <ComboBox SelectedValue="{m:Bind Path=f_repairtype}" ItemsSource="{m:Exp Str=bxlxlist}" DisplayMemberPath="name" SelectedValuePath="name" Margin="1,2,0,1" Height="25" Grid.Column="7" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="ypd" Operator="f_accepter this"/>
+                                <o:PropertySetter PropertyName="f_repairtype" Operator="f_repairtype = 'this'"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="接单人："  Margin="6,0,4,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />

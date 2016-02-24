@@ -21,18 +21,28 @@
         <m:ResourceLoad Margin="0,0,-12,0">
             <!--完成情况ItemsSource="{m:Exp Str=wcqklist}"-->
             <o:ObjectList Name="wcqklist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='完成情况' order by id"/>
+            <!--是否接通-->
+            <o:ObjectList Name="applist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='是否接通'"/>
 
-            <!--接单人对象列表 -->
-            <o:ObjectList Name="jiedanrenlist" WebClientInfo="{StaticResource dbclient}"  Path="from repairsman" />
+            <o:Phone Name="wbPhone"  LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.20:8000" >
+                <o:PropertySetter PropertyName="filename" Value="{m:Exp Str=daninfos.SelectedItem.recordfile}"/>
+            </o:Phone>
 
-            <o:ExcelObj Name="excel" Bind="Index,f_userid,f_username,f_cusDom,f_districtname,f_phone,f_gaswatchbrand,f_accepter,f_havadeal,f_completedate2,f_sender,f_senddate" Source="{m:Exp Str=daninfos}"/>
+            <o:Phone Name="down" recordId="{m:Exp Str=daninfos.SelectedItem.recordfile}"></o:Phone> 
+         
         </m:ResourceLoad>
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*"/>
                 <ColumnDefinition Width="0*"/>
             </Grid.ColumnDefinitions>
-            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy or djxl.ItemsSource.IsBusy}">
                 <toolkit:DockPanel>
                     <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3"  Width="auto" HorizontalAlignment="Stretch" Height="40" d:LayoutOverrides="Width, Height" >
                         <Grid.RowDefinitions>
@@ -43,46 +53,62 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="90"/>
                             <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="72"/>
+                            <ColumnDefinition Width="63"/>
+                            <ColumnDefinition Width="76"/>
+                            <ColumnDefinition Width="79"/>
+                            <ColumnDefinition Width="108"/>
+                            <ColumnDefinition Width="79"/>
+                            <ColumnDefinition Width="108"/>
+                            <ColumnDefinition Width="147"/>
+                            <ColumnDefinition Width="139"/>
                             <ColumnDefinition Width="89"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
                         <a:Data.Context>
                             <o:SearchObject />
                         </a:Data.Context>
                         <Button Content="打印" Visibility="Collapsed" Click="{m:Exp Str=print.Print()}" Height="28" VerticalAlignment="Bottom"  Grid.Column="7" Grid.Row="2" Margin="0,0,2,0"/>
-                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="2" Grid.Column="8" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Height="28" VerticalAlignment="Top"  />
-                        <StackPanel  Visibility="Collapsed" Grid.Row="1" Grid.Column="7" Orientation="Horizontal" Grid.ColumnSpan="2">
-                            <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$\{daninfos.ItemsSource.Path\}}" Completed="{m:Exp Str=downLoad.Down()}"
-								Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_phone:来电电话|f_accepter:接单人|f_havadeal:是否处理|f_completedate2:完成日期|f_sender:派单人|f_senddate:派单日期|f_repairtype:报修类型|f_teltype:来电类型|f_dealtype:处理方式|f_operator:值班人|f_reporttime:报修时间$}" Height="30" VerticalAlignment="Top" Width="0"/>
-                            <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"/>
-                            <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=&gt;Completed!\=null}"/>
-                            <Button Content="导出Excel" Click="{m:Exp Str=toExcel.ToExcel()}" Height="30" VerticalAlignment="top" Width="69" Margin="0,-3,0,0"/>
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="2" Grid.Column="10" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Height="28" VerticalAlignment="Top"  />
+                        <Button Content="  清  空  " x:Name="clearbutton" Click="{m:Exp Str=daninfosearch.DataContext.callnumber\=null;daninfosearch.DataContext.gonghao\=null;daninfosearch.DataContext.comingtime\=null;daninfosearch.DataContext.islink\=null}" Margin="84,1,0,2" Grid.Column="9" Grid.Row="2" />
+                        <StackPanel  Grid.Row="2" Grid.Column="9" Orientation="Horizontal" Grid.ColumnSpan="1" Margin="0,1,55,2">
+                            <Button Content="导出Excel" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Column="9"  Grid.Row="0" HorizontalAlignment="Left" Width="80"/>
+                            <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
+   							 Completed="{m:Exp Str=downLoad.Down()}"
+   							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/Index:序号|trunk:外线号|inline:内线号|callnumber:来电号码|comingtime:接入时间|rectime:接听时间|handuptime:挂机时间|gonghao:工号|islink:是否接通|recordfile:录音文件$}"/>
+                            <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls"></c:DownLoad>
+                            <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
                         </StackPanel>
-                        <TextBlock TextWrapping="Wrap" Text="来电号码：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" d:LayoutOverrides="Height" Grid.Row="2" Margin="0,1,0,0" Width="79" />
-                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=callnumber}" Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="1" d:LayoutOverrides="Height" Grid.Row="2" Grid.ColumnSpan="1" >
+                        <TextBlock TextWrapping="Wrap" Text="来电号码：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="2" Margin="0,1,0,0" Width="79" />
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=callnumber}" Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="callnumber"  Operator="callnumber like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock TextWrapping="Wrap" Text="工号：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2" d:LayoutOverrides="Height" Grid.Row="2" Margin="0,1,0,0" Width="79" />
-                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=gonghao}" Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="3" d:LayoutOverrides="Height" Grid.Row="2" Grid.ColumnSpan="1" >
+                        <TextBlock TextWrapping="Wrap" Text="工号：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2" Grid.Row="2" Margin="0,1,0,0" Width="63" />
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=gonghao}" Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="3" Grid.Row="2" Grid.ColumnSpan="1" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="gonghao"  Operator="gonghao like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock TextWrapping="Wrap" Text="来电时间：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="4" d:LayoutOverrides="Height" Grid.Row="2" Margin="0,1,0,0" Width="79" />
-                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=comingtime}" Width="Auto" Margin="1,1,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="5" d:LayoutOverrides="Height" Grid.Row="2" Grid.ColumnSpan="1" >
+                        <TextBlock TextWrapping="Wrap" Text="来电时间：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="4" Grid.Row="2" Margin="0,1,0,0" Width="80" Grid.ColumnSpan="1" />
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=comingtime1}" Margin="0"  Height="25" VerticalAlignment="Stretch" Grid.Column="5" Grid.Row="2" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="comingtime"  Operator="comingtime like 'this%'"/>
+                                <o:PropertySetter PropertyName="comingtime1" Value="{m:Exp Str=SysTime.MonthsBeforeToday(1)}" Operator=" comingtime >=replace('this','-','') "/>
                             </a:Data.Prop>
-                        </TextBox>
-
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="至" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="6" Grid.Row="2" Margin="0,1,0,0" Width="80" Grid.ColumnSpan="1" />
+                        <sdk:DatePicker SelectedDate="{m:Bind Path=comingtime2}" Margin="0"  Height="25" VerticalAlignment="Stretch" Grid.Column="7" Grid.Row="2" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="comingtime2" Value="{m:Exp Str=SysTime.Today}" Operator=" comingtime ^= LEFT(replace('this','-',''),8)+' 23:59:59' "/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock TextWrapping="Wrap" Text="是否接通：" Height="25" TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="8" Grid.Row="2" Margin="1,1,0,0" Width="80" />
+                        <ComboBox   DisplayMemberPath="name" SelectedValuePath="name"  ItemsSource="{m:Exp Str=applist}" SelectedValue="{m:Bind Path=islink}" Grid.Column="8" Grid.Row="2"  Width="66" HorizontalAlignment="Right" a:ControlAttach.DefaultButton="searchbutton" Margin="0,0,0,2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="islink" Operator="islink = 'this'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                       
                         <!-- <TextBlock Visibility="Visible" TextWrapping="Wrap" Text="报修时间："  Margin="6,2,0,0" Height="25" TextAlignment="Right" HorizontalAlignment="Left" Width="71" VerticalAlignment="Top" Grid.Column="0" Grid.Row="2" />
                         <sdk:DatePicker Visibility="Visible" Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="3" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                             <a:Data.Prop>
@@ -106,18 +132,12 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
                     </toolkit:DockPanel>
 
-                    <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True"
-								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
-
+                    <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
                         <a:Data.Items>
-                            <!-- <o:PagedObjectList x:Name="ldlist" WebClientInfo="{StaticResource dbclient}"
-                                               MultiPath="{m:Exp Str=$from t_comingrecord where callnumber IS NOT NULL and  \{daninfosearch.DataContext.Condition\}}"
-											    Path="{m:Exp Str=$from t_comingrecord where callnumber IS NOT NULL and  \{daninfosearch.DataContext.Condition\} order by comingtime DESC}"
-												IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
-												PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/> -->
-                            <o:PagedList x:Name="ldlist" WebClientInfo="{StaticResource dbclient}" Path="sql"             
-                         SumHQL="{m:Exp Str=$select trunk\,inline\,callnumber\,comingtime\,rectime\,handuptime\,gonghao\,islink\,recordfile\,CONVERT\(varchar(100)\,(cast(substring(handuptime\,1\,4) + \'-\' + substring(handuptime\,5\,2) + \'-\' + substring(handuptime\,7\,2) + \' \' + substring(handuptime\,10\,8) as datetime))-(cast(substring(rectime\,1\,4) + \'-\' + substring(rectime\,5\,2) + \'-\' + substring(rectime\,7\,2) + \' \' + substring(rectime\,10\,8) as datetime))\,24) thtime from t_comingrecord where callnumber IS NOT NULL and  \{daninfosearch.DataContext.Condition\}}"
-                         HQL="{m:Exp Str=$select trunk\,inline\,callnumber\,comingtime\,rectime\,handuptime\,gonghao\,islink\,recordfile\,CONVERT\(varchar(100)\,(cast(substring(handuptime\,1\,4) + \'-\' + substring(handuptime\,5\,2) + \'-\' + substring(handuptime\,7\,2) + \' \' + substring(handuptime\,10\,8) as datetime))-(cast(substring(rectime\,1\,4) + \'-\' + substring(rectime\,5\,2) + \'-\' + substring(rectime\,7\,2) + \' \' + substring(rectime\,10\,8) as datetime))\,24) thtime from t_comingrecord where callnumber IS NOT NULL and  \{daninfosearch.DataContext.Condition\} order by comingtime DESC}"
+                            <o:PagedList x:Name="ldlist" WebClientInfo="{StaticResource dbclient}" Path="sql"     
+                                                      Names="trunk,inline,callnumber,comingtime,rectime,handuptime,gonghao,islink,recordfile,thtime"
+                         SumHQL="{m:Exp Str=$select trunk\,inline\,callnumber\,comingtime\,case islink when \'yes\' then rectime else \'\' end rectime\,case islink when \'yes\' then handuptime else \'\' end handuptime\,gonghao\,islink\,recordfile\,case islink when \'yes\' then CONVERT\(varchar(100)\,(cast(substring(handuptime\,1\,4) + \'-\' + substring(handuptime\,5\,2) + \'-\' + substring(handuptime\,7\,2) + \' \' + substring(handuptime\,10\,8) as datetime))-(cast(substring(rectime\,1\,4) + \'-\' + substring(rectime\,5\,2) + \'-\' + substring(rectime\,7\,2) + \' \' + substring(rectime\,10\,8) as datetime))\,24) end thtime from t_comingrecord where \(callnumber IS not NULL or inline is not null\) and  \{daninfosearch.DataContext.Condition\}}"
+                         HQL="{m:Exp Str=$select trunk\,inline\,callnumber\,comingtime\,case islink when \'yes\' then rectime else \'\' end rectime\,case islink when \'yes\' then handuptime else \'\' end handuptime\,gonghao\,islink\,recordfile\,case islink when \'yes\' then CONVERT\(varchar(100)\,(cast(substring(handuptime\,1\,4) + \'-\' + substring(handuptime\,5\,2) + \'-\' + substring(handuptime\,7\,2) + \' \' + substring(handuptime\,10\,8) as datetime))-(cast(substring(rectime\,1\,4) + \'-\' + substring(rectime\,5\,2) + \'-\' + substring(rectime\,7\,2) + \' \' + substring(rectime\,10\,8) as datetime))\,24) end thtime from t_comingrecord where \(callnumber IS not NULL or inline is not null\) and  \{daninfosearch.DataContext.Condition\} order by comingtime DESC}"
                          PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="," />
 
                         </a:Data.Items>
@@ -127,7 +147,7 @@
                             <sdk:DataGridTextColumn Header="内线号" Binding="{Binding inline}"/>
                             <sdk:DataGridTextColumn Header="来电号码" Binding="{Binding callnumber}"/>
                             <sdk:DataGridTextColumn Header="接入时间" Binding="{Binding comingtime}"/>
-                            <sdk:DataGridTextColumn Header="接听时间" Binding="{Binding rectime}"/>
+                            <!--<sdk:DataGridTextColumn Header="接听时间" Binding="{Binding rectime}"/>
                             <sdk:DataGridTextColumn Header="挂机时间" Binding="{Binding handuptime}"/>
                             <sdk:DataGridTemplateColumn Header="通话时长" >
                                 <sdk:DataGridTemplateColumn.CellTemplate>
@@ -135,20 +155,87 @@
                                         <TextBlock Text="{Binding thtime}" />
                                     </DataTemplate>
                                 </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn> -->
+                            <sdk:DataGridTemplateColumn Header="接听时间" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding rectime}" Visibility="{m:Exp Str='data.islink \=\= $yes$:$Visible$,$Collapsed$'}"  />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="挂机时间" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding handuptime}" Visibility="{m:Exp Str='data.islink \=\= $yes$:$Visible$,$Collapsed$'}" />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="通话时长" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding thtime}" Visibility="{m:Exp Str='data.islink \=\= $yes$:$Visible$,$Collapsed$'}" />
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
                             </sdk:DataGridTemplateColumn>
                             <sdk:DataGridTextColumn Header="话务员工号" Binding="{Binding gonghao}"/>
-                            <sdk:DataGridTextColumn Header="是否接听" Binding="{Binding islink}"/>
-                            <sdk:DataGridTextColumn Header="文件号" Binding="{Binding recordfile}"/>
+                            <sdk:DataGridTemplateColumn Header="是否接通" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock   Text="{m:Exp Str='data.islink \=\= $yes$:$接通$,$未接通$'}"  Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="录音" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="收听录音" IsEnabled="{m:Exp Str='data.islink \=\= $yes$:$true$,$false$'}" Click="{m:Exp Str=wbPhone.startwav()}" Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="收听录音" Visibility="Collapsed"  >
+                                <sdk:DataGridTemplateColumn.CellTemplate >
+                                    <DataTemplate>
+                                        <!--<Button Content="收听test" IsEnabled="{m:Exp Str='data.recordfile!=null'}" Click="Button_Click" Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>-->
+                                        <Grid Width="310" Height="70" Margin="5">
+                                            <WebBrowser Source="{m:Exp Str=$\{httpplay.BaseAddress\}/\{data.recordfile\}\.wav$}" Height="auto" Width="auto" Margin="0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <!--sdk:DataGridTextColumn Header="文件号" Binding="{Binding recordfile}"/
+                            <sdk:DataGridTemplateColumn Header="文件号" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <Button Content="下载文件" IsEnabled="{m:Exp Str='data.recordfile!=null'}" Click="{m:Exp Str=downLoad.Down()}"  Grid.Column="4" Margin="28,3,8,2" Grid.Row="6"/>
+                                            <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{httpfile.BaseAddress\}/\{data.recordfile\}\.wav$}" Filter="(*.wav)|*.wav"></c:DownLoad>
+                                            <c:MessageTipObj Tip="{m:Exp Str=$录音文件下载完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
+                                        </StackPanel>
+                                        
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>-->
+                            <sdk:DataGridTextColumn Header="文件号" Binding="{Binding recordfile}" />
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
-
-
-
                 </toolkit:DockPanel>
-
-
             </c:BusyIndicatorEx>
-
+            <sdk:DataGrid x:Name="djxl" Grid.Column="0" Grid.Row="2" Margin="0,0,0,3"   IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                    <a:Data.Items>
+                        <o:PagedList x:Name="jxl" WebClientInfo="{StaticResource dbclient}" Path="sql" Names="y,n,h,p"
+                            HQL="{m:Exp Str=$select convert(varchar(255)\,sum(y.y)) y\,convert(varchar(255)\,sum(n.n)) n\,convert(varchar(255)\,count(c.id)) h\,LEFT(convert(varchar(255)\,sum(y.y)\/(count(c.id)\+0.0)\*100)\,5) p  from t_comingrecord c left join (select id\,CASE WHEN islink\=\'yes\' THEN 1 ELSE 0 END y from t_comingrecord)y on c.id\=y.id left join (select id\,CASE WHEN islink\=\'no\' THEN 1 ELSE 0 END n from t_comingrecord)n on c.id\=n.id where \(callnumber IS not NULL or inline is not null\) and  \{daninfosearch.DataContext.Condition\}}"
+                         PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="," />
+                    </a:Data.Items>
+                    <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn  Header="来电合计" Binding="{Binding h}"/>
+                        <sdk:DataGridTextColumn Header="接线数" Binding="{Binding y}"/>
+                        <sdk:DataGridTextColumn Header="未接数" Binding="{Binding n}"/>
+                        <sdk:DataGridTextColumn Header="接线率" Binding="{Binding p}"/>
+                        
+                    </sdk:DataGrid.Columns>
+           </sdk:DataGrid>
         </Grid>
+       
     </Grid>
+            
 </UserControl>

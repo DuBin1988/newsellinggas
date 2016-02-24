@@ -51,7 +51,7 @@
             </b:SyncActionFactory>
             
             <!--外拨对象-->
-            <o:Phone Name="wbPhone"  LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.0.201:8000"/>
+            <o:Phone Name="wbPhone"  LineNum="{m:Exp Str=IpTongDao.tongdao}" GongHao="{m:Exp Str=LoginUser.gonghao}" TelServiceUrl="http://192.168.1.160:8000"/>
 
 
             <!--来电短信保存对象 -->
@@ -126,15 +126,16 @@
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="30" />
                                     <RowDefinition Height="34"/>
-                                    <RowDefinition Height="90"/>
-                                    <RowDefinition Height="60" />
+                                    <RowDefinition Height="100"/>
+                                    <RowDefinition Height="50" />
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="0"/>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
                                     <RowDefinition Height="59"/>
-                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="0"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Margin="0" TextWrapping="Wrap" Text="用户姓名：" HorizontalAlignment="Right" Grid.Row="2" Height="25" VerticalAlignment="Center" Grid.Column="1"/>
                                 <TextBlock Margin="0,4,-1.5,4" TextWrapping="Wrap" Text="联系方式：" Grid.Column="3" Grid.Row="2" Height="22" TextAlignment="Right"/>
@@ -245,9 +246,9 @@
                                         <o:PropertySetter PropertyName="f_dealtype"  NotNull="True" Default="{m:Exp Str='chulifangshilist.Count > 0 :chulifangshilist.First().name,null'}"></o:PropertySetter>
                                     </a:Data.Prop>
                                 </ComboBox>
-                                <TextBox Text="{m:Bind Path=f_repairreason}"  VerticalScrollBarVisibility="Auto" AcceptsReturn="True"  Margin="0,40,0,0" Grid.Row="8" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="5" Grid.Column="2" VerticalAlignment="Stretch">
+                                <TextBox Text="{m:Bind Path=f_repairreason}"  VerticalScrollBarVisibility="Auto" AcceptsReturn="True"  Margin="0,60,0,0" Grid.Row="8" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="5" Grid.Column="2" VerticalAlignment="Stretch">
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_repairreason" NotNull="True" Value="{m:Exp Str='${a.IsChecked:$漏气,$,$$}{b.IsChecked:$通气,$,$$}{c.IsChecked:$输气不进,$,$$}{d.IsChecked:$灶具故障,$,$$}{e.IsChecked:$表响,$,$$}{f.IsChecked:$死表,$,$$}{g.IsChecked:$换表,$,$$}{h.IsChecked:$换自闭阀,$,$$}{i.IsChecked:$气量不符,$,$$}{a1.IsChecked:$热水器接驳,$,$$}{b1.IsChecked:$壁挂炉接驳,$,$$}{c1.IsChecked:$改装,$,$$}{d1.IsChecked:$打不着火,$,$$}{e1.IsChecked:$无气,$,$$}'}"/>
+                                        <o:PropertySetter PropertyName="f_repairreason" NotNull="True" Value="{m:Exp Str='${a.IsChecked:$整个小区停气,$,$$}{b.IsChecked:$户内漏气,$,$$}{c.IsChecked:$户外漏气,$,$$}{d.IsChecked:$签协议,$,$$}{e.IsChecked:$通气,$,$$}{f.IsChecked:$重开球阀,$,$$}{g.IsChecked:$表有问题,$,$$}{h.IsChecked:$表有故障,$,$$}{a1.IsChecked:$表显示关闭,$,$$}{b1.IsChecked:$表黑屏,$,$$}{c1.IsChecked:$接软管,$,$$}{d1.IsChecked:$燃气管加长,$,$$}{e1.IsChecked:$壁挂炉调试,$,$$}{f1.IsChecked:$燃气管未入户,$,$$}{g1.IsChecked:$设备整改,$,$$}{a2.IsChecked:$供暖管漏水,$,$$}{b2.IsChecked:$暖气片不热,$,$$}{c2.IsChecked:$灶具点不着火,$,$$}{d2.IsChecked:$安装灶具,$,$$}{e2.IsChecked:$领灶具,$,$$}{f2.IsChecked:$接灶具软管,$,$$}'}" />
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Margin="0" TextWrapping="Wrap" Text="报修编号：" HorizontalAlignment="Right" Height="25" VerticalAlignment="Center" Grid.Column="1"/>
@@ -301,24 +302,33 @@
                                         <o:PropertySetter PropertyName="f_department" NotNull="True" Default="{m:Exp Str=LoginUser.f_parentname}" />
                                     </a:Data.Prop>
                                 </TextBox>
-                                <StackPanel Grid.Row="8" Grid.Column="2" Height="40" Width="auto" Margin="0" Grid.ColumnSpan="5"  Orientation="Vertical" VerticalAlignment="Top">
+                                <StackPanel Grid.Row="8" Grid.Column="2" Height="60" Width="auto" Margin="0" Grid.ColumnSpan="5"  Orientation="Vertical" VerticalAlignment="Top">
                                     <StackPanel Height="20" Width="auto" Orientation="Horizontal">
-                                        <CheckBox Name="a"  Content="漏气"  Height="20" Margin="10,0,5,0"  HorizontalAlignment="Left" Width="50" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="b" Content="通气"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="c" Content="输气不进"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="d" Content="灶具故障"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="77" Grid.ColumnSpan="2"/>
-                                        <CheckBox Name="e" Content="表响"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="47" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="f" Content="死表"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="47" d:LayoutOverrides="HorizontalAlignment, Height"/>
-                                        <CheckBox Name="g" Content="换表"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="47" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="h" Content="换自闭阀" Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="77" d:LayoutOverrides="HorizontalAlignment, Height"/>
-                                        <CheckBox Name="i" Content="气量不符" Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="77" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="a"  Content="整个小区停气"  Height="20" Margin="10,0,5,0"  HorizontalAlignment="Left"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="b" Content="户内漏气"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="c" Content="户外漏气"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="d" Content="签协议"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right"  Grid.ColumnSpan="2"/>
+                                        <CheckBox Name="e" Content="通气"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="f" Content="重开球阀"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="HorizontalAlignment, Height"/>
+                                        <CheckBox Name="g" Content="表有问题"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right"  d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="h" Content="表有故障" Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="HorizontalAlignment, Height"/>
                                     </StackPanel>
                                     <StackPanel Height="20" Width="auto" Orientation="Horizontal">
-                                        <CheckBox Name="a1"  Content="热水器接驳"  Height="20" Margin="10,0,5,0"  HorizontalAlignment="Left" Width="85" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="b1" Content="壁挂炉接驳"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="c1" Content="改装"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                                        <CheckBox Name="d1" Content="打不着火"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="77" Grid.ColumnSpan="2"/>
-                                        <CheckBox Name="e1" Content="无气"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="47" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="a1"  Content="表显示关闭"  Height="20" Margin="10,0,5,0"  HorizontalAlignment="Left"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="b1" Content="表黑屏"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="c1" Content="接软管"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="d1" Content="燃气管加长"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right"  Grid.ColumnSpan="2"/>
+                                        <CheckBox Name="e1" Content="壁挂炉调试"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="f1" Content="燃气管未入户"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="HorizontalAlignment, Height"/>
+                                        <CheckBox Name="g1" Content="设备整改"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right"  d:LayoutOverrides="Height"/>
+                                    </StackPanel>
+                                    <StackPanel Height="20" Width="auto" Orientation="Horizontal">
+                                        <CheckBox Name="a2"  Content="供暖管漏水"  Height="20" Margin="10,0,5,0"  HorizontalAlignment="Left"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="b2" Content="暖气片不热"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="c2" Content="灶具点不着火"  Height="20" Margin="0,0,5,0" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="d2" Content="安装灶具"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Right"  Grid.ColumnSpan="2"/>
+                                        <CheckBox Name="e2" Content="领灶具"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="Height"/>
+                                        <CheckBox Name="f2" Content="接灶具软管"  Height="20" Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Left"  d:LayoutOverrides="HorizontalAlignment, Height"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" Margin="0,3,0,5" Grid.Row="5" TextWrapping="Wrap" Text="报修时间：" Height="22" HorizontalAlignment="Right" d:LayoutOverrides="HorizontalMargin"/>
@@ -339,12 +349,12 @@
                                     <Button Content=" 撤 销 " Margin="5,3,5,0" Click="{m:Exp Str=consumer.New();main.DataContext.New();main.DataContext.f_phone\=Phone.CallNumber;main.DataContext.recordfile\=Phone.RecordFile}" RenderTransformOrigin="0.5,0.5" toolkit:DockPanel.Dock="Right" />
 
                                 </StackPanel>
-                                <!-- <TextBlock Margin="0,4" Grid.Row="15" TextWrapping="Wrap" Text="调度中心：" TextAlignment="Right" Height="22" HorizontalAlignment="Right" Grid.Column="1"/>
+                                <!--<TextBlock Margin="0,4" Grid.Row="15" TextWrapping="Wrap" Text="调度中心：" TextAlignment="Right" Height="22" HorizontalAlignment="Right" Grid.Column="1"/>
                                 <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=tdzxlist}" SelectedValue="{m:Bind Path=f_dzzx}" Grid.Column="2" Margin="0,2,0,3" Grid.Row="15" Height="25" HorizontalAlignment="Stretch">
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_dzzx" NotNull="True" ></o:PropertySetter>
                                     </a:Data.Prop>
-                                </ComboBox> -->
+                                </ComboBox>-->
                                 <TextBlock Margin="0,4,-1,4" TextWrapping="Wrap" Text="是否处理：" Grid.Row="10" HorizontalAlignment="Right" Grid.Column="1"/>
                                 <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=shifoulist}" SelectedValue="{m:Bind Path=f_havadeal}" Grid.Column="2" Grid.Row="10" Margin="1,2,-1,3" Height="25" Width="Auto" VerticalAlignment="Stretch">
                                     <a:Data.Prop>

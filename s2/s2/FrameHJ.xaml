@@ -68,25 +68,25 @@
 			    <o:Timer Name="zjTimer" Interval="60000"/>
 			 
 			 
-            <!--来电总数-->
+            <!--来电总数--><!--
             <o:ObjectList Name="ldcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_comingrecord where islink\=\'yes\' and comingtime like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
             
-            <!--在线处理-->
+            --><!--在线处理--><!--
             <o:ObjectList Name="zxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'电话处理\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
 			
-			<!--上门维修-->
+			--><!--上门维修--><!--
             <o:ObjectList Name="smwxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'转交维修\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
 			
-			<!--抢险-->
+			--><!--抢险--><!--
             <o:ObjectList Name="qxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'抢险\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
-					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
+					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />-->
 
             <!--根据角色配置使用电话,多种角色使用逗号分隔-->
             <o:Phone Name="Phone" LineNum="{m:Exp Str=IpTongDao.tongdao}" LoginRoles="{m:Exp Str=LoginUser.operpage}" GongHao="{m:Exp Str=LoginUser.gonghao}"  TelServiceUrl="http://192.168.1.18:8000" RoleNames="话务员"  IsInit="{m:Exp Str='IpTongDao.tongdao!=null'}" WebClientInfo="{StaticResource dbclient}"   IsRecordDB="True" >

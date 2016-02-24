@@ -22,7 +22,7 @@
 		  	 <m:ResourceLoad Margin="0">
 		  	 	<o:PagedObjectList Name="telslist" WebClientInfo="{StaticResource dbclient}"
 				   IsOld="{m:Exp Str=this.State\=\=$End$}"
-												Path="{m:Exp Str=$from t_comingrecord where \{telrecordsearch.DataContext.Condition\}  order by comingtime desc}"
+												Path="{m:Exp Str=$from t_comingrecord where \{telrecordsearch.DataContext.Condition\} }"
 												PageIndex="{m:Exp Str=pager1.PageIndex}" PageSize="{m:Exp Str=pager1.PageSize}"  SumNames="n" />
 				
 				

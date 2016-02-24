@@ -78,7 +78,7 @@
 						<sdk:DataGridTextColumn Header="信息内容" Binding="{Binding f_infocontent}"/>
 						<sdk:DataGridTextColumn Header="部门" Binding="{Binding f_department}"/>
 						<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operation}"/>
-						<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_operationdate}"/>
+						<!--<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_operationdate}"/>-->
 							
 					</sdk:DataGrid.Columns>
 				</sdk:DataGrid>
@@ -121,16 +121,16 @@
 								</Grid.RowDefinitions>
 								<TextBlock Margin="0" TextWrapping="Wrap" Text="信息标题：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 								<TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="信息内容：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-								<TextBlock Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="操作日期：" Height="25" HorizontalAlignment="Right"/>
+								<!--<TextBlock Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="操作日期：" Height="25" HorizontalAlignment="Right"/>-->
 								<TextBlock Grid.Column="2" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="操作员：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 								<TextBlock Grid.Column="5" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="部门：" Height="25" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 								<TextBox Text="{m:Bind Path=f_infotitle}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0" TextWrapping="Wrap" Height="25"/>
 								<TextBox Text="{m:Bind Path=f_infocontent}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="270"/>
-								<sdk:DatePicker SelectedDate="{m:Bind Path=f_operationdate}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25">
+								<!--<sdk:DatePicker SelectedDate="{m:Bind Path=f_operationdate}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25">
 									<a:Data.Prop>
 										<o:PropertySetter PropertyName="f_operationdate" Default="{m:Exp Str=SysTime.Today.ToString($yyyy-MM-dd$)}" />
 									</a:Data.Prop>
-								</sdk:DatePicker>
+								</sdk:DatePicker>-->
 								<TextBox Text="{m:Bind Path=f_operation}" Grid.Column="3" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25">
 										<a:Data.Prop>
 								             <o:PropertySetter PropertyName="f_operation" NotNull="True" 
