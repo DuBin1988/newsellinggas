@@ -293,7 +293,7 @@ public class HandCharge {
 		// 气量
 		// BigDecimal gas = new BigDecimal(reading).subtract(lastReading);
 		// 从户里取出余额(上期余额)
-		BigDecimal f_zhye = new BigDecimal(map.get("f_zhye") + "");
+		BigDecimal f_zhye = new BigDecimal(user.get("f_zhye") + "");
 		// 用户地址
 		String address = map.get("f_address").toString();
 		// 用户姓名
@@ -411,6 +411,8 @@ public class HandCharge {
 			sell.put("f_enddate", enddate);
 			sell.put("f_allamont", sumamont.doubleValue());
 			int sellid = (Integer) hibernateTemplate.save("t_sellinggas", sell);
+			this.updateUser(user, f_zhye.subtract(chargenum), f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
+
 			hql = "update t_userfiles set f_zhye=?,lastinputgasnum=?,"
 					+
 					// 本次抄表日期
