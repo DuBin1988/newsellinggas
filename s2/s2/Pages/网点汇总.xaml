@@ -216,6 +216,8 @@
 			 <!--阶梯气价信息-->
             <o:PagedList Name="stair" WebClientInfo="{StaticResource dbclient}"
 		            LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
+					SumNames=","
+					Names="type,count,f_stair1amount,f_stair1fee"
 		            Path="sql"
 					HQL="{m:Exp Str=$(select 1 type1\, COUNT(*)count\,SUM(f_stair1amount)f_stair1amount\,SUM(f_stair1fee)f_stair1fee from t_sellinggas where f_stair1amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
 										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
@@ -228,7 +230,8 @@
 										 UNION ALL
                                         (select 4 type4\, COUNT(*)count\,SUM(f_stair4amount)f_stair4amount\,SUM(f_stair4fee)f_stair4fee from t_sellinggas where f_stair4amount>0 and f_payfeevalid\=\'有效\' and f_deliverydate\>\=substring(\'\{search.DataContext.f_yytdate1\}\'\,1\,10) and f_deliverydate\^\=substring(\'\{search.DataContext.f_yytdate2\}\'\,1\,10)+ \' 23:59:59\' and 
 										\{search.DataContext.f_sgnetwork\=\=$汇总报表$:$1\=1$\,$f_sgnetwork\=\'\{search.DataContext.f_sgnetwork\}\'$\})
-                                       }">
+                                       }"
+									  PageIndex="0" PageSize="100">
             </o:PagedList>
         </m:ResourceLoad>
 
@@ -459,23 +462,29 @@
                 <sdk:Label Margin="0,4,17,3" Content="报建收金额" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="13" Grid.Column="2" RenderTransformOrigin="0.463,1.652" HorizontalAlignment="Right" Width="68"/>
                 <TextBlock Text="{m:Exp Str=baojian.Sum(col1)\=&gt;DataLoaded}" Grid.Column="3"  HorizontalAlignment="Right" Margin="0,5,0,0"  Width="110" Height="20" Grid.Row="13"/>
                 <sdk:Label Content="阶梯一售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="15" Width="133"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$1$].Sum(count)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯一售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="15" Width="106"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$1$].Sum(f_stair1amount)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯一售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" Margin="0,0,5,0" Grid.Row="15" Width="116" HorizontalAlignment="Right"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$1$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$1$].Sum(f_stair1fee)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="15" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯二售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="16" Width="133"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$2$].Sum(count)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯二售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="16" Width="105"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$2$].Sum(f_stair1amount)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯二售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="16" Width="121"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$2$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$2$].Sum(f_stair1fee)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="16" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯三售气笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="17" Width="133"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col1)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$3$].Sum(count)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯三售气气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="17" Width="105"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col2)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$3$].Sum(f_stair1amount)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
                 <sdk:Label Content="阶梯三售气金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="17" Width="122"/>
-                <TextBlock Text="{m:Exp Str=stair[data.col0\=\=$3$].Sum(col3)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$3$].Sum(f_stair1fee)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="17" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="超过阶梯三笔数" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="18" Width="133"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$4$].Sum(count)\=&gt;DataLoaded}"  Grid.Column="1" Margin="0" Grid.Row="18" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="超过阶梯三气量" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Row="18" Width="120"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$4$].Sum(f_stair1amount)\=&gt;DataLoaded}"  Grid.Column="3" Margin="0" Grid.Row="18" HorizontalAlignment="Stretch" Width="Auto"/>
+                <sdk:Label Content="超过阶梯三金额" FontSize="13.333" VerticalContentAlignment="Center" Grid.Column="4" HorizontalAlignment="Right" Margin="0" Grid.Row="18" Width="122" BorderThickness="0,0,5,0"/>
+                <TextBlock Text="{m:Exp Str=stair[data.type\=\=$4$].Sum(f_stair1fee)\=&gt;DataLoaded}"  Grid.Column="5" Margin="0" Grid.Row="18" HorizontalAlignment="Stretch" Width="Auto"/>
                 <!--sdk:Label Margin="48,3,10,4" Content="民用本次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="16" Grid.Column="0"/>
                 <TextBlock Text="{m:Exp Str=jieyu[data.col1\=\=$民用$].Sum(col4)\=&gt;DataLoaded}" Grid.Column="1"  HorizontalAlignment="Right" Margin="0,5,0,5"  Width="139" Height="20" Grid.Row="16"/>
                 <sdk:Label Margin="10,3,7,4" Content="非民用本次结余" FontSize="13.333" VerticalContentAlignment="Top" Grid.Row="16" Grid.Column="2"/>
