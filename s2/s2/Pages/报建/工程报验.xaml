@@ -29,7 +29,7 @@
             <o:ObjectList Name="nr3ist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='内容3'"/>
 
 
-            <o:GeneralObject Name="project" EntityType="t_projectplan" WebClientInfo="{StaticResource dbclient}" IsInit="{m:Exp Str=main.DataContext.State\=\=$End$}">
+            <o:GeneralObject Name="project" EntityType="t_projectplan" WebClientInfo="{StaticResource dbclient}" IsInit="{m:Exp Str='BatchSave.State==$End$'}">
                 <o:PropertySetter PropertyName="applyid" Default="{m:Exp Str=main.DataContext.id}" Value="{m:Exp Str=main.DataContext.id}"/>
                 <o:PropertySetter PropertyName="f_username" Default="{m:Exp Str=main.DataContext.f_username}" Value="{m:Exp Str=main.DataContext.f_username}"/>
                 <o:PropertySetter PropertyName="f_code" Default="{m:Exp Str=main.DataContext.f_code}" Value="{m:Exp Str=main.DataContext.f_code}"/>
@@ -92,7 +92,7 @@
                                     <sdk:DataGrid x:Name="myjgdList" Margin="0"  AutoGenerateColumns="False"  
 				         IsReadOnly="True" >
                                         <a:Data.Items>
-                                            <o:PagedList Name="myjgd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='main.DataContext.State==$End$ |or| myjgdPager.DataContext.State==$End$'}"
+                                            <o:PagedList Name="myjgd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='BatchSave.State==$End$|or| myjgdPager.DataContext.State==$End$'}"
                             Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
                             HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                             from activityins act 
@@ -132,7 +132,7 @@
                         <!--编辑对象-->
                         <o:GeneralObject Name="myjgdObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
 			    Path="{m:Exp Str=myjgdList.SelectedItem \!\=null:$one/from t_apply where id\=\{myjgdList.SelectedItem.id\}$\,$null$}"  
-                IsInit="{m:Exp Str='this.State==$End$'}">
+                IsInit="{m:Exp Str='BatchSave.State==$End$'}">
 
                         </o:GeneralObject>
 
@@ -433,7 +433,7 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
                         <Button x:Name="save1" Content="  保  存  " Margin="5" 
-            			Click="{m:Exp Str=BatchSave.Invoke();project.New()}" />
+            			Click="{m:Exp Str=BatchSave.Invoke()}" />
 
 
                     </StackPanel>

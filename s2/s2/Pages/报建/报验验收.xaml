@@ -26,12 +26,10 @@
             <o:ObjectList Name="nr2ist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='内容2'"/>
             <!--内容3-->
             <o:ObjectList Name="nr3ist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='内容3'"/>
-            
-            
-            <o:GeneralObject Name="project" EntityType="t_projectplan" WebClientInfo="{StaticResource dbclient}"
-                  Source="{m:Exp Str='persons.SelectedItem !=null:persons.SelectedItem,null'}"
-		         IsInit="{m:Exp Str=main.DataContext.State\=\=$End$}">
-            </o:GeneralObject>
+            <!--验收结果-->
+            <o:ObjectList Name="ysjglist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='验收结果'"/>
+
+           
 
 
             <b:BatchExcuteAction Name="BatchSave"  WebClientInfo="{StaticResource dbclient}">
@@ -80,6 +78,7 @@
                                         <a:Data.Items>
                                             <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
                              Path="{m:Exp Str=$from t_projectplan  where \{personsearch.DataContext.Condition\} and f_ysjg is  null}"
+                                                          IsOld="{m:Exp Str='BatchSave.State==$End$'}"
 					         >
                                             </o:ObjectList>
                                         </a:Data.Items>
@@ -106,12 +105,21 @@
 
             <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str= BatchSave.IsBusy}" Margin="10,0,0,0" Grid.ColumnSpan="1" Grid.Column="1" >
                 <Grid Background="{x:Null}" x:Name="main" Margin="0">
+                    <a:Data.Context>
+                        <!--编辑对象-->
+                        <o:GeneralObject Name="project" EntityType="t_projectplan" WebClientInfo="{StaticResource dbclient}" 
+			    Path="{m:Exp Str=persons.SelectedItem !\=null:$one/from t_projectplan where id\=\{persons.SelectedItem.id\}$\,$null$}"  
+                IsInit="{m:Exp Str='BatchSave.State==$End$'}">
+
+                        </o:GeneralObject>
+
+                    </a:Data.Context>
 
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" Height="Auto" >
                         <!--民用主操作区-->
                         <sdk:TabItem Header="施工日志">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  Margin="0,-3,0,-4" >
-                                <Grid x:Name="projectinfo" DataContext="{m:Exp Str=project}" >
+                                <Grid >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="30"/>
                                         <RowDefinition Height="30"/>
@@ -228,18 +236,18 @@
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Margin="199,4,1,1" Grid.Row="9" TextWrapping="Wrap" Text="验收结果：" Height="25" TextAlignment="Right" Grid.Column="3" Grid.ColumnSpan="2"/>
-                                    <ComboBox  DisplayMemberPath="f_ysjg" SelectedValuePath="f_ysjg" SelectedValue="{m:Bind Path=f_ysjg}" Grid.Column="4" Margin="109,0,1,5" Grid.Row="9" Grid.ColumnSpan="2">
-                                        <a:Data.Items>
-                                            <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" />
-                                        </a:Data.Items>
+                                    <ComboBox  DisplayMemberPath="name" SelectedValuePath="name"  ItemsSource="{m:Exp Str=ysjglist}" SelectedValue="{m:Bind Path=f_ysjg}" Grid.Column="4" Margin="109,0,1,5" Grid.Row="9" Grid.ColumnSpan="2">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_ysjg" NotNull="True" />
+                                        </a:Data.Prop>
                                     </ComboBox>
                                     <TextBlock Text=" 质检项目负责人：" Margin="0,1,197,4" Height="25" HorizontalAlignment="Right" Grid.Row="9" Grid.ColumnSpan="2" Grid.Column="2"/>
                                     <TextBox  Text="{m:Bind Path=f_zjxmfzr}" Grid.Column="2" Margin="109,0,1,5" Height="25" Grid.Row="9" Grid.ColumnSpan="2">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_zjxmfzr" />
+                                            <o:PropertySetter PropertyName="f_zjxmfzr" NotNull="True" />
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock Text="验收日期：" Margin="0,0,1,5" HorizontalAlignment="Right" Height="25" Grid.Row="10" Grid.Column="2"/>
+                                    <TextBlock Text="竣工日期：" Margin="0,0,1,5" HorizontalAlignment="Right" Height="25" Grid.Row="10" Grid.Column="2"/>
                                     <sdk:DatePicker  SelectedDate="{m:Bind Path=f_ysjgdate}" Grid.Column="2" Margin="109,0,1,5" Height="25" Grid.Row="10" Grid.ColumnSpan="2">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_ysjgdate" />
@@ -266,7 +274,7 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
                         <Button x:Name="save1" Content="  保  存  " Margin="5" 
-            			IsEnabled="{m:Exp Str=data.IsModified   and !data.HasErrors}"
+            			IsEnabled="{m:Exp Str=!data.HasErrors}"
             			Click="{m:Exp Str=BatchSave.Invoke()}" />
 
 
