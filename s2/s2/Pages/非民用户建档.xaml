@@ -41,7 +41,7 @@
             <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
             <!--用气性质列表-->
-            <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\!\=\'民用用气\'}"/>
+            <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\=\'非民用\'}"/>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
             <!--单值用户编号对象ksnumobj.value-->
             <o:GeneralObject Name="ksnumobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
