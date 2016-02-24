@@ -165,7 +165,7 @@
             				<TextBlock Margin="0" TextWrapping="Wrap" Text="申请人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"   Height="25"/>
             				<TextBox Text="{m:Bind Path=f_username}" Grid.Column="1" Margin="0"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" IsReadOnly="True">
             					<a:Data.Prop>
-            						<o:PropertySetter PropertyName="f_username" NotNull="True" />
+            						<o:PropertySetter PropertyName="f_username" />
             					</a:Data.Prop>
             				</TextBox>
             				<TextBlock TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.538,0.364" Grid.Column="2"   Height="25"/>
@@ -190,7 +190,7 @@
             				</TextBox>
             				<TextBox Text="{m:Bind Path=f_address}" Grid.Column="1" Margin="0"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3" IsReadOnly="True">
             					<a:Data.Prop>
-            						<o:PropertySetter PropertyName="f_address" NotNull="True" />
+            						<o:PropertySetter PropertyName="f_address" />
             					</a:Data.Prop>
             				</TextBox>
             				<TextBox IsReadOnly="True" Text="{m:Bind Path=f_usertype}"  Grid.Column="5" Margin="0" Grid.Row="0" TextWrapping="Wrap"   Height="25">
@@ -432,7 +432,7 @@
                     </sdk:TabControl>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
-                        <Button x:Name="save1" Content="  保  存  " Margin="5" 
+                        <Button x:Name="save1" Content="  保  存  " Margin="5"  IsEnabled="{m:Exp Str=projectinfo.DataContext.f_byxm!\=null and!data.HasErrors}"
             			Click="{m:Exp Str=BatchSave.Invoke()}" />
 
 
