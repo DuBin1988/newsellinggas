@@ -213,6 +213,7 @@ public class SellSer {
 			sell.put("f_address", userinfo.get("f_address")); // 地址
 			sell.put("f_districtname", userinfo.get("f_districtname")); // 地址
 			sell.put("f_cusDom", userinfo.get("f_cusDom")); // 地址
+			sell.put("f_books", userinfo.get("f_books")); // 册号
 			sell.put("f_cusDy", userinfo.get("f_cusDy")); // 地址
 			sell.put("f_idnumber", userinfo.get("f_idnumber")); // 身份证号
 			sell.put("f_gaswatchbrand", "机表"); // 气表品牌
@@ -415,7 +416,7 @@ public class SellSer {
 
 	// 查找抄表记录
 	private List<Map<String, Object>> findHanplans(String userid) {
-		String sql = " select u.f_zhye f_zhye, u.f_accountzhye f_accountzhye, u.f_username f_username,u.f_cardid f_cardid, u.f_address f_address,u.f_districtname f_districtname,u.f_cusDom f_cusDom,u.f_cusDy f_cusDy,u.f_beginfee f_beginfee, u.f_metergasnums f_metergasnums, u.f_cumulativepurchase f_cumulativepurchase,"
+		String sql = " select u.f_zhye f_zhye, u.f_accountzhye f_accountzhye, u.f_username f_username,u.f_books f_books,u.f_cardid f_cardid, u.f_address f_address,u.f_districtname f_districtname,u.f_cusDom f_cusDom,u.f_cusDy f_cusDy,u.f_beginfee f_beginfee, u.f_metergasnums f_metergasnums, u.f_cumulativepurchase f_cumulativepurchase,"
 				+ "u.f_idnumber f_idnumber, u.f_gaspricetype f_gaspricetype, u.f_gasprice f_gasprice, u.f_usertype f_usertype,"
 				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid,u.f_zherownum f_zherownum, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord, h.shifoujiaofei shifoujiaofei, h.oughtfee oughtfee,h.f_debtmoney  f_debtmoney ,h.lastinputdate from t_userfiles u "

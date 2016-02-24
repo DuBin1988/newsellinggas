@@ -104,6 +104,8 @@
 				<o:PropertySetter PropertyName="f_finallybought" NoDependValue="{m:Exp Str=kbusers.f_finallybought}"  />
 				<!--最后购气量日期_冲正时用-->
 				<o:PropertySetter PropertyName="f_finabuygasdate" NoDependValue="{m:Exp Str=kbusers.f_finabuygasdate}"  />
+				<!--册号-->
+				<o:PropertySetter PropertyName="f_books" NoDependValue="{m:Exp Str=kbusers.f_books}"  />
 				<!--分公司编号-->
 				<o:PropertySetter PropertyName="f_fengongsinum" Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
 				<!--公司类型，分为天然气公司、银行 -->
@@ -159,6 +161,7 @@
 									<RowDefinition Height="28"/>
 									<RowDefinition Height="28"/>
 									<RowDefinition Height="28"/>
+									<RowDefinition Height="28"/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="70"/>
@@ -178,7 +181,7 @@
 										<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
 									</a:Data.Prop>
 								</TextBox>
-								<Button Content="查  询" x:Name="searchbutton" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=kbsellgas.Clear();search.Search()}" Margin="0,1" HorizontalAlignment="Right"  FontSize="13.333" Width="60"/>
+								<Button Content="查  询" x:Name="searchbutton" Grid.Row="4" Grid.Column="3" Click="{m:Exp Str=kbsellgas.Clear();search.Search()}" Margin="0,1" HorizontalAlignment="Right"  FontSize="13.333" Width="60"/>
 								<!--<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=old}" Width="Auto" Margin="0,2,0,1" Height="25" FontSize="13.333" >
 									<a:Data.Prop>
 										<o:PropertySetter PropertyName="old"  Operator="old like '%this%'"/>          
@@ -212,6 +215,12 @@
 								<TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="3" Text="{m:Bind Path=f_apartment}" Width="Auto" Margin="0,1.5" Height="25" FontSize="13.333" >
 									<a:Data.Prop>
 										<o:PropertySetter PropertyName="f_apartment"  Operator="f_apartment = 'this'"/>          
+									</a:Data.Prop>
+								</TextBox>
+								<TextBlock TextWrapping="Wrap" Text="册     号：" Margin="0" Height="25" FontSize="13.333" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" />
+								<TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="3" Text="{m:Bind Path=f_books}" Width="Auto" Margin="0,1.5" Height="25" FontSize="13.333" >
+									<a:Data.Prop>
+										<o:PropertySetter PropertyName="f_books"  Operator="f_books = 'this'"/>          
 									</a:Data.Prop>
 								</TextBox>
 							</Grid>
