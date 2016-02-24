@@ -96,6 +96,5 @@ namespace Com.Aote.Pages
             kbfee.New();
         }
         #endregion
-
     }
 }

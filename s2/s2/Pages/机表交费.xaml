@@ -44,7 +44,7 @@
 			Source="{m:Exp Str=dataGrid1\=>SelectionChanged!\=null:kbsellgas[data.Pos(kbsellgas)^\=dataGrid1.SelectedItem.Pos(kbsellgas)].ToObjectList()\,null}"/>
 
 			<!--机表用户对象-->
-			<o:GeneralObject Name="kbusers" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+			<o:GeneralObject Name="kbusers" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_userfiles"  WebClientInfo="{StaticResource dbclient}"
 				Path="{m:Exp Str=$one/from t_userfiles u  where u.id\=\'\{userfiles.SelectedItem.id\}\'$}" 
 				IsOld="{m:Exp Str=userfiles.SelectedItem !\=null}"
 			 	IsInit="{m:Exp Str=kbusers.State\=\=$LoadError$ |or| kbfee.f_userid\=\=null}">
@@ -220,7 +220,7 @@
 						</toolkit:DockPanel>
 						<sdk:DataGrid x:Name="userfiles" Margin="0"  FontSize="13.333" ItemsSource="{m:Exp Str=userfileslist}"
 							SelectedItem="{m:Exp Str=userfileslist[data.f_userid\=\=kbfee.f_userid].First()}"
-							AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+							AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True">
 							<sdk:DataGrid.Columns>
 								<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
 								<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
@@ -271,8 +271,7 @@
 						<sdk:DataGrid SelectionMode="Extended" AutoGenerateColumns="False" x:Name="dataGrid1" 
 							
 							ItemsSource="{m:Exp Str=kbsellgas}" IsReadOnly="True" CanUserSortColumns="False" IsHitTestVisible="False"
-							SelectedItem="{m:Exp Str=
-							kbsellgas\=>DataLoaded!\=null:kbsellgas.Last()\,null}"
+							SelectedItem="{m:Exp Str=kbsellgas\=>DataLoaded!\=null:kbsellgas.Last()\,null}"
 							ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible">
 							<sdk:DataGrid.Columns>
 								<sdk:DataGridTemplateColumn>

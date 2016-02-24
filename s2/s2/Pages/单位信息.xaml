@@ -189,14 +189,14 @@
 								<TextBlock Grid.Column="2" Margin="0" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" Text="电　　话："/>
                                 <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="False" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" FontSize="13.333" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
 									<a:Data.Prop>
-										<o:PropertySetter PropertyName="f_phone"  />
+                                        <o:PropertySetter PropertyName="f_phone"   Regex="^1[34578][0123456789]\d{8}$"  ErrorMessage="未正确填写手机号"/>
 									</a:Data.Prop>
 								</TextBox>
 								<TextBlock Grid.Column="0" Margin="0" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" Text="证件类型："/>
 								<TextBlock Grid.Column="2" Margin="0" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" Text="证件号码："/>
                                 <TextBox Text="{m:Bind Path=f_idnumber}" IsReadOnly="False" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" FontSize="13.333" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
 									<a:Data.Prop>
-										<o:PropertySetter PropertyName="f_idnumber"  />
+                                        <o:PropertySetter PropertyName="f_idnumber"   Regex= "^(^\d{18}$|^\d{17}(^\d|X|x$)$)$"  ErrorMessage="未正确填写证件号"/>
 									</a:Data.Prop>
 								</TextBox>
 								<ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_credentials}"  Grid.Column="1" Margin="0" Grid.Row="4" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Grid.ColumnSpan="1" > 
