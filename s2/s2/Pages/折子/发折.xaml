@@ -88,19 +88,19 @@
 					   <TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
 	                    <TextBox x:Name="username" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqdm" Grid.Column="3" Grid.Row="0" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,1" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this'"/>               
+	                      	   <o:PropertySetter PropertyName="f_username" Operator="f_username like '%this%'"/>               
 						  </a:Data.Prop>
 						</TextBox>
 						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区名称：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
 	                    <TextBox x:Name="xqmc" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="searchbutton" Grid.Column="3" Grid.Row="1" Text="{m:Bind Path=f_districtname}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this'"/>               
+	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like '%this%'"/>               
 						  </a:Data.Prop>
 						</TextBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区代码：" Margin="3,0,0,0" TextAlignment="Right"/>
-	                    <TextBox x:Name="xqdm" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqmc" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_communityid}" Width="Auto" Margin="0,1" >
+						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区地址：" Margin="3,0,0,0" TextAlignment="Right"/>
+                        <TextBox x:Name="xqdz" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="searchbutton" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,1"  a:ControlAttach.DefaultButton="searchbutton" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_communityid" Operator="f_communityid like 'this'"/>               
+                                <o:PropertySetter PropertyName="f_address" Operator="f_address like '%this%'"/>               
 						  </a:Data.Prop>
 						</TextBox>
 	                    <Button Content="查  询" x:Name="searchbutton" Grid.Column="3" Grid.Row="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,0" HorizontalAlignment="Right" Width="50"/>					
@@ -111,7 +111,7 @@
     					<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
     						Path="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivepassbook\=\'未发\'}"
     						IsOld="{m:Exp Str=print.State\=\=$End$}"
-							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
     				</a:Data.Items>
     				<sdk:DataGrid.Columns>
     					<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
