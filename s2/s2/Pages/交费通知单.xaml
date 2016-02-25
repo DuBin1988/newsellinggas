@@ -16,12 +16,17 @@
 	mc:Ignorable="d"
 	x:Class="Com.Aote.Pages.交费通知单">
     <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-101,0">
+
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+        </m:ResourceLoad>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*"/>
                 <ColumnDefinition Width="0*"/>
             </Grid.ColumnDefinitions>
-            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy  or  print.IsBusy}">
                 <toolkit:DockPanel>
                     <Grid x:Name="daninfosearch" toolkit:DockPanel.Dock="Top" Height="Auto" Width="Auto" Background="#FFF7F7F7">
                         <Grid.RowDefinitions>
@@ -46,20 +51,21 @@
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="用户编号：" Grid.Row="1"/>
                         <TextBox Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid" Operator="f_userid >= this"/>
+                                <o:PropertySetter PropertyName="f_userid" Operator="u.f_userid >= this"/>
                             </a:Data.Prop>
                         </TextBox>
                         <StackPanel Grid.ColumnSpan="8" Margin="0,0,3,0" Orientation="Horizontal" Grid.RowSpan="3" d:LayoutOverrides="Width" Grid.Row="2" Grid.Column="7">
                             <Button Content=" 查  询" x:Name="dansearchbutton" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" FontSize="14"  Width="60" Height="30" VerticalAlignment="Bottom" RenderTransformOrigin="0.483,0.679"  />
                             <Button Content=" 置  空" Click="{m:Exp Str=daninfosearch.DataContext.f_districtname\=null;daninfosearch.DataContext.f_handdate\=null;daninfosearch.DataContext.f_handdate1\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_menzhan\=null;daninfosearch.DataContext.f_zerenbumen\=null}" FontSize="14" HorizontalAlignment="Right" Width="60" Height="30" VerticalAlignment="Bottom"  />
-                            <Button Content=" 打  印" Click="{m:Exp Str=print1.Print()}" Height="30" VerticalAlignment="top" Width="60"/>
+                            <Button Content=" 打  印" Click="{m:Exp Str=print.PrintD()}" Height="30" VerticalAlignment="top" Width="60"/>
+                            <Button Content=" 打印此项" Click="{m:Exp Str=print1.Print()}" Height="30" VerticalAlignment="top" Width="60" IsEnabled="{m:Exp Str='daninfos.SelectedItem!\=null'}"/>
                         </StackPanel>
                         <TextBlock TextWrapping="Wrap" Margin="0,2,0,3" Height="25" TextAlignment="Right" Text="小区名称"/>
                         <TextBlock TextWrapping="Wrap" Margin="0,3,0,2" Height="25" TextAlignment="Right" Text="计划截止月份：" Grid.Column="2"/>
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="到：" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Text="{m:Bind Path=f_userid2}" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.Column="3" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid2" Operator="f_userid ^= this"/>
+                                <o:PropertySetter PropertyName="f_userid2" Operator="u.f_userid ^= this"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Margin="0" Height="25" TextAlignment="Right" Text="用户类型：" Grid.Row="1" Grid.Column="4"/>
@@ -78,13 +84,13 @@
                             </a:Data.Prop>
                         </ComboBox>
 
-                        <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25" IsEnabled="true" Grid.ColumnSpan="1" FontSize="13.333">
+                        <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0" Grid.Row="2" Height="25" IsEnabled="true" Grid.ColumnSpan="1" FontSize="13.333">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_inputtor" Operator="f_inputtor='this'"/>
+                                <o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" Operator="f_inputtor='this'"/>
                             </a:Data.Prop>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                    <TextBlock Height="20" Text="{Binding f_inputtor}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -115,12 +121,13 @@
 										Operator=" f_deliverydate ^= substring('this',1,10)"/>
 									</a:Data.Prop>
 								</sdk:DatePicker-->
-                        <c:Month SelectedDate="{m:Bind Path=f_handdate}" StringFormat="yyyyMM" Width="Auto" Margin="0,3,0,2" Height="25" HorizontalAlignment="Stretch" Grid.Column="3" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="0" VerticalAlignment="Stretch" >
+                        <sdk:DatePicker   SelectedDate="{m:Bind Path=f_handdate}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="121" Margin="0,3,2,2" Height="25" HorizontalAlignment="Left" Grid.ColumnSpan="1" VerticalAlignment="Stretch" DisplayDate="2016-01-01" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_handdate" NoDependValue="{m:Exp Str=SysTime.Today}"
-										Operator="{m:Exp Str=$substring(convert(varchar(50)\,f_handdate\,112)\,1\,6) \=\'\{this.f_handdate.ToString($yyyyMM$)\}\'}"/>
+                                <!--Operator="hp.f_handdate = substring('this',1,10)"-->
+                                <o:PropertySetter PropertyName="f_handdate" NotNull="True"   
+											Operator="YEAR(f_handdate)=substring('this',1,4) and MONTH(f_handdate)=substring('this',6,2)"/>
                             </a:Data.Prop>
-                        </c:Month>
+                        </sdk:DatePicker>
                         <TextBox Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,2,0,3" Height="25" HorizontalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Row="0" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like '%this%'"/>
@@ -129,7 +136,7 @@
 
                     </Grid>
                     <Grid   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom">
-                        <sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0" PageSize="30" d:LayoutOverrides="Width"   />
+                        <sdk:DataPager x:Name="pager2" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0" PageSize="23" d:LayoutOverrides="Width"   />
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <TextBlock TextWrapping="NoWrap" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项，每页\{daninfos.ItemsSource.PageSize\}行}"/>
                         </StackPanel>
@@ -140,73 +147,54 @@
                         <a:Data.Items>
                             <!--substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'   substring(convert(varchar(50)\,f_handdate\,112)\,1\,6)\=\'201403\'-->
                             <o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
-									
-									SumHQL="{m:Exp Str=$ 
-select u.f_userid\,u.f_username\,u.f_districtname+u.f_apartment address\,u.f_phone\,
-h.lastinputgasnum\,h.lastrecord\,h.oughtamount\,h.oughtfee\,(ISNULL(s.lastfee1\,0)+ISNULL(s1.lastfee2\,0)+ISNULL(g.f_zhinajin\,0)) lastfee\,
-isnull(g.f_zhye\,u.f_zhye) zhye\,(case h.shifoujiaofei when \'是\' then convert(numeric(18\,2)\,u.f_zhye+h.oughtfee-g.f_zhye+ISNULL(s.lastfee1\,0)+ISNULL(s1.lastfee2\,0)+ISNULL(g.f_zhinajin\,0)) else isnull(g.f_grossproceeds\,0) end )benqipayfee\,(case h.shifoujiaofei when \'是\' then u.f_zhye else convert(decimal(18\,2)\,u.f_zhye+isnull(g.f_grossproceeds\,0)-h.oughtfee-ISNULL(s.lastfee1\,0)-ISNULL(s1.lastfee2\,0)-ISNULL(g.f_zhinajin\,0)) end )benqizhye\,
-h.f_inputtor\,h.f_zerenbumen
-FROM
-( SELECT f_sellid\,f_userid\,lastinputgasnum\,lastrecord\,oughtamount\,
-oughtfee\,f_inputtor\,f_zerenbumen\,shifoujiaofei
-FROM t_handplan
-WHERE f_state\=\'已抄表\' AND \{daninfosearch.DataContext.Condition\}  )h
-left join (
-select f_userid \,SUM(oughtfee) lastfee1
-from t_handplan
-where f_state\=\'已抄表\' and shifoujiaofei\=\'否\'and SUBSTRING(CONVERT(varchar(20)\, f_handdate\,112)\,1\,6)^\{daninfosearch.DataContext.f_handdate.ToString($yyyyMM$)\}
-group by f_userid)s on h.f_userid\=s.f_userid
-left join(
-select f_userid\,f_sellid\,SUM(oughtfee) lastfee2
-from t_handplan
-where SUBSTRING(CONVERT(varchar(20)\, f_handdate\,112)\,1\,6)^\{daninfosearch.DataContext.f_handdate.ToString($yyyyMM$)\}
-group by f_userid\,f_sellid)s1 on h.f_sellid\=s1.f_sellid
-left join
-(select id\,f_grossproceeds\,f_zhinajin\,f_zhye from t_sellinggas) g on  h.f_sellid\=g.id 
-left JOIN t_userfiles u ON u.f_userid\=h.f_userid  
-}"
-									HQL="{m:Exp Str=$
-select u.f_userid\,u.f_username\,u.f_districtname+u.f_apartment address\,u.f_phone\,
-h.lastinputgasnum\,h.lastrecord\,h.oughtamount\,h.oughtfee\,(ISNULL(s.lastfee1\,0)+ISNULL(s1.lastfee2\,0)+ISNULL(g.f_zhinajin\,0)) lastfee\,
-isnull(g.f_zhye\,u.f_zhye) zhye\,(case h.shifoujiaofei when \'是\' then convert(numeric(18\,2)\,u.f_zhye+h.oughtfee-g.f_zhye+ISNULL(s.lastfee1\,0)+ISNULL(s1.lastfee2\,0)+ISNULL(g.f_zhinajin\,0)) else isnull(g.f_grossproceeds\,0) end )benqipayfee\,(case h.shifoujiaofei when \'是\' then u.f_zhye else convert(decimal(18\,2)\,u.f_zhye+isnull(g.f_grossproceeds\,0)-h.oughtfee-ISNULL(s.lastfee1\,0)-ISNULL(s1.lastfee2\,0)-ISNULL(g.f_zhinajin\,0)) end )benqizhye\,
-h.f_inputtor\,h.f_zerenbumen
-FROM
-( SELECT f_sellid\,f_userid\,lastinputgasnum\,lastrecord\,oughtamount\,
-oughtfee\,f_inputtor\,f_zerenbumen\,shifoujiaofei
-FROM t_handplan
-WHERE f_state\=\'已抄表\' AND \{daninfosearch.DataContext.Condition\}  )h
-left join (
-select f_userid \,SUM(oughtfee) lastfee1
-from t_handplan
-where f_state\=\'已抄表\' and shifoujiaofei\=\'否\'and SUBSTRING(CONVERT(varchar(20)\, f_handdate\,112)\,1\,6)^\{daninfosearch.DataContext.f_handdate.ToString($yyyyMM$)\}
-group by f_userid)s on h.f_userid\=s.f_userid
-left join(
-select f_userid\,f_sellid\,SUM(oughtfee) lastfee2
-from t_handplan
-where SUBSTRING(CONVERT(varchar(20)\, f_handdate\,112)\,1\,6)^\{daninfosearch.DataContext.f_handdate.ToString($yyyyMM$)\}
-group by f_userid\,f_sellid)s1 on h.f_sellid\=s1.f_sellid
-left join
-(select id\,f_grossproceeds\,f_zhinajin\,f_zhye from t_sellinggas) g on  h.f_sellid\=g.id 
-left JOIN t_userfiles u ON u.f_userid\=h.f_userid  
- order by h.f_userid
-}"
-									Path="sql" PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames=","/>
+                                         Names="f_userid,f_username,f_address,lastinputgasnum,lastrecord,oughtamount,f_stair1price,f_bczhye,f_zhye,f_endjfdate,f_inputtor,f_phone"
+SumHQL="{m:Exp Str=$
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,u.f_stair1price\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+from 
+(
+select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
+where f_state \= \'已抄表\' and shifoujiaofei \= \'否\' and \{daninfosearch.DataContext.Condition\}
+group by f_userid 
+) f
+left join t_userfiles u 
+on f.f_userid \= u.f_userid   
+left join t_inputtor i 
+on u.f_inputtor \= i.f_inputtor
+                                    }"
+
+HQL="{m:Exp Str=$
+select u.f_userid\,u.f_username \,u.f_address \,f.lastinputgasnum\, f.lastrecord\,f.oughtamount\,u.f_stair1price\,f.oughtfee f_bczhye \,u.f_zhye\,CONVERT(varchar(12)\, f.f_endjfdate\, 23 ) f_endjfdate \, u.f_inputtor\,i.f_phone  
+from 
+(
+select f_userid\, MIN(lastinputgasnum) lastinputgasnum\,MAX(lastrecord) lastrecord\,MAX(f_endjfdate)f_endjfdate\,SUM(oughtamount)oughtamount\,SUM(oughtfee)oughtfee from t_handplan 
+where f_state \= \'已抄表\' and shifoujiaofei \= \'否\' and \{daninfosearch.DataContext.Condition\}
+group by f_userid 
+) f
+left join t_userfiles u 
+on f.f_userid \= u.f_userid   
+left join t_inputtor i 
+on u.f_inputtor \= i.f_inputtor
+                                    order by f.f_userid
+                                    }"
+                                   
+                                         Path="sql"
+								PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" 	 SumNames=","      
+                              />
                         </a:Data.Items>
                         <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
                             <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-                            <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
-                            <sdk:DataGridTextColumn Header="地址" Binding="{Binding address}"/>
-                            <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                            <sdk:DataGridTextColumn Header="上次底数" Binding="{Binding lastinputgasnum}"/>
-                            <sdk:DataGridTextColumn Header="本次底数" Binding="{Binding lastrecord}"/>
-                            <sdk:DataGridTextColumn Header="本次气量" Binding="{Binding oughtamount}"/>
-                            <sdk:DataGridTextColumn Header="本次气量金额" Binding="{Binding oughtfee}"/>
-                            <sdk:DataGridTextColumn Header="往月欠费" Binding="{Binding lastfee}"/>
-                            <sdk:DataGridTextColumn Header="上期账户余额" Binding="{Binding zhye}"/>
-                            <sdk:DataGridTextColumn Header="本期交费" Binding="{Binding benqipayfee}"/>
-                            <sdk:DataGridTextColumn Header="本期账户余额" Binding="{Binding benqizhye}"/>
+                            <sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn Header="用户地址" Binding="{Binding f_address}"/>
+                            <sdk:DataGridTextColumn Header="上月表数" Binding="{Binding lastinputgasnum}"/>
+                            <sdk:DataGridTextColumn Header="本月表数" Binding="{Binding lastrecord}"/>
+                            <sdk:DataGridTextColumn Header="本月用量" Binding="{Binding oughtamount}"/>
+                            <sdk:DataGridTextColumn Header="单  价" Binding="{Binding f_stair1price}"/>
+                            <sdk:DataGridTextColumn  Header="本次金额" Binding="{Binding f_bczhye}"/>
+                            <sdk:DataGridTextColumn  Header="上次余额" Binding="{Binding f_zhye}"/>
+                            <sdk:DataGridTextColumn Header="限定交费日期" Binding="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_inputtor}"/>
-                            <sdk:DataGridTextColumn Header="责任部门" Binding="{Binding f_zerenbumen}"/>
+                            <sdk:DataGridTextColumn Header="抄表员电话" Binding="{Binding f_phone}"/>
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
@@ -216,38 +204,106 @@ left JOIN t_userfiles u ON u.f_userid\=h.f_userid
 
 
 
-        <c:PrintPageObj x:Name="print1" ListNameInArea="selllist" Area="{m:Res Key=sqprint1}" 
-      List="{m:Exp Str=daninfos.ItemsSource}" PageRow="30"  />
+        <Grid x:Name="handprint"  Background="White" Height="420" HorizontalAlignment="Left" Width="1125"  VerticalAlignment="Stretch" Margin="-1989,-111,0,-190"  Grid.Row="0" d:LayoutOverrides="HorizontalAlignment, Height"  Grid.RowSpan="1">
+            <a:Data.Context>
+                <o:GeneralObject  x:Name="fkprint" WebClientInfo="{StaticResource dbclient}" EntityType="t_handplan" />
+            </a:Data.Context>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
 
-        <Grid  x:Name="sqprint1" VerticalAlignment="Top" Margin="-1277,22,0,-150" HorizontalAlignment="Left" Width="auto"  Height="804">
 
-            <sdk:DataGrid x:Name="selllist" AutoGenerateColumns="False" Style="{StaticResource DataGridPrintStyle}" FontSize="11"  Grid.Row="1" VerticalAlignment="Top" >
-                <sdk:DataGrid.Columns>
-                    <sdk:DataGridTemplateColumn Header=" " d:IsLocked="True" >
-                        <sdk:DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="     "   IsReadOnly="True"/>
-                            </DataTemplate>
-                        </sdk:DataGridTemplateColumn.CellTemplate>
-                    </sdk:DataGridTemplateColumn>
-                    <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-                    <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
-                    <sdk:DataGridTextColumn Header="地址" Binding="{Binding address}" Width="200"/>
-                    <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                    <sdk:DataGridTextColumn Header="上次底数" Binding="{Binding lastinputgasnum}"/>
-                    <sdk:DataGridTextColumn Header="本次底数" Binding="{Binding lastrecord}"/>
-                    <sdk:DataGridTextColumn Header="本次气量" Binding="{Binding oughtamount}"/>
-                    <sdk:DataGridTextColumn Header="本次气量金额" Binding="{Binding oughtfee}"/>
-                    <sdk:DataGridTextColumn Header="往月欠费" Binding="{Binding lastfee}"/>
-                    <sdk:DataGridTextColumn Header="上期账户余额" Binding="{Binding zhye}"/>
-                    <sdk:DataGridTextColumn Header="本期交费" Binding="{Binding benqipayfee}"/>
-                    <sdk:DataGridTextColumn Header="本期账户余额" Binding="{Binding benqizhye}"/>
-                    <sdk:DataGridTextColumn Header="抄表员" Binding="{Binding f_inputtor}"/>
-                    <sdk:DataGridTextColumn Header="责任部门" Binding="{Binding f_zerenbumen}"/>
-                </sdk:DataGrid.Columns>
-            </sdk:DataGrid>
-
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="112"/>
+                <ColumnDefinition Width="0.142*"/>
+                <ColumnDefinition Width="0.045*"/>
+                <ColumnDefinition Width="0.11*"/>
+                <ColumnDefinition Width="0.205*"/>
+                <ColumnDefinition Width="0.498*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}"  Grid.Column="4" FontSize="18" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" Width="68" Height="26" VerticalAlignment="Bottom" Margin="51,0,0,-13" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}"  Grid.Column="4" FontSize="18" Margin="0,0,35,-12" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}"  Grid.Column="5" FontSize="18" Margin="0,0,453,17" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_gasprice}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_bczhye}" Grid.Column="3" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_zhye}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock  Text="{m:Bind Path=f_username}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock  Text="{m:Bind Path=f_address}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_userid}" Grid.Column="1"  FontSize="18" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="-52,0,5,-13" Grid.Row="4"  Width="Auto" Height="29" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Padding="0,2,0,0" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=lastinputgasnum}" Grid.Column="0" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=lastrecord}" Grid.Column="2" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=aughtamount}" Grid.Column="4" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"  Grid.Column="5" FontSize="18" HorizontalAlignment="Left" Margin="-78,0,0,5" Grid.Row="6" TextWrapping="Wrap" Width="276" Height="30" VerticalAlignment="Bottom" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_phone}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
         </Grid>
+        <!--/sdk:TabItem>
+		</sdk:TabControl-->
+
+        <Grid x:Name="handprint1" DataContext="{m:Exp Str=daninfos.SelectedItem}" Background="White" Height="420" HorizontalAlignment="Left" Width="1125"  VerticalAlignment="Stretch" Margin="-1989,-111,0,-190"  Grid.Row="0" d:LayoutOverrides="HorizontalAlignment, Height"  Grid.RowSpan="1">
+            <Grid.RowDefinitions >
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="112"/>
+                <ColumnDefinition Width="0.142*"/>
+                <ColumnDefinition Width="0.045*"/>
+                <ColumnDefinition Width="0.11*"/>
+                <ColumnDefinition Width="0.205*"/>
+                <ColumnDefinition Width="0.498*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}"  Grid.Column="4" FontSize="18" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" Width="68" Height="26" VerticalAlignment="Bottom" Margin="51,0,0,-13" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($MM$)}"  Grid.Column="4" FontSize="18" Margin="0,0,35,-12" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" d:LayoutOverrides="VerticalAlignment"/>
+            <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($dd$)}"  Grid.Column="5" FontSize="18" Margin="0,0,453,17" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="41" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_gasprice}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_bczhye}" Grid.Column="3" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Bind Path=f_zhye}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Stretch" Margin="102,3,0,13" Grid.Row="9" TextWrapping="Wrap" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2"/>
+            <TextBlock  Text="{m:Bind Path=f_username}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock  Text="{m:Bind Path=f_address}" Grid.Column="1" TextAlignment="Left" FontSize="18"  HorizontalAlignment="Stretch" Margin="-51,0,51,-12" Grid.Row="5"  Width="Auto" Height="27" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_userid}" Grid.Column="1"  FontSize="18" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="-52,0,5,-13" Grid.Row="4"  Width="Auto" Height="29" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Padding="0,2,0,0" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=lastinputgasnum}" Grid.Column="0" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=lastrecord}" Grid.Column="2" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{m:Bind Path=aughtamount}" Grid.Column="4" FontSize="18" HorizontalAlignment="Stretch" Margin="3,-1,-12,-10" Grid.Row="9"  Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+            <TextBlock Text="{Binding f_endjfdate,StringFormat=yyyy-MM-dd}"  Grid.Column="5" FontSize="18" HorizontalAlignment="Left" Margin="-78,0,0,5" Grid.Row="6" TextWrapping="Wrap" Width="276" Height="30" VerticalAlignment="Bottom" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_inputtor}" Grid.Column="2" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+            <TextBlock Text="{m:Bind Path=f_phone}" Grid.Column="4" FontSize="18"  HorizontalAlignment="Left" Margin="-61,-10,0,3" Grid.Row="13" TextWrapping="Wrap" Width="99" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+        </Grid>
+
+
+        <c:PrintPageObj x:Name="print" DataArea="{m:Res Key=handprint}" List="{m:Exp Str=daninfoslist}" PageRow="1" />
+
+        <c:PrintObj x:Name="print1" Area="{m:Res Key=handprint1}" UseDefaultPrinter="False"/>
+
 
 
     </Grid>
