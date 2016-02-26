@@ -14,10 +14,12 @@ namespace voice_card.helper
         public void Save(LineInfo trunk, LineInfo inline)
         {
             //如果id为空，说明是心来电，插入，否则更新
-            string id = trunk.Id;
-            if (id == null || id.Equals(""))
+            //string id = trunk.Id;
+            //if (id == null || id.Equals(""))
+            //修改id获取方式的修改
+            if (inline == null)
             {
-                trunk.Id = Guid.NewGuid().ToString();
+                //trunk.Id = Guid.NewGuid().ToString();
                 Insert(trunk);
             }
             else
@@ -34,6 +36,7 @@ namespace voice_card.helper
             string trunk = line.Number.ToString();
             string sql = "insert into t_comingrecord(id,comingtime,trunk,islink) values('" + id + "','" + comingtime + "','" + trunk + "','no')";
             //Console.WriteLine("插入数据:" + sql);
+            log.Debug("插入数据:" + sql);
             DBHelper.executeNonQuery(sql);
         }
 
@@ -41,11 +44,12 @@ namespace voice_card.helper
         {
             string sql = "update t_comingrecord set ";
             //主叫
-            if (inline != null && inline.CallerPhone != null && !inline.CallerPhone.Equals(""))
+            if (trunk != null && trunk.CallerPhone != null && !trunk.CallerPhone.Equals(""))
             {
-                Console.Write("号码" + inline.CallerPhone);
+                //Console.Write("外线中得到号码" + trunk.CallerPhone);
+                //log.Debug("外线 " + trunk.Number.ToString() + " 中得到号码 " + trunk.CallerPhone.ToString());
                 //截取11位手机号码
-                sql += " callnumber='" + inline.CallerPhone + "',";
+                sql += " callnumber='" + trunk.CallerPhone + "',";
             }
             string rectime = trunk.Rectime.ToLocalTime().ToString("yyyyMMdd HH:mm:ss");
             sql += "rectime='" + rectime + "',";

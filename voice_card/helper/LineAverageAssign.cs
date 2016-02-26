@@ -20,28 +20,24 @@ namespace voice_card.helper
         {
             int result = -1;
             int listedNum = 0;
-            foreach (LineInfo line in Lines)
-            {     
+           foreach (LineInfo line in Lines)
+            {
                 if(line.Type != (ushort)type.CHTYPE_USER || line.State != (ushort)state.CH_FREE)
                 {
                     continue;
-                }
-               //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-                if (this.CheckCanAoutLink(line))
-                {
-                     return line.Number;
                 }
                 //检查时间
                 DateTime now = System.DateTime.Now;
                 DateTime lastTime = line.LastTime;
                 TimeSpan ts = now.Subtract(lastTime).Duration();
-                log.Debug("通道时间差" + ts.TotalSeconds);
+                 log.Debug("通道时间差" + ts.TotalSeconds);
                 if (ts.TotalSeconds > 10)
                 {
-                      continue;
-                }
+                   
+                     //log.Debug("内线" +line.Number+"time out");
+                     continue;
+                 }
                 //查看通道最后接听时间，如果时间是昨天，回复接听数量为0，
-              
                  DateTime lastHandUp = line.Handuptime;
                  TimeSpan comp =  now.Subtract(lastHandUp);
                  if (comp.Days > 0)
@@ -49,49 +45,26 @@ namespace voice_card.helper
                     // log.Debug("上次接听时间" + line.LastTime.ToString()+",接听数量置0");
                      line.ListenedNums = 0;
                      result = line.Number;
-                     return result;
+                   return result;
                  }
                  if (result == -1)
                  {
                      result = line.Number;
                      listedNum = line.ListenedNums;
-                      continue;
+                    // log.Debug("set 内线" + line.Number + "listener");
+                     continue;
                  }
                  if (listedNum.CompareTo(line.ListenedNums) > 0)
                  {
                       result = line.Number;
                       listedNum = line.ListenedNums;
+                     // log.Debug("compare 内线" + line.Number + "listener");
+                     
                  }
-             }
+               
+            }
            log.Debug("返回接听通道号" + result);
            return result;
         }
-
-
-        /**
-         * 检查是否自动接通
-         * */
-      public bool CheckCanAoutLink(LineInfo line)
-      {
-          //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-          DateTime now = System.DateTime.Now;
-          string nowHM = now.ToString("HH:mm");
-          //无开始时间,不自动接通
-          if (line.StartHour != null || line.StartHour.Equals(""))
-          {
-              return false;
-          }
-          //无结束时间,不自动接通
-          if (line.EndHour != null || line.EndHour.Equals(""))
-          {
-              return false;
-          }
-          //当前时间在设置的开始结束之间,可接通
-          if(nowHM.CompareTo(line.StartHour) > 0 && nowHM.CompareTo(line.EndHour) < 0)
-          {
-              return true;
-          }
-          return false;
-      }
     }
 }

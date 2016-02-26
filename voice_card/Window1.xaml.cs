@@ -17,7 +17,6 @@ using voice_card.entity;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using voice_card.helper;
-using System.Data.SqlClient;
 
 namespace voice_card
 {
@@ -25,6 +24,7 @@ namespace voice_card
     {
         WorkService workService;
         ObservableCollection<LineInfo> obColl = new ObservableCollection<LineInfo>();
+        System.Windows.RoutedEventArgs ee = new System.Windows.RoutedEventArgs();
 
         public ObservableCollection<LineInfo> ObColl
         { get { return obColl; } }
@@ -68,23 +68,14 @@ namespace voice_card
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        internal void ShowEx(Window1 window1,string p)
         {
-            string server = "125.76.225.223,5223";
-            string database = "yulingas";
-            string user = "sa";
-            string password = "af@QFG123";
-            string connStr = "server=" + server + ";database =" + database + ";uid = " + user + ";pwd = " + password;
-            SqlConnection conn = new SqlConnection(connStr);
-         
-            conn.Open();
-          //  System.Text.Encoding iso = System.Text.Encoding.GetEncoding(this.Cinfo.Attrs["charset"]);
-           // byte[] temp = Encoding.Convert(Encoding.Default, Encoding.Default, Encoding.Default.GetBytes(sql));
-          //  sql = iso.GetString(temp);
-            string sql = "insert into bsdual values(22);";
-            SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.ExecuteNonQuery();
-            conn.Close();
+           // throw new NotImplementedException();
+            if(null !=p && "-run".Equals(p)){
+                window1.Show();
+                window1.button1_Click(button1,ee);
+            }
+
         }
     }
 }

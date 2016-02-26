@@ -44,6 +44,9 @@ namespace voice_card.service
         string CallPhone(int lineNum,string phone);
 
         [OperationContract, WebGet]
+        string startwav(int lineNum, string filename);
+
+        [OperationContract, WebGet]
         void SetBusy(int lineNum);
 
         [OperationContract, WebGet(UriTemplate = "/clientaccesspolicy.xml")]
@@ -51,6 +54,9 @@ namespace voice_card.service
 
        [OperationContract, WebGet(UriTemplate = "/crossdomain.xml")]
        Stream GetFlashPolicy();
+
+       [OperationContract, WebGet]
+       string Linestatus();
 
 
 

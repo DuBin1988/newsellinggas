@@ -16,10 +16,12 @@ namespace voice_card.helper
         public void Save(entity.LineInfo trunk, entity.LineInfo inline)
         {
             //如果id为空，说明是心来电，插入，否则更新
-            string id = trunk.Id;
-            if (id == null || id.Equals(""))
+            //string id = trunk.Id;
+            //if (id == null || id.Equals(""))
+            //修改id获取方式的修改
+            if (inline == null)
             {
-                trunk.Id = Guid.NewGuid().ToString();
+                //trunk.Id = Guid.NewGuid().ToString();
                 Insert(trunk);
             }
             else

@@ -16,13 +16,14 @@ namespace voice_card.db
         public override System.Data.Common.DbConnection CreateConn()
         {
             string server = this.Cinfo.Attrs["server"];
-             string user = this.Cinfo.Attrs["user"];
+            string user = this.Cinfo.Attrs["user"];
             string password = this.Cinfo.Attrs["password"];
             string port = this.Cinfo.Attrs["port"];
             string database = this.Cinfo.Attrs["dbname"];
             string chartset = this.Cinfo.Attrs["charset"];
            
-            string connStr = "server=" + server + ";database =" + database + ";uid = " + user + ";pwd = " + password;
+          //  string connStr = "server=" + server + ";database =" + database + ";uid = " + user + ";pwd = " + password;
+            string connStr = "server=" + server + ";user=" + user + ";database=" + database + ";password=" + password + ";";
             SqlConnection connection = new SqlConnection(connStr);
             return connection;
         }

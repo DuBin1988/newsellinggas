@@ -130,4 +130,10 @@ public class InvokeVcDll
     //Sig_CheckDial
     [DllImport("NewSig.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     public static extern int Sig_CheckDial(ushort num);
+    //
+    [DllImport("Tc08a32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+    public static extern bool StartTimer(ushort num);
+    //
+    [DllImport("Tc08a32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+    public static extern bool ElapseTime(ushort num);
 }

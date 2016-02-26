@@ -24,21 +24,17 @@ namespace voice_card.helper
             //先从上次号码加一开始找
             int findStart = LastReturnNum+1;
             //log.Debug("起始通道:" + findStart);
-            for (int i = findStart; i < Lines.Count; i++)
+            //for (int i = findStart; i < Lines.Count; i++)
+            for (int i = findStart; i < Lines.Count - 1; i++) // 留最后一个内线号外拨及听录音
             {
-                DateTime now = System.DateTime.Now;
                 LineInfo line = Lines[i];
                 //log.Debug("通道:" + line.Number + ",通道类型:" + line.Type + ",状态:" + line.State);
                 if (line.Type != (ushort)type.CHTYPE_USER || line.State != (ushort)state.CH_FREE)
                 {
                     continue;
                 }
-                //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-                 if (this.CheckCanAoutLink(line))
-                {
-                    return line.Number;
-                }
                 //检查时间
+                DateTime now = System.DateTime.Now;
                 DateTime lastTime = line.LastTime;
                 TimeSpan ts = now.Subtract(lastTime).Duration();
                // log.Debug("通道时间差" + ts.TotalSeconds);
@@ -61,12 +57,6 @@ namespace voice_card.helper
                 {
                     continue;
                 }
-                //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-                //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-                if (this.CheckCanAoutLink(line))
-                {
-                    return line.Number;
-                }
                 //检查时间
                 DateTime now = System.DateTime.Now;
                 DateTime lastTime = line.LastTime;
@@ -84,32 +74,5 @@ namespace voice_card.helper
             log.Debug("未找到空闲内线,返回:"+result);
             return result;
          }
-
-
-        /**
-       * 检查是否自动接通
-       * */
-        public bool CheckCanAoutLink(LineInfo line)
-        {
-            //通道设置有自动接通时间,当前时间在通道时间范围内,转接到该通道
-            DateTime now = System.DateTime.Now;
-            string nowHM = now.ToString("HH:mm");
-            //无开始时间,不自动接通
-            if (line.StartHour != null || line.StartHour.Equals(""))
-            {
-                return false;
-            }
-            //无结束时间,不自动接通
-            if (line.EndHour != null || line.EndHour.Equals(""))
-            {
-                return false;
-            }
-            //当前时间在设置的开始结束之间,可接通
-            if (nowHM.CompareTo(line.StartHour) > 0 && nowHM.CompareTo(line.EndHour) < 0)
-            {
-                return true;
-            }
-            return false;
-        }
     }
 }

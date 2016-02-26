@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using voice_card.service;
-
+using log4net;
+using voice_card.helper;
 
 namespace voice_card.entity
 {
@@ -13,8 +14,8 @@ namespace voice_card.entity
      * */
     public class LineInfo : DependencyObject
     {
-        
 
+        private static ILog log = LogManager.GetLogger(typeof(LineInfo));
 
         //通道号
         public static DependencyProperty number = DependencyProperty.Register("number", typeof(ushort), typeof(LineInfo));
@@ -34,7 +35,7 @@ namespace voice_card.entity
         }
 
         //通道状态
-        public static DependencyProperty state = DependencyProperty.Register("state", typeof(int), typeof(LineInfo));
+        public static DependencyProperty state = DependencyProperty.Register("state", typeof(int), typeof(LineInfo), new PropertyMetadata(new PropertyChangedCallback(OnChangedSave)));
 
         public int State
         {
@@ -42,6 +43,24 @@ namespace voice_card.entity
             set { SetValue(state, value); }
         }
 
+        private static void OnChangedSave(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            try
+            {
+                LineInfo li = (LineInfo)obj;
+                DateTime datetime = System.DateTime.Now;
+                String date = datetime.ToLocalTime().ToString("yyyyMMdd HH:mm:ss");
+                String date1 = datetime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+                string sql = "insert into t_comingrecord_lines (number,connectToLine,islink,type,state,state_old,gonghao,id_c,date,date1) values('" + li.Number + "','" + li.ConnectToLine + "','" + li.Islink + "','" + li.Type + "','" + args.NewValue + "','" + args.OldValue + "','" + li.Gonghao + "','" + li.Id + "','" + date + "','" + date1 + "')";
+                //Console.WriteLine("插入数据:" + sql);
+                log.Debug("插入线路状态数据:" + sql);
+                DBHelper.executeNonQuery(sql);
+            }
+            catch (Exception e)
+            {
+                log.Debug("保存线路状态数据失败!");
+            }
+        }
 
 
         //对应该通道连接上的通道号，无连接 = -1
@@ -176,22 +195,7 @@ namespace voice_card.entity
             get { return this.findInnerTimes; }
         }
 
-        //设定自动接通的开始时间
-        private string startHour;
-        public string StartHour
-        {
-            set { startHour = value; }
-            get { return startHour; }
-        }
-
-        //设定自动接通的结束时间
-        private string endHour;
-        public string EndHour
-        {
-            set { endHour = value; }
-            get { return endHour; }
-        }
-
+         
 
     }
 }

@@ -14,7 +14,7 @@ using voice_card.helper;
 using System.ServiceModel.Web;
 using System.Windows.Forms;
 using System.Collections;
-using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace voice_card.service
 {
@@ -32,9 +32,6 @@ namespace voice_card.service
         //服务主机
         private ServiceHost host;
 
-        //通道配置文件
-
-
     
         //加载驱动,obj是为外部显示集合，加载时会在lines和objs中都保存通道
         public void LoadDriver(ObservableCollection<LineInfo> objs)
@@ -47,29 +44,6 @@ namespace voice_card.service
                 return;
             }
             //设置每条通道初始状态
-            InitLines(objs);
-            //初始化信号音检测
-            InvokeVcDll.Sig_Init(0);
-            //本地保存引用
-            Lines = objs;
-            log.Debug("语音卡驱动加载成功");
-            log.Debug("加载语音分配策略");
-            LoadAssign();
-         }
-
-
-
-
-        /**
-         * 初始化语音通道
-         **/
-        public void InitLines(ObservableCollection<LineInfo> objs)
-        {
-            //加载语音通道配置文件
-            String currentDir = Environment.CurrentDirectory;
-            String path = System.IO.Path.Combine(currentDir, "lines.xml");
-            XElement lineConfig = XElement.Load(System.Xml.XmlReader.Create(path));
-
             ushort TotalLine = InvokeVcDll.CheckValidCh();
             for (int ch = 0; ch < TotalLine; ch++)
             {
@@ -85,34 +59,28 @@ namespace voice_card.service
                 line.Comingtime = System.DateTime.Now;
                 line.Rectime = System.DateTime.Now; ;
                 line.Handuptime = System.DateTime.Now;
-                line.Id = "";
+                //修改id获取方式的修改
+                line.Id = Guid.NewGuid().ToString();
                 line.Gonghao = "";
                 line.IsKey = false;
                 line.Islink = "no";
                 line.ListenNum = -1;
-                //查找配置文件中内容，设置通道属性
-                if(lineConfig !=null)
-                {
-                    XElement element = lineConfig.Elements().Where(e => e.Attribute("num").Value == ch+"").FirstOrDefault();
-                    if(element !=null)
-                    {
-                        //设定通道自动接通的开始和结束小时
-                        string shour = (string)element.Attribute("starthour").Value;
-                        string ehour = (string)element.Attribute("endhour").Value;
-                        line.StartHour =shour;
-                        line.EndHour = ehour;
-                     }
-                 }
                 objs.Add(line);
             }
+
             //给每条通道分配初始语音缓冲区
             if (InvokeVcDll.EnableCard(TotalLine, 1024 * 128) != (long)0)
             {
                 InvokeVcDll.FreeDRV();
             }
-        }
-         
-        
+            //初始化信号音检测
+            InvokeVcDll.Sig_Init(0);
+            //本地保存引用
+            Lines = objs;
+            log.Debug("语音卡驱动加载成功");
+            log.Debug("加载语音分配策略");
+            LoadAssign();
+           }
 
         /**
          * 加载语音分配策略
@@ -166,7 +134,9 @@ namespace voice_card.service
         //查找空闲内线通道,找不到内线通道返回-1
         private int GetFreeUser(LineInfo line)
         {
+            log.Debug("外线"+ line.Number +"开始查找内线:" );
             int i =this.ta.Assign(Lines);
+            log.Debug("外线"+ line.Number +"查找内线结束,内线号"+i );
             //如果找不到通道，说明都被使用中，判断号码是否是优先接入号码
             if (i == -1)
             {
@@ -208,22 +178,32 @@ namespace voice_card.service
 
 
         //得到主叫
-        private string getCaller(LineInfo trunk)
+        private int getCaller(LineInfo trunk)
         {
             byte[] number = new byte[128];
-            InvokeVcDll.GetCallerIDStr(trunk.Number, number);
-            string result = Encoding.UTF8.GetString(number);
-            result = result.TrimEnd('\0');
-            if (result.Length > 8)
+            int i=InvokeVcDll.GetCallerIDStr(trunk.Number, number);
+            if (i == 3 || i == 4)
             {
-                result = result.Substring(8);
+                string result = Encoding.UTF8.GetString(number);
+                result = result.TrimEnd('\0');
+                if (result.Length > 8)
+                {
+                    result = result.Substring(8);
+                }
+                char[] c = { '\0' };
+                string[] phone = result.Split(c);
+                result = phone[0];
+                string regex = @"(\d+)";
+                System.Text.RegularExpressions.Match mstr = Regex.Match(result.Trim(), regex);
+                result = mstr.Groups[1].Value.ToString();
+                trunk.CallerPhone = result;
+                log.Debug("收外线" + trunk.Number + "主叫号码:" + result);
             }
-            char[] c = {'\0'};
-            string[] phone = result.Split(c);
-            result = phone[0];
-            trunk.CallerPhone = result;
-            log.Debug("收外线" + trunk.Number + "主叫号码:" + result);
-            return result;
+            else
+            {
+                log.Debug("收外线---------------------------------()---------------------------------" + i);
+            }
+            return i;
         }
 
         //主工作方法
@@ -258,6 +238,13 @@ namespace voice_card.service
                                 InvokeVcDll.StopRecordFile((ushort)line.Number);
                                 int duan = InvokeVcDll.ClearLink(line.Number, (ushort)tmpCTL);
                                 log.Debug("断开连接返回值:" + duan);
+                                //设置挂断时间保存
+                                int truline = line.ConnectToLine;
+                                if (truline != -1)
+                                {
+                                    Lines[truline].Handuptime = System.DateTime.Now;
+                                    LineRecordHelper.ComingCall(Lines[truline], line);
+                                }
                                 ResetLineInner(line.Number);
                                 ResetLine(tmpCTL);
                                 break;
@@ -278,6 +265,7 @@ namespace voice_card.service
                             case (int)state.CH_CHECKSIG:
                                 log.Debug("外线" + line.Number + "checksig等待连接时挂断");
                                 this.stopWelcome(line.Number);
+                                InvokeVcDll.StartPlaySignal((ushort)line.Number, (ushort)signal.SIG_STOP);
                                 InvokeVcDll.FeedPower((ushort)line.ConnectToLine);
                                 ResetLine(line.ConnectToLine);
                                 ResetLine(line.Number);
@@ -288,6 +276,12 @@ namespace voice_card.service
                                 int duan = InvokeVcDll.ClearLink((ushort)tmpCTL, line.Number);
                                 log.Debug("通话时挂断返回值:" + duan);
                                 int inerline = line.ConnectToLine;
+                                //设置挂断时间保存
+                                if (inerline != -1)
+                                {
+                                    line.Handuptime = System.DateTime.Now;
+                                    LineRecordHelper.ComingCall(line, Lines[inerline]);
+                                }
                                 ResetLine(line.Number);
                                 this.ResetLineInner(inerline);
                                 break;
@@ -369,15 +363,24 @@ namespace voice_card.service
                 
                 case (int)state.CH_GETCAllNUM:
                     bool bOffHook = false;
-                    if (line.Callertime > 1000)
+                    if (line.Callertime > 1400)
                     {
                         bOffHook = true;
                     }
                     if (bOffHook)
                     {
-                        string zhujiao = getCaller(line);
-                        line.State = (int)state.CH_PlAYWELCOME;
-                        LineRecordHelper.ComingCall(line, null);
+                        int i = getCaller(line);
+                        if (i == 3 || i == 4 || line.Callertime > 2800)
+                        {
+                            line.State = (int)state.CH_PlAYWELCOME;
+                            //修改id获取方式的修改
+                            //LineRecordHelper.ComingCall(line, null);
+                            log.Debug("收外线---------------------------------()---------------------------------" + i + "--------------------------------------------" + line.Callertime);
+                        }
+                        else
+                        {
+                            line.Callertime += 70;
+                        }
                     }
                     else
                     {
@@ -399,8 +402,9 @@ namespace voice_card.service
                         //欢迎语音结束,播放坐席忙录音
                         if (InvokeVcDll.CheckPlayEnd(line.Number))
                         {
-                            log.Debug("欢迎语音播放完成，播放忙音");
+                            log.Debug(line.Number+"欢迎语音播放完成，播放忙音");
                             this.stopWelcome(line.Number);
+                            InvokeVcDll.StartPlaySignal((ushort)line.Number, (ushort)signal.SIG_STOP);
                             string weladd = Environment.CurrentDirectory + "\\busy1";
                             InvokeVcDll.StartPlayFile(line.Number, weladd, 0);
                             line.State = (int)state.CH_PLAYBUSY;
@@ -428,11 +432,17 @@ namespace voice_card.service
                 //等待连接状态
                 case (int)state.CH_CHECKSIG:
                     tmpCTL = line.ConnectToLine;
+                     //欢迎语音结束,还未接播放内置铃音
+                    if (InvokeVcDll.CheckPlayEnd(line.Number))
+                    {
+                        InvokeVcDll.StartPlaySignal((ushort)line.Number, (ushort)signal.SIG_RINGBACK);
+                    }
                      //检测内线摘机
                     if (InvokeVcDll.OffHookDetect((ushort)tmpCTL) || Lines[tmpCTL].IsKey)
                     {
                         log.Debug("内线" + tmpCTL + "摘机,与外线" + line.Number + "连通");
                         this.stopWelcome(line.Number);
+                        InvokeVcDll.StartPlaySignal((ushort)line.Number, (ushort)signal.SIG_STOP);
                         //播放工号
                         log.Debug("播放工号");
                         string weladd = Environment.CurrentDirectory + "\\" + Lines[tmpCTL].Gonghao;
@@ -459,8 +469,12 @@ namespace voice_card.service
                         {
                             break;
                         }
-                         InvokeVcDll.FeedPower((ushort)tmpCTL);
+                        InvokeVcDll.FeedPower((ushort)tmpCTL);
                         InvokeVcDll.SetLink(line.Number, (ushort)tmpCTL);
+                        //设置连接状态
+                        line.Islink = "yes";
+                        Lines[tmpCTL].Islink = "yes";
+                        //Lines[tmpCTL].Id = line.Id;
                         line.State = (int)state.CH_CONNECTED;
                         Lines[tmpCTL].State = (int)state.CH_CONNECTED;
                         //录音
@@ -469,8 +483,7 @@ namespace voice_card.service
                         InvokeVcDll.StartRecordFile((ushort)tmpCTL, file, 1024 * 8 * 60 * 30);
                         Lines[tmpCTL].RecordFile = guid;
                         //设置接通时间
-                        line.Rectime = System.DateTime.Now;
-                        line.Islink = "yes";
+                        line.Rectime = System.DateTime.Now;                        
                         
                         LineRecordHelper.ComingCall(line, Lines[tmpCTL]);
                     }
@@ -615,7 +628,8 @@ namespace voice_card.service
                 InvokeVcDll.StartSigCheck((ushort)LineNo);
                 //设置挂断时间
                 Lines[LineNo].Handuptime = System.DateTime.Now;
-                LineRecordHelper.ComingCall(trunk, null);
+                //修改id获取方式的修改
+                //LineRecordHelper.ComingCall(trunk, null);
             }
             if (Lines[LineNo].Type == (int)type.CHTYPE_USER)
             {
@@ -631,13 +645,14 @@ namespace voice_card.service
                 Lines[Lines[LineNo].ConnectToLine].ConnectToLine = -1;
             }
             Lines[LineNo].ConnectToLine = -1;
+            Lines[LineNo].Islink = "no";
             Lines[LineNo].State = (int)state.CH_FREE;
             Lines[LineNo].CallerPhone = "";
             Lines[LineNo].RecordFile = "";
             Lines[LineNo].IsKey = false;
             //清空id
-            Lines[LineNo].Id = "";
-            Lines[LineNo].Islink = "no";
+            //修改id获取方式的修改
+            Lines[LineNo].Id = Guid.NewGuid().ToString();            
             Lines[LineNo].Callertime = 0;
         }
 
@@ -660,13 +675,14 @@ namespace voice_card.service
                 Lines[Lines[LineNo].ConnectToLine].ConnectToLine = -1;
             }
             Lines[LineNo].ConnectToLine = -1;
+            Lines[LineNo].Islink = "no";
             Lines[LineNo].State = (int)state.CH_WAITCONFIRM;
             Lines[LineNo].CallerPhone = "";
             Lines[LineNo].RecordFile = "";
             Lines[LineNo].IsKey = false;
             //清空id
-            Lines[LineNo].Id = "";
-            Lines[LineNo].Islink = "no";
+            //修改id获取方式的修改
+            //Lines[LineNo].Id = "";
             Lines[LineNo].Callertime = 0;
 
 
@@ -812,7 +828,17 @@ namespace voice_card.service
         public void ConfirmHandup(int lineNum)
         {
             log.Debug(lineNum+"提交挂断.............");
-            Lines[lineNum].State = (int)state.CH_FREE;
+            //Lines[lineNum].State = (int)state.CH_FREE;
+
+            //通道电话对象
+            LineInfo line = Lines[lineNum];
+            //通道对应的连接通道号
+            //int tmpCTL = line.ConnectToLine;
+            //查看线路类型是否内线
+            if (line.Type == (int)type.CHTYPE_USER && line.State != (int)state.CH_FREE && line.State != (int)state.CH_RINGING && line.State != (int)state.CH_CHECKSIG && line.State != (int)state.CH_CONNECTED)
+            {
+                line.State = (int)state.CH_FREE;
+            }
         }
 
         //拨号
@@ -844,6 +870,155 @@ namespace voice_card.service
                 InvokeVcDll.SendDtmfBuf((ushort)trunk, phone);
             }
             return "sucessful";
+        }
+
+        //播放外音
+        public string startwav(int lineNum, string filename)
+        {
+            LineInfo line = Lines[lineNum];
+            //判断话务员是否摘机
+            if (line.State != (int)state.CH_DETECT)
+            {
+                return "请先摘机，然后拨号!";
+            }
+            //如果是内线，并且状态为空闲
+            if (line.Type == (int)type.CHTYPE_USER)
+            {
+                //播放外音
+                string file = GetSavePath() + filename + ".wav";
+                InvokeVcDll.StartPlayFile(line.Number, file, 0);
+            }
+            return "sucessful";
+        }
+
+        //线路状态
+        public string Linestatus()
+        {
+            String s0 = "";
+            String s1 = "";
+            //判断线路状态
+            foreach (LineInfo line in Lines)
+            {
+               /* if (line.Type == (int)type.CHTYPE_TRUNK)
+                {
+                    s0 = s0 + "通道号：" + line.Number + " 通道类型：外线" + " 通道状态：" + Linestatuscheck(line) + " 连接内线通道号：" + line.ConnectToLine + " 来电号码：" + line.CallerPhone + " 最后接通时间：" + line.LastTime + " 工号：" + line.Gonghao + LastTimecheck(line) + " 是否接听：" + line.Islink + " 是否连接：" + line.ListenNum + " 接听总量：" + line.ListenedNums + "\n";
+                }
+                else if (line.Type == (int)type.CHTYPE_USER)
+                {
+                    s1 = s1 + "通道号：" + line.Number + " 通道类型：内线" + " 通道状态：" + Linestatuscheck(line) + " 连接外线通道号：" + line.ConnectToLine + " 来电号码：" + line.CallerPhone + " 最后接通时间：" + line.LastTime + " 工号：" + line.Gonghao + LastTimecheck(line) + " 是否接听：" + line.Islink + " 是否连接：" + line.ListenNum + " 接听总量：" + line.ListenedNums + "\n";
+                } */
+                if (line.Type == (int)type.CHTYPE_TRUNK)
+                {
+                    s0 = s0 + "通道号：" + line.Number + " 状态：" + Linestatuscheck(line) + " 连接内线号：" + line.ConnectToLine + " 工号：" + line.Gonghao + LastTimecheck(line) + " 接听：" + line.Islink + " 最后在线时间：" + line.LastTime + " 来电号码：" + line.CallerPhone + "\n";
+                }
+                else if (line.Type == (int)type.CHTYPE_USER)
+                {
+                    s1 = s1 + "通道号：" + line.Number + " 状态：" + Linestatuscheck(line) + " 连接外线号：" + line.ConnectToLine + " 工号：" + line.Gonghao + LastTimecheck(line) + " 接听：" + line.Islink + " 最后在线时间：" + line.LastTime + " 来电号码：" + line.CallerPhone + "\n";
+                }
+            }
+            return "\n内线信息：\n" + s1; //"外线信息：\n" + s0 + "\n内线信息：\n" + s1;
+        }
+
+        public string LastTimecheck(LineInfo line)
+        {
+
+            DateTime DateTime1 = line.LastTime, DateTime2 = DateTime.Now;//现在时间                 
+            TimeSpan ts1 = new TimeSpan(DateTime1.Ticks);
+            TimeSpan ts2 = new TimeSpan(DateTime2.Ticks);
+            TimeSpan ts = ts1.Subtract(ts2).Duration();          //显示时间
+            if (float.Parse(ts.TotalSeconds.ToString()) <= 60)
+            {
+                return " 话务员在线";
+            }
+            else
+            {
+                return " 话务员离线";
+            }
+        }
+
+        public string Linestatuscheck(LineInfo line)
+        {
+            String str = "";
+            //根据状态处理
+            switch (line.State)
+            {
+                //空闲
+                case (int)state.CH_FREE:
+                    str = "坐席空闲";
+                    break;
+                //没有使用
+                case (int)state.CH_WAITDIAL:
+                    str = "没有使用";
+                    break;
+                //没有使用
+                case (int)state.CH_GETDIALCODE1:
+                    str = "没有使用";
+                    break;
+                //没有使用
+                case (int)state.CH_GETDIALCODE2:
+                    str = "没有使用";
+                    break;
+                //没有使用
+                case (int)state.CH_CONNECTED9:
+                    str = "没有使用";
+                    break;
+                //查找内线连接
+                case (int)state.CH_DIALING:
+                    str = "查找内线";
+                    break;
+                //等待连接
+                case (int)state.CH_CHECKSIG:
+                    str = "等待连接";
+                    break;
+                //正在振铃
+                case (int)state.CH_RINGING:
+                    str = "正在振铃";
+                    break;
+                //接通
+                case (int)state.CH_CONNECTED:
+                    str = "电话接通";
+                    break;
+                //等待挂机
+                case (int)state.CH_WAITONHOOK:
+                    str = "等待挂机";
+                    break;
+                //内线摘机
+                case (int)state.CH_DETECT:
+                    str = "内线摘机";
+                    break;
+                //忙碌
+                case (int)state.CH_BUSY:
+                    str = "坐席忙碌";
+                    break;
+                //收主叫
+                case (int)state.CH_GETCAllNUM:
+                    str = "电话打入";
+                    break;
+                //等待操作员填写记录
+                case (int)state.CH_WAITCONFIRM:
+                    str = "正在记录";
+                    break;
+                //电话外拨
+                case (int)state.CH_CALLPHONE:
+                    str = "电话外拨";
+                    break;
+                //播放工号
+                case (int)state.CH_PLAYGONGHAO:
+                    str = "播放工号";
+                    break;
+                //播放忙音
+                case (int)state.CH_PLAYBUSY:
+                    str = "播放忙音";
+                    break;
+                //播放欢迎语音
+                case (int)state.CH_PlAYWELCOME:
+                    str = "欢迎语音";
+                    break;
+                default:
+                    break;
+
+            }
+            return str;
         }
 
         //至忙
