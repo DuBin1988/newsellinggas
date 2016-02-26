@@ -18,6 +18,78 @@ namespace Com.Aote.ObjectTools
     //通用写卡对象
     public class NewGeneralICCard : CustomTypeHelper, IAsyncObject
     {
+        #region 阶梯气价
+
+        //阶梯单价1
+        public string stairprice1;
+        public string Stairprice1
+        {
+            get { return stairprice1; }
+            set
+            {
+                this.stairprice1 = value;
+                OnPropertyChanged("Stairprice1");
+            }
+        }
+
+        //阶梯气量1 
+        public string stairgas1;
+        public string Stairgas1
+        {
+            get { return stairgas1; }
+            set
+            {
+                this.stairgas1 = value;
+                OnPropertyChanged("Stairgas1");
+            }
+        }
+        //阶梯单价2
+        public string stairprice2;
+        public string Stairprice2
+        {
+            get { return stairprice2; }
+            set
+            {
+                this.stairprice2 = value;
+                OnPropertyChanged("Stairprice2");
+            }
+        }
+        //阶梯气量2 
+        public string stairgas2;
+        public string Stairgas2
+        {
+            get { return stairgas2; }
+            set
+            {
+                this.stairgas2 = value;
+                OnPropertyChanged("Stairgas2");
+            }
+        }
+        //阶梯单价3
+        public string stairprice3;
+        public string Stairprice3
+        {
+            get { return stairprice3; }
+            set
+            {
+                this.stairprice3 = value;
+                OnPropertyChanged("Stairprice3");
+            }
+        }
+
+        //阶梯气量3
+        public string stairgas3;
+        public string Stairgas3
+        {
+            get { return stairgas3; }
+            set
+            {
+                this.stairgas3 = value;
+                OnPropertyChanged("Stairgas3");
+            }
+        }
+        #endregion
+
         #region CardId 卡号
         //卡号
         private string cardid;
@@ -28,6 +100,20 @@ namespace Com.Aote.ObjectTools
             {
                 this.cardid = value;
                 OnPropertyChanged("CardId");
+            }
+        }
+        #endregion
+
+        #region MeterId 表号
+        //单价生效标记 
+        public string meterid;
+        public string MeterId
+        {
+            get { return meterid; }
+            set
+            {
+                this.meterid = value;
+                OnPropertyChanged("MeterId");
             }
         }
         #endregion
@@ -384,20 +470,6 @@ namespace Com.Aote.ObjectTools
         }
         #endregion
 
-        #region MeterId 表号
-        //单价生效标记 
-        public string meterid;
-        public string MeterId
-        {
-            get { return meterid; }
-            set
-            {
-                this.meterid = value;
-                OnPropertyChanged("MeterId");
-            }
-        }
-        #endregion
-
         private bool init = false;
         public bool Init
         {
@@ -548,7 +620,6 @@ namespace Com.Aote.ObjectTools
                     BuyTimes = int.Parse(go.GetPropertyValue("Times").ToString());
                     Bkcs = int.Parse(go.GetPropertyValue("RenewTimes").ToString());
                     Dqdm = (string)go.GetPropertyValue("Dqdm");
-                    MeterId = (string)go.GetPropertyValue("Yhh");
                     State = State.Loaded;
                 }
             }
@@ -569,27 +640,30 @@ namespace Com.Aote.ObjectTools
             State = State.Start;
             //调用写卡服务
             WebClient client = new WebClient();
-            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(WriteCard_DownloadStringCompleted);
-            client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/WriteGasCard" +
-                            "?factory=" + Factory +     //厂家
-                            "&kmm=" + Kmm +     //卡密码，写卡后返回新密码
-                            "&kh=" + CardId +          //卡号
-                            "&dqdm=" + Dqdm +        //地区代码，从气表管理里取
-                            "&ql=" + Gas +          //气量
-                            "&csql=" + Scql +         //上次购气量，有些表需要传
-                            "&ccsql=" + Sscql +        //上上次购气量，有些表需要传
-                            "&cs=" + BuyTimes +           //购气次数
-                            "&ljgql=" + Ljgql +        //当前表累计购气量
-                            "&bjql=" + Bjql +         //报警气量
-                            "&czsx=" + Czsx +         //充值上限，可以在气表管理中设置
-                            "&tzed=" + Tzed +         //透支额度，可以在气表管理中设置
-                            "&sqrq=" + Sqrq +        //售气日期，格式为YYYYMMDD
-                            "&cssqrq=" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
-                            "&oldprice=" + OldPrice +     //旧单价，价格管理中取
-                            "&newprice=" + NewPrice +     //新单价，价格管理中取
-                            "&sxrq=" + Sxrq +        //生效日期，价格管理中取
-                            "&sxbj=" + Sxbj         //生效标记，0不生效，1生效，价格管理中取
-                            ));
+            client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
+            string p = "http://127.0.0.1:8001/WriteNewCard" +
+                            "/" + Factory +     //厂家
+                           "/" + Kmm +     //卡密码，写卡后返回新密码
+                           "/" + CardId +          //卡号
+                            "/" + Dqdm +        //地区代码，从气表管理里取
+                            "/" + Gas +          //气量
+                            "/" + Scql +         //上次购气量，有些表需要传
+                            "/" + Sscql +        //上上次购气量，有些表需要传
+                            "/" + BuyTimes +           //购气次数
+                            "/" + Ljgql +        //当前表累计购气量
+                            "/" + Bjql +         //报警气量
+                            "/" + Czsx +         //充值上限，可以在气表管理中设置
+                            "/" + Tzed +         //透支额度，可以在气表管理中设置
+                            "/" + Sqrq +        //售气日期，格式为YYYYMMDD
+                            "/" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
+                            "/" + OldPrice +     //旧单价，价格管理中取
+                            "/" + NewPrice +     //新单价，价格管理中取
+                            "/" + Sxrq +        //生效日期，价格管理中取
+                            "/" + Sxbj;     //生效标记，0不生效，1生效，价格管理中取
+            JsonObject jsonString = GetJsonString();
+            client.UploadStringAsync(new Uri(p), jsonString.ToString());
+
+
         }
         #endregion
 
@@ -604,34 +678,35 @@ namespace Com.Aote.ObjectTools
             State = State.Start;
             //调用写卡服务
             WebClient client = new WebClient();
-            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(WriteCard_DownloadStringCompleted);
-            client.DownloadStringAsync(new Uri("http://127.0.0.1:8000/WriteNewCard" +
-                            "?factory=" + Factory +     //厂家
-                            "&kmm=" + Kmm +     //卡密码，写卡后返回新密码
-                            "&kzt=" + Kzt +          //卡状态，0开户卡，1用户卡
-                            "&kh=" + CardId +          //卡号
-                            "&dqdm=" + Dqdm +        //地区代码，从气表管理里取
-                            "&yhh=" + Yhh +         //用户号，档案中自己输入
-                            "&tm=" + Tm +          //条码，传用户档案里的条码
-                            "&ql=" + Gas +          //气量
-                            "&csql=" + Scql +         //上次购气量，有些表需要传
-                            "&ccsql=" + Sscql +        //上上次购气量，有些表需要传
-                            "&cs=" + BuyTimes +           //购气次数
-                            "&ljgql=" + Ljgql +        //当前表累计购气量
-                            "&bkcs=" + Bkcs +         //补卡次数，用户档案里保存补卡次数
-                            "&ljyql=" + Ljyql +        //累计用气量，有些表要累加原来用气量
-                            "&bjql=" + Bjql +         //报警气量
-                            "&czsx=" + Czsx +         //充值上限，可以在气表管理中设置
-                            "&tzed=" + Tzed +         //透支额度，可以在气表管理中设置
-                            "&sqrq=" + Sqrq +        //售气日期，格式为YYYYMMDD
-                            "&cssqrq=" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
-                            "&oldprice=" + OldPrice +     //旧单价，价格管理中取
-                            "&newprice=" + NewPrice +     //新单价，价格管理中取
-                            "&sxrq=" + Sxrq +        //生效日期，价格管理中取
-                            "&sxbj=" + Sxbj +        //生效标记，0不生效，1生效，价格管理中取
-                             "&klx=" + klx +   //区分民用非民用
-                             "&meterid=" + MeterId
-                            ));
+            client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
+            string p = "http://127.0.0.1:8001/WriteNewCard" +
+                                        "/" + Factory +     //厂家
+                                        "/" + Kmm +     //卡密码，写卡后返回新密码
+                                        "/" + Kzt +          //卡状态，0开户卡，1用户卡
+                                        "/" + CardId +          //卡号
+                                        "/" + Dqdm +        //地区代码，从气表管理里取
+                                        "/" + Yhh +         //用户号，档案中自己输入
+                                        "/" + Tm +          //条码，传用户档案里的条码
+                                        "/" + Gas +          //气量
+                                        "/" + Scql +         //上次购气量，有些表需要传
+                                        "/" + Sscql +        //上上次购气量，有些表需要传
+                                        "/" + BuyTimes +           //购气次数
+                                        "/" + Ljgql +        //当前表累计购气量
+                                        "/" + Bkcs +         //补卡次数，用户档案里保存补卡次数 改为卡类型
+                                        "/" + Ljyql +        //累计用气量，有些表要累加原来用气量
+                                        "/" + Bjql +         //报警气量
+                                        "/" + Czsx +         //充值上限，可以在气表管理中设置
+                                        "/" + Tzed +         //透支额度，可以在气表管理中设置
+                                        "/" + Sqrq +        //售气日期，格式为YYYYMMDD
+                                        "/" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
+                                        "/" + OldPrice +     //旧单价，价格管理中取
+                                        "/" + NewPrice +     //新单价，价格管理中取
+                                        "/" + Sxrq +        //生效日期，价格管理中取
+                                        "/" + Sxbj +     //生效标记，0不生效，1生效，价格管理中取 
+                                        "/" + Klx +       //卡类型
+                                        "/" + MeterId;  //表号
+            JsonObject jsonString = GetJsonString();
+            client.UploadStringAsync(new Uri(p), jsonString.ToString());
         }
         #endregion
 
@@ -651,19 +726,53 @@ namespace Com.Aote.ObjectTools
             State = State.Start;
             //执行写卡线程
             WebClient client = new WebClient();
-            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(WriteCard_DownloadStringCompleted);
-            string path = "http://127.0.0.1:8000/FormatGasCard?" +
-                            "factory=" + Factory +     //厂家
-                            "&kmm=" + Kmm +     //卡密码，写卡后返回新密码
-                            "&kh=" + CardId +          //卡号
-                            "&dqdm=" + Dqdm;        //地区代码，从气表管理里取
-            client.DownloadStringAsync(new Uri(path));
+            client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
+            string p = "http://127.0.0.1:8001/WriteNewCard" +
+                            "/" + Factory +     //厂家
+                           "/" + Kmm +     //卡密码，写卡后返回新密码
+                           "/" + CardId +          //卡号
+                            "/" + Dqdm;        //地区代码，从气表管理里取
+
+            JsonObject jsonString = GetJsonString();
+            client.UploadStringAsync(new Uri(p), jsonString.ToString());
         }
         #endregion
 
-        //所有写卡结束后的统一处理过程
-        void WriteCard_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        #region 累计金额
+        //累计金额
+        public string totalmoney;
+        public string TotalMoney
         {
+            get { return totalmoney; }
+            set
+            {
+                this.totalmoney = value;
+                OnPropertyChanged("TotalMoney");
+            }
+        }
+        #endregion
+
+
+        //把阶梯气价等属性组织成json串
+        private JsonObject GetJsonString()
+        {
+            JsonObject obj = new JsonObject();
+            obj.Add("stairprice1", Stairprice1);
+            obj.Add("stairgas1", Stairgas1);
+            obj.Add("stairprice2", Stairprice2);
+            obj.Add("stairgas2", Stairgas2);
+            obj.Add("stairprice3", Stairprice3);
+            obj.Add("stairgas3", Stairgas3);
+            obj.Add("money", Money);
+            obj.Add("totalmoney", TotalMoney);
+            return obj;
+        }
+
+        //所有写卡结束后的统一处理过程
+        void WriteCard_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        {
+            (sender as WebClient).UploadStringCompleted -= WriteCard_UploadStringCompleted;
+
             IsBusy = false;
             //通讯错误
             if (e.Error != null)
@@ -693,7 +802,7 @@ namespace Com.Aote.ObjectTools
                 }
                 else
                 {
-                    // Kmm = (string)go.GetPropertyValue("Kmm");
+                    Kmm = (string)go.GetPropertyValue("Kmm");
                     State = State.End;
                 }
             }
@@ -786,4 +895,5 @@ namespace Com.Aote.ObjectTools
         }
         #endregion
     }
+
 }
