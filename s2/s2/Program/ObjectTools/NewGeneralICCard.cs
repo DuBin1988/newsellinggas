@@ -76,6 +76,18 @@ namespace Com.Aote.ObjectTools
                 OnPropertyChanged("Stairprice3");
             }
         }
+
+        //阶梯气量3
+        public string stairgas3;
+        public string Stairgas3
+        {
+            get { return stairgas3; }
+            set
+            {
+                this.stairgas3 = value;
+                OnPropertyChanged("Stairgas3");
+            }
+        }
         #endregion
 
         #region CardId 卡号
@@ -88,6 +100,20 @@ namespace Com.Aote.ObjectTools
             {
                 this.cardid = value;
                 OnPropertyChanged("CardId");
+            }
+        }
+        #endregion
+
+        #region MeterId 表号
+        //单价生效标记 
+        public string meterid;
+        public string MeterId
+        {
+            get { return meterid; }
+            set
+            {
+                this.meterid = value;
+                OnPropertyChanged("MeterId");
             }
         }
         #endregion
@@ -654,24 +680,31 @@ namespace Com.Aote.ObjectTools
             WebClient client = new WebClient(); 
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
             string p = "http://127.0.0.1:8001/WriteNewCard" +
-                            "/" + Factory +     //厂家
-                           "/" + Kmm +     //卡密码，写卡后返回新密码
-                           "/" + CardId +          //卡号
-                            "/" + Dqdm +        //地区代码，从气表管理里取
-                            "/" + Gas +          //气量
-                            "/" + Scql +         //上次购气量，有些表需要传
-                            "/" + Sscql +        //上上次购气量，有些表需要传
-                            "/" + BuyTimes +           //购气次数
-                            "/" + Ljgql +        //当前表累计购气量
-                            "/" + Bjql +         //报警气量
-                            "/" + Czsx +         //充值上限，可以在气表管理中设置
-                            "/" + Tzed +         //透支额度，可以在气表管理中设置
-                            "/" + Sqrq +        //售气日期，格式为YYYYMMDD
-                            "/" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
-                            "/" + OldPrice +     //旧单价，价格管理中取
-                            "/" + NewPrice +     //新单价，价格管理中取
-                            "/" + Sxrq +        //生效日期，价格管理中取
-                            "/" + Sxbj;     //生效标记，0不生效，1生效，价格管理中取
+                                        "/" + Factory +     //厂家
+                                        "/" + Kmm +     //卡密码，写卡后返回新密码
+                                        "/" + Kzt +          //卡状态，0开户卡，1用户卡
+                                        "/" + CardId +          //卡号
+                                        "/" + Dqdm +        //地区代码，从气表管理里取
+                                        "/" + Yhh +         //用户号，档案中自己输入
+                                        "/" + Tm +          //条码，传用户档案里的条码
+                                        "/" + Gas +          //气量
+                                        "/" + Scql +         //上次购气量，有些表需要传
+                                        "/" + Sscql +        //上上次购气量，有些表需要传
+                                        "/" + BuyTimes +           //购气次数
+                                        "/" + Ljgql +        //当前表累计购气量
+                                        "/" + Bkcs +         //补卡次数，用户档案里保存补卡次数 改为卡类型
+                                        "/" + Ljyql +        //累计用气量，有些表要累加原来用气量
+                                        "/" + Bjql +         //报警气量
+                                        "/" + Czsx +         //充值上限，可以在气表管理中设置
+                                        "/" + Tzed +         //透支额度，可以在气表管理中设置
+                                        "/" + Sqrq +        //售气日期，格式为YYYYMMDD
+                                        "/" + Scsqrq +     //上次售气日期，格式为YYYYMMDD
+                                        "/" + OldPrice +     //旧单价，价格管理中取
+                                        "/" + NewPrice +     //新单价，价格管理中取
+                                        "/" + Sxrq +        //生效日期，价格管理中取
+                                        "/" + Sxbj +     //生效标记，0不生效，1生效，价格管理中取 
+                                        "/" + Klx +       //卡类型
+                                        "/" + MeterId;  //表号
             JsonObject jsonString = GetJsonString();
             client.UploadStringAsync(new Uri(p), jsonString.ToString());
                     }
@@ -728,7 +761,8 @@ namespace Com.Aote.ObjectTools
             obj.Add("stairgas1", Stairgas1);
             obj.Add("stairprice2", Stairprice2);
             obj.Add("stairgas2", Stairgas2);
-            obj.Add("stairprice3", Stairprice3);
+            obj.Add("stairprice3", Stairprice3); 
+            obj.Add("stairgas3", Stairgas3);
             obj.Add("money", Money);
             obj.Add("totalmoney", TotalMoney);
             return obj;
