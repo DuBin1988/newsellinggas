@@ -4,7 +4,7 @@
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <!--阶梯气价信息-->
-    <class   entity-name="t_stairprice" table="t_stairprice" >
+    <class   entity-name="t_stairprice" table="t_stairprice" dynamic-insert="true" dynamic-update="true">
 		<id name="id" type="int">
 			<generator class="identity"></generator>
 		</id>
@@ -26,8 +26,13 @@
 		<property name="f_stair4price" type="double"/>
 		<!--阶段月数-->
 		<property name="f_stairmonths" type="int"/>
-			<!--阶段开始日期-->
+		<!--单价同步 状态-->
+		<property name="f_returnvaluedj" type="string" >
+			<column name="f_returnvaluedj" default="0"></column>
+		</property>
+		
+		<!--阶段开始日期-->
 		<property name="f_stairstartdate" type="string"/>
-	
+		
 	</class>
 </hibernate-mapping>

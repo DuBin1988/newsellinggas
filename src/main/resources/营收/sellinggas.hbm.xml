@@ -4,7 +4,7 @@
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <!--售气收费-->
-    <class   entity-name="t_sellinggas" table="t_sellinggas" >
+    <class   entity-name="t_sellinggas" table="t_sellinggas" dynamic-insert="true" dynamic-update="true">
 		<id name="id" type="int">
 			<generator class="identity"></generator>
 		</id>
@@ -291,6 +291,12 @@
 		<property name="f_fanpandate" type="string"/>
 		<!--补收费记录-->
 		<property name="f_bsfjl" type="string"/>
+		<!--缴费时间，同步用-->
+		<property name="f_deliverydate_tb" type="string"/>
+		<!--同步状态-->
+		<property name="f_status_tb" type="string" >
+			<column name="f_status_tb" default="0"></column>
+		</property>
 		<!--折子行数-->
 		<property name="f_zherownum" type="int"/>
 		

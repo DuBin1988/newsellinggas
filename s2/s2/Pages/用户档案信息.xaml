@@ -88,10 +88,10 @@
                                 <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock TextWrapping="Wrap" Text="卡　　号：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
-                        <TextBox Name="tj2" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_cardid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                        <TextBlock TextWrapping="Wrap" Text="表　　号：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+                        <TextBox Name="tj2" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid='this'"/>
+                                <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber='this'"/>
                             </a:Data.Prop>
                         </TextBox>
 
@@ -366,6 +366,7 @@ order by id
                             <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
                             <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
                             <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+                            <sdk:DataGridTextColumn Header="抄表时间" Binding="{Binding lastinputdate, StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="抄表表底" Binding="{Binding lastinputgasnum}"/>
                             <sdk:DataGridTextColumn Header="账户余额" Binding="{Binding f_zhye}"/>
                             <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
@@ -394,14 +395,26 @@ order by id
                             <sdk:DataGridTextColumn Header="银行" Binding="{Binding f_bankname}"/>
                             <sdk:DataGridTextColumn Header="账户名" Binding="{Binding f_usermc}"/>
                             <sdk:DataGridTextColumn Header="账号" Binding="{Binding f_idofcard}"/>
-
+                            
                             <sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
                             <sdk:DataGridTextColumn Header="建档部门" Binding="{Binding f_yytdepa}"/>
                             <sdk:DataGridTextColumn Header="建档人" Binding="{Binding f_yytoper}"/>
                             <sdk:DataGridTextColumn Header="建档日期" Binding="{Binding f_yytdate,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="开户日期" Binding="{Binding f_dateofopening,StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="审核部门" Binding="{Binding f_examinedepa}"/>
                             <sdk:DataGridTextColumn Header="审核人" Binding="{Binding f_examineoper}"/>
                             <sdk:DataGridTextColumn Header="审核日期" Binding="{Binding f_examinedate,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="抄表系统最新底数" Binding="{Binding lastinputgasnum_cb}"/>
+                            <sdk:DataGridTextColumn Header="抄表系统最新余额" Binding="{Binding lastinputjval_cb}"/>
+                            <sdk:DataGridTextColumn Header="抄表系统抄表日期" Binding="{Binding lastinputdate_cb, StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="档案同步" Binding="{Binding f_danganstatus}"/>
+                            <sdk:DataGridTextColumn Header="档案同步状态" Binding="{Binding f_danganreturnvalue}"/>
+                            <sdk:DataGridTextColumn Header="用户同步状态" Binding="{Binding f_userstatus}"/>
+                            <sdk:DataGridTextColumn Header="单价同步状态" Binding="{Binding f_returnvaluedj}"/>
+                            <sdk:DataGridTextColumn Header="阀门同步状态" Binding="{Binding f_returnvalueoperate}"/>
+                            <sdk:DataGridTextColumn Header="气表最新状态" Binding="{Binding f_tablestatus}"/>
+                            <sdk:DataGridTextColumn Header="气表状态时间" Binding="{Binding f_statusdate, StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="气表状态信息" Binding="{Binding f_tablesmessage}"/>
 
                             <!--sdk:DataGridTextColumn Header="时间" Binding="{Binding f_yyttime,StringFormat=hh:mm:ss tt}"/-->
                         </sdk:DataGrid.Columns>
