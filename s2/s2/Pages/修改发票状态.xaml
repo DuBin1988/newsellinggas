@@ -138,23 +138,23 @@
 					</Grid>
 				</toolkit:DockPanel>
 				<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="51">
-					<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=fpinfos}" Margin="0,0,0,0" PageSize="20" toolkit:DockPanel.Dock="Top" Height="24"   />
-						<TextBlock TextWrapping="Wrap" Margin="5,0,0,3" Text="{m:Exp Str=$共\{fpinfos.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
+                    <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=fpinfos}" Margin="0,0,0,0" PageSize="20"  toolkit:DockPanel.Dock="Top" Height="24"/>
+                    <TextBlock TextWrapping="Wrap" Margin="5,0,0,3" Text="{m:Exp Str=$共\{fpinfos.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Left" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
 					</toolkit:DockPanel>
 					<sdk:DataGrid x:Name="fpinfos" Margin="0,0,0,2"  
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
-						<!--a:Data.Items>
+						<a:Data.Items>
 							<o:PagedObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
                                 Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
 								IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_yi"/>
-						</a:Data.Items-->
-						<a:Data.Items>
+						</a:Data.Items>
+						<!--a:Data.Items>
 							<o:ObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
                                 Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
 								IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
 								/>
-						</a:Data.Items>
+						</-->
 						<sdk:DataGrid.Columns>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
 							<sdk:DataGridTextColumn Header="发票代码" Binding="{Binding f_invoiceid}"/>
