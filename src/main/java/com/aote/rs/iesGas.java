@@ -142,7 +142,7 @@ public class iesGas {
 					}					
 					String f_statusdate = row.getString("record_date");
 					execSQL("insert into t_cbstatuslog (f_userid,f_tablestatus,f_statusdate,f_tablesmessage,f_inertdate,f_username,f_address,meter_phone,f_meternumber,f_gaswatchbrand,f_aliasname) "
-							+ "(select top 1 '"+f_userid+"','"+f_tablestatus+"','"+f_statusdate+"','"+f_tablesmessage+",'"+f_tbdate+"',f_username,f_address,meter_phone,f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+f_userid+"' and "+gasmeterstyle+")");
+							+ "(select '"+f_userid+"','"+f_tablestatus+"','"+f_statusdate+"','"+f_tablesmessage+"','"+f_tbdate+"',f_username,f_address,meter_phone,f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+f_userid+"' and "+gasmeterstyle+")");
 					execSQL("update t_userfiles set f_tablestatus='"+f_tablestatus+"',f_tablesmessage='"+f_tablesmessage+"',f_statusdate='"+f_statusdate+"' where f_userid='"+f_userid+"' and "+gasmeterstyle);
 				}catch(Exception e){
 					returnvalue="1";
@@ -192,7 +192,7 @@ public class iesGas {
 					} catch (Exception e) {
 						jval = -0.0001;
 					}															
-					final String sql = "select top 1 f_userid from t_cbnum where f_userid='"+f_userid+"' and f_gasdate='"+f_gasdate+"' and f_gasnum="+f_gasnum+" and jval="+jval+"";
+					final String sql = "select f_userid from t_cbnum where f_userid='"+f_userid+"' and f_gasdate='"+f_gasdate+"' and f_gasnum="+f_gasnum+" and jval="+jval+"";
 					List list = (List)hibernateTemplate.execute(new HibernateCallback() {
 								public Object doInHibernate(Session session)throws HibernateException {
 									SQLQuery query = session.createSQLQuery(sql);
@@ -200,9 +200,9 @@ public class iesGas {
 								}
 							});
 					// 查找数据记录是否存在
-					if (list.size() != 1){
+					if (list.size() < 1){
 						execSQL("insert into t_cbnum (f_userid,f_gasdate,f_gasnum,jval,f_inertdate,f_meternumber,f_gaswatchbrand,f_aliasname) "
-								+ "(select top 1 '"+f_userid+"','"+f_gasdate+"',"+f_gasnum+","+jval+",'"+f_tbdate+"',f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+f_userid+"' and "+gasmeterstyle+")");
+								+ "(select '"+f_userid+"','"+f_gasdate+"',"+f_gasnum+","+jval+",'"+f_tbdate+"',f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+f_userid+"' and "+gasmeterstyle+")");
 						execSQL("update t_userfiles set lastinputdate_cb='"+f_gasdate+"',lastinputgasnum_cb="+f_gasnum+",lastinputjval_cb="+jval+" where f_userid='"+f_userid+"' and "+gasmeterstyle);
 					}
 				}catch(Exception e){
@@ -895,7 +895,7 @@ public class iesGas {
 						String lastinputdate= tmp[2]+"";
 						String cid= tmp[5]+"";
 						String jval= tmp[6]+"";
-						if(null !=f_gasnum && !"".equals(f_gasnum) && !"null".equals(f_gasnum) && !"NULL".equals(f_gasnum)){
+						if(null !=f_gasnum && !"".equals(f_gasnum) && !"null".equals(f_gasnum) && !"NULL".equals(f_gasnum) && Double.parseDouble(f_gasnum) >= Double.parseDouble(lastinputgasnum)){
 							rows.put(new JSONObject("{userid:\""+f_userid+"\",reading:\"" + f_gasnum+"\",cid:\"" + cid+"\",jval:\"" + jval+"\",lastinputdate:\"" + lastinputdate +"\",lastreading:\"" + lastinputgasnum + "\"}"));
 							execSQL("update t_cbnum set f_isuse='1' where id='"+cid+"'");
 						}
