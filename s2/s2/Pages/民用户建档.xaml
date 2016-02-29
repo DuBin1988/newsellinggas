@@ -22,7 +22,7 @@
             <!--阶梯气价信息列表-->
             <o:ObjectList Name="stairlist" EntityType="t_stairprice" 
                           WebClientInfo="{StaticResource dbclient}" 
-                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\' group by a.f_gasproperties}" 
+                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\' group by a.f_gasproperties}" 
                              LoadOnPathChanged="True" 
                           />
 
@@ -84,7 +84,7 @@
 
 
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')$\,$null$}"/>
 
             <!--判断用户是否存在-->
             <o:GeneralObject Name="userexist" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}" 
@@ -148,7 +148,7 @@
 
             <!--小区列表-->
             <o:PagedObjectList Name="areafileslist" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_area where \{areafilesearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')}"
+				Path="{m:Exp Str=$from t_area where \{areafilesearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"
 				 IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}"
 				SumNames=","
 				PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>

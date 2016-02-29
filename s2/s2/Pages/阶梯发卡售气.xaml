@@ -286,8 +286,8 @@
 					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Margin="0,1,0,0" >
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
-							MultiPath="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivecard \=\'未发\' and f_gasmeterstyle \=\'卡表\' and f_gasmeterstyle \=\'卡表\' and  (f_OrgStr  like  \'\{LoginUser.orgpathstr\}\{$%$\}\')}"
-                			Path="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivecard \=\'未发\' and f_gasmeterstyle \=\'卡表\'  and f_gasmeterstyle \=\'卡表\' and  (f_OrgStr  like  \'\{LoginUser.orgpathstr\}\{$%$\}\') order by id }"
+							MultiPath="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivecard \=\'未发\' and f_gasmeterstyle \=\'卡表\' and f_gasmeterstyle \=\'卡表\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"
+                			Path="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivecard \=\'未发\' and f_gasmeterstyle \=\'卡表\'  and f_gasmeterstyle \=\'卡表\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\') order by id }"
                 			IsOld="{m:Exp Str='print.State\=\=$End$'}"
 							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
                         </a:Data.Items>

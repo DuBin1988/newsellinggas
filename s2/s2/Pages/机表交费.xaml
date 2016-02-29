@@ -27,6 +27,7 @@
             <!--付款方式列表-->
             <o:ObjectList Name="paylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
 
+           
             <!--抄表的未交费记录-->
             <o:ObjectList Name="kbsellgas" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"/>
 
@@ -102,6 +103,11 @@
                             <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Height="25" FontSize="13.333" VerticalAlignment="Stretch" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBlock TextWrapping="Wrap" Text="档案编号：" Margin="0,5,-1,-2" Height="25" FontSize="13.333" HorizontalAlignment="Right" />

@@ -132,25 +132,25 @@
                         <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="5" Grid.Column="3" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="SecondStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="SecondStair" Default="{m:Exp Str=daninfosearch.DataContext.SecondStair}" Operator="1=1"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="4" Grid.Row="5"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="5" Grid.Column="5" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="ThirdStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="ThirdStair"  Default="{m:Exp Str=daninfosearch.DataContext.ThirdStair}" Operator="1=1"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="6" Grid.Row="5"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="5" Grid.Column="7" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="FourthStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="FourthStair" Default="{m:Exp Str=daninfosearch.DataContext.FourthStair}" Operator="1=1"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="org"   Operator="f_OrgStr like 'this%'"/>
+                                <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
                             </a:Data.Prop>
                         </TextBox>
                         <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="4" Grid.Column="8" Click="dansearchbutton_Click"  Margin="6,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60" Height="28" VerticalAlignment="Bottom"  />

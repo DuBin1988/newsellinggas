@@ -1,5 +1,4 @@
-﻿using Com.Aote.ObjectTools;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -8,13 +7,32 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Com.Aote.ObjectTools;
 using System.Linq;
+using System.Net;
+using System.Json;
+using Com.Aote.Behaviors;
+using Com.Aote.Controls;
+using System.Collections.Generic;
 using Com.Aote.Utils;
+
 
 namespace Com.Aote.Pages
 {
     public partial class 民用小区管理 : UserControl
     {
+        private void save12_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralObject go = ybuserfile.DataContext as GeneralObject;
+            Dictionary<String, String> dict = go._errors;
+            String err = "";
+            foreach (String key in dict.Keys)
+            {
+                err += key + ":" + dict[key] + "\n";
+            }
+            MessageBox.Show(err);
+        }
+
         public 民用小区管理()
         {
             // Required to initialize variables

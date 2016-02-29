@@ -138,6 +138,11 @@
                                     <o:PropertySetter PropertyName="f_userid" Operator="f_userid like 'this'"/>
                                 </a:Data.Prop>
                             </TextBox>
+                            <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
+                                </a:Data.Prop>
+                            </TextBox>
                             <TextBlock TextWrapping="Wrap"  Grid.Row="1" Text="卡　　号：" Margin="0" HorizontalAlignment="Right"/>
                             <TextBox TextWrapping="Wrap" Grid.Column="1"  Grid.Row="1" Text="{m:Bind Path=f_cardid}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
                                 <a:Data.Prop>

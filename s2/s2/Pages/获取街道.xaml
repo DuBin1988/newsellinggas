@@ -43,7 +43,7 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="7">
                 <a:Data.Items>
                     <o:ObjectList Name="userfileslist1" WebClientInfo="{StaticResource dbclient}"								
-								Path="{m:Exp Str=$from t_road where \{roadsearch.DataContext.Condition\} and  (f_OrgStr  like \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')}"/>
+								Path="{m:Exp Str=$from t_road where \{roadsearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"/>
                 </a:Data.Items>
                 <sdk:DataGrid.Columns>
                     <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>

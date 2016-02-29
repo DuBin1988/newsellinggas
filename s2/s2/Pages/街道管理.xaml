@@ -142,28 +142,27 @@
                             </TextBox>
                             <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="0" Grid.Row="6"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
                             <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="6" Grid.Column="1" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,3,0,2" Height="25" HorizontalAlignment="Stretch" Width="Auto">
-
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="SecondStair" Default="{m:Exp Str=roadmanege.DataContext.SecondStair}" NotNull="True"/>
+                                    <o:PropertySetter PropertyName="SecondStair"/>
                                 </a:Data.Prop>
                             </ComboBox>
                             <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="0" Grid.Row="7"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
                             <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="7" Grid.Column="1" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,3,0,2" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="ThirdStair" Default="{m:Exp Str=roadmanege.DataContext.ThirdStair}"  NotNull="True"/>
+                                    <o:PropertySetter PropertyName="ThirdStair" />
                                 </a:Data.Prop>
                             </ComboBox>
                             <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="0" Grid.Row="8"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
                             <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="8" Grid.Column="1" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,3,0,2" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="FourthStair" Default="{m:Exp Str=roadmanege.DataContext.FourthStair}"  NotNull="True"/>
+                                    <o:PropertySetter PropertyName="FourthStair"/>
                                 </a:Data.Prop>
                             </ComboBox>
                             <TextBox Visibility="Collapsed" Text="{m:Bind Path=f_OrgStr}" Grid.Row="23" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_OrgStr" NotNull="True"
-													Default="{m:Exp Str=$\{roadmanege.DataContext.FirstStair\}\{$.$\}\{roadmanege.DataContext.SecondStair\}\{$.$\}\{roadmanege.DataContext.ThirdStair\}\{$.$\}\{roadmanege.DataContext.FourthStair\}$}"/>
+													NoDependValue="{m:Exp Str=$\{roadmanege.DataContext.FirstStair\}\{$.$\}\{roadmanege.DataContext.SecondStair\!\=null:roadmanege.DataContext.SecondStair\,$$\}\{$.$\}\{roadmanege.DataContext.ThirdStair\!\=null:roadmanege.DataContext.ThirdStair\,$$\}\{$.$\}\{roadmanege.DataContext.FourthStair\!\=null:roadmanege.DataContext.FourthStair\,$$\}$}"/>                                
                                 </a:Data.Prop>
                             </TextBox>
                 </Grid>

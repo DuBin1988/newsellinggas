@@ -55,7 +55,7 @@ namespace Com.Aote.Pages
                 "f_watchinstalldate, 111 ) f_watchinstalldate,f_payment,f_bankname,f_usermc,f_idofcard,f_filiale,f_yytdepa,"+
                 "f_yytoper,CONVERT(varchar(12), f_yytdate, 111 ) f_yytdate,f_credentials,f_idnumber,f_dibaohu,f_gasmetermanufacturers,"+
                 "f_aroundmeter,f_gasmeteraccomodations,f_aliasname,f_stairtype,f_stair1amount,f_stair1price,f_stair2amount,f_stair2price,f_stair3amount,f_stair3price,f_stairmonths from t_userfiles " +
-                "where "+userSearch.Condition+"";
+                "where " + userSearch.Condition + "";
             userList.HQL = sql;
             userList.PageSize = pager2.PageSize;
             userList.SumNames = ",";

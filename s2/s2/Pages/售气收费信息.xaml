@@ -141,7 +141,7 @@
                         </TextBox>
                         <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="org"   Operator="f_OrgStr like 'this%'"/>
+                                <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
                             </a:Data.Prop>
                         </TextBox>
                         <ComboBox Name="tj9" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">

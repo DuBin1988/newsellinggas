@@ -28,7 +28,7 @@
             <!--阶梯气价信息列表-->
             <o:ObjectList Name="stairlist" EntityType="t_stairprice" 
                           WebClientInfo="{StaticResource dbclient}" 
-                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\' group by a.f_gasproperties}" 
+                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\' group by a.f_gasproperties}" 
                              LoadOnPathChanged="True" 
                           />
             <!--o:ObjectList Name="stairlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_stairprice}"/-->
@@ -111,14 +111,14 @@
             <o:ObjectList Name="loucenglist" EntityType="t_gasaddress" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$select new map(f_cusFloor as f_cusFloor) from t_gasaddress where f_districtname like \'%\{areafilesearch2.DataContext.f_districtname\}%\'  and f_cusDom \= \'\{CoboxGasPro2.SelectedItem.f_cusDom\}\'   and f_cusDy \= \'\{CoboxGasPro3.SelectedItem.f_cusDy\}\'  group by f_cusFloor}"/>
 
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	 Path="{m:Exp Str=userfile.DataContext.f_stairtype!\=null:$from t_stairprice where f_stairtype\=\'\{userfile.DataContext.f_stairtype\}\'  and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')$\,$null$}"/>
+             	 Path="{m:Exp Str=userfile.DataContext.f_stairtype!\=null:$from t_stairprice where f_stairtype\=\'\{userfile.DataContext.f_stairtype\}\'  and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')$\,$null$}"/>
 
 
             <o:GeneralObject Name="temp" EntityType="" Source="{m:Exp Str=TabControl.SelectedIndex\=\=0:areafiles.SelectedItem\,areafiles2.SelectedItem}"/>
 
             <!--小区列表-->
             <o:PagedObjectList Name="areafileslist" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_area  where \{areafilesearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')}"
+				Path="{m:Exp Str=$from t_area  where \{areafilesearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"
 				 IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}"
 				SumNames=","
 				PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>
@@ -126,7 +126,7 @@
 
             <!--地址列表-->
             <o:PagedObjectList Name="areafileslist2" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_userinfo  where \{areafilesearch2.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.orgpathstr.Split($.$\,2)\}\{$%$\}\')}"
+				Path="{m:Exp Str=$from t_userinfo  where \{areafilesearch2.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"
 				IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"
 				SumNames=","
 				PageSize="{m:Exp Str=pager2.PageSize}" PageIndex="{m:Exp Str=pager2.PageIndex}"/>

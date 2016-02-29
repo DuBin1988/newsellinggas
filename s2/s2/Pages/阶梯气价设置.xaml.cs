@@ -51,7 +51,7 @@ namespace Com.Aote.Pages
             ui_searchBusy.IsBusy = true;
             string f_parentname = loginUser.GetPropertyValue("orgpathstr").ToString(); ;
             stairSearch.Search();
-            string sql = "from t_stairprice where " + stairSearch.Condition + "and (f_OrgStr  like " + "'" + f_parentname + "%'" + ")";
+            string sql = "from t_stairprice where " + stairSearch.Condition + "and (f_OrgStr  like " + "'%" + f_parentname + "%'" + ")";
             stairList.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
             stairList.LoadOnPathChanged = false;
             stairList.Path = "hql";
