@@ -637,7 +637,12 @@
 														<o:PropertySetter PropertyName="f_gaswatchbrand" NotNull="True" Value="{m:Exp Str=CoboxPinpai.SelectedItem.f_gaswatchbrand}" />
 													</a:Data.Prop>
 												</ComboBox>
-												<ComboBox x:Name="DaXiaoKa" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber" ItemsSource="{m:Exp Str=CoboxPinpai.SelectedItem.qbnumber}" SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,2,0,3" Grid.Row="13" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1"  >
+                                            <TextBox Text="{m:Bind Path=f_gasmeterstyle}"  Grid.Column="3" Margin="0,5,0,0" Grid.Row="14" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" >
+                                                <a:Data.Prop>
+                                                    <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=CoboxPinpai.SelectedItem.f_type}" />
+                                                </a:Data.Prop>
+                                            </TextBox>
+                                            <ComboBox x:Name="DaXiaoKa" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber" ItemsSource="{m:Exp Str=CoboxPinpai.SelectedItem.qbnumber}" SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,2,0,3" Grid.Row="13" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1"  >
 													<a:Data.Prop>
 														<o:PropertySetter PropertyName="f_metertype" NotNull="True" Value="{m:Exp Str=CoboxPinpai.SelectedItem.f_metertype}" />
 													</a:Data.Prop>
