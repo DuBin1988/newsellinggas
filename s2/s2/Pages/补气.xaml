@@ -40,6 +40,14 @@
 		 NewPrice="{m:Exp Str='user != null\:user.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         Stairprice1="{m:Exp Str='user != null \:user.f_stair1price\,null'}"
+         Stairgas1="{m:Exp Str='user != null \:user.f_stair1gas\,null'}" 
+         Stairprice2="{m:Exp Str='user != null \:user.f_stair2price\,null'}"
+         Stairgas2="{m:Exp Str='user != null \:user.f_stair2gas\,null'}"                         
+         Stairprice3="{m:Exp Str='user != null \:user.f_stair3price\,null'}"
+         Stairgas3="{m:Exp Str='user != null \:user.f_stair3gas\,null'}" 
+         Money="{m:Exp Str=apply.DataContext.f_preamount}"      
+         TotalMoney="{m:Exp Str=apply.DataContext.f_totalcost}"
 		>
 		</oo:NewGeneralICCard>
 		
