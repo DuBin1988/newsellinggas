@@ -266,7 +266,7 @@
                             <TextBlock Text="付款方式：" Grid.Column="2" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25"/>
                             <TextBox  Text="{m:Bind Path=f_payment}"  Grid.Column="3" Margin="0" TextWrapping="Wrap"  Grid.Row="7"  IsReadOnly="True" Height="25">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_payment"/>
+                                    <o:PropertySetter PropertyName="f_payment" NoDependValue="{m:Exp Str=sellinggas.f_payment\=&gt;Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
                             <!--TextBlock Text="本次总累计购气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="4" Height="25"/>
