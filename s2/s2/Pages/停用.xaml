@@ -17,7 +17,7 @@
     x:Class="Com.Aote.Pages.停用" FontSize="13"
     mc:Ignorable="d" >
 	  <Grid x:Name="LayoutRoot">
-	<m:ResourceLoad Margin="0,0,-12,0">
+        <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader" >
 		  <!--卡对象-->
 		<o:NewGeneralICCard Name="card"  ></o:NewGeneralICCard> 
 		
@@ -33,8 +33,9 @@
 			pipelines.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userfiles where f_userid\=\'\{pipelines.SelectedItem.f_userid\}\' and f_userstate\=\'正常\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}" 
 			  IsInit="{m:Exp Str='SaveAction.State==$End$'}">
        			<!--o:PropertySetter PropertyName="f_gasmeteraccomodations" Value="{m:Exp Str=pipeline.DataContext.f_gasmeteraccomodations}"/-->
-                <o:PropertySetter PropertyName="f_stopdate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_stopdate\,null}">
-                 </o:PropertySetter>
+                <o:PropertySetter PropertyName="f_stopdate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_stopdate\,null}" />
+                <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstate\,$停用$}" />
+                <o:PropertySetter PropertyName="f_userstatus" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstatus\,$1$}" />
 
             </o:GeneralObject>
 		<!--停用对象 -->		
@@ -131,7 +132,7 @@
         	</toolkit:DockPanel>
         </toolkit:BusyIndicator>
 		<!--操作区按钮-->
-        <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy |or|   userfiles.IsBusy  |or| SaveAction.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+            <toolkit:BusyIndicator x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
             <Grid Background="{x:Null}" x:Name="pipeline" DataContext="{m:Exp Str=pipelinego}">
             	<!--a:Data.Context>
             		<o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}" 
@@ -149,7 +150,7 @@
             <StackPanel HorizontalAlignment="Right"  VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0" >
             		<Button x:Name="save" Content="保 存" Margin="5" 
             			IsEnabled="{m:Exp Str=pipeline.DataContext.IsModified and !pipeline.DataContext.HasErrors}"
-            			Click="{m:Exp Str=userfiles.f_userstate\=$停用$;SaveAction.Invoke()}" Width="50"/>
+            			Click="save_Click" Width="50"/>
             		<Button Content="撤 销" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New()}" Width="50" />
                     
             	</StackPanel>
@@ -203,7 +204,22 @@
             				<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}"/>
             			</a:Data.Prop>
             		</TextBox>
-            		<TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                        <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=userfiles.f_gasmeterstyle\=>Completed}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=f_userstate}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userstate" Default="停用" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=f_userstatus}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userstatus" Default="1" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
             			<a:Data.Prop>
             				<o:PropertySetter PropertyName="f_username"  Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
             			</a:Data.Prop>

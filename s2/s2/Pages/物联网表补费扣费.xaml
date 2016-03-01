@@ -1,0 +1,251 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="s2.物联网表补费扣费"
+	d:DesignWidth="640" d:DesignHeight="480">
+
+	<Grid x:Name="LayoutRoot" Background="#FFDBE4F3">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.4*"/>
+			<ColumnDefinition Width="0.6*"/>
+		</Grid.ColumnDefinitions>
+        <m:ResourceLoad x:Name="loader">
+            <!--气价类型-->
+            <o:ObjectList Name="lxlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='费用操作类型' order by id"/>
+
+			<b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from t_cbgas where ID \= \'\{cbgass.SelectedItems.ToString(ID)\=>SelectionChanged\}\'}">
+			</b:HQLAction>
+			
+			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+			<!--b:BatchInfo Source="{m:Exp Str=ksnumobj}" MethodName="SaveToJson"/-->
+			<b:BatchInfo Source="{m:Exp Str=cbgasmanege.DataContext}" MethodName="SaveToJson"/>
+		</b:BatchExcuteAction>
+		</m:ResourceLoad>
+    <toolkit:DockPanel  x:Name="cbgasmanege" Margin="0,0,10,0" HorizontalAlignment="Stretch">
+            	<a:Data.Context>
+                    <o:GeneralObject Name="cbgasItem" WebClientInfo="{StaticResource dbclient}" EntityType="t_cbgas"
+		                IsInit="{m:Exp Str='this.State\=\=$End$ |or| DeleteAction.State \=\= $End$ |or| SaveAction.State \=\= $End$'}"/>
+                </a:Data.Context>
+		<Grid Background="#FFDBE4F3">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="100"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Width="auto" Orientation="Horizontal" VerticalAlignment="bottom" Grid.ColumnSpan="4" Margin="1,0,0,0" Grid.Row="12" d:LayoutOverrides="Height" HorizontalAlignment="stretch" Grid.Column="0">
+                <Button Content="保存" x:Name="save" Margin="60,0,0,0" IsEnabled="{m:Exp Str=!cbgasmanege.DataContext.HasErrors}" Click="SaveClick" Width="70" HorizontalAlignment="Left"  Height="30" d:LayoutOverrides="Height, GridBox"  />
+				<Button Content="新建" x:Name="save_Copy"  Click="{m:Exp Str=cbgasmanege.DataContext.New()}" Width="70" HorizontalAlignment="center" Margin="6,0,0,0" Height="30" d:LayoutOverrides="Height"  />
+				<Button Content="删除" Visibility="Collapsed" x:Name="delete" IsEnabled="{m:Exp Str=cbgass.SelectedItem!\=null}" Click="{m:Exp Str=DeleteAction.Invoke()}" Width="70" HorizontalAlignment="Right" Margin="6,0,0,0" VerticalAlignment="Stretch" Height="30" d:LayoutOverrides="Height"  />
+			</StackPanel>
+			<TextBlock Text="用户id："  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,6,0,5"/>
+            <TextBox Grid.Row="0" IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="1" Text="{m:Bind Path=f_userid}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_userid" NotNull="True" NoDependValue="{m:Exp Str=userinfos.SelectedItem.f_userid}" />
+    		    </a:Data.Prop>
+			</TextBox>
+            <TextBlock Text="用户名称：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Margin="0" />
+            <TextBox Grid.Row="1" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=f_username}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+               <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=userinfos.SelectedItem.f_username}" /> 
+               </a:Data.Prop>
+          </TextBox>
+            <TextBlock Text="用户地址：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Margin="0" />
+            <TextBox Grid.Row="2" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=f_address}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+                   <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=userinfos.SelectedItem.f_address}" /> 
+                   </a:Data.Prop>
+          </TextBox>
+            <TextBlock Text="表    号：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Margin="0" />
+            <TextBox Grid.Row="3" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+                   <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_meternumber" NotNull="True" NoDependValue="{m:Exp Str=userinfos.SelectedItem.f_meternumber}" /> 
+                   </a:Data.Prop>
+          </TextBox>
+            <TextBlock Text="金    额：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Margin="0" />
+            <TextBox Grid.Row="4" IsReadOnly="False" Grid.Column="1" Text="{m:Bind Path=f_grossproceeds}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+                   <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_grossproceeds" NotNull="True" /> 
+                   </a:Data.Prop>
+          </TextBox>
+            <TextBlock Text="操作类型：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Margin="0" />
+                <ComboBox DisplayMemberPath="name"  SelectedValuePath="name" ItemsSource="{m:Exp Str=lxlistnull}" SelectedValue="{m:Bind Path=f_payfeetype}"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="5" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="200">
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_payfeetype"  NotNull="True" />
+                        </a:Data.Prop>
+            </ComboBox>
+            <TextBlock Text="有 效 性：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="6" Margin="0" />
+            <TextBox Grid.Row="6" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=f_payfeevalid}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+                   <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_payfeevalid"  Default="有效"/> 
+                   </a:Data.Prop>
+          </TextBox>
+            <TextBlock Text="操作日期：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="11" Margin="0,6,0,5"/>
+			<TextBlock Text="操 作 员：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="10" Margin="0" />
+                <TextBox Text="{m:Bind Path=f_deliverydate_tb}" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2" Grid.Row="11" VerticalAlignment="Stretch" Height="25" Grid.RowSpan="1" HorizontalAlignment="Left" Width="200" >
+    			<a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_deliverydate_tb" NotNull="True" Default="{m:Exp Str=SysTime.Today.ToString($yyyy-MM-dd hh:mm:ss$)}"/>
+    			</a:Data.Prop>
+    		</TextBox>
+                <TextBox Text="{m:Bind Path=f_deliverydate}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2" Grid.Row="11" VerticalAlignment="Stretch" Height="25" Grid.RowSpan="1" HorizontalAlignment="Left" Width="200" >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_deliverydate" NotNull="True" Default="{m:Exp Str=SysTime.Today}"/>
+                    </a:Data.Prop>
+                </TextBox>
+                <TextBox Text="{m:Bind Path=f_deliverytime}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2" Grid.Row="11" VerticalAlignment="Stretch" Height="25" Grid.RowSpan="1" HorizontalAlignment="Left" Width="200" >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_deliverytime" NotNull="True" Default="{m:Exp Str=SysTime.Today}"/>
+                    </a:Data.Prop>
+                </TextBox>
+                <TextBox Text="{m:Bind Path=f_status_tb}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2" Grid.Row="11" VerticalAlignment="Stretch" Height="25" Grid.RowSpan="1" HorizontalAlignment="Left" Width="200" >
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_status_tb" NotNull="True" Default="1"/>
+                    </a:Data.Prop>
+                </TextBox>
+                <TextBox Grid.Row="10" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=f_sgoperator}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+				<a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_sgoperator"  Default="{m:Exp Str=LoginUser.name}"/>
+				</a:Data.Prop>
+			</TextBox>             
+
+             </Grid>
+			</toolkit:DockPanel>
+        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userinfos.ItemsSource.IsBusy}" Grid.Column="1" >
+
+            <Grid toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFDBE4F3"    >
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="360" />
+                    <RowDefinition Height="300"/>
+                </Grid.RowDefinitions>
+
+                <toolkit:DockPanel toolkit:DockPanel.Dock="Top" Grid.Row="0" >
+                    <Grid Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0" Height="27"  >
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userinfos}"  Margin="0" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userinfos.ItemsSource.Count\}项}" Width="Auto" Height="27" HorizontalAlignment="Left" Foreground="#FF140000"/>
+                    </Grid>
+
+                    <Grid  x:Name="cbgassearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFDBE4F3"    >
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="69"/>
+                            <ColumnDefinition Width="0.749*"/>
+                            <ColumnDefinition Width="0.251*"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject />
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userid"  Operator="f_userid like 'this%'" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="表      号：" Grid.Row="1" Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0,2,0,1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber like 'this%'" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_username"  Operator="f_username like 'this%'" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户地址：" Grid.Row="3" Margin="0" Height="25" TextAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <Button Content="查询" Grid.Column="2"  Grid.Row="3" x:Name="searchbutton" Click="{m:Exp Str=cbgassearch.DataContext.Search()}" Margin="5,0,0,3" HorizontalAlignment="Left" Width="70" Height="30" VerticalAlignment="Center" />
+                    </Grid>
+                    <sdk:DataGrid x:Name="userinfos" Margin="0"  IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="userinfolist" WebClientInfo="{StaticResource dbclient}"
+    							Path="{m:Exp Str='$from t_userfiles where {cbgassearch.DataContext.Condition}'}"
+    							IsOld="{m:Exp Str='cbgassearch.DataContext.Condition\=\=$End$ or DeleteAction.State==$End$ |or| SaveAction.State==$End$'}"
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}"  SumNames=","/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户id" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户名称" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户地址" Binding="{Binding f_address}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="表    号" Binding="{Binding f_meternumber}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="账号结余" Binding="{Binding f_zhye}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>
+                <toolkit:DockPanel toolkit:DockPanel.Dock="Top" Grid.Row="1" Margin="0,30,0,0" >
+                    <Grid Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0" Height="27"  >
+                        <sdk:DataPager x:Name="pager1" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=cbgass}"  Margin="0" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{cbgass.ItemsSource.Count\}项}" Width="Auto" Height="27" HorizontalAlignment="Left" Foreground="#FF140000"/>
+                    </Grid>
+                    <sdk:DataGrid x:Name="cbgass" Margin="0"  IsReadOnly="True" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="cbgasslist" WebClientInfo="{StaticResource dbclient}"
+    							Path="{m:Exp Str='$from t_cbgas where f_userid\={userinfos.SelectedItem.f_userid}'}"
+    							IsOld="{m:Exp Str='userinfos.SelectedItem.f_userid\!\=null'}"
+    							PageIndex="{m:Exp Str=pager1.PageIndex}" PageSize="{m:Exp Str=pager1.PageSize}"  SumNames=","/>
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户id" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户名称" Binding="{Binding f_username}"/>
+                            
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="表    号" Binding="{Binding f_meternumber}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="金    额" Binding="{Binding f_grossproceeds}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作类型" Binding="{Binding f_payfeetype}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="有 效 性" Binding="{Binding f_payfeevalid}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户地址" Binding="{Binding f_address}"/>
+                            <!--<sdk:DataGridTextColumn d:IsLocked="True" Header="操作时间" Binding="{Binding f_deliverytime}"/> -->
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="操作人员" Binding="{Binding f_sgoperator}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="同步时间" Binding="{Binding f_deliverydate_tb}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="同步状态" Binding="{Binding f_status_tb}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel>                
+            </Grid>
+        </c:BusyIndicatorEx>
+		</Grid>
+</UserControl>

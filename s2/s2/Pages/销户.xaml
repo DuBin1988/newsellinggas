@@ -16,7 +16,7 @@
     x:Class="Com.Aote.Pages.销户" FontSize="13"
     mc:Ignorable="d" >
 	  <Grid x:Name="LayoutRoot">
-	<m:ResourceLoad Margin="0,0,-12,0">
+        <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
 	  <!--卡对象-->
 		<o:NewGeneralICCard Name="card"  ></o:NewGeneralICCard> 
 		
@@ -38,15 +38,15 @@
         	<o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
               Path="{m:Exp Str=pipelines.SelectedItem.id\!\=null:$one/from t_userfiles where id\=\'\{pipelines.SelectedItem.id\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\'$\,$qqq$}" 
 			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
-			</o:GeneralObject>
+                <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstate\,$销户$}" />
+                <o:PropertySetter PropertyName="f_userstatus" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstatus\,$1$}" />
+            </o:GeneralObject>
 			
 			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
 				<b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
 				<b:BatchInfo Source="{m:Exp Str=pipeline.DataContext}" MethodName="SaveToJson"/>
 			</b:BatchExcuteAction>
-		 
-		 
-	
+
 	</m:ResourceLoad>
 	<toolkit:BusyIndicator BusyContent="该用户已停用，不能操作" IsBusy="{m:Exp Str='pipeline.DataContext.f_userstate==$停用$:$True$,$False$'}" Grid.Column="1" Margin="8,0,0,0">
 	<Grid  VerticalAlignment="Stretch" >
@@ -135,7 +135,7 @@
         	</toolkit:DockPanel>
         </toolkit:BusyIndicator>
 		<!--操作区按钮-->
-                <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy  |or|   userfiles.IsBusy  |or| SaveAction.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+                <toolkit:BusyIndicator x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
                     <Grid  x:Name="pipeline" >
                         <a:Data.Context>
                             <!--o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}" 
@@ -152,7 +152,7 @@
                         <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0">
                             <Button x:Name="save" Content="保 存" Margin="5" 
             			IsEnabled="{m:Exp Str=pipeline.DataContext.IsModified and !pipeline.DataContext.HasErrors}"
-            			Click="{m:Exp Str=userfiles.f_userstate\=$销户$;SaveAction.Invoke()}" HorizontalAlignment="Right" Width="50"/>
+            			Click="save_Click" HorizontalAlignment="Right" Width="50"/>
                             <Button Content="撤 销" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New()}" HorizontalAlignment="Right" Width="50"/>
 
                         </toolkit:DockPanel>
@@ -203,6 +203,21 @@
                             <TextBox Text="{m:Bind Path=f_userid}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=userfiles.f_gasmeterstyle\=>Completed}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_userstate}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userstate" Default="销户" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_userstatus}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userstatus" Default="1" />
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
@@ -292,11 +307,12 @@
                                     <o:PropertySetter PropertyName="f_aliasname" />
                                 </a:Data.Prop>
                             </TextBox>
+                            <!-- 
                             <TextBox Text="{m:Bind Path=f_userstate}" Grid.Column="5" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=userfiles.f_userstate\=>Completed}" />
                                 </a:Data.Prop>
-                            </TextBox>
+                            </TextBox> -->
                             <TextBlock Margin="0,6" Grid.Row="8" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" HorizontalAlignment="Right" d:LayoutOverrides="HorizontalAlignment"/>
                             <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0,6" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" >
                                 <a:Data.Prop>

@@ -43,7 +43,7 @@ namespace Com.Aote.Pages
                 "CONVERT(varchar(12), f_finabuygasdate, 111 ) f_finabuygasdate,f_anzhuanguser,CONVERT(varchar(12), " +
                 "f_watchinstalldate, 111 ) f_watchinstalldate,f_payment,f_bankname,f_usermc,f_idofcard,f_filiale,f_yytdepa," +
                 "f_yytoper,CONVERT(varchar(12), f_yytdate, 111 ) f_yytdate,f_credentials,f_idnumber,f_dibaohu,f_gasmetermanufacturers," +
-                "f_aroundmeter,f_kitchennum,f_kitchenbrand,f_kitchenmodel,f_kitstyle,f_kitchenbrand2,f_kitchenmodel2,f_waterheaternum,f_waterheaterbrand,f_waterheatermodel,f_wallhangboilernum,f_wallhangboilerbrand,f_wallhangboilermodel,f_gasmeteraccomodations,f_aliasname,f_kitchen,f_waterheater,f_stairtype,f_stair1amount,f_stair1price,f_stair2amount,f_stair2price,f_stair3amount,f_stair3price,f_stairmonths from t_userfiles " +
+                "f_aroundmeter,f_kitchennum,f_kitchenbrand,f_kitchenmodel,f_kitstyle,f_kitchenbrand2,f_kitchenmodel2,f_waterheaternum,f_waterheaterbrand,f_waterheatermodel,f_wallhangboilernum,f_wallhangboilerbrand,f_wallhangboilermodel,f_gasmeteraccomodations,f_aliasname,f_kitchen,f_waterheater,f_stairtype,f_stair1amount,f_stair1price,f_stair2amount,f_stair2price,f_stair3amount,f_stair3price,f_stairmonths,lastinputgasnum_cb,lastinputjval_cb,lastinputdate_cb,f_danganstatus,f_danganreturnvalue,f_userstatus,f_returnvaluedj,f_returnvalueoperate,f_tablestatus,f_statusdate,f_tablesmessage,lastinputdate from t_userfiles " +
                 "where " + userSearch.Condition + " order by id";
             userList.LoadOnPathChanged = false;
             userList.Path = "sql";
@@ -54,7 +54,7 @@ namespace Com.Aote.Pages
                 "CONVERT(varchar(12), f_finabuygasdate, 111 ) f_finabuygasdate,f_anzhuanguser,CONVERT(varchar(12), "+
                 "f_watchinstalldate, 111 ) f_watchinstalldate,f_payment,f_bankname,f_usermc,f_idofcard,f_filiale,f_yytdepa,"+
                 "f_yytoper,CONVERT(varchar(12), f_yytdate, 111 ) f_yytdate,f_credentials,f_idnumber,f_dibaohu,f_gasmetermanufacturers,"+
-                "f_aroundmeter,f_gasmeteraccomodations,f_aliasname,f_stairtype,f_stair1amount,f_stair1price,f_stair2amount,f_stair2price,f_stair3amount,f_stair3price,f_stairmonths from t_userfiles " +
+                "f_aroundmeter,f_gasmeteraccomodations,f_aliasname,f_stairtype,f_stair1amount,f_stair1price,f_stair2amount,f_stair2price,f_stair3amount,f_stair3price,f_stairmonths,lastinputgasnum_cb,lastinputjval_cb,lastinputdate_cb,f_danganstatus,f_danganreturnvalue,f_userstatus,f_returnvaluedj,f_returnvalueoperate,f_tablestatus,f_statusdate,f_tablesmessage,lastinputdate from t_userfiles " +
                 "where "+userSearch.Condition+"";
             userList.HQL = sql;
             userList.PageSize = pager2.PageSize;
