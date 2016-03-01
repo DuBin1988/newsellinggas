@@ -12,7 +12,7 @@
             <key column="processid"/>
             <one-to-many class="com.browsesoft.workflow.perform.ActivityInstance"/>
         </set>
-        <set name="vars">
+        <set name="vars" cascade="save-update">
             <key column="processid"/>
             <one-to-many class="com.browsesoft.workflow.perform.VarInstance"/>
         </set>

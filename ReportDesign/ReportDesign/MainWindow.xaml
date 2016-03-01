@@ -41,7 +41,7 @@
                
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
                 <StackPanel Grid.Column="2" Margin="0,0,0,-0.001" Orientation="Vertical">
-                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=EditTextBox.Text, ElementName=ui_report, Mode=TwoWay}"/>
+                    <TextBox Height="100" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Disabled" AcceptsReturn ="true" Text="{Binding Path=EditTextBox.Text, ElementName=ui_report, Mode=TwoWay}"/>
                 	<DockPanel Height="293.163">
                 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 			<Button x:Name="ui_insertsql" Content="新增" Click="ui_insertsql_Click"/>
@@ -55,7 +55,7 @@
                 							<ColumnDefinition Width="*"/>
                 						</Grid.ColumnDefinitions>
                 						<TextBox HorizontalAlignment="Stretch" Height="Auto" TextWrapping="Wrap" Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Stretch" Width="Auto"/>
-                						<TextBox Height="Auto" TextWrapping="Wrap" Text="{Binding Content, Mode=TwoWay}" VerticalAlignment="Stretch" Width="Auto" Grid.Column="1"/>
+                                        <TextBox Height="100" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Disabled" AcceptsReturn ="true" Text="{Binding Content, Mode=TwoWay}" VerticalAlignment="Stretch" Width="Auto" Grid.Column="1"/>
                 					</Grid>
                 				</DataTemplate>
                 			</ListBox.ItemTemplate>

@@ -38,9 +38,7 @@
        <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
               Source="{m:Exp Str=userfiles.SelectedItem}"
 			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
-        	<!--折子号-->
-			<o:PropertySetter PropertyName="f_foldnum" Value="{m:Exp Str=userfile.DataContext.f_newfoldnum}"/>   
-		</o:GeneralObject>	
+        		</o:GeneralObject>	
 			
 			<!--补折对象 -->
 		<o:GeneralObject  Name="userfilego1" WebClientInfo="{StaticResource dbclient}" 
@@ -68,7 +66,7 @@
     						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
     							<Button x:Name="save" Content="补\换  折" Margin="5" 
     								IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
-    								Click="{m:Exp Str=SaveAction.Invoke()}" Width="85"/>
+    								Click="{m:Exp Str=users.f_foldnum\=userfile.DataContext.f_newfoldnum;SaveAction.Invoke()}" Width="85"/>
     							<Button Content="撤  销" Margin="5" Click="{m:Exp Str=userfiles.SelectedItem \=null;userfilego1.New();users.New()}" Width="50"/></StackPanel>
     					</toolkit:DockPanel>
     				
@@ -259,7 +257,7 @@
     						<TextBlock Margin="50,7,0,5" Grid.Row="4" TextWrapping="Wrap" Text="新折编号：" TextAlignment="Right" Grid.Column="4"/>
     						<TextBox Text="{m:Bind Path=f_newfoldnum}"   Grid.Column="5" Margin="0,7,0,5" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_newfoldnum"   />
+    								<o:PropertySetter PropertyName="f_newfoldnum"   Value="{m:Exp Str=users.f_foldnum}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<TextBlock Margin="0,5,-2,5" Grid.Row="7" TextWrapping="Wrap" Text="部   门：" TextAlignment="Right" HorizontalAlignment="Right" Height="25"/>
@@ -319,19 +317,19 @@
 					   <TextBlock TextWrapping="Wrap" Grid.Row="2" Text="姓　　名：" Margin="3,0,0,0" TextAlignment="Right"/>
 	                    <TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="2" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this'"/>               
+	                      	   <o:PropertySetter PropertyName="f_username" Operator="f_username like '%this%'"/>               
 						  </a:Data.Prop>
 						</TextBox>
 						<TextBlock TextWrapping="Wrap" Grid.Row="3" Text="地　　址：" Margin="0" Height="25" TextAlignment="Right"/>
     						<TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this'"/>          
+    								<o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>          
     							</a:Data.Prop>
     						</TextBox>
 						<TextBlock TextWrapping="Wrap" Grid.Row="4" Text="小　　区：" Margin="3,0,0,0" TextAlignment="Right"/>
 	                    <TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="4" Text="{m:Bind Path=f_districtname}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this'"/>               
+	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like '%this%'"/>               
 						  </a:Data.Prop>
 						</TextBox>
 						<TextBlock TextWrapping="Wrap" Grid.Row="5" Text="门 牌 号：" Margin="3,0,0,0" TextAlignment="Right"/>

@@ -100,10 +100,61 @@ namespace Com.Aote.Pages
             }
         }
 
+        private void save_Click(String type)
+        {
+            ui_searchBusy.IsBusy = true;
+
+            string json = "[";
+            if (ui_stairtype.Text != "" || ui_stair1amount.Text != "" || ui_stair1price.Text != "" || ui_stair2amount.Text != "" || ui_stair2price.Text != "" || ui_stair3amount.Text != "" || ui_stair3price.Text != "" || ui_stairmonths.SelectedValue != null)
+            {                
+                    //产生要发送后台的JSON串
+                    json += ("{type:\"" + type +
+                                      "\",price_type:\"" + ui_stairtype.Text +
+                                      "\",money1:\"" + ui_stair1price.Text +
+                                      "\",limit1:\"" + ui_stair1amount.Text +
+                                      "\",money2:\"" + ui_stair2price.Text +
+                                      "\",limit2:\"" + ui_stair2amount.Text +
+                                      "\",money3:\"" + ui_stair3price.Text +
+                                      "\",limit3:\"" + ui_stair3amount.Text +
+                                      "\",money4:\"" + ui_stair4price.Text +
+                                      "\",limit4:\"999999999" +
+                                      "\",money5:\"" + ui_stair4price.Text +
+                                      "\",limit5:\"999999999" +
+                                      "\",cycle:\"" + ui_stairmonths.SelectedValue +
+                                      "\"," + "idlist:\"[]\"" + "}");
+                json += "]";
+                //将产生的json串送后台服务进行处理
+                WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
+                string uri = wci.BaseAddress + "/iesgas/gasdj/comand";
+                WebClient client = new WebClient();
+                client.UploadStringCompleted += client_UploadStringCompleted;
+                client.UploadStringAsync(new Uri(uri), json);
+            }
+            else
+            {
+                ui_searchBusy.IsBusy = false;
+            }
+        }
+
+        void client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        {
+            ui_searchBusy.IsBusy = false;
+            if (e.Error == null)
+            {
+                //弹出错误信息
+                if (e.Result != "")
+                {
+                    // MessageBox.Show(e.Result);
+                }
+
+            }
+        }
+
         private void action_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             stairList.IsOld = true;
             ui_searchBusy.IsBusy = false;
+            save_Click("2");
             Clear();
         }
 
@@ -111,6 +162,7 @@ namespace Com.Aote.Pages
         {
             stairList.IsOld = true;
             ui_searchBusy.IsBusy = false;
+            save_Click("0");
             Clear();
         }
 

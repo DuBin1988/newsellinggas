@@ -17,7 +17,7 @@ namespace Com.Aote.Pages
 {
     public partial class 民用卡表抄表批量录入 : UserControl
     {
-        PagedList list = new PagedList();
+        ObjectList list = new ObjectList();
         public 民用卡表抄表批量录入()
         {
             // Required to initialize variables

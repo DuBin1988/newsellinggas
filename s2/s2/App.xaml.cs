@@ -35,6 +35,11 @@ namespace s2
             this.Startup += (o, e) =>
             {
                 this.RootVisual = new Com.Aote.Pages.Frame();
+                //全屏
+                if (App.Current.IsRunningOutOfBrowser)
+                {
+                    App.Current.MainWindow.WindowState = WindowState.Maximized;
+                }
             };
             this.Exit += this.Application_Exit;
             this.UnhandledException += this.Application_UnhandledException;

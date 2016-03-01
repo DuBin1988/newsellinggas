@@ -47,13 +47,13 @@
 			insert into t_handplan(f_handdate\,f_userid\, f_username\, lastinputgasnum\, f_gaswatchbrand\, f_metertype\,
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				f_phone\, scinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
-				f_zerenbumen\, f_state\, shifoujiaofei\, users\, f_cusDom\, f_cusDy\,f_gasmeterstyle)
+				f_zerenbumen\, f_state\, shifoujiaofei\, users\, f_cusDom\, f_cusDy\,f_gasmeterstyle\,f_books)
 			select \'\{daninfosearch.DataContext.f_handdate\}\'\,f_userid\, f_username\, lastinputgasnum\, f_gaswatchbrand\, f_metertype\,
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				f_phone\, lastinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
-				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'
-			from t_userfiles where f_userstate\=\'正常\' and \{search.Condition\} and f_userid not in
-			(select distinct f_userid from t_handplan where f_state\=\'未抄表\')}"/>
+				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'\,f_books
+			from t_userfiles u where f_userstate\=\'正常\' and \{search.Condition\} and not exists
+			(select id from t_handplan h where h.f_userid\=u.f_userid and f_state\=\'未抄表\')}"/>
             <!--生成抄表单-->
             <b:BatchExcuteAction Name="CreateHandplan" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=DeleteHandplan}" MethodName="InvokeToJson"/>
@@ -164,6 +164,12 @@
                                         <o:PropertySetter PropertyName="f_gasmeterstyle"  Operator="f_gasmeterstyle = 'this'"/>
                                     </a:Data.Prop>
                                 </ComboBox>
+                                <TextBlock TextWrapping="Wrap" Text="册号："  Margin="0,1.5" Height="25" TextAlignment="Right" Grid.Row="2" Grid.Column="2" />
+                                <TextBox x:Name="tjwhf_Copy2" TextWrapping="Wrap" Text="{m:Bind Path=f_books}" Width="Auto" Margin="0,1.5" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="3" >
+                                	<a:Data.Prop>
+                                		<o:PropertySetter PropertyName="f_books"  Operator="f_books = 'this'"/>
+                                	</a:Data.Prop>
+                                </TextBox>
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -178,10 +184,12 @@
 								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" ItemsSource="{m:Exp Str=userfiles}">
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="册号" Binding="{Binding f_books}"/>
                             <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn  Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="用户地址" Binding="{Binding f_address}"/>
                             <sdk:DataGridTextColumn  Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="气表类型" Binding="{Binding f_gasmeterstyle}"/>
                             <sdk:DataGridTextColumn Header="气表编号" Binding="{Binding f_meternumber}"/>
                             <sdk:DataGridTextColumn Header="表安装位置" Binding="{Binding f_weizhi}"/>
                             <sdk:DataGridTextColumn  Header="抄表底数" Binding="{Binding lastinputgasnum}"/>

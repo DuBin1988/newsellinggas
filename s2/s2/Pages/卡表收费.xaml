@@ -133,6 +133,9 @@
                 <!--所包含的补气对象，剩余补气量为0时，为空-->
                 <o:PropertySetter PropertyName="f_fillgas" 
 				NoDependValue="{m:Exp Str=kbfee.f_surplusgas>0:fillgas\,null}"/>
+				<!--册号-->
+				<o:PropertySetter PropertyName="f_books" NoDependValue="{m:Exp Str=kbusers.f_books}"  />
+				
             </o:GeneralObject>
             <!--开票类型-->
             <o:ObjectList Name="invoicelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票样式' order by id"/>
@@ -1375,8 +1378,8 @@ Margin="18.667,280.706,381.139,0"/>
         <c:PrintObj Name="print1" 
 		Message="是否打印国税发票" Area="{m:Res Key=guoshuiprint}"
 />
-        <!--c:PrintObj Name="zzprint" 
+        <c:PrintObj Name="zzprint" 
 		Message="是否打印购气证"
-		IsPrint="{m:Exp Str=print.State\=\=$End$ or print1.State\=\=$End$}" Area="{m:Res Key=zheziprint}" /-->
+		IsPrint="{m:Exp Str=(print.State\=\=$End$ or print1.State\=\=$End$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$是$}" Area="{m:Res Key=zheziprint}" />
     </Grid>
 </UserControl>

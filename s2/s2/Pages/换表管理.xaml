@@ -17,7 +17,7 @@
     x:Class="Com.Aote.Pages.换表管理" FontSize="13"
     mc:Ignorable="d"  FontFamily="Microsoft YaHei">
     <Grid x:Name="LayoutRoot">
-        <m:ResourceLoad Margin="0,0,-12,0">
+        <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
             <!--发卡费-->
             <o:GeneralObject Name="fakafei" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		        IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}" 
@@ -43,6 +43,12 @@
                 <o:PropertySetter PropertyName="f_state" Default="换表登记"></o:PropertySetter>
             </o:GeneralObject>
 
+            <!-- 获取标记信息 -->
+            <o:GeneralObject Name="tabletel" EntityType="t_table_tel" WebClientInfo="{StaticResource dbclient}"
+                             IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}"
+                             Path="{m:Exp Str=$one/select new Map(meter_phone as meter_phone\,terminal_name as terminal_name) from t_table_tel  where f_meternumber\=\'\{pipeline.DataContext.f_cmnewmeternumber\}\' $}">
+            </o:GeneralObject>
+
             <!--用户列表-->
             <o:PagedObjectList Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
             Path="{m:Exp Str=$from t_userfiles where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_userstate !\=\'销户\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
@@ -61,10 +67,14 @@
                 <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str='cardid1.State \=\= $Loaded$:cardid1.f_qishicard,null'}" />
                 <o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=pipeline.DataContext.f_cmnewmetertitles}"/>
                 <o:PropertySetter PropertyName="f_metertitles" Value="{m:Exp Str=pipeline.DataContext.f_cmnewmeternumber}"/>
+                <o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=pipeline.DataContext.f_cmnewmeternumber}"/>
                 <o:PropertySetter PropertyName="f_metergasnums" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:0\,0}"/>
                 <o:PropertySetter PropertyName="f_cypregas" Value="{m:Exp Str=pipeline.DataContext.f_cypregas}"/>
                 <o:PropertySetter PropertyName="f_replacewatchtype" Value="{m:Exp Str=pipeline.DataContext.f_replacewatchtype}"/>
                 <o:PropertySetter PropertyName="f_watchfee" Value="{m:Exp Str=pipeline.DataContext.f_watchfee}"/>
+                <o:PropertySetter PropertyName="terminal_name" Value="{m:Exp Str=pipeline.DataContext.terminal_name}"/>
+                <o:PropertySetter PropertyName="meter_phone" Value="{m:Exp Str=pipeline.DataContext.meter_phone}"/>
+                <o:PropertySetter PropertyName="f_jllx" Value="{m:Exp Str=pipeline.DataContext.f_jllx}"/>
                 <!--卡信息-->
                 <o:PropertySetter PropertyName="klx" Value="{m:Exp Str=pipeline.DataContext.klx}"/>
                 <o:PropertySetter PropertyName="dqdm" Value="{m:Exp Str=pipeline.DataContext.dqdm}"/>
@@ -73,9 +83,22 @@
                 <o:PropertySetter PropertyName="czsx" Value="{m:Exp Str=pipeline.DataContext.czsx}"/>
                 <o:PropertySetter PropertyName="tzed" Value="{m:Exp Str=pipeline.DataContext.tzed}"/>
                 <o:PropertySetter PropertyName="kmm" Value="{m:Exp Str=pipeline.DataContext.kmm}"/>
+                <!-- 
+                <o:PropertySetter PropertyName="meter_phone" Value="{m:Exp Str=pipeline.DataContext.meter_phone}"/>
+                <o:PropertySetter PropertyName="terminal_name" Value="{m:Exp Str=pipeline.DataContext.terminal_name}"/> -->
+                <o:PropertySetter PropertyName="f_channel_type" Value="{m:Exp Str=pipeline.DataContext.f_channel_type}"/>
+                <o:PropertySetter PropertyName="switch_op" Value="{m:Exp Str=pipeline.DataContext.switch_op}"/>
+                <o:PropertySetter PropertyName="old_val" Value="{m:Exp Str=pipeline.DataContext.f_oldcurrentbase}"/>
+                <o:PropertySetter PropertyName="old_steal_no" Value="{m:Exp Str=pipeline.DataContext.f_meternumber}"/>
+                <o:PropertySetter PropertyName="lastinputdate" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:SysTime.Today\,SysTime.Today}"/>
+
+                <o:PropertySetter PropertyName="f_danganstatus" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$换表$\,$换表$}"/>
+                <o:PropertySetter PropertyName="f_danganreturnvalue" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$1$\,$1$}"/>
+                <!-- <o:PropertySetter PropertyName="refreshCache" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null and pipeline.DataContext.f_newgasmeterstyle!\=$物联网表$:$0$\,$1$}"/> -->
+                <o:PropertySetter PropertyName="refreshCache" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$1$\,$1$}"/>
+
                 <!--换机表时，抄表指数为新表底数-->
-                <o:PropertySetter PropertyName="lastinputgasnum" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:pipelinego.f_newgasmeteraccomodations\,null}"/>
+                <o:PropertySetter PropertyName="lastinputgasnum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:pipelinego.f_newgasmeteraccomodations\,null}"/>
                 <!--别名-->
                 <o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=pipeline.DataContext.f_aliasname}"/>
                 <!--额定流量-->
@@ -89,6 +112,11 @@
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:pipelinego.f_zherownum.ToInt()\,0}"/>
                 <!--初始化卡标记-->
                 <o:PropertySetter PropertyName="f_initcardsellgas" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$初始化卡购气标记$\,null}"/>
+            </o:GeneralObject>
+            <o:GeneralObject Name="userfiles1" NotEmpty="true" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+			IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}"
+            Path="{m:Exp Str=
+			card.CardId\=>ReadCompleted!\=null and card.Factory!\=null:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,pipelines.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userfiles where f_userid\=\'\{pipelines.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}">
             </o:GeneralObject>
 
             <!--卡对象-->
@@ -117,11 +145,38 @@
 		    >
             </oo:NewGeneralICCard>
 
+            <!--根据用户档案的计划月份产生抄表单-->
+            <!--删除抄表单-->
+            <b:HQLAction Name="DeleteHandplan" WebClientInfo="{StaticResource dbclient}" Type="sql"
+			HQL="{m:Exp Str=$delete from t_handplan where f_state \=\'未抄表\' and shifoujiaofei \=\'否\' and f_userid\=\'\{userfiles1.f_userid\}\'}" />
+            <b:HQLAction Name="InsertHandplan" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+			HQL="{m:Exp Str=$insert into t_handplan(f_userid\, f_username\, lastinputgasnum\, f_gaswatchbrand\, f_metertype\,
+				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
+				f_phone\, scinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
+				f_zerenbumen\, f_state\, shifoujiaofei\, users\, f_cusDom\, f_cusDy\,f_gasmeterstyle )  
+                select f_userid\, f_username\, lastinputgasnum\, f_gaswatchbrand\, f_metertype\,
+				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
+				f_phone\, lastinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
+				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy\,f_gasmeterstyle from t_userfiles where f_gasmeterstyle \!\=\'卡表\' and f_userid\=\'\{userfiles1.f_userid\}\'}"/>
+            <!-- 最新指数插入记录 -->
+            <b:HQLAction Name="Insertcbnum" WebClientInfo="{StaticResource dbclient}" Type="sql" 
+			HQL="{m:Exp Str=$insert into t_cbnum(f_userid\, f_gasdate\, f_gasnum\, f_meternumber\, f_gaswatchbrand\,jval ) values (
+                \'\{pipeline.DataContext.f_userid\}\'\,\'\{pipeline.DataContext.f_cmdate\}\'\,\'\{pipeline.DataContext.f_newgasmeteraccomodations\}\'\,\'\{pipeline.DataContext.f_cmnewmeternumber\}\'\,\'\{pipeline.DataContext.f_cmnewgaswatchbrand\}\'\,\'-0.0001\') }"/>
+            <!--生成抄表单-->
+            <b:BatchExcuteAction Name="CreateHandplan" WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=DeleteHandplan}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=InsertHandplan}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=Insertcbnum}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+
             <!--保存-->
-            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}"   
-		   	CanSave="{m:Exp Str=card.State\=\=$End$ |or| onlySave\=>Click!\=null}" >
+            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}"  CanSave="{m:Exp Str=card.State\=\=$End$}" >
+                <!-- CanSave="{m:Exp Str=card.State\=\=$End$ |or| onlySave\=>Click!\=null}"
+                <b:BatchInfo Source="{m:Exp Str=DeleteHandplan}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=InsertHandplan}" MethodName="InvokeToJson"/>  -->
                 <b:BatchInfo Source="{m:Exp Str=pipelinego}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
+
             </b:BatchExcuteAction>
         </m:ResourceLoad>
         <Grid>
@@ -193,14 +248,14 @@
                 </toolkit:DockPanel >
             </c:BusyIndicatorEx>
             <!--操作区按钮-->
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy or userfiles.IsBusy or SaveAction.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+            <c:BusyIndicatorEx x:Name="ui_userfiles" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy or userfiles.IsBusy or SaveAction.IsBusy or tabletel.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
                 <Grid Background="{x:Null}" x:Name="pipeline" DataContext="{m:Exp Str=pipelinego}" >
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
                         <Button x:Name="save" Content="保存并发卡" Margin="0" 
             			IsEnabled="{m:Exp Str=data.f_newgasmeterstyle\=\=$卡表$ and !pipeline.DataContext.HasErrors}" 
             			Click="{m:Exp Str=userfiles.f_surplusgas\=pipeline.DataContext.f_cmaddgas;userfiles.f_bugas\=pipeline.DataContext.f_cmaddgas;userfiles.f_metergasnums\=pipeline.DataContext.f_zhi;userfiles.f_times\=0;card.Gas\=0;card.Sqrq\=pipelinego.f_cmdate.ToString($yyyyMMdd$);submit.IsShow\=True}"/>
-                        <Button x:Name="onlySave" Content=" 保 存 " Margin="20,0,0,0" Width="50"
-            			IsEnabled="{m:Exp Str=data.f_newgasmeterstyle\=\=$机表$ and !pipeline.DataContext.HasErrors}"/>
+                        <Button x:Name="onlySave" Content=" 保 存 " Margin="20,0,0,0" Width="50" Click="save_Click" 
+            			IsEnabled="{m:Exp Str=data.f_newgasmeterstyle\!\=$卡表$ and !pipeline.DataContext.HasErrors}"/>
                         <Button Content="撤 销" Margin="20,0,5,0" Click="{m:Exp Str=pipeline.DataContext.New();userfiles.New()}" Width="50"/>
                     </StackPanel>
                     <Grid Margin="0,0,0,45" Grid.Column="0" >
@@ -238,7 +293,42 @@
                             <RowDefinition Height="60" />
                             <RowDefinition Height="30" />
                             <RowDefinition Height="30" />
-                        </Grid.RowDefinitions>
+                        </Grid.RowDefinitions>                        
+                        <TextBox Text="{m:Bind Path=f_channel_type}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,3,0,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_channel_type" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.channel_type}" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBox Text="{m:Bind Path=switch_op}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,3,0,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="switch_op" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.switch_op}" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Visibility="Collapsed" Text="表状态："  Margin="0,0" Height="25" TextAlignment="Right" Grid.Row="2" Grid.Column="6" />
+                        <ComboBox x:Name="meter"  Visibility="Collapsed" SelectedValue="{m:Bind Path=f_meterstate}" Grid.Column="7" Grid.Row="3" ItemsSource="{m:Exp Str=meterstatelistnull}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_meterstate"  Default="{m:Exp Str=meterstatelistnull.Count &gt; 0 :meterstatelistnull.First().name\,null}" />
+                            </a:Data.Prop>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="抄表日期：" Visibility="Collapsed"  Margin="2,5,0,0" Height="25" TextAlignment="Right" Grid.Column="6" />
+                        <sdk:DatePicker x:Name="chaobiaoriqi" Visibility="Collapsed" SelectedDateFormat="Short" SelectedDate="{m:Bind Path=lastinputdate}" Grid.Row="0" Grid.Column="7" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="lastinputdate" Default="{m:Exp Str=SysTime.Today}" NotNull="True"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBox x:Name="ui_sgoperator" Visibility="Collapsed" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.name}" IsReadOnly="True" Margin="0,0,0,-2" RenderTransformOrigin="6.242,0.893" />
+                        <TextBox x:Name="ui_sgnetwork" Visibility="Collapsed" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.f_parentname}" IsReadOnly="True" Margin="0,0,0,-2"/>
+                        <TextBlock  Visibility="Collapsed" TextWrapping="Wrap" Text="抄表计划年月："  Margin="0" Height="25" TextAlignment="Right" />
+                        <c:Month  Visibility="Collapsed" SelectedDate="{m:Bind Path=f_handdate}" x:Name="ui_handdate" StringFormat="yyyyMM"  Grid.Row="0" Grid.Column="1"  Width="118" Margin="0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_handdate" NotNull="True" Default="{m:Exp Str=SysTime.Today}" />
+                            </a:Data.Prop>
+                        </c:Month>
                         <TextBlock Margin="0" TextWrapping="Wrap" Text="用户编号：" Height="25" TextAlignment="Right"/>
                         <TextBlock Margin="0" TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Height="25" TextAlignment="Right"/>
                         <TextBlock Margin="0" TextWrapping="Wrap" Text="用户类型：" Grid.Row="3" Height="25" TextAlignment="Right" Grid.Column="2"/>
@@ -265,10 +355,10 @@
                         <TextBlock Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="新气表厂家：" Grid.Column="2" Height="25" TextAlignment="Right"/>
                         <TextBlock Grid.Column="4" Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="新气表类型：" Height="25" TextAlignment="Right"/>
                         <TextBlock Margin="0" Grid.Row="12" TextWrapping="Wrap" Text="新 卡 号：" Height="25" TextAlignment="Right"/>
-                        <TextBlock Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="新 表 号：" Height="25" TextAlignment="Right"/>
-                        <TextBlock Grid.Column="2" Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="脉冲/表系数：" Height="25" TextAlignment="Right"/>
-                        <TextBlock Grid.Column="4" Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="新表底数：" Height="25" TextAlignment="Right"/>
-                        <TextBlock Margin="0" Grid.Row="12" TextWrapping="Wrap" Text="海力新表型编码：" Grid.Column="2" Height="25" TextAlignment="Right"/>
+                        <TextBlock Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="新 表 号：" Height="25" TextAlignment="Right"  Foreground="Red" />
+                        <TextBlock Grid.Column="2" Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="表计电话：" Height="25" TextAlignment="Right"/>
+                        <TextBlock Grid.Column="4" Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="新表底数：" Height="25" TextAlignment="Right"  Foreground="Red" />
+                        <TextBlock Margin="0" Grid.Row="12" TextWrapping="Wrap" Text="终端名称：" Grid.Column="2" Height="25" TextAlignment="Right"/>
                         <TextBlock Margin="0" Grid.Row="13" TextWrapping="Wrap" Text="补 气 量：" Height="25" TextAlignment="Right" Foreground="Red"/>
                         <TextBlock Grid.Column="4" Margin="0" Grid.Row="12" TextWrapping="Wrap" Text="剩余补气量：" Height="25" TextAlignment="Right"/>
                         <TextBlock Margin="0,1" Grid.Row="16" TextWrapping="Wrap" Text="备      注：" Height="25" TextAlignment="Right"/>
@@ -278,7 +368,7 @@
                         <TextBlock Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="网      点：" Height="25" TextAlignment="Right"/>
                         <TextBlock Grid.Column="2" Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="操 作 人：" Height="25" TextAlignment="Right"/>
                         <TextBlock Grid.Column="4" Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="操作日期：" Height="25" TextAlignment="Right"/>
-                        <TextBox Text="{m:Bind Path=f_userid}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
+                        <TextBox x:Name="ur_userid" Text="{m:Bind Path=f_userid}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_userid" NoDependValue="{m:Exp Str=userfiles.f_userid\=&gt;Completed}"/>
                             </a:Data.Prop>
@@ -365,12 +455,16 @@
 								NoDependValue="{m:Exp Str=userfiles.f_metergasnums\=&gt;Completed}"  />
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_oldcurrentbase}" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                        <TextBox x:Name="lastinputgasnum_cb" Text="{m:Bind Path=f_oldcurrentbase}" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_oldcurrentbase" NotNull="True"/>
+                                <o:PropertySetter PropertyName="f_oldcurrentbase" NotNull="True" NoDependValue="{m:Exp Str=userfiles.lastinputgasnum_cb\=&gt;Completed}" />
                             </a:Data.Prop>
                         </TextBox>
-
+                        <TextBox x:Name="lastinputgasnum" Visibility="Collapsed" Text="{m:Bind Path=lastinputgasnum}" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="lastinputgasnum" NotNull="True" NoDependValue="{m:Exp Str=userfiles.lastinputgasnum\=&gt;Completed}" />
+                            </a:Data.Prop>
+                        </TextBox>
                         <TextBox Text="{m:Bind Path=f_payfeevalid}" Visibility="Collapsed" Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_payfeevalid" 
@@ -379,7 +473,7 @@
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_watchfee}" Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_watchfee" NotNull="True"/>
+                                <o:PropertySetter PropertyName="f_watchfee" NotNull="True" Default="0"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_cardfees}" Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" >
@@ -406,6 +500,11 @@
                                 <o:PropertySetter PropertyName="f_newgasmetermanufacturers" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.f_changjia}" />
                             </a:Data.Prop>
                         </TextBox>
+                        <TextBox Visibility="Collapsed" Text="{m:Bind Path=f_jllx}" Grid.Column="3" Margin="0" Grid.Row="10" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_jllx" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.jllx}" />
+                            </a:Data.Prop>
+                        </TextBox>
                         <TextBox Text="{m:Bind Path=f_newgasmeterstyle}" Grid.Column="5" Margin="0" Grid.Row="10" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" >
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_newgasmeterstyle" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.f_type}" />
@@ -416,24 +515,24 @@
                                 <o:PropertySetter PropertyName="f_newcardid" NoDependValue="{m:Exp Str=cardid1.f_qishicard}" />
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_cmnewmeternumber}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                        <TextBox Name="f_meternumber" Text="{m:Bind Path=f_cmnewmeternumber}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" LostFocus="TextBox_LostFocus_1">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_cmnewmeternumber" />
+                                <o:PropertySetter PropertyName="f_cmnewmeternumber" NotNull="True" />
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_newmaichong}" Grid.Column="3" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
+                        <TextBox Text="{m:Bind Path=meter_phone}" Grid.Column="3" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="False" HorizontalAlignment="Stretch" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_newmaichong" NoDependValue="{m:Exp Str=DaXiaoKa.SelectedItem.f_maichong}"/>
+                                <o:PropertySetter PropertyName="meter_phone" Default="{m:Exp Str=tabletel.State\!\=$LoadError$:tabletel.meter_phone\,$$}" NoDependValue="{m:Exp Str=tabletel.State\!\=$LoadError$:tabletel.meter_phone\,$$}" />
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_newgasmeteraccomodations}" Grid.Column="5" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                        <TextBox Name="f_newgasmeteraccomodations" Text="{m:Bind Path=f_newgasmeteraccomodations}" Grid.Column="5" Margin="0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_newgasmeteraccomodations" Default="0"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_newwatchnum}" Grid.Column="3" Margin="0" Grid.Row="12" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
+                        <TextBox Text="{m:Bind Path=terminal_name}"  Grid.Column="3" Margin="0,3,0,2" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="1" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_newwatchnum" NoDependValue="{m:Exp Str=DaXiaoKa.SelectedItem.f_watchnum}"/>
+                                <o:PropertySetter PropertyName="terminal_name" Default="{m:Exp Str=tabletel.State\!\=$LoadError$:tabletel.terminal_name\,$$}" NoDependValue="{m:Exp Str=tabletel.State\!\=$LoadError$:tabletel.terminal_name\,$$}" />
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_cmaddgas}" Grid.Column="1" Margin="0" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Foreground="#FFFD0606">
@@ -842,10 +941,11 @@ Margin="18.667,280.706,381.139,0"/>
             </Grid>
         </Grid>
 
-        <!--发票和折子打印-->
-        <c:PrintObj Name="print1" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=guoshuiprint}"/>
-        <c:PrintObj Name="zzprint" Message="是否打印购气证" IsPrint="{m:Exp Str=print1.State\=\=$End$}" Area="{m:Res Key=zheziprint}" />
-        <c:PrintObj Name="print" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=aofengprint}" />
+        <!--发票和折子打印 -->
+        <c:PrintObj Name="print" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End--$}" Area="{m:Res Key=guoshuiprint}"/>
+        <c:PrintObj Name="zzprint" Message="是否打印购气证" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=zheziprint}" />
+        <c:PrintObj Name="print1" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End---$}" Area="{m:Res Key=aofengprint}" />
+        <c:MessageTipObj  Name="savedone1" Type="MessageBox" Tip="{m:Exp Str='$此表号未找到对应的表计电话,请联系系统管理人员!'}" IsShow="{m:Exp Str=tabletel.State\=\=$LoadError$}"/>
 
     </Grid>
 </UserControl>

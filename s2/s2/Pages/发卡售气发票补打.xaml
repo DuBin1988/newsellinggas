@@ -518,20 +518,20 @@
 									<RowDefinition Height="30*"/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="117*"/>
-									<ColumnDefinition Width="127*"/>
-									<ColumnDefinition Width="53*"/>
-									<ColumnDefinition Width="56*"/>
-									<ColumnDefinition Width="88*"/>
-									<ColumnDefinition Width="99*"/>
-									<ColumnDefinition Width="89*"/>
-									<ColumnDefinition Width="94*"/>
-									<ColumnDefinition Width="70*"/>
-									<ColumnDefinition Width="129*"/>
+									<ColumnDefinition Width="98*"/>
+									<ColumnDefinition Width="106*"/>
+									<ColumnDefinition Width="44*"/>
+									<ColumnDefinition Width="47*"/>
+									<ColumnDefinition Width="86*"/>
+									<ColumnDefinition Width="69*"/>
+									<ColumnDefinition Width="54*"/>
+									<ColumnDefinition Width="98*"/>
+									<ColumnDefinition Width="59*"/>
+									<ColumnDefinition Width="107*"/>
 								</Grid.ColumnDefinitions>
 								<sdk:Label Content="周期开始：" HorizontalAlignment="Right" Margin="0,5,0,0" HorizontalContentAlignment="Right"  Height="22" VerticalAlignment="Top" Width="70" />
-								<sdk:Label Content="周期结束：" Margin="0" HorizontalContentAlignment="Right"  Height="22" Grid.Column="2" Grid.ColumnSpan="2" />
-								<sdk:Label Content="周期内累购：" Margin="0" HorizontalContentAlignment="Right"  Height="22" Grid.Column="6" Width="84" Grid.ColumnSpan="2" HorizontalAlignment="Right" />
+								<sdk:Label Content="周期结束：" Margin="0,6,0,5" HorizontalContentAlignment="Right" Grid.Column="2" Grid.ColumnSpan="2" />
+								<sdk:Label Content="周期内累购：" Margin="0,6,0,5" HorizontalContentAlignment="Right" Grid.Column="7" Width="84" HorizontalAlignment="Right" />
 								<TextBox Text="{m:Bind Path=f_allamont}"  IsReadOnly="True" Margin="0,5,0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="148" Grid.Column="8" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
@@ -548,7 +548,7 @@
 								</TextBox>
 								<sdk:Label Content="阶梯3总气量：" Margin="0,6,0,2" HorizontalContentAlignment="Right" Grid.Row="3" />
 								<sdk:Label Content="单价1：" Margin="0,10,0,2" HorizontalContentAlignment="Right" Grid.Column="2" Grid.Row="1" />
-								<TextBox Text="{m:Bind Path=f_stair1price}"  IsReadOnly="True" Margin="0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="1" >
+								<TextBox Text="{m:Bind Path=f_stair1price}"  IsReadOnly="True" Margin="0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair1price"    NoDependValue="{m:Exp Str=sellinggas.f_stair1price \=&gt;Completed}"      />
@@ -561,80 +561,59 @@
 									</a:Data.Prop>
 								</TextBox>
 								<sdk:Label Content="单价2：" Margin="0,9,0,8" HorizontalContentAlignment="Right" Grid.Column="2" Grid.Row="2" />
-								<TextBox Text="{m:Bind Path=f_stair2price}"  IsReadOnly="True" Margin="1,2,0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" >
+								<TextBox Text="{m:Bind Path=f_stair2price}"  IsReadOnly="True" Margin="1,2,0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="2" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair2price"    NoDependValue="{m:Exp Str=sellinggas.f_stair2price \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
 								<sdk:Label Content="单价3：" Margin="0,6,0,5" HorizontalContentAlignment="Right" Grid.Column="2" Grid.Row="3" />
-								<TextBox Text="{m:Bind Path=f_stair3price}"  IsReadOnly="True" Margin="0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="3" Grid.RowSpan="1" Grid.ColumnSpan="1" >
+								<TextBox Text="{m:Bind Path=f_stair3price}"  IsReadOnly="True" Margin="0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="3" Grid.Row="3" Grid.RowSpan="1" Grid.ColumnSpan="2" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair3price"  NoDependValue="{m:Exp Str=sellinggas.f_stair3price \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="本次气量1：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="6" Grid.Row="1" />
-								<TextBox Text="{m:Bind Path=f_stair1amount}"  IsReadOnly="True" Margin="0,2"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="7" Grid.Row="1" Grid.RowSpan="1" >
+								<sdk:Label Content="本次气量1：" Margin="0,7,0,3" HorizontalContentAlignment="Right" Grid.Column="5" Grid.Row="1" Grid.ColumnSpan="2" />
+								<TextBox Text="{m:Bind Path=f_stair1amount}"  IsReadOnly="True" Margin="0,4,0,3"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="7" Grid.Row="1" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair1amount"   NoDependValue="{m:Exp Str=sellinggas.f_stair1amount \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="本次气量2：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="6" Grid.Row="2" />
-								<TextBox Text="{m:Bind Path=f_stair2amount}"  IsReadOnly="True" Margin="1,2,0,2"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="7" Grid.Row="2" Grid.RowSpan="1" >
+								<sdk:Label Content="本次气量2：" Margin="0,8,0,3" HorizontalContentAlignment="Right" Grid.Column="5" Grid.Row="2" Grid.ColumnSpan="2" />
+								<TextBox Text="{m:Bind Path=f_stair2amount}"  IsReadOnly="True" Margin="1,4,0,4"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="7" Grid.Row="2" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair2amount"   NoDependValue="{m:Exp Str=sellinggas.f_stair2amount \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="本次气量3：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="6" Grid.Row="3" />
+								<sdk:Label Content="本次气量3：" Margin="0,7,0,3" HorizontalContentAlignment="Right" Grid.Column="5" Grid.Row="3" Grid.ColumnSpan="2" />
 								<TextBox Text="{m:Bind Path=f_stair3amount}"  IsReadOnly="True" Margin="1,2,0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="7" Grid.Row="3" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair3amount"     NoDependValue="{m:Exp Str=sellinggas.f_stair3amount \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="金额1：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="8" Grid.Row="1" />
-								<TextBox Text="{m:Bind Path=f_stair1fee}"  IsReadOnly="True" Margin="0,2"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="9" Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="1" >
+								<sdk:Label Content="金额1：" Margin="0,7,0,3" HorizontalContentAlignment="Right" Grid.Column="8" Grid.Row="1" />
+								<TextBox Text="{m:Bind Path=f_stair1fee}"  IsReadOnly="True" Margin="0,4,0,3"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="9" Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair1fee"       NoDependValue="{m:Exp Str=sellinggas.f_stair1fee \=&gt;Completed}"  />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="金额2：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="8" Grid.Row="2" />
+								<sdk:Label Content="金额2：" Margin="0,8,0,3" HorizontalContentAlignment="Right" Grid.Column="8" Grid.Row="2" />
 								<TextBox Text="{m:Bind Path=f_stair2fee}"  IsReadOnly="True" Margin="0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="9" Grid.Row="2" Grid.ColumnSpan="1" Grid.RowSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair2fee"     NoDependValue="{m:Exp Str=sellinggas.f_stair2fee \=&gt;Completed}"   />
 									</a:Data.Prop>
 								</TextBox>
-								<sdk:Label Content="金额3：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Grid.Column="8" Grid.Row="3" />
+								<sdk:Label Content="金额3：" Margin="0,7,0,3" HorizontalContentAlignment="Right" Grid.Column="8" Grid.Row="3" />
 								<TextBox Text="{m:Bind Path=f_stair3fee}"  IsReadOnly="True" Margin="0,4,0,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="9" Grid.Row="3" Grid.RowSpan="1" Grid.ColumnSpan="1" >
 									<a:Data.Prop>
 								  	
 										<o:PropertySetter PropertyName="f_stair3fee"     NoDependValue="{m:Exp Str=sellinggas.f_stair3fee \=&gt;Completed}"    />
-									</a:Data.Prop>
-								</TextBox>
-                                    <sdk:Label Content="已购气量1：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Foreground="Red"  Height="22" Width="71" Grid.Column="4" Grid.Row="1" />
-                                    <TextBox Text="{m:Bind Path=f_stair1alreadamount}"  IsReadOnly="True" Margin="0,2"  Foreground="Red"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="5" Grid.Row="1" Grid.RowSpan="1" >
-									<a:Data.Prop>
-								  	
-										<o:PropertySetter PropertyName="f_stair1alreadamount"   NoDependValue="{m:Exp Str=sellinggas.f_stair1alreadamount \=&gt;Completed}"   />
-									</a:Data.Prop>
-								</TextBox>
-                                    <sdk:Label Content="已购气量2：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Width="71" Foreground="Red"  Grid.Column="4" Grid.Row="2" />
-                                    <TextBox Text="{m:Bind Path=f_stair2alreadamount}"  IsReadOnly="True" Margin="0,2"  Foreground="Red"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="5" Grid.Row="2" Grid.RowSpan="1" >
-									<a:Data.Prop>
-								  	
-										<o:PropertySetter PropertyName="f_stair2alreadamount"   NoDependValue="{m:Exp Str=sellinggas.f_stair2alreadamount \=&gt;Completed}"   />
-									</a:Data.Prop>
-								</TextBox>
-                                    <sdk:Label Content="已购气量3：" Margin="0,6,0,2" HorizontalContentAlignment="Right"  Height="22" Width="74"   Foreground="Red"  Grid.Column="4" Grid.Row="3" />
-                                    <TextBox Text="{m:Bind Path=f_stair3alreadamount}"  IsReadOnly="True" Margin="0,2"  Height="Auto"  Foreground="Red" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="5" Grid.Row="3" Grid.RowSpan="1" >
-									<a:Data.Prop>
-								  	
-										<o:PropertySetter PropertyName="f_stair3alreadamount"     NoDependValue="{m:Exp Str=sellinggas.f_stair3alreadamount \=&gt;Completed}"  />
 									</a:Data.Prop>
 								</TextBox>
                                     <TextBox Text="{m:Bind Path=f_stardate}"  IsReadOnly="True" Margin="2,2,7,2"  Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Grid.RowSpan="1" >
@@ -886,61 +865,60 @@
 			<c:PrintObj Name="printjtgs" Message="是否打印阶梯发票" Area="{m:Res Key=guoshuiprint_Copy}" UseDefaultPrinter="False"/>
 
 	<!--	<c:PrintObj Name="printzz" Message="是否打印购气证" Area="{m:Res Key=zheziprint}"  UseDefaultPrinter="False"/>-->
-	    <c:PrintObj Name="printzz" Message="是否打印购气证"  Area="{m:Res Key=zheziprint}" MessWindowName="/Pages/折子/折子打印提示界面" ParamObj="{m:Exp Str=sellinggas}" UseDefaultPrinter="False"/>
+	   <c:PrintObj Name="printzz" Message="是否打印购气证"	 Area="{m:Res Key=zheziprint}" />
+		<Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-310,0,0,-703">
+			<a:Data.Context>
+				<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
+					EntityType="t_myfaka"  />
+			</a:Data.Context>
+			<Grid.RowDefinitions >
+				<RowDefinition Height="50"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="80"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+				<RowDefinition Height="17"/>
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="16*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+					<ColumnDefinition Width="14*"/>
+				</Grid.ColumnDefinitions>
 
-
-
-	    <Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-487,0,0,-613" d:LayoutOverrides="VerticalAlignment">
-	    	<a:Data.Context>
-	    		<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
-	    			EntityType="t_myfaka"  />
-	    	</a:Data.Context>
-	    	<Grid.RowDefinitions >
-	    		<RowDefinition Height="50"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="80"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    		<RowDefinition Height="17"/>
-	    	</Grid.RowDefinitions>
-	    	<Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}">
-	    		<Grid.ColumnDefinitions>
-	    			<ColumnDefinition Width="16*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    			<ColumnDefinition Width="14*"/>
-	    		</Grid.ColumnDefinitions>
-			
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyy-MM-dd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_gasmeterstyle\=\=$卡表$:$卡$\,$机$}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.lastrecord}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_pregas}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_preamount}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_source !\=null and sellinggas.f_source \=\=$旧数据$ \:sellinggas.f_pregas+sellinggas.f_metergasnums\, sellinggas.f_metergasnums}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    		<TextBlock Text="{m:Exp Str=sellinggas.f_sgoperator}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="17"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-	    	</Grid>
+				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+				<TextBlock Text="{m:Exp Str=sellinggas.lastrecord\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_pregas\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+				<TextBlock Text="{m:Exp Str=sellinggas.f_totalcost\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_grossproceeds\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_benqizhye\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_zhinajin\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+			</Grid>
 	    </Grid>
 	    <Grid x:Name="aofengprint" Background="b" Margin="-1630,0,0,-320"  Width="1125" Height="346" VerticalAlignment="Bottom" HorizontalAlignment="Left">
 	    	<Grid.ColumnDefinitions>

@@ -1,0 +1,198 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="s2.表计信息查询"
+	d:DesignWidth="640" d:DesignHeight="480">
+
+	<Grid x:Name="LayoutRoot" Background="#FFDBE4F3">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.4*"/>
+			<ColumnDefinition Width="0.4*"/>
+		</Grid.ColumnDefinitions>
+		<m:ResourceLoad>
+			<!--街道资源
+        	<o:GeneralObject Name="road" EntityType="t_road" WebClientInfo="{StaticResource dbclient}"
+                  Path="{m:Exp Str=$one/from t_road where id \= \{roadid.f_flownum\} and f_daofanwei &gt; \{kbusers.f_flownum\}}">
+			</o:GeneralObject>-->
+			
+			<!--<o:GeneralObject Name="roadmanege1" EntityType="t_road" WebClientInfo="{StaticResource dbclient}"
+              IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
+			</o:GeneralObject>-->
+			<!--<o:GeneralObject Name="roadsave" EntityType="t_road" WebClientInfo="{StaticResource dbclient}">
+			<o:PropertySetter PropertyName="f_road" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:roadmanege.f_road\,null}"/>
+			<o:PropertySetter PropertyName="f_operatedate" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:roadmanege.f_operatedate\,null}"/>
+			<o:PropertySetter PropertyName="f_operatestation" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:roadmanege.f_operatestation\,null}"/>
+			<o:PropertySetter PropertyName="f_operator" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:roadmanege.f_operator\,null}"/>
+			</o:GeneralObject>-->
+			<!--判断小区名称是否存在
+		<o:GeneralObject Name="roadexist" EntityType="t_road" WebClientInfo="{StaticResource dbclient}" 
+		  	Path="{m:Exp Str=roadmanege.DataContext.f_road \!\=null:$one/select new Map(count(*) as count) from t_road where f_road\=\'\{roadmanege.DataContext.f_road\}\'$\,$aaa$}" 
+			IsInit="{m:Exp Str=roadmanege.DataContext.State\=\=$End$ }">
+		</o:GeneralObject> -->
+			<!--街道编号
+			<o:SeriaNumber Name="roadid" Length="5"  Key="{m:Exp Str='$A{SysTime.Now.ToString($yyyy$)}'}"/> -->
+			<!--总公司名称 
+		    <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject> -->
+            
+            <b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}" 
+		    	HQL="{m:Exp Str=$delete from t_road where ID \= \'\{roads.SelectedItems.ToString(ID)\=>SelectionChanged\}\'}">
+            </b:HQLAction>
+
+            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}"> 
+			<!--b:BatchInfo Source="{m:Exp Str=ksnumobj}" MethodName="SaveToJson"/-->
+			<b:BatchInfo Source="{m:Exp Str=roadmanege.DataContext}" MethodName="SaveToJson"/>
+		</b:BatchExcuteAction>
+		</m:ResourceLoad>
+		
+		<c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=roadmanege.DataContext.IsBusy or SaveAction.IsBusy}">
+			
+			<toolkit:DockPanel  x:Name="roadmanege" Margin="0,0,10,0" HorizontalAlignment="Stretch">
+            	<a:Data.Context>
+            		<o:GeneralObject Name="roadItem" WebClientInfo="{StaticResource dbclient}" 
+		EntityType="t_road" Source="{m:Exp Str=roads.SelectedItem}"
+		IsInit="{m:Exp Str='this.State\=\=$End$ |or| DeleteAction.State \=\= $End$ |or| SaveAction.State \=\= $End$'}"/>
+		
+				</a:Data.Context>
+		<Grid Background="#FFDBE4F3">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+
+                        <RowDefinition Height="30"/>
+
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="100"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Width="auto" Visibility="Collapsed" Orientation="Horizontal" VerticalAlignment="bottom" Grid.ColumnSpan="4" Margin="1,0,0,0" Grid.Row="6" d:LayoutOverrides="Height" HorizontalAlignment="stretch" Grid.Column="0">
+				<Button Content="保存" x:Name="save" Margin="60,0,0,0" IsEnabled="{m:Exp Str=!roadmanege.DataContext.HasErrors}" Click="{m:Exp Str=SaveAction.Invoke()}" Width="70" HorizontalAlignment="Left"  Height="30" d:LayoutOverrides="Height, GridBox"  />
+				<Button Content="新建" x:Name="save_Copy"  Click="{m:Exp Str=roadmanege.DataContext.New()}" Width="70" HorizontalAlignment="center" Margin="6,0,0,0" Height="30" d:LayoutOverrides="Height"  />
+				<Button Content="删除" x:Name="delete" IsEnabled="{m:Exp Str=roads.SelectedItem!\=null}" Click="{m:Exp Str=DeleteAction.Invoke()}" Width="70" HorizontalAlignment="Right" Margin="6,0,0,0" VerticalAlignment="Stretch" Height="30" d:LayoutOverrides="Height"  />
+			</StackPanel>
+			<TextBlock Text="表号：" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,6,0,5"/>
+            <TextBlock Text="表计电话：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Margin="0" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" IsReadOnly="True" Text="{m:Bind Path=f_meternumber}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+			<a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_meternumber" /><!---->
+    		</a:Data.Prop>
+			</TextBox>
+			<!--
+			<TextBox Text="{m:Bind Path=f_roadnum}" IsReadOnly="True" Grid.Column="3" Margin="0,0,11,0"  Grid.Row="1" TextWrapping="Wrap"  HorizontalAlignment="right" VerticalAlignment="Top" Height="25" FontSize="13.333" Width="4" d:LayoutOverrides="Height" Grid.RowSpan="1" >
+					<a:Data.Prop>
+						<o:PropertySetter PropertyName="f_roadnum"   Validation="{m:Exp Str=value \=\= 0 }"  Value="{m:Exp Str=roadexist.count}"  ErrorMessage="街道名称已存在"/>
+					</a:Data.Prop>
+			</TextBox>-->
+                            <TextBox Grid.Row="1" IsReadOnly="True" Grid.Column="1" Text="{m:Bind Path=meter_phone}" VerticalAlignment="Center" Margin="0" Grid.RowSpan="1" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="200">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="meter_phone" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="终端名称：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Margin="0,6,0,5"/>
+                            <TextBox Grid.Row="2"  IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="1" Text="{m:Bind Path=terminal_name}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="terminal_name" />
+                                    <!---->
+    		                    </a:Data.Prop>
+			                </TextBox>
+                            <TextBlock Text="小区：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Margin="0" />
+                          <TextBox Grid.Row="3"  IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="1" Text="{m:Bind Path=f_districtname}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname" />
+                                    <!---->
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="地址：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Margin="0" />
+                            <TextBox Grid.Row="4"  IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="1" Text="{m:Bind Path=f_address}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_address" />
+                                    <!---->
+                                </a:Data.Prop>
+                            </TextBox>
+                           <TextBlock Text="是否使用：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Margin="0" />
+                          <TextBox Grid.Row="5"  IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="1" Text="{m:Bind Path=isuse}" Margin="0,2,0,1" VerticalAlignment="Center" Grid.RowSpan="1" Width="200" HorizontalAlignment="Left">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="isuse" />
+                                    <!---->
+                                </a:Data.Prop>
+                            </TextBox>
+
+
+                </Grid>
+			</toolkit:DockPanel>
+			</c:BusyIndicatorEx>
+			<c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=roads.ItemsSource.IsBusy}" Grid.Column="1" >
+    		
+    			<toolkit:DockPanel toolkit:DockPanel.Dock="Top" >
+    				<Grid Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0" Height="27"  >
+    					<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=roads}"  Margin="0" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+    					<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{roads.ItemsSource.Count\}项}" Width="Auto" Height="27" HorizontalAlignment="Left" Foreground="#FF140000"/>
+					</Grid>
+					
+    				<Grid x:Name="roadsearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFDBE4F3"    >
+    					
+							<Grid.RowDefinitions>
+							<RowDefinition Height="28"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="69"/>
+								<ColumnDefinition Width="0.749*"/>
+								<ColumnDefinition Width="0.251*"/>
+							</Grid.ColumnDefinitions>
+    					<a:Data.Context>
+    						<o:SearchObject />        	
+    					</a:Data.Context>
+    						
+    						<TextBlock TextWrapping="Wrap" Text="搜寻：" Margin="0" Height="25" TextAlignment="Right" />
+                            <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0,2,0,1" Height="25" >
+    							<a:Data.Prop>
+                                       <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber like '%this%' or meter_phone like '%this%' or (f_districtname like '%this%' or f_address like '%this%') " />          
+    							</a:Data.Prop>
+    						</TextBox>
+    						<Button Content="查询" Grid.Column="2" x:Name="searchbutton" Click="{m:Exp Str=roadsearch.DataContext.Search()}" Margin="5,0,0,3" HorizontalAlignment="Left" Width="70" Height="30" VerticalAlignment="Center" />
+    						</Grid>
+    				<sdk:DataGrid x:Name="roads" Margin="0"  IsReadOnly="True"
+    					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
+    					<a:Data.Items>
+    						<!--userfile.DataContext.State\=\=$End$ or SaveAction.State\=\=$End$-->
+    						<o:PagedObjectList x:Name="roadlist" WebClientInfo="{StaticResource dbclient}"
+    							Path="{m:Exp Str='$from t_table_tel where {roadsearch.DataContext.Condition}'}"
+    							IsOld="{m:Exp Str='roadsearch.DataContext.Condition\=\=$End$ or DeleteAction.State==$End$ |or| SaveAction.State==$End$'}"
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}"  SumNames=","/>
+    					</a:Data.Items>
+    					<sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="表号" Binding="{Binding f_meternumber}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="表计电话" Binding="{Binding meter_phone}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="终端名称" Binding="{Binding terminal_name}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="小区" Binding="{Binding f_districtname}" />
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="地址" Binding="{Binding f_address}" />
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="是否使用" Binding="{Binding isuse}"/>
+                    </sdk:DataGrid.Columns>
+    				</sdk:DataGrid>
+    			</toolkit:DockPanel>	 		
+		</c:BusyIndicatorEx>
+		</Grid>
+</UserControl>

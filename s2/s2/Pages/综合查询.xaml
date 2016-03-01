@@ -277,12 +277,12 @@
 						</ComboBox>
 							
 							<Button Content="查  询" x:Name="searchbutton" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=userfilesearch.DataContext.Search();Comboxfx.SelectedValue\=null}" HorizontalAlignment="Right" Width="50" Height="32" VerticalAlignment="Bottom" Margin="0,0,56,-3"/>
-							<TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Text="门 牌 号：" Margin="0" Height="25" TextAlignment="Right"/>
-							<TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_apartment}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
-								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_apartment"  Operator="f_apartment like '%this%'"/>          
-								</a:Data.Prop>
-							</TextBox>
+							<TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Text="表    号：" Margin="0" Height="25" TextAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber like 'this%'"/>
+                                </a:Data.Prop>
+                            </TextBox>
 							<TextBlock TextWrapping="Wrap" Grid.Column="2" Text="小　　区：" Margin="0" Height="25" TextAlignment="Right" Grid.Row="2"/>
 							<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="2" >
 								<a:Data.Prop>
@@ -328,46 +328,61 @@
 								<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
 				Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_userfiles where \{userfilesearch.DataContext.Condition\} and id!\=0$ \, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_userfiles where \{userfilesearch.DataContext.Condition\} and id!\=0 and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
 				PageIndex="{m:Exp Str=pager8.PageIndex}" PageSize="{m:Exp Str=pager8.PageSize}" SumNames="f_times"/>
-							</a:Data.Items>
-						<sdk:DataGrid.Columns>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="卡号" Binding="{Binding f_cardid}"/>
-							<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
-							<sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户状态" Binding="{Binding f_userstate}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="小区" Binding="{Binding f_districtname}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="小区地址" Binding="{Binding f_address}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="门牌号" Binding="{Binding f_apartment}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="电话" Binding="{Binding f_phone}"/>
-							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-							<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="表号" Binding="{Binding f_meternumber}"/>
-							<sdk:DataGridTextColumn Header="建档日期" Binding="{Binding f_yytdate, StringFormat=yyyy-MM-dd}"/>
-							<sdk:DataGridTextColumn Header="发卡日期" Binding="{Binding f_givecarddate, StringFormat=yyyy-MM-dd}"/>
-						
-						</sdk:DataGrid.Columns>
-					</sdk:DataGrid>
-				</toolkit:DockPanel>
-				<TextBlock Text="当前表总购气量:" Margin="0" Grid.Row="9" Grid.Column="0" TextAlignment="Right" Height="25" d:LayoutOverrides="HorizontalAlignment"/>
-				<TextBox  Text="{m:Bind Path=f_metergasnums}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" IsReadOnly="True" Grid.Row="9" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
-					<a:Data.Prop>
-						<o:PropertySetter PropertyName="f_metergasnums"  />
-					</a:Data.Prop>
-				</TextBox>
-				<TextBlock Text="小　　区：" Margin="0" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-				<TextBox Text="{m:Bind Path=f_districtname}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
-					<a:Data.Prop>
-						<o:PropertySetter PropertyName="f_districtname"  />
-					</a:Data.Prop>
-				</TextBox>
-				<TextBlock Text="门 牌 号：" Margin="0" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-				<TextBox Text="{m:Bind Path=f_apartment}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
-					<a:Data.Prop>
-						<o:PropertySetter PropertyName="f_apartment"  />
-					</a:Data.Prop>
-				</TextBox>
+                            </a:Data.Items>
+                            <sdk:DataGrid.Columns>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="卡号" Binding="{Binding f_cardid}"/>
+                                <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+                                <sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="用户状态" Binding="{Binding f_userstate}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="小区" Binding="{Binding f_districtname}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="小区地址" Binding="{Binding f_address}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="门牌号" Binding="{Binding f_apartment}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="电话" Binding="{Binding f_phone}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="备用电话" Binding="{Binding f_phone1}"/>
+                                <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+                                <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+                                <sdk:DataGridTextColumn d:IsLocked="True" Header="表号" Binding="{Binding f_meternumber}"/>
+                                <sdk:DataGridTextColumn Header="抄表时间" Binding="{Binding lastinputdate, StringFormat=yyyy-MM-dd}"/>
+                                <sdk:DataGridTextColumn Header="抄表表底" Binding="{Binding lastinputgasnum}"/>
+                                <sdk:DataGridTextColumn Header="账户余额" Binding="{Binding f_zhye}"/>
+                                <sdk:DataGridTextColumn Header="建档日期" Binding="{Binding f_yytdate, StringFormat=yyyy-MM-dd}"/>
+                                <sdk:DataGridTextColumn Header="开户日期" Binding="{Binding f_dateofopening,StringFormat=yyyy-MM-dd}"/>
+                                <sdk:DataGridTextColumn Header="抄表系统最新底数" Binding="{Binding lastinputgasnum_cb}"/>
+                                <sdk:DataGridTextColumn Header="抄表系统最新余额" Binding="{Binding lastinputjval_cb}"/>
+                                <sdk:DataGridTextColumn Header="抄表系统抄表日期" Binding="{Binding lastinputdate_cb, StringFormat=yyyy-MM-dd}"/>
+                                <sdk:DataGridTextColumn Header="档案同步" Binding="{Binding f_danganstatus}"/>
+                                <sdk:DataGridTextColumn Header="档案同步状态" Binding="{Binding f_danganreturnvalue}"/>
+                                <sdk:DataGridTextColumn Header="用户同步状态" Binding="{Binding f_userstatus}"/>
+                                <sdk:DataGridTextColumn Header="单价同步状态" Binding="{Binding f_returnvaluedj}"/>
+                                <sdk:DataGridTextColumn Header="阀门同步状态" Binding="{Binding f_returnvalueoperate}"/>
+                                <sdk:DataGridTextColumn Header="气表最新状态" Binding="{Binding f_tablestatus}"/>
+                                <sdk:DataGridTextColumn Header="气表状态时间" Binding="{Binding f_statusdate, StringFormat=yyyy-MM-dd}"/>
+                                <sdk:DataGridTextColumn Header="气表状态信息" Binding="{Binding f_tablesmessage}"/>
+
+                            </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+                    </toolkit:DockPanel>
+                    <TextBlock Text="当前表总购气量:" Margin="0" Grid.Row="9" Grid.Column="0" TextAlignment="Right" Height="25" d:LayoutOverrides="HorizontalAlignment"/>
+                    <TextBox  Text="{m:Bind Path=f_metergasnums}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" IsReadOnly="True" Grid.Row="9" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_metergasnums"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="小　　区：" Margin="0" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                    <TextBox Text="{m:Bind Path=f_districtname}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_districtname"  />
+                        </a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="表    号：" Margin="0" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                    <TextBox Text="{m:Bind Path=f_meternumber}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" >
+                        <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_meternumber"  />
+                        </a:Data.Prop>
+                    </TextBox>
 			</Grid>			
 			<sdk:TabControl Margin="0,0,0,30">
 				
@@ -386,31 +401,38 @@
 									Path="{m:Exp Str=$from t_sellinggas where f_userid\=\'\{cxuserfile.DataContext.f_userid\}\' order by f_deliverydate desc}"
 									PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"
 									IsOld="{m:Exp Str=cxuserfile.DataContext.f_userid!\=null}"/>
-							</a:Data.Items>
-							<sdk:DataGrid.Columns>
-								<sdk:DataGridTemplateColumn>
-									<sdk:DataGridTemplateColumn.CellTemplate>
-										<DataTemplate/>
-									</sdk:DataGridTemplateColumn.CellTemplate>
-								</sdk:DataGridTemplateColumn>
-										
-								<sdk:DataGridTextColumn Header="序   号" d:IsLocked="True" Binding="{Binding Index}" />
-								<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-								<sdk:DataGridTextColumn Header="姓名或单位" Binding="{Binding f_username}"/>
-								<sdk:DataGridTextColumn Header="卡   号" Binding="{Binding f_cardid}"/>
-								<sdk:DataGridTextColumn Header="收费类型" Binding="{Binding f_payfeetype}"/>
-								<sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_payfeevalid}"/>
-								<sdk:DataGridTextColumn Header="购 气 量" Binding="{Binding f_pregas}"/>
-								<sdk:DataGridTextColumn Header="气    价" Binding="{Binding f_gasprice}"/>
-								<sdk:DataGridTextColumn Header="购气金额" Binding="{Binding f_preamount}"/>
-								<sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
-								<sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss tt}"/>
-								<sdk:DataGridTextColumn Header="旧业务类型" Binding="{Binding f_oldtype}"/>
-								<sdk:DataGridTextColumn Header="维护费交费开始年月" Binding="{Binding f_beginfee,StringFormat=yyyy-MM}"/>
-								<sdk:DataGridTextColumn Header="维护费交费截止年月" Binding="{Binding f_endfee,StringFormat=yyyy-MM}"/>
-								<sdk:DataGridTextColumn Header="维护费金额" Binding="{Binding f_amountmaintenance}"/>
-								<sdk:DataGridTextColumn Header="网　　点" Binding="{Binding f_sgnetwork}"/>
-								<sdk:DataGridTextColumn Header="操 作 员" Binding="{Binding f_sgoperator}"/>
+                                </a:Data.Items>
+                                <sdk:DataGrid.Columns>
+                                    <sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate/>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+
+                                    <sdk:DataGridTextColumn Header="序   号" d:IsLocked="True" Binding="{Binding Index}" />
+                                    <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                                    <sdk:DataGridTextColumn Header="姓名或单位" Binding="{Binding f_username}"/>
+                                    <sdk:DataGridTextColumn Header="卡   号" Binding="{Binding f_cardid}"/>
+                                    <sdk:DataGridTextColumn Header="收费类型" Binding="{Binding f_payfeetype}"/>
+                                    <sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_payfeevalid}"/>
+                                    <sdk:DataGridTextColumn Header="购 气 量" Binding="{Binding f_pregas}"/>
+                                    <sdk:DataGridTextColumn Header="气    价" Binding="{Binding f_gasprice}"/>
+                                    <sdk:DataGridTextColumn Header="购气金额" Binding="{Binding f_preamount}"/>
+                                    <sdk:DataGridTextColumn Header="收款金额" Binding="{Binding  f_grossproceeds}"/>
+                                    <sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
+                                    <sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss tt}"/>
+                                    <sdk:DataGridTextColumn Header="机表上期结余" Binding="{Binding f_zhye}"/>
+                                    <sdk:DataGridTextColumn Header="机表本期结余" Binding="{Binding f_benqizhye}"/>
+                                    <sdk:DataGridTextColumn Header="应交金额" Binding="{Binding f_totalcost}"/>
+
+
+
+                                    <sdk:DataGridTextColumn Header="旧业务类型" Binding="{Binding f_oldtype}"/>
+                                    <sdk:DataGridTextColumn Header="维护费交费开始年月" Binding="{Binding f_beginfee,StringFormat=yyyy-MM}"/>
+                                    <sdk:DataGridTextColumn Header="维护费交费截止年月" Binding="{Binding f_endfee,StringFormat=yyyy-MM}"/>
+                                    <sdk:DataGridTextColumn Header="维护费金额" Binding="{Binding f_amountmaintenance}"/>
+                                    <sdk:DataGridTextColumn Header="网　　点" Binding="{Binding f_sgnetwork}"/>
+                                    <sdk:DataGridTextColumn Header="操 作 员" Binding="{Binding f_sgoperator}"/>
 
 								
 							</sdk:DataGrid.Columns>

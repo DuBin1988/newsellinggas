@@ -166,11 +166,10 @@
                         <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="操作员：" Margin="0,0,0,-2" />
                         <TextBox x:Name="ui_sgoperator" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.name}" IsReadOnly="True" Margin="0,0,0,-2" RenderTransformOrigin="6.242,0.893" />
                         <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="网  点：" Margin="0,0,0,-2" VerticalContentAlignment="Stretch" />
-                        <TextBox x:Name="ui_sgnetwork" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.f_parentname}" IsReadOnly="True" Margin="0,0,0,-2"/>
+                        <TextBox x:Name="ui_sgnetwork" Height="28" VerticalAlignment="Top" Width="180" Text="{m:Exp Str=LoginUser.f_parentname}" IsReadOnly="True" Margin="0"/>
                     </StackPanel>
 
-                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
-                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=daninfos}" Margin="0" PageSize="40" d:LayoutOverrides="Width" toolkit:DockPanel.Dock="Top"   />
+                    <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="30">
                         <TextBlock TextWrapping="Wrap"  Margin="0,0,5,0" Text="{m:Exp Str=$共\{daninfos.ItemsSource.Count\}项}"   Foreground="#FF140000" Width="868" toolkit:DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Right" TextAlignment="Right" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
                     </toolkit:DockPanel>
