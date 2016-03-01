@@ -641,7 +641,7 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            string p = "http://127.0.0.1:8000/WriteNewCard" +
                             "/" + Factory +     //厂家
                            "/" + Kmm +     //卡密码，写卡后返回新密码
                            "/" + CardId +          //卡号
@@ -679,7 +679,7 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            string p = "http://127.0.0.1:8000/WriteNewCard" +
                                         "/" + Factory +     //厂家
                                         "/" + Kmm +     //卡密码，写卡后返回新密码
                                         "/" + Kzt +          //卡状态，0开户卡，1用户卡
@@ -727,7 +727,7 @@ namespace Com.Aote.ObjectTools
             //执行写卡线程
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            string p = "http://127.0.0.1:8000/WriteNewCard" +
                             "/" + Factory +     //厂家
                            "/" + Kmm +     //卡密码，写卡后返回新密码
                            "/" + CardId +          //卡号
