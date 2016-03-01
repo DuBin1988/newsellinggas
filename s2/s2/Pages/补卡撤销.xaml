@@ -32,15 +32,11 @@
 		<o:ChildWindowObj Name="openkafei" CWName="/Pages/高级管理员登录" />
 		<o:ChildWindowObj Name="openxiangou" CWName="/Pages/管理员登录" />
 		<!--补卡对象  and SaveAction.State==$End-->
-            <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
-    		EntityType="t_renewalcardcancel"
-			
+            <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" EntityType="t_renewalcardcancel"
     		IsInit="{m:Exp Str='SaveAction.State\=\=$End$'}" >
             <o:PropertySetter PropertyName="f_comtype" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null\:$天然气公司$\,null}"/>
     	</o:GeneralObject>
 		
-		 
-
 		  <!--更新补卡记录为无效-->
 		   <b:HQLAction Name="updatebuka"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_renewalcard set f_payfeevalid\= \'无效\' where id \=\'\{users.SelectedItem.id\}\'}">
@@ -145,9 +141,9 @@
     							<o:PropertySetter PropertyName="f_gaswatchbrand"  NoDependValue="{m:Exp Str=users.SelectedItem.f_gaswatchbrand}"  />
     						</a:Data.Prop>
     					</TextBox>
-    					<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" IsReadOnly="True">
     						<a:Data.Prop>
-    							<o:PropertySetter PropertyName="f_metertype"   NoDependValue="{m:Exp Str=users.SelectedItem.f_metertype}"  />
+                                    <o:PropertySetter PropertyName="f_metertype"   NoDependValue="{m:Exp Str=users.SelectedItem.f_metertype}"  />
     						</a:Data.Prop>
     					</TextBox>
     					<!--<ComboBox x:Name="CoboxPinpai" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="3" Margin="0,6" Grid.Row="1" IsEnabled="True"  >
@@ -385,9 +381,9 @@
     					<a:Data.Items>
     						<!--userfile.DataContext.State\=\=$End$ or SaveAction.State\=\=$End$-->
     						<o:PagedObjectList x:Name="userslist" WebClientInfo="{StaticResource dbclient}"
-    							Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'  $\,LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\}     and f_payfeevalid\=\'有效\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+    							Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'  $\,LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_renewalcard where \{usersearch.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
     							IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
-    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+    							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
     					</a:Data.Items>
     					<sdk:DataGrid.Columns>
     						<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
@@ -399,9 +395,8 @@
 							<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
     						<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
 							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-							<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_meternumber}"/>
-    						
-    						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+                                <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+                                <!--sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/-->
     					</sdk:DataGrid.Columns>
     				</sdk:DataGrid>
 					
