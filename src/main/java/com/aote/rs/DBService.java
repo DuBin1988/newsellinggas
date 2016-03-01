@@ -1619,11 +1619,12 @@ public class DBService {
 	 * 档案批量上传处理,,Param,判断的条件
 	*/	
 	@POST
-	@Path("User/{type}/{Param1}/{Param2}")
+	@Path("User/{type}/{Param1}/{Param2}/{isuserid}")
 	public JSONObject xtExecuteUser(@Context HttpServletResponse response,String values
 			, @PathParam("type") String type // 物联表类型
 			, @PathParam("Param1") String Param1 // 参数1
 			, @PathParam("Param2") String Param2 // 参数2
+			, @PathParam("isuserid") String isuserid // 如果处理的是用户档案是否自增用户id /false，true
 			) {
 		log.debug(values);
 		// open a new session since we dont use spring here
@@ -1668,7 +1669,7 @@ public class DBService {
 							}							
 						}else{
 							//得到编号 getSerialNumber
-							if("t_userfiles".equals(entity)){
+							if("t_userfiles".equals(entity) && Boolean.parseBoolean(isuserid)){
 								Session session2 = sessionFactory.openSession();
 								try {
 									JSONObject bh = SynchronizedTools.getSerialNumber(session2,null, "from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'","value");
@@ -1691,7 +1692,7 @@ public class DBService {
 						
 					} catch (Exception e) {
 						//得到编号 getSerialNumber
-						if("t_userfiles".equals(entity)){
+						if("t_userfiles".equals(entity) && Boolean.parseBoolean(isuserid)){
 							Session session2 = sessionFactory.openSession();
 							try {
 								JSONObject bh = SynchronizedTools.getSerialNumber(session2,null, "from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'","value");
