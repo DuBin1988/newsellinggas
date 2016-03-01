@@ -1,7 +1,10 @@
 package com.aote.rs.weixin;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -25,6 +28,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.aote.rs.tcp.TcpService;
+import com.aote.rs.util.StringUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
@@ -36,6 +41,7 @@ public class WeiXinService {
 
 	/**
 	 * 获得授权code
+	 * 
 	 * @param response
 	 * @return
 	 */
@@ -240,5 +246,72 @@ public class WeiXinService {
 	public String notify(@Context HttpServletRequest request) {
 		System.out.println("微信支付weixin-notify");
 		return "";
+	}
+
+	/**
+	 * 银行代码
+	 */
+	private String yhno = "0000000051";
+	/**
+	 * 机构号
+	 */
+	private String jgno = "0000000051";
+	/**
+	 * 银行方终端设备代码或营业厅编码
+	 */
+	private String sbno = "0000000051";
+
+	/**
+	 * 根据用户编号生成查询报文
+	 * 
+	 * @param userid
+	 * @return
+	 */
+	private String get1001(String userid) {
+		String result = "";
+		result = "000000651001";
+		userid = StringUtil.joint(userid, 10, " ");
+		System.out.println(userid);
+		// 银行交易流水号：YYYYMMDD+12位流水号
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		String pipeline = sdf.format(new Date()) + StringUtil.grandom(6);
+		result += userid + yhno + pipeline + "0" + jgno + sbno;
+		return result;
+	}
+
+	/**
+	 * 发送交费报文
+	 * @param userid 用户编号
+	 * @param money 交费金额
+	 * @return
+	 */
+	private String get1002(String userid, String money) {
+		String result = "";
+		result = "000000751002";
+		userid = StringUtil.joint(userid, 10, " ");
+		// 银行交易流水号：YYYYMMDD+12位流水号
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		String pipeline = sdf.format(new Date()) + StringUtil.grandom(6);
+		result += userid + yhno + pipeline + "0" + jgno + sbno;
+		BigDecimal j = new BigDecimal(money);
+		j = j.multiply(new BigDecimal(100));
+		money = StringUtil.jointleft(j.intValue() + "", 10, "0");
+		result += money;
+		return result;
+	}
+
+
+	public JSONObject wxquery(String userid) {
+		JSONObject result = new JSONObject();
+		TcpService tcp = new TcpService();
+		result = tcp.send(get1001(userid));
+		return result;
+	}
+
+	public JSONObject wxpay(String userid, String money) {
+		JSONObject result = new JSONObject();
+		TcpService tcp = new TcpService();
+		result = tcp.send(get1002(userid, money));
+		return result;
 	}
 }
