@@ -320,8 +320,8 @@
                     <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" >
                         <Button x:Name="save" Content="保  存" Margin="5" 
 							  IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
-							Click="{m:Exp Str='SaveAction.Invoke()'}" Width="50" />
-                        <Button x:Name="cancel" Content="撤  销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();temp.New()}" Width="50"/>
+							Click="{m:Exp Str='SaveAction.Invoke()'}" Width="88" />
+                        <Button x:Name="cancel" Content="撤销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();temp.New()}" Width="50"/>
                     </toolkit:DockPanel>
                     <Grid x:Name="userfile" DataContext="{m:Exp Str=userfilego}" Margin="0,0,0,20" >
                         <!--非民用主操作区-->
@@ -368,11 +368,11 @@
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="0.1*"/>
+                                            <ColumnDefinition Width="0.3*"/>
                                             <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="300"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="0.8*"/>
+                                            <ColumnDefinition Width="0.3*"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="0.3*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="用户姓名：" Margin="-1,3,1,2" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                                         <TextBlock Text="小区名称：" Margin="0,3,0,2" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
@@ -505,15 +505,15 @@
                                         <TextBlock Margin="0" Grid.Row="18" TextWrapping="Wrap" Text="最后购气量：" TextAlignment="Right" Grid.Column="1" Height="25" Grid.ColumnSpan="2"/>-->
 
                                         <TextBlock Margin="-201,-4,0,-7" Grid.Row="7" TextWrapping="Wrap" Text="是否发折：" TextAlignment="Right" Height="25" HorizontalAlignment="Left" Width="110"/>
-                                        <TextBlock Grid.Row="22" TextWrapping="Wrap" Text="网     点：" TextAlignment="Right" Height="25" Margin="0,4,147,1" Grid.ColumnSpan="2"/>
-                                        <TextBox Text="{m:Bind Path=f_yytdepa}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="22" TextWrapping="Wrap"  VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Left" Height="25" Grid.ColumnSpan="1" Width="147" Grid.RowSpan="1" >
+                                        <TextBlock Grid.Row="22" TextWrapping="Wrap" Text="网     点：" TextAlignment="Right" Height="25" Margin="0"/>
+                                        <TextBox Text="{m:Bind Path=f_yytdepa}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="22" TextWrapping="Wrap"  VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" Width="Auto" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_yytdepa" NotNull="True" 
 													Default="{m:Exp Str=LoginUser.f_parentname}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Grid.Column="2" Grid.Row="22" TextWrapping="Wrap" Text="操  作 人："  TextAlignment="Right" Height="25" Margin="3,4,0,1"/>
-                                        <TextBox Text="{m:Bind Path=f_yytoper}" Grid.Column="3" Margin="0,3,0,0" Grid.Row="22" TextWrapping="Wrap"  VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_yytoper}" Grid.Column="3" Margin="0" Grid.Row="22" TextWrapping="Wrap"  VerticalAlignment="Center" IsReadOnly="True" HorizontalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_yytoper" NotNull="True"  
 													Default="{m:Exp Str=LoginUser.name}"/>
@@ -529,8 +529,8 @@
                                         <!--是否发卡-->
                                         <!--是否发折-->
                                         <!--小区查询-->
-                                        <TextBlock Margin="1,3,145,2" Grid.Row="23" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25" Grid.ColumnSpan="2"/>
-                                        <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0,3,109,2" Grid.Row="23" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="147" d:LayoutOverrides="HorizontalMargin">
+                                        <TextBlock Margin="0" Grid.Row="23" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25"/>
+                                        <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="23" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="HorizontalMargin">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_filiale" 
 													Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
@@ -538,7 +538,7 @@
                                         </TextBox>
 
                                         <TextBlock Text="公司组织代码：" Grid.Row="23" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Height="25" />
-                                        <TextBox Text="{m:Bind Path=f_OrgStr}" Grid.Row="23" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_OrgStr}" Grid.Row="23" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_OrgStr" NotNull="True"
 													Default="{m:Exp Str=LoginUser.orgpathstr}"/>
@@ -577,7 +577,7 @@
                                         </Border>
 
                                         <TextBlock Grid.Column="4" Margin="0" Grid.Row="23" TextWrapping="Wrap" Text="建档时间：" TextAlignment="Right" Grid.RowSpan="2" />
-                                        <toolkit:TimePicker Value="{m:Bind Path=f_yyttime}"   Grid.Column="5" Margin="0,1,-4,0" Grid.Row="23"   IsDropDownOpen="False"  VerticalAlignment="Stretch" IsEnabled="False" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1" RenderTransformOrigin="0.336,0.16" >
+                                        <toolkit:TimePicker Value="{m:Bind Path=f_yyttime}"   Grid.Column="5" Margin="0" Grid.Row="23"   IsDropDownOpen="False"  VerticalAlignment="Center" IsEnabled="False" Height="Auto" Grid.ColumnSpan="1" Grid.RowSpan="1" RenderTransformOrigin="0.336,0.16" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_yyttime" NotNull="True" Default="{m:Exp Str=SysTime.Now}"
 													Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
@@ -718,83 +718,83 @@
                                         <TextBlock Grid.Column="3" Margin="36,2,1,0" Grid.Row="17" TextWrapping="Wrap" Text="灶具型号：" TextAlignment="Right" Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
                                         <TextBlock Grid.Column="2" Grid.Row="19" TextWrapping="Wrap" Text="热水器品牌：" TextAlignment="Right" Height="25" VerticalAlignment="Bottom" Margin="0,0,0,26" Grid.RowSpan="2"/>
                                         <TextBlock Grid.Column="3" Grid.Row="19" TextWrapping="Wrap" Text="热水器型号：" TextAlignment="Right" Height="25" VerticalAlignment="Bottom" Margin="36,0,1,26" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                                        <CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Grid.Column="0" Margin="0,2,149,3" Grid.Row="17" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="103" Grid.RowSpan="1" Grid.ColumnSpan="2" >
+                                        <CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Grid.Column="0" Margin="0" Grid.Row="17" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="80" Grid.RowSpan="1" Grid.ColumnSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_wallhangboiler" Default="{m:Exp Str=False}"/>
                                             </a:Data.Prop>
                                         </CheckBox>
-                                        <TextBox Text="{m:Bind Path=f_wallhangboilerbrand}" Grid.Column="3" Margin="0,2,1,3" Grid.Row="16" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"    Grid.ColumnSpan="1" Grid.RowSpan="1"    >
+                                        <TextBox Text="{m:Bind Path=f_wallhangboilerbrand}" Grid.Column="3" Margin="0" Grid.Row="16" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"    Grid.ColumnSpan="1" Grid.RowSpan="1"    >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_wallhangboilerbrand"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_wallhangboilermodel}" Grid.Column="4" Margin="99,2,3,3" Grid.Row="16" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Grid.ColumnSpan="2" Grid.RowSpan="1"  >
+                                        <TextBox Text="{m:Bind Path=f_wallhangboilermodel}" Grid.Column="5" Margin="0" Grid.Row="16" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Grid.ColumnSpan="1" Grid.RowSpan="1"  >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_wallhangboilermodel"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <CheckBox IsChecked="{m:Bind Path=f_kitchen}"   Content="有灶具" Grid.Column="0" Margin="10,6,0,29" Grid.Row="18" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="2" >
+                                        <CheckBox IsChecked="{m:Bind Path=f_kitchen}"   Content="有灶具" Grid.Column="0" Margin="0" Grid.Row="18" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Width="80" HorizontalAlignment="Right" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchen" Default="{m:Exp Str=True}"/>
                                             </a:Data.Prop>
                                         </CheckBox>
-                                        <TextBox Text="{m:Bind Path=f_kitchenbrand}" Grid.Column="3" Margin="0,2,1,0" Grid.Row="17"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Top" Grid.ColumnSpan="1" Grid.RowSpan="1"  >
+                                        <TextBox Text="{m:Bind Path=f_kitchenbrand}" Grid.Column="3" Margin="0" Grid.Row="17"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Center" Grid.ColumnSpan="1" Grid.RowSpan="1"  >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchenbrand"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_kitchenmodel}" Grid.Column="4" Margin="99,2,3,0" Grid.Row="17" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_kitchenmodel}" Grid.Column="5" Margin="0" Grid.Row="17" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchenmodel"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <CheckBox IsChecked="{m:Bind Path=f_waterheater}"  Content="有热水器" Grid.Column="0" Margin="10,0,0,26" Grid.Row="19" Height="25" VerticalAlignment="Bottom" Grid.RowSpan="2" >
+                                        <CheckBox IsChecked="{m:Bind Path=f_waterheater}"  Content="有热水器" Grid.Column="0" Margin="0" Grid.Row="19" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Width="80" HorizontalAlignment="Right" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_waterheater" Default="{m:Exp Str=False}"/>
                                             </a:Data.Prop>
                                         </CheckBox>
-                                        <TextBox Text="{m:Bind Path=f_waterheaterbrand}" Grid.Column="3" Margin="0,0,1,28" Grid.Row="19"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.RowSpan="2" >
+                                        <TextBox Text="{m:Bind Path=f_waterheaterbrand}" Grid.Column="3" Margin="0" Grid.Row="19"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Center" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_waterheaterbrand"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_waterheatermodel}" Grid.Column="4" Margin="99,0,3,28" Grid.Row="19" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Grid.RowSpan="2" >
+                                        <TextBox Text="{m:Bind Path=f_waterheatermodel}" Grid.Column="5" Margin="0" Grid.Row="19" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_waterheatermodel"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Grid.Column="2" Margin="0,1,0,4" Grid.Row="18" TextWrapping="Wrap" Text="灶具品牌2：" TextAlignment="Right" Height="25"/>
                                         <TextBlock Grid.Column="3" Margin="36,1,1,4" Grid.Row="18" TextWrapping="Wrap" Text="灶具型号2：" TextAlignment="Right" Height="25" Grid.ColumnSpan="2"/>
-                                        <TextBox Text="{m:Bind Path=f_kitchenbrand2}" Grid.Column="3" Margin="0,1,1,4" Grid.Row="18"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch"  Grid.ColumnSpan="1" Grid.RowSpan="1"  >
+                                        <TextBox Text="{m:Bind Path=f_kitchenbrand2}" Grid.Column="3" Margin="0" Grid.Row="18"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Center"  Grid.ColumnSpan="1" Grid.RowSpan="1"  >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchenbrand2"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_kitchenmodel2}" Grid.Column="4" Margin="99,1,3,4" Grid.Row="18" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Grid.RowSpan="1" >
+                                        <TextBox Text="{m:Bind Path=f_kitchenmodel2}" Grid.Column="5" Margin="0" Grid.Row="18" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchenmodel2"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Grid.Column="1" Margin="0,2,82,3" Grid.Row="17" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53"/>
-                                        <TextBox Text="{m:Bind Path=f_wallhangboilernum}" Grid.Column="1" Margin="74,2,42,3" Grid.Row="17" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="35" Grid.RowSpan="1"    >
+                                        <TextBlock Grid.Column="1" Margin="0,0,60,0" Grid.Row="17" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53"/>
+                                        <TextBox Text="{m:Bind Path=f_wallhangboilernum}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="17" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="55" Grid.RowSpan="1"    >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_wallhangboilernum"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Grid.Column="1" Margin="0,1,80,4" Grid.Row="18" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53"/>
-                                        <TextBox Text="{m:Bind Path=f_kitchennum}" Grid.Column="1" Margin="75,1,41,4" Grid.Row="18" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="35" Grid.RowSpan="1"    >
+                                        <TextBlock Grid.Column="1" Margin="0,0,60,0" Grid.Row="18" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53"/>
+                                        <TextBox Text="{m:Bind Path=f_kitchennum}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="18" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="56" Grid.RowSpan="1"    >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_kitchennum"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Grid.Column="1" Margin="0,0,75,28" Grid.Row="19" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53" VerticalAlignment="Bottom" Grid.RowSpan="2"/>
-                                        <TextBox Text="{m:Bind Path=f_waterheaternum}" Grid.Column="1" Margin="74,0,42,29" Grid.Row="19" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="35" Grid.RowSpan="2"    >
+                                        <TextBlock Grid.Column="1" Margin="0,0,60,0" Grid.Row="19" TextWrapping="Wrap" Text="数量：" TextAlignment="Right" Height="25" HorizontalAlignment="Right" Width="53"/>
+                                        <TextBox Text="{m:Bind Path=f_waterheaternum}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="19" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="56" Grid.RowSpan="1"    >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_waterheaternum"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Grid.Row="20" TextWrapping="Wrap" Text="备　　注：" TextAlignment="Right" Height="25" Margin="10,11,150,4" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-                                        <TextBox Text="{m:Bind Path=f_useryijian}" Grid.Column="1" Margin="1,8,0,7" Grid.Row="20" TextWrapping="Wrap"  VerticalAlignment="Stretch"  HorizontalAlignment="Left" Height="25" Grid.ColumnSpan="5" Width="530" Grid.RowSpan="2" >
+                                        <TextBlock Grid.Row="20" TextWrapping="Wrap" Text="备　　注：" TextAlignment="Right" Height="25" Margin="0" VerticalAlignment="Center"/>
+                                        <TextBox Text="{m:Bind Path=f_useryijian}" Grid.Column="1" Margin="0" Grid.Row="20" TextWrapping="Wrap"  VerticalAlignment="Center"  HorizontalAlignment="Left" Height="25" Grid.ColumnSpan="5" Width="811" Grid.RowSpan="1" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_useryijian" />
                                             </a:Data.Prop>
@@ -846,7 +846,7 @@
 
             </c:BusyIndicatorEx>
         </Grid>
-
+		<c:MessageTipObj  Name="saveerror" Type="MessageBox" Tip="民用户保存失败" IsShow="{m:Exp Str=SaveAction.State\=\=$Error$}"/>
         <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}的档案创建成功!'}" IsShow="{m:Exp Str=SaveAction.State\=\=$End$}"/>
     </Grid>
 </UserControl>
