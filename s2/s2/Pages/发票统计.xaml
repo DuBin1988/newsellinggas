@@ -31,16 +31,8 @@
 
 		<o:PagedList Name="fapiao" WebClientInfo="{StaticResource dbclient}"
 		LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
-		SumHQL="{m:Exp Str=$select grp\, min(f_invoicenum)+\'\~\'+ max(f_invoicenum) as fapiaohao\, sum(case when f_fapiaostatue\=\'作废\'then 1 else 0 end) zuofeishu\,sum(case when f_fapiaostatue\=\'已用\'then 1 else 0 end) yiyongshu\, sum(case when f_fapiaostatue\=\'已用\'then f_money else 0 end) money1\,
-				STUFF((Select \'\,\'+f_invoicenum 
-					from (select f_invoicenum\,f_fapiaostatue\,f_money\, f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp 
-						from(
-							select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where       
-							\{search.Condition\} and f_fapiaostatue!\=\'未用\'           
-							group by f_invoicenum\, f_fapiaostatue\, f_money\, f_fapiaodate
-						) m
-				)i where i.grp\=o.grp and f_fapiaostatue\=\'作废\' FOR XML PATH(\'\'))\,1\,1\,\'\') as zuofeihao 
-				from (select f_invoicenum\,f_fapiaostatue\,f_money\, f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp 
+		SumHQL="{m:Exp Str=$select grp\, min(f_invoicenum)+\'\~\'+ max(f_invoicenum) as fapiaohao\, sum(case when f_fapiaostatue\=\'作废\'then 1 else 0 end) zuofeishu\,sum(case when f_fapiaostatue\=\'已用\'then 1 else 0 end) yiyongshu\, sum(case when f_fapiaostatue\=\'已用\'then f_money else 0 end) money1\,STUFF((Select \'\,\'+f_invoicenum from (select f_invoicenum\,f_fapiaostatue\,f_money\,f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp from( select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where \{search.Condition\} and f_fapiaostatue!\=\'未用\' group by f_invoicenum\, f_fapiaostatue\, f_money\, f_fapiaodate  ) m  )i  where i.grp\=o.grp and f_fapiaostatue\=\'作废\' FOR XML PATH(\'\'))\,1\,1\,\'\') as zuofeihao  	
+            from (select f_invoicenum\,f_fapiaostatue\,f_money\, f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp 
 					from(
 						select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where       
 						\{search.Condition\} and f_fapiaostatue!\=\'未用\'           
@@ -48,15 +40,7 @@
 					) m
 				)o 
 				group by grp}" 
-		HQL="{m:Exp Str=$select grp\, min(f_invoicenum)+\'\~\'+ max(f_invoicenum) as fapiaohao\, sum(case when f_fapiaostatue\=\'作废\'then 1 else 0 end) zuofeishu\,sum(case when f_fapiaostatue\=\'已用\'then 1 else 0 end) yiyongshu\, sum(case when f_fapiaostatue\=\'已用\'then f_money else 0 end) money1\,
-				STUFF((Select \'\,\'+f_invoicenum 
-					from (select f_invoicenum\,f_fapiaostatue\,f_money\, f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp 
-					from(
-							select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where       
-							\{search.Condition\} and f_fapiaostatue!\=\'未用\'           
-							group by f_invoicenum\, f_fapiaostatue\, f_money\, f_fapiaodate
-						) m
-				)i where i.grp\=o.grp and f_fapiaostatue\=\'作废\' FOR XML PATH(\'\'))\,1\,1\,\'\') as zuofeihao 
+		HQL="{m:Exp Str=$select grp\, min(f_invoicenum)+\'\~\'+ max(f_invoicenum) as fapiaohao\, sum(case when f_fapiaostatue\=\'作废\'then 1 else 0 end) zuofeishu\,sum(case when f_fapiaostatue\=\'已用\'then 1 else 0 end) yiyongshu\, sum(case when f_fapiaostatue\=\'已用\'then f_money else 0 end) money1\,STUFF((Select \'\,\'+f_invoicenum from (select f_invoicenum\,f_fapiaostatue\,f_money\,f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp from( select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where \{search.Condition\} and f_fapiaostatue!\=\'未用\' group by f_invoicenum\, f_fapiaostatue\, f_money\, f_fapiaodate  ) m  )i  where i.grp\=o.grp and f_fapiaostatue\=\'作废\' FOR XML PATH(\'\'))\,1\,1\,\'\') as zuofeihao  	
 				from (select f_invoicenum\,f_fapiaostatue\,f_money\, f_invoicenum - ROW_NUMBER() over( order by cast(f_invoicenum as int)) as grp 
 					from(
 						select f_invoicenum\, f_fapiaostatue\, f_money\,f_fapiaodate from t_fapiaoinfos where       
@@ -154,11 +138,11 @@
 			<TextBlock Text="{m:Exp Str=userfilesearch.DataContext.endinvoicenum}"  Grid.Column="4" Margin="32,0,41,7" Grid.Row="1" Height="20" VerticalAlignment="Bottom"/>
 			<sdk:DataGrid x:Name="userfiles" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{m:Exp Str=fapiao}" Margin="0,0,28,0" Grid.Row="2" Grid.ColumnSpan="5">
 						<sdk:DataGrid.Columns>
-							<sdk:DataGridTextColumn Header="号码段" Width="1*" Binding="{Binding fapiaohao}"/>
-							<sdk:DataGridTextColumn Header="作废发票号码" Width="1*" Binding="{Binding zuofeihao}"/>
-							<sdk:DataGridTextColumn Header="作废发票份数" Width="1*" Binding="{Binding zuofeishu}"/>
+                            <sdk:DataGridTextColumn Header=" 号  码  段 " Width="1*" Binding="{Binding fapiaohao}"/>
+                            <sdk:DataGridTextColumn Header="作废发票份数" Width="1*" Binding="{Binding zuofeishu}"/>
 							<sdk:DataGridTextColumn Header="有效发票份数" Width="1*" Binding="{Binding yiyongshu}"/>
-							<sdk:DataGridTextColumn Header="开票金额" Width="1*" Binding="{Binding money1}"/>
+							<sdk:DataGridTextColumn Header="开 票 金 额" Width="1*" Binding="{Binding money1}"/>
+                            <sdk:DataGridTextColumn Header="作废发票号码" Width="1*" Binding="{Binding zuofeihao}"/>
 						</sdk:DataGrid.Columns>
 			</sdk:DataGrid>
 			</Grid>

@@ -76,7 +76,7 @@
 		  	Path="one/from t_singlevalue where name='发票格式'"   ></o:GeneralObject>
 
             <!--用户对象-->
-            <o:GeneralObject Name="userfiles1" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+            <o:GeneralObject Name="userfiles1"  EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
         IsInit="{m:Exp Str='SaveAction\=\=$Error$ |or| card.State\=\=$Error$ |or| print.State==$End$  |or| print1.State==$End$'}"
 		Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,$null$}">
                 <o:PropertySetter PropertyName="f_finallybought" NoDependValue="{m:Exp Str=userfile.DataContext.f_pregas}" />
@@ -99,6 +99,8 @@
             <o:GeneralObject Name="sellgasobj" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
 		IsInit="{m:Exp Str='userfiles1.State\=\=$StartLoad$ |or| SaveAction\=\=$Error$ |or| card.State\=\=$Error$ |or| print.State==$End$ |or| print1.State==$End$ |or| print1.State==$Cancle$ |or| print.State==$Cancle$'}">
                 <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=userfile.DataContext.f_username}"/>
+                <o:PropertySetter PropertyName="f_apartment" NoDependValue="{m:Exp Str=userfiles1.DataContext.f_apartment}"/>
+                <o:PropertySetter PropertyName="f_metertype" NoDependValue="{m:Exp Str=userfiles1.DataContext.f_metertype}"/>
                 <o:PropertySetter PropertyName="f_districtname" NoDependValue="{m:Exp Str=userfile.DataContext.f_districtname}"/>
                 <o:PropertySetter PropertyName="f_apartment" NoDependValue="{m:Exp Str=userfile.DataContext.f_apartment}"/>
                 <o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=userfile.DataContext.f_address}" />
@@ -232,7 +234,7 @@
                         <TextBlock Height="33" toolkit:DockPanel.Dock="Bottom" Text="{m:Exp Str='$共{userfiles.ItemsSource.Count}项'}" Margin="0,3,0,0" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Stretch"/>
                         <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"    Margin="0" PageSize="20" Height="24"/>
                     </toolkit:DockPanel>
-                    <Grid x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Background="#FFCFEFFF" Margin="0,0,0,1" >
+                    <Grid x:Name="userfilesearch"  toolkit:DockPanel.Dock="Top" Background="#FFCFEFFF" Margin="0,0,0,1" >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="27"/>
                             <RowDefinition Height="27"/>
@@ -289,7 +291,7 @@
                     </Grid>
                     <sdk:DataGrid x:Name="userfiles"  
                 	SelectedItem="{m:Exp Str=card.State\=\=$Error$:null\,this.SelectedItem}"
-					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Margin="0,1,0,0" >
+					AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Margin="0,1,0,0">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
 							MultiPath="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivecard \=\'未发\' and f_gasmeterstyle \=\'卡表\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\' }"
