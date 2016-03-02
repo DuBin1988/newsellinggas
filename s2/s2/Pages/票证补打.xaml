@@ -56,7 +56,7 @@
 						</o:GeneralObject>
 		<!--售气收费对象 -->
         	<o:GeneralObject Name="sellinggas" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=$one/from t_sellinggas where id\=(select max(id) from t_sellinggas where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_payfeevalid \=\'有效\' and f_comtype \!\=\'银行\' ) and  f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_payfeevalid \=\'有效\' and f_comtype \!\=\'银行\' $\,$abc$}" 
+             Path="{m:Exp Str=$one/from t_sellinggas where id\=(select id from t_sellinggas where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_payfeevalid \=\'有效\' and f_comtype \!\=\'银行\' ) and  f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_payfeevalid \=\'有效\' and f_comtype \!\=\'银行\' $\,$abc$}" 
 			 IsInit="{m:Exp Str=print.State\=\=$End$ or print1.State\=\=$End$}">
 			</o:GeneralObject>
 		<!--保存对象  CanSave="{m:Exp Str=print.State\=\=$End$}"-->
@@ -158,7 +158,8 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
 						<a:Data.Items>
 							<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-								Path="{m:Exp Str=$from t_sellinggas where \{usersearch.Condition\}}"
+							    MultiPath="{m:Exp Str=$from t_sellinggas where \{usersearch.Condition\}}"
+								Path="{m:Exp Str=$from t_sellinggas where \{usersearch.Condition\} order by f_deliverydate desc f_deliverytime desc }"
 								IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or DeleteAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
 						</a:Data.Items>
@@ -174,6 +175,7 @@
                             <sdk:DataGridTextColumn Header="应交金额" Binding="{Binding f_totalcost}"/>
                             <sdk:DataGridTextColumn Header="找零" Binding="{Binding f_givechange}"/>
                             <sdk:DataGridTextColumn Header="表本次累计购气量" Binding="{Binding f_metergasnums}"/>
+							<sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=hh:mm:ss}"/>
                             <sdk:DataGridTextColumn Header="缴费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
@@ -221,7 +223,7 @@
 								<RowDefinition Height="30"/>
 								<RowDefinition Height="30"/>
 								<RowDefinition Height="30"/>
-								<RowDefinition Height="30"/>
+								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="30"/>
 								<RowDefinition Height="30"/>
 								<RowDefinition Height="30"/>
@@ -263,126 +265,125 @@
 							<TextBlock Text="付款方式：" Grid.Column="2" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25"/>
 							<TextBox  Text="{m:Bind Path=f_payment}"  Grid.Column="3" Margin="0" TextWrapping="Wrap"  Grid.Row="7"  IsReadOnly="True" Height="25">
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_payment"/>
+                                    <o:PropertySetter PropertyName="f_payment" NoDependValue="{m:Exp Str=sellinggas.f_premetergasnums\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
-							<TextBlock Text="本次总累计购气量：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="4" Height="25"/>
+							<TextBlock Text="本次总累计购气量：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="4" Height="25" HorizontalAlignment="Right" Width="130"/>
 							<TextBlock Text="表本次累计购气量：" Margin="0" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBlock Text="收      款：" Grid.Column="2" Margin="0" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBlock Text="应交金额：" Margin="0" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
-							<TextBlock Text="找      零：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBlock Text="余    额：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBox x:Name="userid" Text="{m:Bind Path=f_userid}"  Grid.Column="1"  TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" IsReadOnly="True"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.SelectedItem.f_userid}"/>
+                                    <o:PropertySetter PropertyName="f_userid" NoDependValue="{m:Exp Str=sellinggas.f_userid\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="3" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=userfiles.SelectedItem.f_username}"/>
+                                    <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=sellinggas.f_username\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_idnumber}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=userfiles.SelectedItem.f_idnumber}"/>
+                                    <o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=sellinggas.f_idnumber\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=userfiles.SelectedItem.f_address}"/>
+                                    <o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=sellinggas.f_address\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>	
 							
 							<TextBox Text="{m:Bind Path=f_districtname}" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=userfiles.SelectedItem.f_districtname}"/>
+                                    <o:PropertySetter PropertyName="f_districtname" NoDependValue="{m:Exp Str=sellinggas.f_districtname\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_gaswatchbrand}" Grid.Column="5" Margin="0" Grid.Row="2" IsReadOnly="True" Height="25"    >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=userfiles.SelectedItem.f_gaswatchbrand}"/>
+                                    <o:PropertySetter PropertyName="f_gaswatchbrand"  NoDependValue="{m:Exp Str=sellinggas.f_gaswatchbrand\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="1" Margin="0" Grid.Row="3" IsReadOnly="True" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=userfiles.SelectedItem.f_metertype}"/>
+                                    <o:PropertySetter PropertyName="f_metertype" NoDependValue="{m:Exp Str=sellinggas.f_metertype\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_gaspricetype}"  Grid.Column="3" Margin="0" Grid.Row="3" IsReadOnly="True" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=userfiles.SelectedItem.f_gaspricetype}"/>
+                                    <o:PropertySetter PropertyName="f_gaspricetype"  NoDependValue="{m:Exp Str=sellinggas.f_gaspricetype\=&gt;Completed}"/>
 								</a:Data.Prop>	
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_gasprice}" Grid.Column="5"  Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=userfiles.SelectedItem.f_gasprice}"/>
+                                    <o:PropertySetter PropertyName="f_gasprice"  NoDependValue="{m:Exp Str=sellinggas.f_gasprice\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_unitfee}" Grid.Column="1"  Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_unitfee" Value="{m:Exp Str=userfiles.SelectedItem.f_unitfee}"/>
+                                    <o:PropertySetter PropertyName="f_unitfee" NoDependValue="{m:Exp Str=sellinggas.f_unitfee\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_upbuynum}" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_upbuynum" 
-										Value="{m:Exp Str=userfiles.SelectedItem.f_upbuynum }"/>
+									<o:PropertySetter PropertyName="f_upbuynum" NoDependValue="{m:Exp Str=sellinggas.f_upbuynum\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="1" Margin="0" Grid.Row="5" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=userfiles.SelectedItem.f_usertype }"/>
+                                    <o:PropertySetter PropertyName="f_usertype" NoDependValue="{m:Exp Str=sellinggas.f_usertype\=&gt;Completed}"/>
 								</a:Data.Prop>	
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_gasproperties}" Grid.Column="3" Margin="0" Grid.Row="5" IsReadOnly="True" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gasproperties" Value="{m:Exp Str=userfiles.SelectedItem.f_gasproperties }"/>
+                                    <o:PropertySetter PropertyName="f_gasproperties" NoDependValue="{m:Exp Str=sellinggas.f_gasproperties\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_beginfee}" Grid.Column="5" Margin="0" Grid.Row="5" IsReadOnly="True" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_beginfee" Value="{m:Exp Str=userfiles.SelectedItem.f_beginfee }"/>
+                                    <o:PropertySetter PropertyName="f_beginfee" NoDependValue="{m:Exp Str=sellinggas.f_beginfee\=&gt;Completed}"/>
 								</a:Data.Prop>	
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_endfee}" Grid.Column="1" Margin="0" Grid.Row="6" IsReadOnly="True" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_endfee" Value="{m:Exp Str=userfiles.SelectedItem.f_endfee }" />
+                                    <o:PropertySetter PropertyName="f_endfee" NoDependValue="{m:Exp Str=sellinggas.f_endfee\=&gt;Completed}" />
 								</a:Data.Prop>	
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_pregas}"  Grid.Column="5" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Grid.Row="6" IsReadOnly="True" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_pregas" Value="{m:Exp Str=userfiles.SelectedItem.f_pregas }" />
+                                    <o:PropertySetter PropertyName="f_pregas" NoDependValue="{m:Exp Str=sellinggas.f_pregas\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_preamount}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="7" Height="25"  >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_preamount" Value="{m:Exp Str=userfiles.SelectedItem.f_preamount }"/>
+                                    <o:PropertySetter PropertyName="f_preamount" NoDependValue="{m:Exp Str=sellinggas.f_preamount\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_cumulativepurchase}"  Grid.Column="5" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="7"  HorizontalAlignment="Stretch" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_cumulativepurchase"  Value="{m:Exp Str=userfiles.SelectedItem.f_cumulativepurchase }" />
+                                    <o:PropertySetter PropertyName="f_cumulativepurchase"  NoDependValue="{m:Exp Str=sellinggas.f_cumulativepurchase\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>	
 							
 							<TextBox Text="{m:Bind Path=f_metergasnums}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_metergasnums" Value="{m:Exp Str=userfiles.SelectedItem.f_metergasnums }"/>
+                                    <o:PropertySetter PropertyName="f_metergasnums" NoDependValue="{m:Exp Str=sellinggas.f_metergasnums\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>	
 							<TextBox Text="{m:Bind Path=f_grossproceeds}" Grid.Column="3" Margin="0" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_grossproceeds" Value="{m:Exp Str=userfiles.SelectedItem.f_grossproceeds }"/>
+                                    <o:PropertySetter PropertyName="f_grossproceeds" NoDependValue="{m:Exp Str=sellinggas.f_grossproceeds\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>	
 							
 							<TextBox Text="{m:Bind Path=f_totalcost}" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="8" TextWrapping="Wrap" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_totalcost" Value="{m:Exp Str=userfiles.SelectedItem.f_totalcost }" />
+                                    <o:PropertySetter PropertyName="f_totalcost" NoDependValue="{m:Exp Str=sellinggas.f_totalcost\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_givechange}"  Grid.Column="1" Margin="0,6" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="9"  HorizontalAlignment="Stretch" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_givechange" Value="{m:Exp Str=userfiles.SelectedItem.f_givechange }"  />
+                                    <o:PropertySetter PropertyName="f_givechange" NoDependValue="{m:Exp Str=sellinggas.f_givechange\=&gt;Completed}"  />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Margin="0" Grid.Row="14" TextWrapping="Wrap" Text="网      点：" TextAlignment="Right" Height="25"/>
@@ -409,42 +410,42 @@
 							<TextBlock Text="表上次累计购气量：" Grid.Column="4" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_premetergasnums}" Grid.Column="8" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_premetergasnums" Value="{m:Exp Str=userfiles.SelectedItem.f_premetergasnums }" />
+                                    <o:PropertySetter PropertyName="f_premetergasnums" NoDependValue="{m:Exp Str=sellinggas.f_premetergasnums\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Text="维护费交费月数：" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_repairnum}" Grid.Column="3" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" Height="25">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_repairnum" Value="{m:Exp Str=userfiles.SelectedItem.f_repairnum }" />
+                                    <o:PropertySetter PropertyName="f_repairnum" NoDependValue="{m:Exp Str=sellinggas.f_repairnum\=&gt;Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Text="维护费金额：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_amountmaintenance}" Grid.Column="3" Margin="0" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" Grid.ColumnSpan="1">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_amountmaintenance" Value="{m:Exp Str=userfiles.SelectedItem.f_amountmaintenance }" />
+                                    <o:PropertySetter PropertyName="f_amountmaintenance" NoDependValue="{m:Exp Str=sellinggas.f_amountmaintenance\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBox Text="{m:Bind Path=f_givechange}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="9"  HorizontalAlignment="Stretch" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_givechange" Value="{m:Exp Str=userfiles.SelectedItem.f_givechange }"  />
+                                    <o:PropertySetter PropertyName="f_givechange" NoDependValue="{m:Exp Str=sellinggas.f_givechange\=&gt;Completed}"  />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="网      点：" TextAlignment="Right" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_sgnetwork}" Grid.Column="1" Margin="0" Grid.Row="10" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_sgnetwork" Value="{m:Exp Str=userfiles.SelectedItem.f_sgnetwork }"  />
+                                    <o:PropertySetter PropertyName="f_sgnetwork" NoDependValue="{m:Exp Str=sellinggas.f_sgnetwork\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Grid.Column="2" Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="操  作 员："  TextAlignment="Right" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_sgoperator}" Grid.Column="3" Margin="0" Grid.Row="10" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_sgoperator" Value="{m:Exp Str=userfiles.SelectedItem.f_sgoperator }"  />
+                                    <o:PropertySetter PropertyName="f_sgoperator" NoDependValue="{m:Exp Str=sellinggas.f_sgoperator\=&gt;Completed}"  />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="交费日期：" TextAlignment="Right" Height="25" Grid.Column="4"/>
 							<sdk:DatePicker SelectedDate="{m:Bind Path=f_deliverydate}" IsEnabled="False" Grid.Column="5" Margin="0" Grid.Row="10"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_deliverydate"  Value="{m:Exp Str=userfiles.SelectedItem.f_deliverydate }"  />
+                                    <o:PropertySetter PropertyName="f_deliverydate"  NoDependValue="{m:Exp Str=sellinggas.f_deliverydate\=&gt;Completed}"  />
 								</a:Data.Prop>
 							</sdk:DatePicker>
 							<TextBlock Margin="8,2,-8,8" Grid.Row="12" TextWrapping="Wrap" Text="补打原因：" TextAlignment="Right" Height="25"/>
@@ -464,7 +465,7 @@
 							<!--购气记录id-->
 							<TextBox Text="{m:Bind Path=f_payfeeid}" Visibility="Collapsed"  Margin="0,6" TextWrapping="Wrap" IsReadOnly="True">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_payfeeid" Value="{m:Exp Str=userfiles.SelectedItem.id }" />
+                                    <o:PropertySetter PropertyName="f_payfeeid" NoDependValue="{m:Exp Str=sellinggas.f_amountmaintenance\=&gt;Completed}"  />
 								</a:Data.Prop>
 							</TextBox>	
 							<!--上次购气量-->
@@ -488,7 +489,7 @@
 							<!--卡号-->
 							<TextBox Text="{m:Bind Path=f_cardid}" Visibility="Collapsed"  Margin="0,6" TextWrapping="Wrap" IsReadOnly="True">
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=userfiles.SelectedItem.f_cardid }" />
+                                    <o:PropertySetter PropertyName="f_cardid" NoDependValue="{m:Exp Str=sellinggas.f_cardid\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<!--银行-->
@@ -531,7 +532,7 @@
 							</-->
 							<TextBox Text="{m:Bind Path=f_apartment}" Grid.Column="3" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True" Height="25" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_apartment" Value="{m:Exp Str=userfiles.SelectedItem.f_apartment }" />
+                                    <o:PropertySetter PropertyName="f_apartment" NoDependValue="{m:Exp Str=sellinggas.f_apartment\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Grid.Column="4" Grid.Row="12" TextWrapping="Wrap" Text="发 票 号："  TextAlignment="Right" Height="25" Margin="0"/>
@@ -543,7 +544,7 @@
                             <TextBlock Text="原票号：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_oldinvoicenum}" IsReadOnly="True" Grid.Column="5" Margin="0" Grid.Row="9" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
 								<a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_oldinvoicenum" Value="{m:Exp Str=userfiles.SelectedItem.f_invoicenum }" />
+                                    <o:PropertySetter PropertyName="f_oldinvoicenum" NoDependValue="{m:Exp Str=sellinggas.f_oldinvoicenum\=&gt;Completed}" />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Grid.Column="4" Margin="0" Grid.Row="13" TextWrapping="Wrap" Text="公司类型："  TextAlignment="Right" Height="25"/>
