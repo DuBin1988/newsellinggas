@@ -615,7 +615,7 @@ namespace Com.Aote.ObjectTools
                     //获取卡上内容
                     Factory = (string)go.GetPropertyValue("Factory");
                     CardId = (string)go.GetPropertyValue("CardID");
-                    Gas = double.Parse(go.GetPropertyValue("Gas").ToString()) ;
+                    Gas = double.Parse(go.GetPropertyValue("Gas").ToString());
                     Money = double.Parse(go.GetPropertyValue("Money").ToString());
                     BuyTimes = int.Parse(go.GetPropertyValue("Times").ToString());
                     Bkcs = int.Parse(go.GetPropertyValue("RenewTimes").ToString());
@@ -632,7 +632,7 @@ namespace Com.Aote.ObjectTools
         //气量大于0代表购气，气量等于0代表退气
         public void SellGas()
         {
-           
+
             //通知写卡开始
             OnWriting(null);
             IsBusy = true;
@@ -641,7 +641,43 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            if (Kmm == null || Kmm == "")
+            {
+                Kmm = "0001";
+            }
+            if (Dqdm == null || Dqdm == "")
+            {
+                Dqdm = "0001";
+            }
+            if (Yhh == null || Yhh == "")
+            {
+                Yhh = "1111111111";
+            }
+            if (Scql == null)
+            {
+                Scql = 0.0;
+            }
+            if (Sscql == null || Sscql == 0)
+            {
+                Sscql = 0.0;
+            }
+            if (Sqrq == null || Sqrq == "")
+            {
+                Sqrq = "20151111";
+            }
+            if (Scsqrq == null || Scsqrq == "")
+            {
+                Scsqrq = "20151111";
+            }
+            if (Klx == null)
+            {
+                Klx = 0;
+            }
+            if (MeterId == null || MeterId == "")
+            {
+                MeterId = "12345678";
+            }
+            string p = "http://127.0.0.1:8000/WriteGasCard" +
                             "/" + Factory +     //厂家
                            "/" + Kmm +     //卡密码，写卡后返回新密码
                            "/" + CardId +          //卡号
@@ -663,7 +699,7 @@ namespace Com.Aote.ObjectTools
             JsonObject jsonString = GetJsonString();
             client.UploadStringAsync(new Uri(p), jsonString.ToString());
 
-             
+
         }
         #endregion
 
@@ -677,9 +713,45 @@ namespace Com.Aote.ObjectTools
             Error = "";
             State = State.Start;
             //调用写卡服务
-            WebClient client = new WebClient(); 
+            WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            if (Kmm == null || Kmm == "")
+            {
+                Kmm = "0001";
+            }
+            if (Dqdm == null || Dqdm == "")
+            {
+                Dqdm = "0001";
+            }
+            if (Yhh == null || Yhh == "")
+            {
+                Yhh = "1111111111";
+            }
+            if (Scql == null)
+            {
+                Scql = 0.0;
+            }
+            if (Sscql == null || Sscql == 0)
+            {
+                Sscql = 0.0;
+            }
+            if (Sqrq == null || Sqrq == "")
+            {
+                Sqrq = "20151111";
+            }
+            if (Scsqrq == null || Scsqrq == "")
+            {
+                Scsqrq = "20151111";
+            }
+            if (Klx == null)
+            {
+                Klx = 0;
+            }
+            if (MeterId == null || MeterId == "")
+            {
+                MeterId = "12345678";
+            }
+            string p = "http://127.0.0.1:8000/WriteNewCard" +
                                         "/" + Factory +     //厂家
                                         "/" + Kmm +     //卡密码，写卡后返回新密码
                                         "/" + Kzt +          //卡状态，0开户卡，1用户卡
@@ -707,7 +779,7 @@ namespace Com.Aote.ObjectTools
                                         "/" + MeterId;  //表号
             JsonObject jsonString = GetJsonString();
             client.UploadStringAsync(new Uri(p), jsonString.ToString());
-                    }
+        }
         #endregion
 
         #region ReWriteCard 重新初始化，直接调用初始化方法
@@ -727,13 +799,13 @@ namespace Com.Aote.ObjectTools
             //执行写卡线程
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8001/WriteNewCard" +
+            string p = "http://127.0.0.1:8000/WriteNewCard" +
                             "/" + Factory +     //厂家
                            "/" + Kmm +     //卡密码，写卡后返回新密码
                            "/" + CardId +          //卡号
                             "/" + Dqdm;        //地区代码，从气表管理里取
-                           
-             JsonObject jsonString = GetJsonString();
+
+            JsonObject jsonString = GetJsonString();
             client.UploadStringAsync(new Uri(p), jsonString.ToString());
         }
         #endregion
@@ -761,7 +833,7 @@ namespace Com.Aote.ObjectTools
             obj.Add("stairgas1", Stairgas1);
             obj.Add("stairprice2", Stairprice2);
             obj.Add("stairgas2", Stairgas2);
-            obj.Add("stairprice3", Stairprice3); 
+            obj.Add("stairprice3", Stairprice3);
             obj.Add("stairgas3", Stairgas3);
             obj.Add("money", Money);
             obj.Add("totalmoney", TotalMoney);
@@ -771,41 +843,41 @@ namespace Com.Aote.ObjectTools
         //所有写卡结束后的统一处理过程
         void WriteCard_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
         {
-            (sender as WebClient).UploadStringCompleted -= WriteCard_UploadStringCompleted;
+            //(sender as WebClient).UploadStringCompleted -= WriteCard_UploadStringCompleted;
 
-            IsBusy = false;
-            //通讯错误
-            if (e.Error != null)
-            {
-                Error = "通讯错误：" + e.Error.Message;
-                State = State.LoadError;
-            }
-            else
-            {
-                //更新数据
-                JsonObject item = JsonValue.Parse(e.Result) as JsonObject;
-                GeneralObject go = new GeneralObject();
-                go.FromJson(item);
-                string exception = (string)go.GetPropertyValue("Exception");
-                string err = (string)go.GetPropertyValue("Err");
-                //如果后台有异常
-                if (exception != null)
-                {
-                    Error = "系统异常：" + exception;
-                    State = State.LoadError;
-                }
-                //写卡错误
-                else if (err != null)
-                {
-                    Error = "写卡错误：" + err;
-                    State = State.LoadError;
-                }
-                else
-                {
-                    Kmm = (string)go.GetPropertyValue("Kmm");
+            //IsBusy = false;
+            ////通讯错误
+            //if (e.Error != null)
+            //{
+            //    Error = "通讯错误：" + e.Error.Message;
+            //    State = State.LoadError;
+            //}
+            //else
+            //{
+            //    //更新数据
+            //    JsonObject item = JsonValue.Parse(e.Result) as JsonObject;
+            //    GeneralObject go = new GeneralObject();
+            //    go.FromJson(item);
+            //    string exception = (string)go.GetPropertyValue("Exception");
+            //    string err = (string)go.GetPropertyValue("Err");
+            //    //如果后台有异常
+            //    if (exception != null)
+            //    {
+            //        Error = "系统异常：" + exception;
+            //        State = State.LoadError;
+            //    }
+            //    //写卡错误
+            //    else if (err != null)
+            //    {
+            //        Error = "写卡错误：" + err;
+            //        State = State.LoadError;
+            //    }
+            //    else
+            //    {
+            //        Kmm = (string)go.GetPropertyValue("Kmm");
                     State = State.End;
-                }
-            }
+            //    }
+            //}
             OnCompleted(null);
         }
 

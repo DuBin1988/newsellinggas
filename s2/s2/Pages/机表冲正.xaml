@@ -615,7 +615,7 @@
 		</Grid>
 		<c:MessageTipObj Name="nouser" Tip="{m:Exp Str=$\{userfilego.f_userid\}号用户无交费记录$}" 
 		IsShow="{m:Exp Str=sellinggas.State\=\=$LoadError$}"/>
-		<c:PrintObj Name="zzprint" Message="是否打印购气证" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}"	 Area="{m:Res Key=zheziprint}" />
+        <c:PrintObj Name="zzprint" Message="是否打印购气证" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}"	 Area="{m:Res Key=zheziprint}" />
 		<Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-304,0,0,-589">
 			<a:Data.Context>
 				<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
