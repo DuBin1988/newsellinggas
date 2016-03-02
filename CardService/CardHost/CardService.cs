@@ -18,7 +18,7 @@ namespace CardHost
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Single)]
     class CardService : ICardService
     {
-
+        
         private static Log Log = Log.GetInstance(typeof(CardService));
         private static String EXE_IN_FULL_PATH = @"Activator.exe";
 
@@ -39,7 +39,7 @@ namespace CardHost
             using (process = new Process())
             {
                 process.StartInfo = processStartInfo;
-                process.EnableRaisingEvents = true;
+                process.EnableRaisingEvents = false;
                 process.Start();
                 //等待进程50秒，根据实施时的具体情况来设置
                 bool terminated = process.WaitForExit(50 * 1000);
@@ -63,7 +63,7 @@ namespace CardHost
             }
         }
 
-        public string Test(string name)
+        public string Test(Stream name)
         {
             return "Hi, Buddy.";
         }
@@ -87,7 +87,7 @@ namespace CardHost
                     Log.Debug(args + "=" + ci.Err);
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 ci.Exception = e.Message;
                 ci.Err = "调用错误。";
@@ -95,14 +95,15 @@ namespace CardHost
             return ci;
         }
 
-        public WriteRet WriteNewCard(string factory, string kmm, short kzt, string kh, string dqdm, string yhh, string tm,
-            int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed,
-            string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
+        public WriteRet WriteNewCard(Stream param, string factory, string kmm, string kzt, string kh, string dqdm, string yhh, string tm,
+            string ql, string csql, string ccsql, string cs, string ljgql, string bkcs, string ljyql, string bjql, string czsx, string tzed,
+            string sqrq, string cssqrq, string oldprice, string newprice, string sxrq, string sxbj, string klx, string meterid)
         {
             String args = "WriteNewCard";
             Log.Debug(args + " started.");
-            Log.Debug("Generic之后到这");
-
+            StreamReader paramReader = new StreamReader(param);
+            string paramStr = paramReader.ReadToEnd();
+            args += " " + (String.IsNullOrWhiteSpace(paramStr) ? "0" : paramStr);
             args += " " + (String.IsNullOrWhiteSpace(factory) ? "0" : factory);
             args += " " + (String.IsNullOrWhiteSpace(kmm) ? "\"0\"" : "\"" + kmm + "\"");
             args += " " + kzt;
@@ -126,8 +127,9 @@ namespace CardHost
             args += " " + newprice;
             args += " " + (String.IsNullOrWhiteSpace(sxrq) ? "0" : sxrq);
             args += " " + (String.IsNullOrWhiteSpace(sxbj) ? "0" : sxbj);
-
-
+            args += " " +  klx;
+            args += " " + (String.IsNullOrWhiteSpace(meterid) ? "0" : meterid);
+            
             String result = null;
             WriteRet ret = new WriteRet();
             try
@@ -151,13 +153,15 @@ namespace CardHost
             return ret;
         }
 
-        public WriteRet WriteGasCard(string factory, string kmm, string kh, string dqdm,
-            int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed,
-            string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
+        public WriteRet WriteGasCard(Stream param, string factory, string kmm, string kh, string dqdm,
+            string ql, string csql, string ccsql, string cs, string ljgql, string bjql, string czsx, string tzed,
+            string sqrq, string cssqrq, string oldprice, string newprice, string sxrq, string sxbj)
         {
             String args = "WriteGasCard";
             Log.Debug(args + " started.");
-
+            StreamReader paramReader = new StreamReader(param);
+            string paramStr = paramReader.ReadToEnd();
+            args += " " + (String.IsNullOrWhiteSpace(paramStr) ? "0" : paramStr);
             args += " " + (String.IsNullOrWhiteSpace(factory) ? "0" : factory);
             args += " " + (String.IsNullOrWhiteSpace(kmm) ? "\"0\"" : "\"" + kmm + "\"");
             args += " " + (String.IsNullOrWhiteSpace(kh) ? "0" : kh);

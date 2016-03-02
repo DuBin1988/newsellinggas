@@ -11,38 +11,38 @@ namespace Card
     /// <summary>
     /// 对卡操作的描述及操作时需要特别注意的问题的描述
     /// </summary>
-    public class KeLuoMuRC : ICard,IVerbose
+    public class KeLuoMuMZ : ICard,IVerbose
     {
         /// <summary>
         /// 得到日志实例。代码中的写法为了兼顾以前卡的封装
         /// 对于新卡，按照下行的方式来写
         /// <code>
-        /// private static log4net.ILog Log = log4net.LogManager.GetLogger(typeof(JinKaGY));
+        /// private static log4net.ILog Log = log4net.LogManager.GetLogger(typeof(KeLuoMuMZ));
         /// </code>
         /// </summary>
-        public static Log Log = Log.GetInstance("Card.KeLuoMuRC");
+        public static Log Log = Log.GetInstance("Card.KeLuoMuMZ");
         //引入动态库中标准读卡函数接口
-        [DllImport("qw_card.dll", EntryPoint = "ReadGasCard", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "readCard", CallingConvention = CallingConvention.StdCall)]
         public static extern Int32 ReadGasCard(Int16 com, byte[] kh, byte[] yhh, ref Int32 ql, ref Int32 cs, ref Int32 ljgql, ref Int32 syql, ref Int32 klx);
         //引入动态库中标准发卡，补卡函数接口
-        [DllImport("qw_card.dll", EntryPoint = "MakeGasCard", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "makeCard", CallingConvention = CallingConvention.StdCall)]
         public static extern int MakeGasCard(Int16 com, byte[] cardNo, byte[] customeNo, Int16 orderNum, Int32 orderamount);
         //引入动态库中标准清卡函数接口
-        [DllImport("qw_card.dll", EntryPoint = "FormatGasCard", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "clearCard", CallingConvention = CallingConvention.StdCall)]
         public static extern int StaticFormatGasCard(Int16 com, byte[] customeNo);
         //引入动态库中标准判卡函数接口
-        [DllImport("qw_card.dll", EntryPoint = "CheckGasCard", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "NewCardCheck", CallingConvention = CallingConvention.StdCall)]
         public static extern int StaticCheckGasCard(Int16 com, byte[] Istrue);
         //引入动态库中标准买气函数接口
-        [DllImport("qw_card.dll", EntryPoint = "WriteGasCard", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "writeOrders", CallingConvention = CallingConvention.StdCall)]
         public static extern Int16 StaticWriteGasCard(Int16 com, byte[] cardNo, byte[] customeNo, Int32 orderNum, Int32 orderamount);
         //引入动态库中标准检测函数接口
-        [DllImport("qw_card.dll", EntryPoint = "rd_Company", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("qw_card.dll", EntryPoint = "rdCompany", CallingConvention = CallingConvention.StdCall)]
         public static extern int Staticrd_Company(Int16 com, byte[] Istrue);
        
         public string Test()
         {
-            return "荣城民用";
+            return "绵竹";
         }
         #region 卡操作
         /// <summary>
@@ -383,7 +383,7 @@ namespace Card
         /// 存错误码不在GenericService的Errors数组中的错误错误码和错误信息，通常是表厂自己的错误信息。
         /// </summary>
         private Dictionary<int, string> Errors = new Dictionary<int, string>();
-        public KeLuoMuRC()
+        public KeLuoMuMZ()
         {
             ///<code>
             ///Errors.Add(-9999, "未知错误。");

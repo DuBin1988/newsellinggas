@@ -91,9 +91,9 @@ namespace CardHost
             {
                 string ip = Config.GetConfig("RemoteIP");
                 //从后台获取所有文件信息
-                WebClient client = new WebClient();
-                string str = client.DownloadString(ip + "/rs/card");
-                string[] infos = str.Split('|');
+                //WebClient client = new WebClient();
+                //string str = client.DownloadString(ip + "/rs/card");
+                //string[] infos = str.Split('|');
                 //对于每一个文件，检查时间是否一致，不一致则到后台获取文件
                 //foreach (string item in infos)
                 //{

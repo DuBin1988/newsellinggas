@@ -12,60 +12,67 @@ namespace Card
     [ServiceContract]
     public interface ICardService
     {
-        [OperationContract, WebGet(ResponseFormat = WebMessageFormat.Json)]
-        string Test(string name);
+        [OperationContract, WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        String Test(Stream jsonStream);
 
         [OperationContract, WebGet(ResponseFormat = WebMessageFormat.Json)]
         //读卡
         CardInfo ReadCard();
 
-        [OperationContract, WebGet(ResponseFormat = WebMessageFormat.Json)]
+        [OperationContract, WebInvoke(UriTemplate = "WriteNewCard/{factory}/{kmm}/{kzt}/{kh}/{dqdm}/{yhh}/{tm}/{ql}/{csql}/{ccsql}/{cs}/{ljgql}/{bkcs}/{ljyql}/{bjql}/{czsx}/{tzed}/{sqrq}/{cssqrq}/{oldprice}/{newprice}/{sxrq}/{sxbj}/{klx}/{meterid}",
+             RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         //写新卡
         WriteRet WriteNewCard(
+            Stream param,       //附加参数
             string factory,     //厂家代码
             string kmm,     //卡密码，写卡后返回新密码
-            Int16 kzt,          //卡状态，0开户卡，1用户卡
+            string kzt,          //卡状态，0开户卡，1用户卡
             string kh,          //卡号
             string dqdm,        //地区代码，从气表管理里取
             string yhh,         //用户号，档案中自己输入
             string tm,          //条码，传用户档案里的条码
-            Int32 ql,           //气量
-            Int32 csql,         //上次购气量，有些表需要传
-            Int32 ccsql,        //上上次购气量，有些表需要传
-            Int16 cs,           //购气次数
-            Int32 ljgql,        //当前表累计购气量
-            Int16 bkcs,         //补卡次数，用户档案里保存补卡次数
-            Int32 ljyql,        //累计用气量，有些表要累加原来用气量
-            Int32 bjql,         //报警气量
-            Int32 czsx,         //充值上限，可以在气表管理中设置
-            Int32 tzed,         //透支额度，可以在气表管理中设置
+            string ql,           //气量
+            string csql,         //上次购气量，有些表需要传
+            string ccsql,        //上上次购气量，有些表需要传
+            string cs,           //购气次数
+            string ljgql,        //当前表累计购气量
+            string bkcs,         //补卡次数，用户档案里保存补卡次数
+            string ljyql,        //累计用气量，有些表要累加原来用气量
+            string bjql,         //报警气量
+            string czsx,         //充值上限，可以在气表管理中设置
+            string tzed,         //透支额度，可以在气表管理中设置
             string sqrq,        //售气日期，格式为YYYYMMDD
             string cssqrq,      //上次售气日期，格式为YYYYMMDD
-            Int32 oldprice,     //旧单价，价格管理中取
-            Int32 newprice,     //新单价，价格管理中取
+            string oldprice,     //旧单价，价格管理中取
+            string newprice,     //新单价，价格管理中取
             string sxrq,        //生效日期，价格管理中取
-            string sxbj         //生效标记，0不生效，1生效，价格管理中取
+            string sxbj,         //生效标记，0不生效，1生效，价格管理中取
+            string klx,             //表类型 in)表类型，0->6系 1->8A/8B/8H 2->8C 3->6E6F
+            string meterid      //表号
             );
 
-        [OperationContract, WebGet(ResponseFormat = WebMessageFormat.Json)]
+
+         [OperationContract, WebInvoke(UriTemplate = "WriteGasCard/{factory}/{kmm}/{kh}/{dqdm}/{ql}/{csql}/{ccsql}/{cs}/{ljgql}/{bjql}/{czsx}/{tzed}/{sqrq}/{cssqrq}/{oldprice}/{newprice}/{sxrq}/{sxbj}",
+           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         //写购气卡
         WriteRet WriteGasCard(
+            Stream param,        //附加参数 
             string factory,     //厂家
             string kmm,     //卡密码，写卡后返回新密码
             string kh,          //卡号
             string dqdm,        //地区代码，从气表管理里取
-            Int32 ql,           //气量
-            Int32 csql,         //上次购气量，有些表需要传
-            Int32 ccsql,        //上上次购气量，有些表需要传
-            Int16 cs,           //购气次数
-            Int32 ljgql,        //当前表累计购气量
-            Int32 bjql,         //报警气量
-            Int32 czsx,         //充值上限，可以在气表管理中设置
-            Int32 tzed,         //透支额度，可以在气表管理中设置
+            string ql,           //气量
+            string csql,         //上次购气量，有些表需要传
+            string ccsql,        //上上次购气量，有些表需要传
+            string cs,           //购气次数
+            string ljgql,        //当前表累计购气量
+            string bjql,         //报警气量
+            string czsx,         //充值上限，可以在气表管理中设置
+            string tzed,         //透支额度，可以在气表管理中设置
             string sqrq,        //售气日期，格式为YYYYMMDD
             string cssqrq,      //上次售气日期，格式为YYYYMMDD
-            Int32 oldprice,     //旧单价，价格管理中取
-            Int32 newprice,     //新单价，价格管理中取
+            string oldprice,     //旧单价，价格管理中取
+            string newprice,     //新单价，价格管理中取
             string sxrq,        //生效日期，价格管理中取
             string sxbj         //生效标记，0不生效，1生效，价格管理中取
             );
@@ -78,8 +85,14 @@ namespace Card
             string kh,          //卡号
             string dqdm         //地区代码，从气表管理里取
             );
-      
-   
+        [OperationContract, WebGet(ResponseFormat = WebMessageFormat.Json)]
+        //航天解锁
+        Ret OpenCard(
+           string factory,
+           string kmm,
+           string kh,
+           string dqdm
+           );
     }
 
     //服务返回结果
@@ -171,6 +184,14 @@ namespace Card
         {
             get { return yhh; }
             set { yhh = value; }
+        }
+
+        //表号
+        private string meterid;
+        public string Meterid
+        {
+            get { return meterid; }
+            set { meterid = value; }
         }
     }
 }

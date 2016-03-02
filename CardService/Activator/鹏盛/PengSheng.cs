@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using Com.Aote.Logs;
+using ICard;
 
 namespace Card
 {
-    public class PengSheng : ICard
+    public class PengSheng : ICard,IVerbose
     {
         private static Log Log = Log.GetInstance("Card.PengSheng");
 
@@ -91,8 +92,7 @@ namespace Card
             return rs;
         }
 
-        public int ReadGasCard(short com, int baud, ref string kh, ref int ql, ref decimal money, ref short cs, ref short bkcs,ref string
-            dm )
+        public int ReadGasCard(short com, int baud, ref string kh, ref int ql, ref decimal money, ref short cs, ref short bkcs,ref string dm )
         {
             int PintCardCode = 0;
             short PboolCard = 0;
@@ -117,7 +117,8 @@ namespace Card
             bkcs = (short)PlongCardNumber;
             return rs;
         }
-        public int WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj) {
+        public int WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
+        {
             int PintCardCode = 0;
             short PboolCard = 0;
             StringBuilder PstrCustomer16Id = new StringBuilder(16);
@@ -158,7 +159,7 @@ namespace Card
         }
 
 
-        public int WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
+        public int WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj, int klx, string meterid)
         {
             Log.Debug("进入鹏胜的WriteNewCard,卡状态是"+kzt);
             StringBuilder oldkmm = new StringBuilder("ffffff");
@@ -182,7 +183,10 @@ namespace Card
                 return rs;
             }
         }
-
+        public int OpenCard(Int16 com, Int32 baud)
+        {
+            return -1;
+        }
         public string Name
         {
             get
@@ -191,6 +195,65 @@ namespace Card
             }
         }
 
+        #endregion
+          #region IVerbose 实现 在此实现错误代码与提示信息的对应关系
+
+        /// <summary>
+        /// 存错误码不在GenericService的Errors数组中的错误错误码和错误信息，通常是表厂自己的错误信息。
+        /// </summary>
+        private Dictionary<int, string> Errors = new Dictionary<int, string>();
+        public PengSheng()
+        {
+            ///<code>
+            ///Else：系统出错
+            ///
+            Errors.Add(1, "读卡器初始化出错，可能串口被占用。");
+            Errors.Add(2, "测试卡的存在错误。");
+            Errors.Add(3, "卡不存在。");
+            Errors.Add(4, "密码字符错误。");
+            Errors.Add(5, "卡密码错误，且读密码错误计数器错误。");
+            Errors.Add(6, "卡密码错误。");
+            Errors.Add(7, "加密卡被烧。");
+            Errors.Add(8, "读卡错误。");
+            Errors.Add(9, "写卡错误。");
+            Errors.Add(10, "空卡。");
+            Errors.Add(11, "卡号错误。");
+            Errors.Add(12, "用户编号错误。");
+            Errors.Add(13, "单位代号错误。");
+            Errors.Add(14, "购气量错误。");
+            Errors.Add(15, "购气序号错误。");
+            Errors.Add(16, "报警气量错误，或过大");
+            Errors.Add(17, "补卡序号错误");
+            Errors.Add(18, "非用户卡");
+            Errors.Add(19, "购气卡号不符");
+            Errors.Add(20, "购气用户编号不符");
+            Errors.Add(21, "新补的卡，暂时无法购气");
+            Errors.Add(22, "此卡被挂失");
+            Errors.Add(23, "卡内还有气量，暂时无法购气 ");
+            Errors.Add(24, "卡内没有那么多气量可以退");
+            Errors.Add(25, "修改卡密码错误");
+            Errors.Add(26, "转移卡次数错误");
+            Errors.Add(27, "非普通操作员卡");
+            Errors.Add(28, "非备用卡");
+            ///Else：系统出错
+        }
+        /// <summary>
+        /// 根据错误码，该错误码不在GenericService的Errors数组中，数组中的错误，统一处理，此处只返回不在错误列表中的错误信息
+        /// </summary>
+        /// <param name="errCode">错误代码</param>
+        /// <returns></returns>
+        public string GetError(int errCode)
+        {
+            try
+            {
+                //如果改代码不存在，会引发异常
+                return Errors[errCode];
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
         #endregion
     }
 }

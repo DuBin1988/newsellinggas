@@ -8,30 +8,38 @@ using ICard;
 
 namespace Card
 {
-    public class XianFeng : ICard,IVerbose
+    public class LiaoDong : ICard,IVerbose
     {
-        private static Log Log = Log.GetInstance("Card.XianFeng");
+        private static Log Log = Log.GetInstance("Card.LiaoDong");
 
         public string Test()
         {
-            return "ruisen";
+            return "LiaoDong";
         }
 
         #region 动态库导入
         //读卡函数
 
-        [DllImport("WRwCard.dll", EntryPoint = "ReadCard", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public unsafe static extern int ReadCard(int com,out byte* cardNo, int* BuyGasNum, int* UpdateFlag);
+        [DllImport("DR_Soft.dll", EntryPoint = "ReadGasCard", CallingConvention = CallingConvention.StdCall)]
+        public static extern Int32 ReadGasCard(Int16 com, Int32 baut, byte[] kh, ref Int32 ql, ref Int32 ljgql, ref Int32 syql);
 
-        //写卡函数
-        [DllImport("WRwCard.dll", EntryPoint = "WriteUser", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int WriteUser(int com,byte[] cardNo, byte[] OldcardNo, int BuyGasNum, int UpdateFlag);
-        //清卡
-        [DllImport("WRwCard.dll", EntryPoint = "FormatCard", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int FormatCard(int com);
-        //判卡函数
-        [DllImport("WRwCard.dll", EntryPoint = "ReadCompany", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int ReadCompany(int com);
+        [DllImport("DR_Soft.dll", EntryPoint = "WriteGasCard", CallingConvention = CallingConvention.StdCall)]
+        public static extern Int32 WriteGasCard(Int16 com, Int32 baut, byte[] kh, Int32 ql, byte[] gqrq);
+
+        [DllImport("DR_Soft.dll", EntryPoint = "WriteNewCard", CallingConvention = CallingConvention.StdCall)]
+        public static extern Int32 WriteNewCard(Int16 com, Int32 baut, byte[] kh, Int32 ql, byte[] gqrq);
+        /*
+            Com：串口号 com1为1,com2为2。
+            Baut：串口通讯波特率（1200－115200）。
+            Kh：用户卡号（00000000－99999999）。
+            ql ：气量。
+            sqrq：8位字符串如“20140808”
+         */
+        [DllImport("DR_Soft.dll", EntryPoint = "FormatGasCard", CallingConvention = CallingConvention.StdCall)]
+        public static extern Int32 FormatGasCard(Int16 com, Int32 baut);
+
+        [DllImport("DR_Soft.dll", EntryPoint = "CheckGasCard", CallingConvention = CallingConvention.StdCall)]
+        public static extern Int32 CheckCard(Int16 com, Int32 baut);
         #endregion
 
         #region ICard Members
@@ -54,7 +62,7 @@ namespace Card
             string dqdm)
         {
             Log.Debug("FormatGasCard(short com)=(" + com + "," + baud + ")");
-            int i = FormatCard(com+1);
+            int i = FormatGasCard(com, baud);
             Log.Debug("FormatGasCard(short com)=(" + com + "," + baud + ")="+i);
             return i;
         }
@@ -70,7 +78,16 @@ namespace Card
         /// <returns>成功:0,失败：非0</returns>
         public int CheckGasCard( Int16 com,  Int32 baud  ) {
             Log.Debug("CheckGasCard(short com, int baud)=(" + com + "," + baud + ")");
-            int i = ReadCompany(com+1);
+            int i = -1;
+            try
+            {
+                i = CheckCard(com, baud);
+            }
+            catch (Exception ee)
+            {
+                Log.Debug("检测卡异常:"+ee.StackTrace+"---"+ee.Message);
+            }
+            
             Log.Debug("StaticCheckGasCard(com, baud)=" + i);
             return i;
         }
@@ -91,24 +108,23 @@ namespace Card
             Log.Debug("ReadGasCard(short com, int baud, ref string kh, ref int ql, ref decimal money, ref short cs, ref Int16 bkcs)=("
                + com + "," + baud + "," + kh + "," + ql
                + money + "," + cs + "," + bkcs + "," + ")");
-           int i=10;
-           unsafe
-           {
-               byte* cardNo;
-               int quantity;
-               int flag;
-             
-               i = ReadCard(com+1,out cardNo, &quantity, &flag);
-               Log.Debug("ReadGasCard(short com, int baud, ref string kh, ref int ql, ref decimal money, ref short cs, ref Int16 bkcs)=" +
-                 "(" + com + "," + baud + "," + kh + "," + ql
-                 + money + "," + cs + "," + bkcs + ")=" + i);
-               while (*cardNo != 0)
-               {
-                   kh += Convert.ToChar(*cardNo++);
-               }
-               ql = quantity;
-           }
-            return i;
+            byte[] cardno = new byte[8];          
+            Int32 ljgql = 0;
+            Int32 syql = 0;
+            int result = -1;
+            try
+            {
+                result = ReadGasCard(com, baud, cardno, ref ql, ref ljgql, ref syql);
+                kh = Encoding.ASCII.GetString(cardno, 0, 8);
+            }
+            catch (Exception ee)
+            {
+                Log.Debug("读卡异常:"+ee.Message+"----"+ee.StackTrace);
+            }
+           
+            Log.Debug("ReadGasCard(short com, int baud, ref string kh, ref int ql, ref decimal money, ref short cs, ref Int16 bkcs)=" +
+                 "(" + com + "," + baud + "," + kh + "," + ql + ")");
+            return result;
         }
         /// <summary>
         /// 售气写卡
@@ -135,59 +151,37 @@ namespace Card
         /// <returns>成功:0,失败：非0</returns>
         public int WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
         {
+            int result = -1;
+            if (ql < 0)
+            {
+                ql = 0;
+            }
             Log.Debug("WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
                 + com + "," + baud + "," + kmm + "," + kh
                 + dqdm + "," + ql + "," + csql + "," + ccsql
                 + cs + "," + ljgql + "," + bjql + "," + czsx
                 + tzed + "," + sqrq + "," + cssqrq + "," + oldprice
                 + newprice + "," + sxrq + "," + sxbj
-                + ")");
-            int i = 10;
-            byte[] cardNo1 = System.Text.Encoding.GetEncoding(1252).GetBytes(kh);
-
-            unsafe
-            {
-
-                int flag = 0;
-                int quantity = ql;
-                if (ql > 0)
-                { 
-                    i = WriteUser(com+1,cardNo1, cardNo1, quantity, flag);
-                Log.Debug("WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
+                + ")");          
+            try 
+	            {	        
+		             byte[] cardno = System.Text.Encoding.GetEncoding(1252).GetBytes(kh);
+                     byte[] gasdate = System.Text.Encoding.GetEncoding(1252).GetBytes(sqrq);
+                     result = WriteGasCard(com, baud, cardno, ql, gasdate);
+	            }
+	            catch (Exception ee)
+	            {
+		            Log.Debug("写卡异常："+ee.Message+"----"+ee.StackTrace);
+	            }
+           
+            Log.Debug("WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
                    + com + "," + baud + "," + kmm + "," + kh
                    + dqdm + "," + ql + "," + csql + "," + ccsql
                    + cs + "," + ljgql + "," + bjql + "," + czsx
                    + tzed + "," + sqrq + "," + cssqrq + "," + oldprice
                    + newprice + "," + sxrq + "," + sxbj
-                   + ")=" + i);
-                }
-                else {
-                    byte* cardNo;
-                    int quantity1;
-                    Log.Debug("XF ReadCard start ");
-                    i = ReadCard(com+1,out cardNo, &quantity, &flag);
-                    Log.Debug("XF ReadCard end and i is " + i + " quantity is " + quantity + " flag is " + flag + "ql is " + ql);
-                    while (*cardNo != 0)
-                    {
-                        kh += Convert.ToChar(*cardNo++);
-                    }
-
-                    flag = 0;
-                    quantity1 = quantity + ql;
-                    i = WriteUser(com+1,cardNo1, cardNo1, quantity1, flag);
-                   Log.Debug("WriteGasCard(short com, int baud, ref string kmm, string kh, string dqdm, int ql, int csql, int ccsql, short cs, int ljgql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
-                   + com + "," + baud + "," + kmm + "," + kh
-                   + dqdm + "," + ql + "," + csql + "," + ccsql
-                   + cs + "," + ljgql + "," + bjql + "," + czsx
-                   + tzed + "," + sqrq + "," + cssqrq + "," + oldprice
-                   + newprice + "," + sxrq + "," + sxbj
-                   + ")=" + i);
-                }
-          
-             
-            }
-          
-            return i;
+                   + ")=" + result);               
+            return result;
         }
         /// <summary>
         /// 写新卡
@@ -219,6 +213,7 @@ namespace Card
         /// <returns>成功:0,失败：非0</returns>
         public int WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj, int klx, string meterid)
         {
+            int result = -1;
             Log.Debug("WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
                   + com + "," + baud + "," + kmm + "," + kzt
                   + kh + "," + dqdm + "," + yhh + "," + tm
@@ -227,16 +222,15 @@ namespace Card
                   + czsx + "," + tzed + "," + sqrq + "," + cssqrq
                   + oldprice + "," + newprice + "," + sxrq + "," + sxbj
                   + ")");
-            FormatCard(com);
-            int i = 10;
-            byte[] cardNo1 = System.Text.Encoding.GetEncoding(1252).GetBytes(kh);
-
-            unsafe
-            {
-
-                int flag = 12;
-                int quantity = ql;
-                i=WriteUser(com+1,cardNo1, cardNo1, quantity, flag);
+           result = FormatGasCard(com, baud);
+           Log.Debug("格式化卡结果:"+result);
+           byte[] cardNo = System.Text.Encoding.GetEncoding(1252).GetBytes(kh);
+            byte[] gasdate = System.Text.Encoding.GetEncoding(1252).GetBytes(sqrq);
+           if(0 == kzt)
+           {
+               cs = 1;
+           }
+           result = WriteNewCard(com, baud, cardNo, ql, gasdate);
                 Log.Debug("WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)=("
                     + com + "," + baud + "," + kmm + "," + kzt
                     + kh + "," + dqdm + "," + yhh + "," + tm
@@ -244,10 +238,8 @@ namespace Card
                     + ljgql + "," + bkcs + "," + ljyql + "," + bjql
                     + czsx + "," + tzed + "," + sqrq + "," + cssqrq
                     + oldprice + "," + newprice + "," + sxrq + "," + sxbj
-                    + ")=" + i);
-            }
-
-            return i;
+                    + ")=" + result);
+            return result;
         }
 
         public string Name
@@ -265,26 +257,30 @@ namespace Card
         /// 存错误码不在GenericService的Errors数组中的错误错误码和错误信息，通常是表厂自己的错误信息。
         /// </summary>
         private Dictionary<int, string> Errors = new Dictionary<int, string>();
-        public XianFeng()
+        public LiaoDong()
         {
             ///<code>
             ///Errors.Add(-9999, "未知错误。");
             ///
-            Errors.Add(-100, "判卡失败。");
-            Errors.Add(-101, "串口打开失败。");
-            Errors.Add(-102, "卡片加电失败。");
-            Errors.Add(-103, "重新操作。");
-            Errors.Add(-104, "读卡器中没有插卡。");
-            Errors.Add(-105, "不是SLE4442卡。");
-            Errors.Add(-106, "清卡失败。");
-            Errors.Add(-107, "读卡失败。");
-            Errors.Add(-110, "读取卡片数据失败。");
-            Errors.Add(-111, "数据转换失败。");
-            Errors.Add(-112, "密码校验失败。");
-            Errors.Add(-113, "写卡出错。");
-            Errors.Add(-114, "公司代码不匹配。");
-            Errors.Add(-115, "不是空白卡。");
-            Errors.Add(-116, "密码修改出错。");
+           
+            Errors.Add(-2, "串口打开失败。");
+            Errors.Add(-3, "设备状态失败。");
+            
+            Errors.Add(-4, "读卡器中没有插卡。");
+            Errors.Add(-5, "读卡密码次数失败");
+            Errors.Add(-6, "该卡已经损坏。");
+            Errors.Add(-7, "读卡失败。");
+            Errors.Add(-8, "不是用户卡。");
+           
+            Errors.Add(-9, "密码校验失败。");
+            Errors.Add(-10, "写卡出错。");
+            Errors.Add(-12, "关闭通讯串口失败。");
+            Errors.Add(-13, "该卡可能是新卡或插反。");
+            Errors.Add(-14, "该卡非本系统卡。");
+            Errors.Add(-15, "该卡不是新卡。");
+            Errors.Add(-16, "用户卡号与卡内的值不匹配。");
+            Errors.Add(-17, "清卡失败。");
+            Errors.Add(-18, "气量超限。");
         }
 
 

@@ -80,6 +80,10 @@ namespace Card
       
             return i;
         }
+        public int OpenCard(Int16 com, Int32 baud)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// 判卡
         /// </summary>
@@ -232,7 +236,7 @@ namespace Card
         /// <param name="sxrq">生效日期</param>
         /// <param name="sxbj">生效标记</param>
         /// <returns>成功:0,失败：非0</returns>
-        public int WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj)
+        public int WriteNewCard(short com, int baud, ref string kmm, short kzt, string kh, string dqdm, string yhh, string tm, int ql, int csql, int ccsql, short cs, int ljgql, short bkcs, int ljyql, int bjql, int czsx, int tzed, string sqrq, string cssqrq, int oldprice, int newprice, string sxrq, string sxbj, int klx, string meterid)
         {
 
             double d_buy = ql;             //购气量

@@ -48,7 +48,9 @@ namespace Card
             Int32 oldprice,     //旧单价，价格管理中取
             Int32 newprice,     //新单价，价格管理中取
             string sxrq,        //生效日期，价格管理中取
-            string sxbj         //生效标记，0不生效，1生效，价格管理中取
+            string sxbj,         //生效标记，0不生效，1生效，价格管理中取
+            Int32 klx,           //表类型 in)表类型，0->6系 1->8A/8B/8H 2->8C 3->6E6F
+            string meterid       //表号
             );
     
         //写购气卡
@@ -89,6 +91,9 @@ namespace Card
             Int32 baud          //波特率
             );
         //航天解锁
-     
+        int OpenCard(
+           Int16 com,          //串口号，从0开始
+           Int32 baud          //波特率
+           );
    }
 }
