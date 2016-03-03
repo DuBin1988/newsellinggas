@@ -13,14 +13,14 @@ using System.Linq;
 using Com.Aote.ObjectTools;
 
 namespace Com.Aote.Pages
-{ 
+{
 	public partial class 非民用一步建档 : UserControl
 	{
         String userid = "";
 
 		public 非民用一步建档()
 		{
-
+            
 			// Required to initialize variables
 			InitializeComponent();
 		}
@@ -94,5 +94,4 @@ namespace Com.Aote.Pages
             }
         }
 	}
-
 }
