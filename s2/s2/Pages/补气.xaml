@@ -25,7 +25,7 @@
 		 Factory="{m:Exp Str=apply.DataContext.f_aliasname}" 
 		 BuyTimes="{m:Exp Str=user.f_times.ToInt()}"
 		 Klx="{m:Exp Str='user != null\:user.klx\,null'}"		
-		 Kzt="0"
+		 Kzt="{m:Exp Str='card.CardId\=>ReadCompleted!=null:0,0'}"
 		 Dqdm="{m:Exp Str='user != null \:user.dqdm\,null'}"
 		 Yhh="{m:Exp Str='user != null \:user.yhh\,null'}"
 		 Tm="{m:Exp Str='user != null \:user.f_meternumber\,null'}"
@@ -40,6 +40,14 @@
 		 NewPrice="{m:Exp Str='user != null\:user.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         Stairprice1="{m:Exp Str='user != null \:user.f_stair1price\,null'}"
+         Stairgas1="{m:Exp Str='user != null \:user.f_stair1amount\,null'}" 
+         Stairprice2="{m:Exp Str='user != null \:user.f_stair2price\,null'}"
+         Stairgas2="{m:Exp Str='user != null \:user.f_stair2amount\,null'}"                         
+         Stairprice3="{m:Exp Str='user != null \:user.f_stair3price\,null'}"
+         Stairgas3="{m:Exp Str='user != null \:user.f_stair3amount\,null'}" 
+         Money="{m:Exp Str=apply.DataContext.f_preamount}"      
+         TotalMoney="{m:Exp Str=apply.DataContext.f_totalcost}"
 		>
 		</oo:NewGeneralICCard>
 		

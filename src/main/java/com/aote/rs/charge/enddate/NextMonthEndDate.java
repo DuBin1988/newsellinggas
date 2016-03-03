@@ -24,4 +24,6 @@ public class NextMonthEndDate implements IEndDate {
 		return cal;
 	}
 
+ 
 }
+ 

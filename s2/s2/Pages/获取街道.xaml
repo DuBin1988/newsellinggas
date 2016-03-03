@@ -19,39 +19,39 @@
 	Title="获取街道"
 	d:DesignWidth="400" d:DesignHeight="300" Name="child">
 
-	<Grid x:Name="Layout">
-		<Grid >
-			<Grid.RowDefinitions>
-				<RowDefinition Height="30"/>
-				<RowDefinition Height="200"/>
-				<RowDefinition Height="30"/>
-			</Grid.RowDefinitions>
-		<toolkit:DockPanel Grid.Column="2"  x:Name="roadsearch" Grid.ColumnSpan="2">
-							<a:Data.Context>
-								<o:SearchObject />        	
-							</a:Data.Context>
-								<TextBlock Text="街道名称：" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
-								<TextBox Text="{m:Bind Path=f_road}" Width="150" Margin="10,0,0,0">
-									<a:Data.Prop>
-										<o:PropertySetter PropertyName="f_road"  Operator="f_road like 'this%'"/>
-									</a:Data.Prop>
-									</TextBox>
-									<Button Content="查询"  Click="{m:Exp Str=roadsearch.DataContext.Search()}" Width="70" Margin="20,0,0,0"  />
-								
-								</toolkit:DockPanel>
-								<sdk:DataGrid x:Name="userfiles1" Margin="0"  FontSize="13.333"
+    <Grid x:Name="Layout">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <toolkit:DockPanel Grid.Column="2"  x:Name="roadsearch" Grid.ColumnSpan="2">
+                <a:Data.Context>
+                    <o:SearchObject />
+                </a:Data.Context>
+                <TextBlock Text="街道名称：" Margin="0,1,-0.25,4" TextWrapping="Wrap" TextAlignment="Right" Height="25" FontSize="13.333" d:LayoutOverrides="HorizontalMargin"/>
+                <TextBox Text="{m:Bind Path=f_road}" Width="150" Margin="10,0,0,0">
+                    <a:Data.Prop>
+                        <o:PropertySetter PropertyName="f_road"  Operator="f_road like 'this%'"/>
+                    </a:Data.Prop>
+                </TextBox>
+                <Button Content="查询"  Click="{m:Exp Str=roadsearch.DataContext.Search()}" Width="70" Margin="20,0,0,0"  />
+
+            </toolkit:DockPanel>
+            <sdk:DataGrid x:Name="userfiles1" Margin="0"  FontSize="13.333"
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="7">
-						<a:Data.Items>
-							<o:ObjectList Name="userfileslist1" WebClientInfo="{StaticResource dbclient}"								
-								Path="{m:Exp Str=$from t_road where \{roadsearch.DataContext.Condition\}}"/>
-						</a:Data.Items>
-						<sdk:DataGrid.Columns>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-							<sdk:DataGridTextColumn Header="街道名称" Binding="{Binding f_road}"/>
-						</sdk:DataGrid.Columns>
-					</sdk:DataGrid>
-					<Button Content="确认选择" Grid.Row="2" Width="80" HorizontalAlignment="Right" Height="25" Click="{m:Exp Str=child.ReturnValue\=userfiles1.SelectedItem;child.Close()}" ></Button>
-					</Grid>
-					
-				</Grid>
+                <a:Data.Items>
+                    <o:ObjectList Name="userfileslist1" WebClientInfo="{StaticResource dbclient}"								
+								Path="{m:Exp Str=$from t_road where \{roadsearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"/>
+                </a:Data.Items>
+                <sdk:DataGrid.Columns>
+                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                    <sdk:DataGridTextColumn Header="街道名称" Binding="{Binding f_road}"/>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+            <Button Content="确认选择" Grid.Row="2" Width="80" HorizontalAlignment="Right" Height="25" Click="{m:Exp Str=child.ReturnValue\=userfiles1.SelectedItem;child.Close()}" ></Button>
+        </Grid>
+
+    </Grid>
 </c:CustomChildWindow>

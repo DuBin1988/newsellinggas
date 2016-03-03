@@ -13,14 +13,26 @@ using System.Net;
 using System.Json;
 using Com.Aote.Behaviors;
 using Com.Aote.Controls;
+using System.Collections.Generic;
 
 namespace Com.Aote.Pages
 {
     public partial class 卡表收费 : UserControl
     {
         GeneralObject goPopup = new GeneralObject();
- 
+
         PagedList listwh = new PagedList();
+        private void save12_Click(object sender, RoutedEventArgs e)
+         {
+            GeneralObject go = kbfee1.DataContext as GeneralObject;
+            Dictionary<String, String> dict = go._errors;
+            String err = "";
+            foreach (String key in dict.Keys)
+            {
+                err += key + ":" + dict[key] + "\n";
+            }
+            MessageBox.Show(err);
+        }
 
         public 卡表收费()
         {
@@ -43,6 +55,7 @@ namespace Com.Aote.Pages
             ui_chargeBusy.IsBusy = true;
             string userid = f_userid.Text;
             string pregas = ui_pregas.Text;
+            string usertype = f_usertype.Text;
             if (userid.Equals(""))
             {
                 MessageBox.Show("请先读卡！");
@@ -56,7 +69,7 @@ namespace Com.Aote.Pages
                 return;
             }
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas;
+            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += client_DownloadStringCompleted;
@@ -73,9 +86,6 @@ namespace Com.Aote.Pages
                 ui_stair1amont.Text = items["f_stair1amount"].ToString();
                 ui_stair2amont.Text = items["f_stair2amount"].ToString();
                 ui_stair3amont.Text = items["f_stair3amount"].ToString();
-                ui_stair1surplus.Text = items["f_stair1surplus"].ToString();
-                ui_stair2surplus.Text = items["f_stair2surplus"].ToString();
-                ui_stair3surplus.Text = items["f_stair3surplus"].ToString();
                 ui_stair4amont.Text = items["f_stair4amount"].ToString();
                 ui_stair1fee.Text = items["f_stair1fee"].ToString();
                 ui_stair2fee.Text = items["f_stair2fee"].ToString();
@@ -86,7 +96,9 @@ namespace Com.Aote.Pages
                 ui_stair3price.Text = items["f_stair3price"].ToString();
                 ui_stair4price.Text = items["f_stair4price"].ToString();
                 ui_allamont.Text = items["f_allamont"].ToString();
-                if (items["f_stardate"] == null) {
+                ui_OrdinaryNum.Text = items["f_allamont"].ToString();
+                if (items["f_stardate"] == null)
+                {
                     items["f_stardate"] = "2050-12-12";
                 }
                 if (items["f_enddate"] == null)
@@ -124,7 +136,7 @@ namespace Com.Aote.Pages
             }
             userid = f_userid.Text;
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-            string str = wci.BaseAddress + "/fee/" + userid + "/" + grossproceeds;
+            string str = wci.BaseAddress + "/fee/" + userid + "/" + grossproceeds + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client1 = new WebClient();
             client1.DownloadStringCompleted += client1_DownloadStringCompleted;
@@ -140,7 +152,7 @@ namespace Com.Aote.Pages
                 JsonObject items = JsonValue.Parse(e.Result) as JsonObject;
                 pregas = Math.Floor(double.Parse(items["chargeamont"].ToString()));
                 WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas;
+                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
                 Uri uri = new Uri(str);
                 WebClient client2 = new WebClient();
                 client2.DownloadStringCompleted += client2_DownloadStringCompleted;
@@ -183,7 +195,7 @@ namespace Com.Aote.Pages
                 }
                 ui_stardate.Text = items["f_stardate"].ToString().Substring(1, 10);
                 ui_enddate.Text = items["f_enddate"].ToString().Substring(1, 10);
-                ui_preamount.Text = Math.Round(double.Parse(items["f_chargenum"].ToString()), 2).ToString(); 
+                ui_preamount.Text = Math.Round(double.Parse(items["f_chargenum"].ToString()), 2).ToString();
                 ui_totalcost.Text = Math.Round(double.Parse(items["f_totalcost"].ToString()), 2).ToString();
                 ui_pregas.Text = pregas.ToString();
 
@@ -197,19 +209,21 @@ namespace Com.Aote.Pages
 
         private void DisplayPopup(object sender, RoutedEventArgs e)
         {
-            if (myPopup.IsOpen == false) { 
-            myPopup.IsOpen = true;
+            if (myPopup.IsOpen == false)
+            {
+                myPopup.IsOpen = true;
             }
-            else{
+            else
+            {
                 myPopup.IsOpen = false;
             }
         }
 
-      
+
 
         private void fapiaoNum1_TextChanged(object sender, TextChangedEventArgs e)
         {
-           // FapiaoNum.Text =  (int.Parse(fapiaoNum1.Text)).ToString("D8");
+            // FapiaoNum.Text =  (int.Parse(fapiaoNum1.Text)).ToString("D8");
         }
 
         /// <summary>
@@ -219,44 +233,22 @@ namespace Com.Aote.Pages
         /// <param name="e"></param>
         private void NewGeneralICCard_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            NewGeneralICCard firstWriteCard = (NewGeneralICCard)sender;
-            //写卡失败，显示错误原因，只能重写
-            if (firstWriteCard.State == State.LoadError)
-            {
-                //显示校验框
-                VerificationPopUp.Visibility = Visibility.Visible;
-                goPopup.SetPropertyValue("PreGasOnCard", TextGasOnCard.Text, true);
-                GeneralObject go = kbfee1.DataContext as GeneralObject;
-                goPopup.SetPropertyValue("GasPurchased", go.GetPropertyValue("f_pregas").ToString(), true);
-                if (go.GetPropertyValue("f_surplusgas") == null)
-                    goPopup.SetPropertyValue("GasAddedOn", "0", true);
-                else
-                    goPopup.SetPropertyValue("GasAddedOn", go.GetPropertyValue("f_surplusgas").ToString(), true);
-                goPopup.SetPropertyValue("IsBalanced", "False", true);
-                goPopup.SetPropertyValue("IsNotBalanced", "True", true);
-                goPopup.SetPropertyValue("IsOccupied", "False", true);
-                goPopup.SetPropertyValue("Hint", "写卡失败,请重写!"+firstWriteCard.Error, true);
-                VerificationPopUp.DataContext = goPopup;
-            }
+            //显示校验框
+            VerificationPopUp.Visibility = Visibility.Visible;
+            goPopup.SetPropertyValue("PreGasOnCard", TextGasOnCard.Text, true);
+            GeneralObject go = kbfee1.DataContext as GeneralObject;
+            goPopup.SetPropertyValue("GasPurchased", go.GetPropertyValue("f_pregas").ToString(), true);
+            if (go.GetPropertyValue("f_surplusgas") == null)
+                goPopup.SetPropertyValue("GasAddedOn", "0", true);
             else
-            {
-                //显示校验框
-                VerificationPopUp.Visibility = Visibility.Visible;
-                goPopup.SetPropertyValue("PreGasOnCard", TextGasOnCard.Text, true);
-                GeneralObject go = kbfee1.DataContext as GeneralObject;
-                goPopup.SetPropertyValue("GasPurchased", go.GetPropertyValue("f_pregas").ToString(), true);
-                if (go.GetPropertyValue("f_surplusgas") == null)
-                    goPopup.SetPropertyValue("GasAddedOn", "0", true);
-                else
-                    goPopup.SetPropertyValue("GasAddedOn", go.GetPropertyValue("f_surplusgas").ToString(), true);
-                goPopup.SetPropertyValue("IsBalanced", "False", true);
-                goPopup.SetPropertyValue("IsNotBalanced", "False", true);
-                goPopup.SetPropertyValue("IsOccupied", "True", true);
-                goPopup.SetPropertyValue("Hint", "", true);
-                VerificationPopUp.DataContext = goPopup;
-                //读卡
-                ReadChip(e, null);
-            }
+                goPopup.SetPropertyValue("GasAddedOn", go.GetPropertyValue("f_surplusgas").ToString(), true);
+            goPopup.SetPropertyValue("IsBalanced", "False", true);
+            goPopup.SetPropertyValue("IsNotBalanced", "False", true);
+            goPopup.SetPropertyValue("IsOccupied", "True", true);
+            goPopup.SetPropertyValue("Hint", "", true);
+            VerificationPopUp.DataContext = goPopup;
+            //读卡
+            ReadChip(e, null);
         }
 
         //写卡
@@ -265,13 +257,13 @@ namespace Com.Aote.Pages
             goPopup.SetPropertyValue("IsOccupied", "True", true);
             NewGeneralICCard chip = (from p in loader.Res where p.Name.Equals("chip") select p).First() as NewGeneralICCard;
             chip.BuyTimes = card.BuyTimes;
-             chip.Completed += chip_Completed;
+            chip.Completed += chip_Completed;
             chip.SellGas();
         }
 
         void chip_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            NewGeneralICCard chip = (from p in loader.Res where p.Name.Equals("chip") select p).First() as NewGeneralICCard;
+            NewGeneralICCard card = (from p in loader.Res where p.Name.Equals("chip") select p).First() as NewGeneralICCard;
             chip.Completed -= chip_Completed;
             //继续读卡
             ReadChip(e, null);
@@ -282,6 +274,7 @@ namespace Com.Aote.Pages
         {
             goPopup.SetPropertyValue("IsOccupied", "True", true);
             NewGeneralICCard chip = (from p in loader.Res where p.Name.Equals("chip") select p).First() as NewGeneralICCard;
+            NewGeneralICCard card = (from p in loader.Res where p.Name.Equals("card") select p).First() as NewGeneralICCard;
             chip.ReadCompleted += chip_ReadCompleted;
             chip.ReadCard();
         }
@@ -330,7 +323,7 @@ namespace Com.Aote.Pages
         {
             (sender as WebClient).UploadStringCompleted -= wc_UploadStringCompleted;
             print.State = State.Start;
-            print.Print();
+            print.TipPrint();
             VerificationPopUp.Visibility = Visibility.Collapsed;
         }
 

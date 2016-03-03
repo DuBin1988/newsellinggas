@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+ 
 /**
  * 计算抄表交费截止日期
  * @author Administrator
@@ -12,3 +13,4 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 public interface IEndDate {
 	Calendar enddate(String userid,HibernateTemplate hibernateTemplate);
 }
+ 

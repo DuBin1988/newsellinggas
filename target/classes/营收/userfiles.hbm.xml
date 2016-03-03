@@ -1,18 +1,19 @@
-<?xml version="1.0"  encoding='utf-8'?>
+﻿<?xml version="1.0"  encoding='utf-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC 
 	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <!--用户档案表-->
-	<class  entity-name="t_userfiles" table="t_userfiles" dynamic-update="true">
+	<class  entity-name="t_userfiles" table="t_userfiles" dynamic-insert="true" dynamic-update="true">
 		<id name="id" type="int">
 			<generator class="identity"></generator>
 		</id>
 			<version name="version"></version>
-	 	<!--用户编号-->
-		<!-- property name="f_userinfoid" type="string" /-->
+	 	
+		<!--用户编号-->
+		<property name="f_userinfoid" type="string" />
 		<!--用户档案 -->
-		<many-to-one name="f_userinfoid" entity-name="t_userinfo"></many-to-one>
+		<!--many-to-one name="f_userinfoid" entity-name="t_userinfo"/-->
 		
 		<!--发票号， -->
 		<property name="f_invoicenum" type="string"/>
@@ -160,6 +161,8 @@
 		<property name="f_gasmeteraccomodations" type="double"/>
 		<!--表号-->
 		<property name="f_meternumber" type="string"/>
+		<!--假表号-->
+		<property name="f_meternumber1" type="string"/>
 		<!--表 封 号-->
 		<property name="f_metertitles" type="string"/>
 		<!--卡号-->
@@ -285,6 +288,12 @@
 		<property name="f_whethergivepassbook" type="string"/>
 		<!--大小卡-->
 		<property name="f_bigsmallcard" type="string"/>
+		<!--抄表系统最新底数-->
+		<property name="lastinputgasnum_cb" type="double"/>
+		<!--抄表系统最新抄表日期-->
+		<property name="lastinputdate_cb" type="date"/>
+		<!--抄表系统最新抄表月份-->
+		<property name="lastinputjval_cb" type="double"/>
 <!--隐藏域换表 -->	
 		<!--超用气量-->
 		<property name="f_cypregas" type="double"/>
@@ -420,9 +429,6 @@
 		<property name="f_stair4price" type="double"/>
 		<!--阶段月数-->
 		<property name="f_stairmonths" type="int"/>
-			<!--阶段开始日期-->
-		<property name="f_stairstartdate" type="string"/>
-	
 		<!-- ***************安检*************** -->
 		<!--待检标记-->
 		<property name="f_toBeInspected" type="string"/>
@@ -431,6 +437,73 @@
 		<!-- ***************押金*************** -->
 		<!--押金-->
 		<property name="f_yajin" type="string"/>
-		
+	<!-- 抄表系统 对接       -->
+		<!--表具状态-->
+		<property name="f_tablestatus" type="string"/>
+		<!--状态时间-->
+		<property name="f_statusdate" type="string"/>
+		<!--档案同步状态-->
+		<property name="f_danganstatus" type="string"/>
+		<!--档案同步状态-->
+		<property name="f_danganreturnvalue" type="string" >
+			<column name="f_danganreturnvalue" default="0"></column>
+		</property>
+		<!--用户同步状态-->
+		<property name="f_userstatus" type="string" >
+			<column name="f_userstatus" default="0"></column>
+		</property>
+		<!--表计电话-->
+		<property name="meter_phone" type="string"/>
+		<!--终端名称-->
+		<property name="terminal_name" type="string"/>
+		<!--单价同步 状态-->
+		<property name="f_returnvaluedj" type="string" >
+			<column name="f_returnvaluedj" default="0"></column>
+		</property>
+		<!--阀门指令-->
+		<property name="f_operate_zl" type="string"/>
+		<!--阀门状态-->
+		<property name="f_operate_status" type="string"/>
+		<!--阀门操作时间-->
+		<property name="f_operate_date" type="string"/>
+		<!--阀门同步状态-->
+		<property name="f_returnvalueoperate" type="string" >
+			<column name="f_returnvalueoperate" default="0"></column>
+		</property>
+		<!-- 表通道类型 -->
+		<property name="f_channel_type" type="string"/>
+		<!-- 是否支持阀门操作  -->
+		<property name="switch_op" type="string"/>
+		<!-- 旧编号  -->
+		<property name="old_steal_no" type="string"/>
+		<property name="old_val" type="double"/>
+		<!-- 表状态详细信息  -->
+		<property name="f_tablesmessage" type="string"/>
+		<!-- 抄表系统刷新缓存 refreshCache-->
+		<property name="refreshCache" type="string" >
+			<column name="refreshCache" default="0"></column>
+		</property>
+		<!-- 表计量类型  -->
+		<property name="f_jllx" type="string"/>
+
+		<!--平价气累计购气量-->
+		<property name="f_OrdinaryNum" type="double"/>
+		<!--上次购气量-->
+		<property name="f_ThePreGas" type="double"/>
+		<!--上上次购气量-->
+		<property name="f_LastPreGas" type="double"/>
+		<!--上上上次购气量-->
+		<property name="f_LastLastPreGas" type="double"/>
+		<!--是否已经关联-->
+		<property name="f_IsLinked" type="string"/>
+
+		<!--补卡次数-->
+		<property name="f_PatchCard" type="int"/>
+		<!--组织代码-->
+		<property name="f_OrgStr" type="string"/>
+		<!--暗码-->
+		<property name="f_secretcode" type="string"/>
+		<!--明码-->
+		<property name="f_plaincode" type="string"/>
 </class>
 </hibernate-mapping>

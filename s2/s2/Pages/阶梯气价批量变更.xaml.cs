@@ -18,7 +18,7 @@ namespace Com.Aote.Pages
     {
         SearchObject search = new SearchObject();
         String f_userids = "";
-       
+
         public 阶梯气价批量变更()
         {
             InitializeComponent();
@@ -119,10 +119,10 @@ namespace Com.Aote.Pages
                     WebClient client = new WebClient();
                     client.UploadStringCompleted += client_UploadStringCompleted;
                     client.UploadStringAsync(new Uri(uri), json);
-                }           
+                }
 
             }
-            else 
+            else
             {
                 MessageBox.Show("请输入阶梯气价类型！");
                 ui_searchBusy.IsBusy = false;

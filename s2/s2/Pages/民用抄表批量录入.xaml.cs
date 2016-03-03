@@ -34,13 +34,13 @@ namespace Com.Aote.Pages
             BaseObjectList list = daninfos.ItemsSource as BaseObjectList;
 
             List<GeneralObject> removed = new List<GeneralObject>();
-            var meterstate = meter.SelectedValue;
 
             //对于每一条记录
             foreach (GeneralObject go in list)
             {
+                //表状态
+                var meterstate = meter.SelectedValue;
 
-             
                 // 抄表记录里的上期指数
                 var lastinputnum = go.GetPropertyValue("lastinputgasnum");
 
@@ -67,10 +67,10 @@ namespace Com.Aote.Pages
                 {
                     json += ',';
                 }
-              //产生要发送后台的JSON串
+                //产生要发送后台的JSON串
                 json += ("{userid:" + go.GetPropertyValue("f_userid") + ",lastreading:" + lastinputnum + ",reading:" + lastrecord + ",meterstate:" + meterstate + "}");
-      
-               }
+
+            }
 
             json += "]";
 
@@ -80,9 +80,9 @@ namespace Com.Aote.Pages
             }
             //将产生的json串送后台服务进行处理
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + ui_sgoperator.Text + "/" + chaobiaoriqi.SelectedDate +"/" +meter.SelectedValue.ToString() + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + ui_sgoperator.Text + "/" + chaobiaoriqi.SelectedDate + "/" + meter.SelectedValue.ToString() + "?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
-         	client.UploadStringCompleted += client_UploadStringCompleted;
+            client.UploadStringCompleted += client_UploadStringCompleted;
             client.UploadStringAsync(new Uri(uri), json);
         }
 
@@ -160,7 +160,7 @@ namespace Com.Aote.Pages
                 //把数据转换成JSON
                 JsonArray items = JsonValue.Parse(e.Result) as JsonArray;
                 daninfos.ItemsSource = list;
-                if(list.Size!=0)
+                if (list.Size != 0)
                 {
                     list.Clear();
                 }
@@ -183,7 +183,7 @@ namespace Com.Aote.Pages
                     catch (Exception ex)
                     {
                         ui_handBusy.IsBusy = false;
-                        MessageBox.Show("用户:"+go.GetPropertyValue("f_userid")+"抄表数据有问题,请核查!");
+                        MessageBox.Show("用户:" + go.GetPropertyValue("f_userid") + "抄表数据有问题,请核查!");
                         MessageBox.Show(ex.ToString() + "" + go.GetPropertyValue("f_userid"));
                         return;
                     }

@@ -368,15 +368,16 @@ public class CardCharge {
 		return obj;
 	}
 
-	// 查询用户阶梯气价信息
+	// 查询用户阶梯气价信息 用户档案里面的阶梯
 	private void SearchStair(String userid) {
 		try {
 			// 查出该用户阶梯气价信息
-			final String usersql = "select isnull(f_stairtype,'未设')f_stairtype, isnull(f_gasprice,0)f_gasprice, isnull(f_stair1amount,0)f_stair1amount,isnull(f_stair2amount,0)f_stair2amount,"
-					+ "isnull(f_stair3amount,0)f_stair3amount,isnull(f_stair1price,0)f_stair1price,"
-					+ "isnull(f_stair2price,0)f_stair2price,isnull(f_stair3price,0)f_stair3price,isnull(f_stair4price,0)f_stair4price,"
-					+ "isnull(f_stairmonths,0)f_stairmonths,isnull(f_zhye,0)f_zhye "
-					+ " from t_userfiles where f_userid='" + userid + "'";
+			final String usersql = "select isnull(uo.f_stairtype,'未设')f_stairtype, isnull(uo.f_gasprice,0)f_gasprice, isnull(uo.f_stair1amount,0)f_stair1amount,isnull(uo.f_stair2amount,0)f_stair2amount,"
+					+ "isnull(uo.f_stair3amount,0)f_stair3amount,isnull(uo.f_stair1price,0) f_stair1price,"
+					+ "isnull(uo.f_stair2price,0) f_stair2price,isnull(uo.f_stair3price,0) f_stair3price,isnull(uo.f_stair4price,0) f_stair4price,"
+					+ "isnull(uo.f_stairmonths,0)f_stairmonths,Substring( CONVERT(varchar(12), uo.f_yytdate, 111 ),1,10) f_yytdate,isnull(uo.f_zhye,0)* 100 f_zhye "
+					+ " from t_userfiles um left join t_userinfo uo on um.f_userinfoid = uo.f_userid where um.f_userid='"
+					+ userid + "'";
 			List<Map<String, Object>> userlist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)
@@ -471,9 +472,9 @@ public class CardCharge {
 			CountDate(userid, hibernateTemplate);
 
 			final String gassql = " select count(*) times, sum(isnull(f_pregas,0))f_pregas from t_sellinggas "
-					+ "where f_userid='"
+					+ "where f_userid in (select f_userid from t_userfiles   where f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
 					+ userid
-					+ "' and f_deliverydate>='"
+					+ "')) and f_deliverydate>='"
 					+ stardate + "' and f_deliverydate<='" + enddate + "'";
 			List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {

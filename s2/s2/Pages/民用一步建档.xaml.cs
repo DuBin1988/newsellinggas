@@ -16,6 +16,7 @@ namespace Com.Aote.Pages
 {
     public partial class 民用一步建档 : UserControl
     {
+
         GeneralObject obj = new GeneralObject();
         String userid = "";
         public 民用一步建档()
@@ -38,7 +39,7 @@ namespace Com.Aote.Pages
             userid = obj.GetPropertyValue("f_userid")+"";
             SyncActionFactory save = (from p in loader.Res where p.Name.Equals("SaveAction") select p).First() as SyncActionFactory;
             save.Completed += save_Completed;
-            save.Invoke();                
+            save.Invoke();
         }
 
         void save_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
@@ -71,7 +72,7 @@ namespace Com.Aote.Pages
                 {
                    // MessageBox.Show(e.Result);
                 }
-                
+
             }
         }
         #endregion
@@ -98,6 +99,7 @@ namespace Com.Aote.Pages
             }
         }
 
+ 
 
     }
 }

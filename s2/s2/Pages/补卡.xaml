@@ -50,6 +50,14 @@
 		 NewPrice="{m:Exp Str='userfiles1 != null\:userfiles1.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+         Stairprice1="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair1price\,null'}"
+         Stairgas1="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair1amount\,null'}" 
+         Stairprice2="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair2price\,null'}"
+         Stairgas2="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair2amount\,null'}"                         
+         Stairprice3="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair3price\,null'}"
+         Stairgas3="{m:Exp Str='userfiles1 != null \:userfiles1.f_stair3amount\,null'}" 
+         Money="{m:Exp Str=userfile.DataContext.f_preamount}"      
+         TotalMoney="{m:Exp Str=userfile.DataContext.f_totalcost}"
 		>
 		</oo:NewGeneralICCard>
 
@@ -214,7 +222,7 @@
     					</TextBox>
     					<TextBox Text="{m:Bind Path=f_gasprice}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="3" TextWrapping="Wrap" IsEnabled="True" Height="25" >
     						<a:Data.Prop>
-    							<o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=userfiles1.f_gasprice}" NotNull="True"/>
+    							<o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=userfiles1.f_gasprice}" />
     						</a:Data.Prop>
     					</TextBox>
     					<TextBox Text="{m:Bind Path=f_rcreason}" Grid.Column="1" Margin="0,1" Grid.Row="5" TextWrapping="Wrap" Grid.ColumnSpan="5">

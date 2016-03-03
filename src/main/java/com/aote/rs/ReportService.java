@@ -50,7 +50,7 @@ public class ReportService {
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
-
+   
 	/**
 	 * 根据文件名获得报表的配置信息
 	 * 

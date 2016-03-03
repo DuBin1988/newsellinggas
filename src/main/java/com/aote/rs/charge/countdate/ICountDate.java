@@ -12,4 +12,5 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 public interface ICountDate {
 	String startdate(String userid,HibernateTemplate hibernateTemplate);
 	String enddate(String userid,HibernateTemplate hibernateTemplate);
+ 
 }

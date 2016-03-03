@@ -10,12 +10,12 @@ using System.Windows.Shapes;
 
 namespace Com.Aote.Pages
 {
-	public partial class 抄表单生成 : UserControl
-	{
+    public partial class 抄表单生成 : UserControl
+    {
         public 抄表单生成()
-		{
-			// Required to initialize variables
-			InitializeComponent();
-		}
-	}
+        {
+            // Required to initialize variables
+            InitializeComponent();
+        }
+    }
 }

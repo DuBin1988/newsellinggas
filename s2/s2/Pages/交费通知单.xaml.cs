@@ -10,12 +10,12 @@ using System.Windows.Shapes;
 
 namespace Com.Aote.Pages
 {
-	public partial class 交费通知单 : UserControl
-	{
-		public 交费通知单()
-		{
-			// Required to initialize variables
-			InitializeComponent();
-		}
-	}
+    public partial class 交费通知单 : UserControl
+    {
+        public 交费通知单()
+        {
+            // Required to initialize variables
+            InitializeComponent();
+        }
+    }
 }
