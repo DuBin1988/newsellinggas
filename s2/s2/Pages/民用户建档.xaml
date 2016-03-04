@@ -148,7 +148,7 @@
 
             <!--小区列表-->
             <o:PagedObjectList Name="areafileslist" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_area where \{areafilesearch.DataContext.Condition\} and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')}"
+				Path="{m:Exp Str=$from t_area where \{areafilesearch.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\'}"
 				 IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}"
 				SumNames=","
 				PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>
@@ -241,7 +241,6 @@
                                     <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
                                     <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
                                     <sdk:DataGridTextColumn Header="小区地址" Binding="{Binding f_address}"/>
-                                    <sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gasproperties}"/>
                                     <sdk:DataGridTextColumn Header="街  道" Binding="{Binding f_road}"/>
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
@@ -846,7 +845,7 @@
 
             </c:BusyIndicatorEx>
         </Grid>
-		<c:MessageTipObj  Name="saveerror" Type="MessageBox" Tip="民用户保存失败" IsShow="{m:Exp Str=SaveAction.State\=\=$Error$}"/>
+		<c:MessageTipObj  Name="saveerror" Type="MessageBox" Tip="{m:Exp Str=SaveAction.Error}" IsShow="{m:Exp Str=SaveAction.State\=\=$Error$}"/>
         <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}的档案创建成功!'}" IsShow="{m:Exp Str=SaveAction.State\=\=$End$}"/>
     </Grid>
 </UserControl>

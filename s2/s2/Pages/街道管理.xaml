@@ -17,9 +17,22 @@
     x:Class="Com.Aote.Pages.街道管理" FontSize="13"
     mc:Ignorable="d" >
     <Grid x:Name="LayoutRoot">
-        <m:ResourceLoad  x:Name="pageResource" Margin="0,0,-12,0">
-            <o:ChildWindowObj Name="openchild" CWName="/Pages/获取小区" />
-        </m:ResourceLoad>
+		<m:ResourceLoad >
+			<b:HQLAction Name="delete"   WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from t_road where id \= \{apply.DataContext.id\}}"/> 
+
+			<!--判断街道名称是否存在-->
+			<o:GeneralObject Name="areaexist" EntityType="t_area2" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=apply.DataContext.f_road \!\=null:$one/select new Map(count(*) as count) from t_road where f_road\=\'\{apply.DataContext.f_road\}\'$\,$aaa$}" 
+				IsInit="{m:Exp Str=apply.DataContext.State\=\=$End$ }">
+			</o:GeneralObject>
+
+			<b:BatchExcuteAction Name="deleteAction" WebClientInfo="{StaticResource dbclient}">
+			
+                        <b:BatchInfo Source="{m:Exp Str=delete}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+		
+		</m:ResourceLoad>
         <Grid >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
@@ -61,25 +74,26 @@
                     </Grid>
                     <Grid toolkit:DockPanel.Dock="Bottom" Margin="0" Background="#94a8cd" Height="25">
                         <!--信息列表翻页-->
-                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{applys.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Left" Margin="0" Foreground="#FF140000"/>
-                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=applys}"  Margin="0" PageSize="20" Height="24" Width="387" Foreground="#FF140000"/>
-                    </Grid>
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=applys}"  Margin="0,1,0,0" PageSize="20" Height="24" Foreground="#FF140000"/>
+							<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{applys.ItemsSource.Count\}项}" Width="122" HorizontalAlignment="Left" Margin="0" Foreground="#FF140000"/>
+                        </Grid>
                     <sdk:DataGrid x:Name="applys" Margin="0"  
 				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-                      Path="{m:Exp Str=$from t_gasaddress where \{applysearch.DataContext.Condition\}}"
-					 IsOld="{m:Exp Str=apply.DataContext.State\=\=$End$}"
+                     MultiPath="{m:Exp Str=$from t_road where \{applysearch.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\'}"
+					 Path="{m:Exp Str=$from t_road where \{applysearch.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\' order by f_date desc}"
+					 IsOld="{m:Exp Str=apply.DataContext.State\=\=$End$ or deleteAction.State\=\=$End$}"
 					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 				        </a:Data.Items>
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="序 号" Binding="{Binding Index}"/>
                             <sdk:DataGridTextColumn Header="街道名称" Binding="{Binding f_road}"/>
                             <sdk:DataGridTextColumn Header="街道范围" Binding="{Binding f_roadrange}"/>
-                            <sdk:DataGridTextColumn Header="楼  号" Binding="{Binding f_cusDom}"/>
-                            <sdk:DataGridTextColumn Header="单  元" Binding="{Binding f_cusDy}"/>
-                            <sdk:DataGridTextColumn Header="楼  层" Binding="{Binding f_cusFloor}"/>
-                            <sdk:DataGridTextColumn Header="房  号" Binding="{Binding f_apartment}"/>
+                            <sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operator}"/>
+                            <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+                            <sdk:DataGridTextColumn Header="网点" Binding="{Binding f_network}"/>
+                            <sdk:DataGridTextColumn Header="分公司" Binding="{Binding f_branch}"/>
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel >
@@ -90,25 +104,28 @@
                 <toolkit:DockPanel Background="{x:Null}" x:Name="apply" >
                     <a:Data.Context>
                         <oo:GasADObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
-						EntityType="t_gasaddress" IsInit="{m:Exp Str=apply.DataContext.State\=\=$Loaded$}"
+						EntityType="t_road" IsInit="{m:Exp Str=apply.DataContext.State\=\=$End$ or deleteAction.State\=\=$End$}"
+						Source="{m:Exp Str=applys.SelectedItem}"
 						>
-                            <o:PropertySetter PropertyName="f_state" Default="未建档"/>
-                            <o:PropertySetter PropertyName="f_road" Default="{m:Exp Str=openchild.Result.f_road}"/>
-							<o:PropertySetter PropertyName="f_address" Default="{m:Exp Str=openchild.Result.f_address}"/>
-
                         </oo:GasADObject>
                     </a:Data.Context>
-
-                    <!--主操作区-->
+				<c:MessageTipObj  Name="submittip" Tip="您确认删除该项吗？" OK="{m:Exp Str=deleteAction.Invoke()}" />
+	
+                    <Grid toolkit:DockPanel.Dock="Bottom">
+						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
+						    <Button Content="删除" Margin="5"
+							IsEnabled="{m:Exp Str=apply.DataContext.id!\=null}" Click="{m:Exp Str=submittip.Show()}" Height="30" Width="75"  />
+					</StackPanel>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
-
+						
 
                         <Button x:Name="save" Content="保存" Margin="5" 
                 			IsEnabled="{m:Exp Str=apply.DataContext.IsModified and !apply.DataContext.HasErrors}"
-                			Click="save_Click" Height="30" Width="70"  />
-                        <Button Content="撤销" Margin="5" Click="{m:Exp Str=apply.DataContext.New()}" Height="30" Width="70"  />
+                			Click="{m:Exp Str=apply.DataContext.Save()}" Height="30" Width="85"  />
+                        <Button Content="清空" Margin="5" Click="{m:Exp Str=apply.DataContext.New()}" Height="30" Width="58"  />
 
                     </StackPanel>
+					</Grid>
 
 
 
@@ -128,96 +145,58 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="154"/>
+                            <ColumnDefinition Width="81"/>
                             <ColumnDefinition Width="140"/>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="65"/>
                             <ColumnDefinition Width="140"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="用气地址：" Margin="0,9" TextWrapping="Wrap" TextAlignment="Right"/>
-                        <TextBlock Text="楼号：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="3" Height="25" />
-                        <TextBox Text="{m:Bind Path=f_gasaddress}"  Grid.Column="1" Margin="0,9" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="4" />
-
-                        <TextBlock Text="单元：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" />
-                        <TextBox Text="{m:Bind Path=f_startunit}"  Grid.Column="1"  Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_startunit"  NotNull="True"/>
+                        <TextBlock Text="街道范围：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="3" />
+                        <TextBox Text="{m:Bind Path=f_road}"  Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" >
+							<a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_road" ValidationVal="{m:Exp Str=areaexist.count>0:$False$\,$True$}" ErrorMessage="街道名称已存在" NotNull="True"/>
                             </a:Data.Prop>
-                        </TextBox>
+						</TextBox>
 
-                        <TextBlock Margin="0" TextWrapping="Wrap" Text="小      区：" TextAlignment="Right" Grid.Row="1" Height="25"/>
-                        <TextBox Text="{m:Bind Path=f_districtname}" IsEnabled="False" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.ColumnSpan="2" >
+                        <TextBlock Text="操作员：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" />
+                        <TextBox Text="{m:Bind Path=f_operator}"  Grid.Column="1"  Margin="0,10" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_districtname" NotNull="True" Value="{m:Exp Str=openchild.Result.f_districtname}"/>
+                                <o:PropertySetter PropertyName="f_operator"  Default="{m:Exp Str=LoginUser.name}"/>
                             </a:Data.Prop>
                         </TextBox>
 
-                        <Button Content="获取小区" Grid.Column="3" Grid.Row="1" Height="25" Click="{m:Exp Str=openchild.IsOpen\=True}" Width="60" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                        <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="3" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
-                        <TextBox Text="{m:Bind Path=f_startbuild}" Grid.Column="1" Margin="0,10" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                        <TextBlock Margin="0,10" TextWrapping="Wrap" Text="街道名称：" TextAlignment="Right" Grid.Row="1"/>
+                        <TextBox Text="{m:Bind Path=f_roadrange}" Grid.Column="1" Margin="0,10" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="3"  >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_startbuild" NotNull="True"/>
+                                <o:PropertySetter PropertyName="f_roadrange" NotNull="True"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_endbuild}" Grid.Column="3" Margin="0,10" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                        <TextBlock Text="操作日期：" Grid.Column="2" Margin="0,10" Grid.Row="4" TextWrapping="Wrap"  VerticalAlignment="Center" Height="25" HorizontalAlignment="Right" Width="65"  />
+                        <TextBlock Text="网点：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" />
+                        <TextBox Text="{m:Bind Path=f_network}"  Grid.Column="1" Margin="0,10" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_endbuild"/>
+                                <o:PropertySetter PropertyName="f_network" Default="{m:Exp Str=LoginUser.f_parentname}"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock Text="号楼" Grid.Column="4" Margin="0,10,74,10" Grid.Row="3" TextWrapping="Wrap"  VerticalAlignment="Center" Height="25"  />
-                        <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="4" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
-                        <TextBox Text="{m:Bind Path=f_endunit}"  Grid.Column="3" Margin="0,10" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                        <TextBlock Text="分公司：" Grid.Column="2" Margin="0,10" Grid.Row="5" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Right" Height="25" Width="52"  />
+                        <TextBox Text="{m:Bind Path=f_branch}"   Grid.Column="3" Margin="0,10" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_endunit" />
+                                <o:PropertySetter PropertyName="f_branch" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBlock Text="单元" Grid.Column="4" Margin="0,10" Grid.Row="4" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
-                        <TextBlock Text="从：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" />
-                        <TextBox Text="{m:Bind Path=f_startlayer}"  Grid.Column="1" Margin="0,10" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_startlayer" NotNull="True"/>
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBlock Text="到" Grid.Column="2" Margin="0,10" Grid.Row="5" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
-                        <TextBox Text="{m:Bind Path=f_endlayer}"   Grid.Column="3" Margin="0,10" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_endlayer" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBlock Text="每楼层从：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Height="25" />
-                        <TextBox Text="{m:Bind Path=f_startroom}"  Grid.Column="1" Margin="0,10" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_startroom" NotNull="True"/>
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBlock Text="层" Grid.Column="4" Margin="0,10" Grid.Row="5" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
-                        <TextBlock Text="室" Grid.Column="2" Margin="0,10" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25"  />
-                        <TextBlock Text="建址时间：" Margin="-30,8,0,12" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="7" Height="25" FontSize="13.333" />
-                        <sdk:DatePicker Grid.Column="1" Margin="-0.25,2,0,3" Grid.Row="7"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Height="25" HorizontalAlignment="Stretch" FontSize="13.333" VerticalAlignment="Stretch" Grid.RowSpan="1">
+                        <sdk:DatePicker Grid.Column="3" Margin="0,10" Grid.Row="4"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Height="Auto" HorizontalAlignment="Stretch" FontSize="13.333" VerticalAlignment="Stretch" Grid.RowSpan="1">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_date"
                 					Default="{m:Exp Str=SysTime.Today}"/>
                             </a:Data.Prop>
                         </sdk:DatePicker>
-                        <TextBox Text="{m:Bind Path=f_endroom}" LostFocus="{m:Exp Str=apply.DataContext.Change()}" Grid.Column="3" Margin="0,6,0,14" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.RowSpan="1"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_endroom" />
-                            </a:Data.Prop>
+                        <TextBlock Grid.Column="5" Margin="17,10,123,10" Grid.Row="8" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12" Width="0"  />
+                        <TextBox Text="{m:Bind Path=f_orgstr}"   Grid.Column="1" Margin="0,10" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="3"  >
+                        	<a:Data.Prop>
+                        		<o:PropertySetter PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+                        	</a:Data.Prop>
                         </TextBox>
-                        <TextBlock Text="室" Grid.Column="4" Margin="0,6,0,14" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="25"  />
-                        <TextBlock Text="模式" Grid.Column="4" Margin="0,9,0,9" Grid.Row="3" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
-                        <TextBlock Text="模式" Grid.Column="4" Margin="0,0,0,3" Grid.Row="4" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
-                        <TextBlock Text="模式" Grid.Column="4" Margin="0,9,0,7" Grid.Row="5" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
-                        <TextBlock Text="模式" Grid.Column="4" Margin="0,0,0,1" Grid.Row="6" TextWrapping="Wrap" Height="25" HorizontalAlignment="Right"/>
-                        <TextBox Text="{m:Bind Path=f_buildpattern}"  Grid.Column="5" Margin="0,10" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1"  />
-                        <TextBox Text="{m:Bind Path=f_unitpattern}"  Grid.Column="5" Margin="0,1,0,4" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
-                        <TextBox Text="{m:Bind Path=f_layerpattern}"  Grid.Column="5" Margin="0,9,0,8" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
-                        <TextBox Text="{m:Bind Path=f_roompattern}"  Grid.Column="5" Margin="0,8,0,12" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  Grid.ColumnSpan="1" Grid.RowSpan="1"  />
-                        <TextBlock Text="共" Grid.Column="3" Margin="137,10,0,10" Grid.Row="8" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12"  />
-                        <TextBox Text="{m:Bind Path=f_n}" Grid.Column="4" Margin="20,6,10,14" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" Grid.RowSpan="1" Grid.ColumnSpan="1"  >
-                        </TextBox>
-                        <TextBlock Text="户" Grid.Column="5" Margin="10,10,117,10" Grid.Row="8" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12"  />
                     </Grid>
                 </toolkit:DockPanel>
             </c:BusyIndicatorEx>

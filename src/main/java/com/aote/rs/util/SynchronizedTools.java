@@ -9,6 +9,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import com.aote.rs.exception.ResultException;
+
 /**
  * 线程锁定处理
  * 
@@ -19,13 +21,14 @@ public class SynchronizedTools {
 
 	// 锁定线程获得编号
 	public synchronized static JSONObject getSerialNumber(
-			SessionFactory sessionFactory, String query, String attrname) {
+			SessionFactory sessionFactory, String query, String attrname)
+			throws ResultException {
 		JSONObject result = new JSONObject();
 		List list = executeFind(sessionFactory.getCurrentSession(),
 				new HibernateCall(query, 0, 10));
 		if (list.size() != 1) {
 			// 查询到多条数据，跑出异常
-			throw new WebApplicationException(500);
+			throw new ResultException("查询到多条数据或者未查询到数据：" + query);
 		}
 		// 把单个map转换成JSON对象
 		Map<String, Object> map = (Map<String, Object>) list.get(0);

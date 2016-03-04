@@ -1,4 +1,4 @@
-package com.aote.rs.util;
+package com.aote.rs.exception;
 
 /**
  * 处理异常信息

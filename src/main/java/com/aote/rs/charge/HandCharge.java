@@ -39,7 +39,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.aote.listener.ContextListener;
 import com.aote.rs.charge.countdate.ICountDate;
 import com.aote.rs.charge.enddate.IEndDate;
-import com.aote.rs.util.RSException;
+import com.aote.rs.exception.RSException;
 
 @Path("handcharge")
 @Scope("prototype")
@@ -561,6 +561,14 @@ public class HandCharge {
 			BigDecimal stair2price, BigDecimal stair3price,
 			BigDecimal stair4price) {
 		BigDecimal chargenum = new BigDecimal(0);
+		stair1num = new BigDecimal(0);
+		stair1fee = new BigDecimal(0);
+		stair2num = new BigDecimal(0);
+		stair2fee = new BigDecimal(0);
+		stair3num = new BigDecimal(0);
+		stair3fee = new BigDecimal(0);
+		stair4num = new BigDecimal(0);
+		stair4fee = new BigDecimal(0);
 		// 针对设置阶梯气价的用户运算
 		CountDate(userid, hibernateTemplate);
 		if (!stairtype.equals("未设")) {

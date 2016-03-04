@@ -79,6 +79,7 @@ import com.aote.expression.ExpressionGenerator;
 import com.aote.expression.upkeep.UpkeepFactory;
 import com.aote.expression.upkeep.UpkeepInterface;
 import com.aote.helper.Util;
+import com.aote.rs.exception.ResultException;
 import com.aote.rs.util.FileHelper;
 import com.aote.rs.util.SynchronizedTools;
 import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
@@ -263,8 +264,18 @@ public class DBService {
 		// long attrVal = Long.parseLong(map.get(attrname).toString());
 		// map.put(attrname, attrVal + 1 + "");
 		// sessionFactory.getCurrentSession().update(map);
-		result = SynchronizedTools.getSerialNumber(sessionFactory, query,
-				attrname);
+		try {
+			result = SynchronizedTools.getSerialNumber(sessionFactory, query,
+					attrname);
+		} catch (ResultException e) {
+			try {
+				result.put("error", e.getMessage());
+				log.error(e.getMessage());
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		log.debug(result.toString());
 		return result;
 	}
