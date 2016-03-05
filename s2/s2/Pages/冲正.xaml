@@ -69,36 +69,36 @@
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=sellinggas.f_zherownum}"/>
                 <!--用户总累计购气量-->
                 <o:PropertySetter PropertyName="f_cumulativepurchase" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfile.DataContext.f_upbuynum\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfile.DataContext.f_upbuynum\,null}"></o:PropertySetter>
                 <!--当前表累计购气量-->
                 <o:PropertySetter PropertyName="f_metergasnums" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfile.DataContext.f_premetergasnums\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfile.DataContext.f_premetergasnums\,null}"></o:PropertySetter>
                 <!--维护费日期-->
                 <o:PropertySetter PropertyName="f_beginfee" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:sellinggas.f_beginfee\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_beginfee\,null}"></o:PropertySetter>
                 <!--最后购气量-->
                 <o:PropertySetter PropertyName="f_finallybought" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:sellinggas.f_finallybought\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_finallybought\,null}"></o:PropertySetter>
                 <!--最后购气日期-->
                 <o:PropertySetter PropertyName="f_finabuygasdate" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:sellinggas.f_finabuygasdate\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_finabuygasdate\,null}"></o:PropertySetter>
                 <!--写卡次数-->
                 <o:PropertySetter PropertyName="f_times" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfilego.f_times\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfilego.f_times\,null}"></o:PropertySetter>
                 <!--剩余补气量-->
                 <o:PropertySetter PropertyName="f_surplusgas" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:sellinggas.f_surplusgas\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_surplusgas\,null}"></o:PropertySetter>
                 <!--初始化卡标志-->
                 <o:PropertySetter PropertyName="f_initcardsellgas" 
-				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:sellinggas.f_initcardsellgas\,null}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_initcardsellgas\,null}"></o:PropertySetter>
                 <!--发卡标记-->
                 <o:PropertySetter PropertyName="f_whethergivecard" 
-				NoDependValue="{m:Exp Str='SaveAction=>Saving!=null:(sellinggas.f_payfeetype==$发卡售气$:$未发$,$已发$),null'}"></o:PropertySetter>
+				NoDependValue="{m:Exp Str='(SaveAction2\=>Saving!\=null or SaveAction=>Saving!=null):(sellinggas.f_payfeetype==$发卡售气$:$未发$,$已发$),null'}"></o:PropertySetter>
             </o:GeneralObject>
 
             <!--收费对象-->
             <o:GeneralObject Name="sellinggas" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
-             IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
+             IsInit="{m:Exp Str=SaveAction.State\=\=$End$ |or| SaveAction2.State\=\=$End$}">
                 <o:GeneralObject.Path>
                     <m:Exp Str="card != null and card.Factory != null and  card.CardId != null:
 			 $one/select distinct s from t_sellinggas s left join fetch s.f_fillgas 
@@ -125,7 +125,7 @@
             <!--冲正对象-->
             <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
 			EntityType="t_chongzheng" 
-			IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
+			IsInit="{m:Exp Str='SaveAction.State\=\=$End$ |or| SaveAction2.State\=\=$End$'}">
             </o:GeneralObject>
             <!--更新售气记录为冲正-->
             <b:HQLAction Name="UpdateSellgas"   WebClientInfo="{StaticResource dbclient}" 
@@ -166,6 +166,14 @@
                 <b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
                 <!--更新发卡记录是否有效标记-->
                 <b:BatchInfo Source="{m:Exp Str=UpdateFaka}" MethodName="InvokeToJson"/>
+                <!--添加一笔负记录-->
+                <b:BatchInfo Source="{m:Exp Str=InsertSellingGas}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+
+            <b:BatchExcuteAction Name="SaveAction2" CanSave="{m:Exp Str='save2=>Click!=null'}" WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=users}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=UpdateSellgas}" MethodName="InvokeToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
                 <!--添加一笔负记录-->
                 <b:BatchInfo Source="{m:Exp Str=InsertSellingGas}" MethodName="InvokeToJson"/>
             </b:BatchExcuteAction>
@@ -248,9 +256,11 @@
                     <toolkit:DockPanel >
                         <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom"  Background="#FFC3E4FD">
                             <StackPanel Orientation="Horizontal">
-                                <Button x:Name="save" Content="写  卡" Margin="5" 
-									IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"/>
+                                <Button x:Name="save" Content="卡表冲正" Margin="5" 
+									IsEnabled="{m:Exp Str='(!userfile.DataContext.HasErrors) and sellinggas.f_payfeetype\!\=$超用收费$'}"/>
                                 <Button Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=kbsumgas.Clear();userfile.DataContext.New();sellinggas.New();fapiao.New()}" Width="50"/>
+                                <Button x:Name="save2" Content="超用冲正" Margin="5" 
+									IsEnabled="{m:Exp Str='sellinggas.f_payfeetype\=\=$超用收费$'}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
 
@@ -330,6 +340,13 @@
                                     <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=sellinggas.f_idnumber\=&gt;Completed}"/>
                                 </a:Data.Prop>
                             </TextBox>
+
+                            <TextBox Text="{m:Bind Path=f_payfeetype}" Visibility="Collapsed"  IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_payfeetype" Value="{m:Exp Str=sellinggas.f_payfeetype\=&gt;Completed}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+
                             <TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="25" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=sellinggas.f_address\=&gt;Completed}"/>
@@ -637,7 +654,8 @@
 
             </Grid>
         </Grid>
-        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}冲正完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or(SaveAction.State\=\=$End$ and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
+        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}卡表冲正完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or(SaveAction.State\=\=$End$ and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
+        <c:MessageTipObj  Name="save2done" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}超用冲正完成!'}" IsShow="{m:Exp Str=SaveAction2.State\=\=$End$}"/>
 
     </Grid>
 </UserControl>
