@@ -47,6 +47,7 @@ namespace Com.Aote.Pages
                 return;
             }
             string loginid = (string)loginUser.GetPropertyValue("id");
+            string orgpathstr = (string)loginUser.GetPropertyValue("orgpathstr");
             //显示正在工作
             busy.IsBusy = true;
 
@@ -55,7 +56,7 @@ namespace Com.Aote.Pages
 
             // 提交
             string str = wci.BaseAddress + "/sell/" + ui_userid.Text + "/" + shoukuan.Text + "/"
-                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "?uuid=" + System.Guid.NewGuid().ToString();
+                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "/" + orgpathstr + "?uuid=" + System.Guid.NewGuid().ToString();
 
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
@@ -95,6 +96,7 @@ namespace Com.Aote.Pages
                 ui_threegas1.Text = item["f_stair3amount1"].ToString();
                 ui_threeprice1.Text = item["f_stair3price"].ToString();
                 ui_threefee1.Text = item["f_stair3fee1"].ToString();
+                /*
                 ui_minnum1.Text = item["minnum1"].ToString();
                 ui_maxnum1.Text = item["maxnum1"].ToString();
                 ui_minyue1.Text = item["minyue1"].ToString();
@@ -129,8 +131,6 @@ namespace Com.Aote.Pages
                 {
                     ui_mterid1.Text = "";
                 }
-
-                /*
                 ui_onegas2.Text = item["f_stair1amount2"].ToString();
                 ui_oneprice2.Text = item["f_stair1price"].ToString();
                 ui_onefee2.Text = item["f_stair1fee2"].ToString();

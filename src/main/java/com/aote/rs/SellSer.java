@@ -31,7 +31,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import com.aote.rs.exception.RSException;
-
+import com.aote.rs.exception.ResultException;
 
 @Path("sell")
 @Scope("prototype")
@@ -186,24 +186,35 @@ public class SellSer {
 
 	}
 
-	// 定义sell方法，处理交费
+	/**
+	 * 定义sell方法，处理交费
+	 * @param userid  用户编号
+	 * @param dMoney  收款
+	 * @param dZhinajin  滞纳金
+	 * @param payments  付款方式
+	 * @param opid   操作员id
+	 * @param orgstr  组织信息，前台获取后传入到后台处理
+	 * @return
+	 */
+
 	@GET
-	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}")
-	public String txSell(@PathParam("userid") String userid,
+	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}/{orgstr}")
+	public JSONObject txSell(@PathParam("userid") String userid,
 			@PathParam("money") BigDecimal dMoney,
 			@PathParam("zhinajin") double dZhinajin,
 			@PathParam("payment") String payments,
-			@PathParam("opid") String opid) {
-		// 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
-		String ret = "";
+			@PathParam("opid") String opid,
+			@PathParam("orgstr") String orgstr) {
+		JSONObject ret = new JSONObject();
 		try {
 			log.debug("售气交费 开始");
 			BigDecimal payMent = dMoney;
 
-			Map user = this.findUser(userid);
+			Map user = this.findUserinfo(userid);
+			//查询户所有欠费信息
 			Map<String, Object> inforMap = getInfor(userid);
 			// 获取每个表的阶梯信息
-			String rets = this.getmeterInfor(userid);
+			//JSONObject files_stair = this.getfilesInfor(userid);
 			List<Map<String, Object>> hands = this.findHands(userid);
 
 			// 循环欠费记录，记录 欠费ids,最小指数，最大指数，欠费气量，金额合计userid
@@ -239,7 +250,8 @@ public class SellSer {
 			// 先计算payment >=用户结余+用户欠费
 			BigDecimal jieyu = new BigDecimal(user.get("f_zhye").toString());
 			if (payMent.compareTo(debts.subtract(jieyu)) < 0) {
-				return "";
+				throw new ResultException("交费金额:" + payMent + "不够缴纳本次欠费:"
+						+ debts.subtract(jieyu));
 			}
 			// 计算结余,交费日期，表累计气量，总累计气量
 			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu));
@@ -261,19 +273,17 @@ public class SellSer {
 			ret = insertSell(user, inforMap, nowye, lastinputgasnum,
 					lastrecord, debts, debtGas, handIds, lastinputdate,
 					payMent, metergasnums, cumuGas, newMeterGasNums,
-					newCumuGas, opid, payments);
-			ret += rets;
+					newCumuGas, opid, payments,orgstr);
 			log.debug("售气交费成功!" + ret);
-			return ret;
+			ret.put("success", "机表交费成功");
 			// 抓取自定义异常
-		} catch (RSException e) {
-			log.debug("售气交费 失败!");
-			ret = e.getMessage();
 		} catch (Exception ex) {
-			log.debug("售气交费 失败!" + ex.getMessage());
-			ret = ex.getMessage();
+			ex.printStackTrace();
+			hibernateTemplate.getSessionFactory().getCurrentSession()
+					.getTransaction().rollback();
+			log.error("售气交费 失败!" + ex.getMessage());
+			ret.put("error", ex.getMessage());
 		} finally {
-			// session.close();
 			return ret;
 		}
 	}
@@ -288,18 +298,26 @@ public class SellSer {
 		return (Map<String, Object>) userList.get(0);
 	}
 
-	public String insertSell(Map<String, Object> userMap,
+	/**
+	 * 保存收费记录，返回保存后的id
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public JSONObject insertSell(Map<String, Object> userMap,
 			Map<String, Object> inforMap, BigDecimal nowye,
 			double lastinputgasnum, double lastrecord, BigDecimal debts,
 			BigDecimal debtGas, String handIds, Date lastinputdate,
 			BigDecimal payMent, BigDecimal metergasnums, BigDecimal cumuGas,
 			BigDecimal newMeterGasNums, BigDecimal newCumuGas, String opid,
-			String payments) {
+			String payments,String orgstr) throws Exception {
+		JSONObject result = new JSONObject();
 		// 查找登陆用户,获取登陆网点,操作员
 		Map<String, Object> loginUser = this.findloginUser(opid);
+		loginUser.put("orgstr",orgstr);
 		if (loginUser == null) {
 			log.debug("机表缴费处理时未找到登陆用户,登陆id" + opid);
-			throw new RSException("机表缴费处理时未找到登陆用户,登陆id" + opid);
+			throw new ResultException("机表缴费处理时未找到登陆用户,登陆id" + opid);
 		}
 		Map sale = new HashMap<String, Object>();
 		Date now = new Date();
@@ -346,6 +364,7 @@ public class SellSer {
 		sale.put("f_sgoperator", loginUser.get("name").toString()); // 操 作 员
 		sale.put("f_filiale", loginUser.get("f_fengongsi").toString()); // 分公司
 		sale.put("f_fengongsinum", loginUser.get("f_fengongsinum").toString()); // 分公司编号
+		sale.put("f_orgstr", loginUser.get("orgstr").toString()); // 组织信息
 		sale.put("f_payfeetype", "机表收费"); // 交易类型
 		sale.put("f_payfeevalid", "有效"); // 购气有效类型
 		sale.put("f_useful", handIds); // 抄表记录id
@@ -374,16 +393,18 @@ public class SellSer {
 		int sellId = (Integer) hibernateTemplate.save("t_sellinggas", sale);
 		// 格式化交费日期
 		SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		String result = "{id:" + sellId + ", f_deliverydate:'" + f2.format(now)
-				+ "', f_stair1price:" + inforMap.get("f_stair1price")
-				+ ", f_stair1amount:" + inforMap.get("f_stair1amount")
-				+ ", f_stair1fee:" + inforMap.get("f_stair1fee") + ""
-				+ ",f_stair2price:" + inforMap.get("f_stair2price")
-				+ ", f_stair2amount:" + inforMap.get("f_stair2amount")
-				+ ", f_stair2fee:" + inforMap.get("f_stair2fee") + ","
-				+ "f_stair3price:" + inforMap.get("f_stair3price")
-				+ ", f_stair3amount:" + inforMap.get("f_stair3amount")
-				+ ", f_stair3fee:" + inforMap.get("f_stair3fee") + ", ";
+
+		result.put("id", sellId);
+		result.put("f_deliverydate", f2.format(now));
+		result.put("f_stair1price", inforMap.get("f_stair1price"));
+		result.put("f_stair1amount", inforMap.get("f_stair1amount"));
+		result.put("f_stair1fee", inforMap.get("f_stair1fee"));
+		result.put("f_stair2price", inforMap.get("f_stair2price"));
+		result.put("f_stair2amount", inforMap.get("f_stair2amount"));
+		result.put("f_stair2fee", inforMap.get("f_stair2fee"));
+		result.put("f_stair3price", inforMap.get("f_stair3price"));
+		result.put("f_stair3amount", inforMap.get("f_stair3amount"));
+		result.put("f_stair3fee", inforMap.get("f_stair3fee"));
 		// 更新抄表记录sellid
 		if (handIds != null && !handIds.equals("") && !handIds.equals("0")) {
 			String updateHandplan = "update t_handplan set f_sellid =" + sellId
@@ -440,7 +461,14 @@ public class SellSer {
 		return list;
 	}
 
-	private String getmeterInfor(String userinfoId) {
+	/**
+	 * 获取每个表的阶梯信息
+	 * 
+	 * @param userinfoId
+	 * @return
+	 * @throws Exception
+	 */
+	private JSONObject getfilesInfor(String userinfoId) throws Exception {
 		final String sql = "select   u.f_userid f_userid,ISNULL(u.f_meternumber,' ') f_meternumber,MIN(h.lastinputgasnum) lastinputgasnum,MAX(h.lastrecord) lastrecord, min(h.f_handdate) f_handdatemin, max(h.f_handdate) f_handdatemax, min(u.f_stair1price) f_stair1price, Round(SUM(isnull(h.f_stair1amount,0)),2) f_stair1amount,"
 				+ "Round(SUM(isnull(h.f_stair1fee,0)),2) f_stair1fee,min(u.f_stair2price) f_stair2price,"
 				+ "Round(SUM(isnull(h.f_stair2amount,0)),2) f_stair2amount, Round(SUM(isnull(h.f_stair2fee,0)),2) f_stair2fee,"
@@ -456,7 +484,7 @@ public class SellSer {
 		HibernateSQLCall sqlCall = new HibernateSQLCall(sql);
 		List<Map<String, Object>> list = this.hibernateTemplate
 				.executeFind(sqlCall);
-		String result = "";
+		String result = "{";
 		if (list.size() > 0) {
 			Map<String, Object> map0 = (Map<String, Object>) list.get(0);
 
@@ -522,9 +550,16 @@ public class SellSer {
 		}
 
 		result += "}";
-		return result;
+		JSONObject r = new JSONObject(result);
+		return r;
 	}
 
+	/**
+	 * 查询该户的欠费信息
+	 * 
+	 * @param userinfoId
+	 * @return
+	 */
 	private Map<String, Object> getInfor(String userinfoId) {
 		final String sql = "select f_stair1price f_stair1price, f_stair1amount f_stair1amount, f_stair1fee f_stair1fee, f_stair2price f_stair2price, f_stair2amount f_stair2amount,"
 				+ " f_stair2fee f_stair2fee, f_stair3price f_stair3price, f_stair3amount f_stair3amount, f_stair3fee f_stair3fee from "
@@ -937,16 +972,17 @@ public class SellSer {
 	}
 
 	/**
-	 * 查找用户信息
+	 * 查找户信息
+	 * 
 	 * @param userid
 	 * @return
 	 */
-	private Map<String, Object> findUser(String userid) {
+	private Map<String, Object> findUserinfo(String userid) {
 		final String userSql = "from t_userinfo  where f_userid='" + userid
 				+ "'  ";
-		//List userlist = session.createQuery(userSql).list();
+		// List userlist = session.createQuery(userSql).list();
 		log.debug("查询户信息开始:" + userSql);
-		List<Object> userlist = this.hibernateTemplate.find(userSql);		
+		List<Object> userlist = this.hibernateTemplate.find(userSql);
 		if (userlist.size() != 1) {
 			return null;
 		}
