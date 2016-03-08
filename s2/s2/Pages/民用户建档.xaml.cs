@@ -17,5 +17,10 @@ namespace Com.Aote.Pages
             // Required to initialize variables
             InitializeComponent();
         }
+		
+		private void f_address_MouseEnter(object sender, MouseEventArgs e)
+        {
+            f_address.Text = f_road.Text + f_districtname.Text + "#" + f_cusDom.Text + "-" + f_cusDy.Text + "-" + f_cusFloor.Text + "-" + f_apartment.Text;
+        }
     }
 }
