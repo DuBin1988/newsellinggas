@@ -59,8 +59,8 @@
 
             <!--户列表-->
             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-		       Path="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_userstate !\=\'销户\'}"
-		       PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+		       Path="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_userstate !\=\'销户\' and f_filiale\=\'\{\LoginUser.f_fengongsi\}\'}"
+		       PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 
             <b:HQLAction Name="UpdateZhinajin"  WebClientInfo="{StaticResource dbclient}"  Type="sql" HQL="{m:Exp Str=$update t_zhinajin set f_state\=\'有效\' where id\=(select top 1 id from t_zhinajin where f_state\=\'无效\' and f_userid\=\'\{kbfee.f_userid\}\' and f_zhinajin\=\'\{kbfee.f_zhinajin\}\'  and f_date\=\'\{kbfee.f_date.ToString($yyyy-MM-dd$)\}\')$}" />
         </m:ResourceLoad>
@@ -105,12 +105,7 @@
                                     <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
-                                <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
-                                </a:Data.Prop>
-                            </TextBox>
-                            <TextBlock TextWrapping="Wrap" Text="档案编号：" Margin="0,5,-1,-2" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                            <TextBlock TextWrapping="Wrap" Text="户编号：" Margin="0,5,-1,-2" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
                             <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,3,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" Grid.Row="0" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
@@ -123,7 +118,7 @@
             			AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="户编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
                             <sdk:DataGridTextColumn Header="用户状态" Binding="{Binding f_userstate}"/>

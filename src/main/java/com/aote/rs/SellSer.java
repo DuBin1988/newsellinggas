@@ -30,7 +30,8 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
-import com.aote.rs.util.RSException;
+import com.aote.rs.exception.RSException;
+
 
 @Path("sell")
 @Scope("prototype")
