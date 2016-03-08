@@ -511,5 +511,60 @@ Margin="18.667,158.706,381.139,0"/>
         </Grid>
 
         <c:PrintObj Name="print" Area="{m:Res Key=aofengprint}" Completed="print_Completed"/>
+        <c:PrintObj Name="zzprint" Message="是否打印折子？" Area="{m:Res Key=zheziprint}" />
+        <Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="515,0,-238,-850">
+        	<a:Data.Context>
+        		<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
+        			EntityType="t_myfaka"  />
+        	</a:Data.Context>
+        	<Grid.RowDefinitions >
+        		<RowDefinition Height="50"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="80"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        		<RowDefinition Height="17"/>
+        	</Grid.RowDefinitions>
+        	<Grid Grid.Row="{m:Exp Str=kbusers.f_zherownum.ToString().ToInt()}">
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="16*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        			<ColumnDefinition Width="14*"/>
+        		</Grid.ColumnDefinitions>
+
+        		<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+        		<TextBlock Text="{m:Exp Str=kbfee.lastrecord}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        		<TextBlock Text="{m:Exp Str=kbfee.f_pregas}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+        		<TextBlock Text="{m:Exp Str=kbfee.f_totalcost}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        		<TextBlock Text="{m:Exp Str=kbfee.f_grossproceeds}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        		<TextBlock Text="{m:Exp Str=kbfee.f_benqizhye}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        		<TextBlock Text="{m:Exp Str=kbfee.f_zhinajin}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        		<TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
+        	</Grid>
+        </Grid>
     </Grid>
 </UserControl>
