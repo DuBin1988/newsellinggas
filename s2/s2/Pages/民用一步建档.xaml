@@ -71,6 +71,14 @@
                 <!--o:PropertySetter PropertyName="f_userinfoid"  Default="{m:Exp Str=userinfogo}" /-->
                 <o:PropertySetter PropertyName="refreshCache" Default="1" />
 				<o:PropertySetter PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+				<o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair1amount}"  />
+                <o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair1price}"  />
+                <o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair2amount}"  />
+                <o:PropertySetter PropertyName="f_stair2price" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair2price}"  />
+                <o:PropertySetter PropertyName="f_stair3amount" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair3amount}"  />
+                <o:PropertySetter PropertyName="f_stair3price" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair3price}"  />
+                <o:PropertySetter PropertyName="f_stair4price" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair4price}"  />
+                <o:PropertySetter PropertyName="f_stairmonths" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stairmonths}"  /> 
 
 
 
@@ -382,8 +390,7 @@
                                         <TextBlock Text="证件号码：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Height="25" Grid.Column="8"/>
                                         <TextBlock Text="备用电话：" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
                                         <TextBlock Text="用气性质：" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-                                        <TextBlock Text="气价类型：" Grid.Column="4" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-                                        <TextBlock Text="气　  　价：" Grid.Column="8" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                                        <TextBlock Text="一阶气价：" Grid.Column="8" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                                         <!--TextBox Text="{m:Bind Path=f_username}" Grid.Column="3" Margin="0" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="-1.739,-0.923" HorizontalAlignment="Stretch"  Width="Auto" >
 											<a:Data.Prop>
 												<o:PropertySetter PropertyName="f_username"  NotNull="True"/>
@@ -441,19 +448,14 @@
                                                 <o:PropertySetter PropertyName="f_idnumber"  Value="{m:Exp Str=userfilego.f_idnumber\=>Completed}"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <ComboBox x:Name="CoboxGasPro" DisplayMemberPath="f_gasproperties"  SelectedValuePath="f_gasproperties" ItemsSource="{m:Exp Str=usegaslist}" SelectedValue="{m:Bind Path=f_gasproperties}"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3" >
+                                        <TextBox  Text="{m:Bind Path=f_gasproperties}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3" IsReadOnly="True" >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_gasproperties" NotNull="True" Value="{m:Exp Str=$\{areafiles.SelectedItem.f_gasproperties\}$}" Default="{m:Exp Str='usegaslist.Count > 0 :usegaslist.First().f_gasproperties,null'}" />
+                                                <o:PropertySetter PropertyName="f_gasproperties" NotNull="True" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_gasproperties}"  />
                                             </a:Data.Prop>
-                                        </ComboBox>
-                                        <ComboBox x:Name="CoboxGas" DisplayMemberPath="f_gaspricetype" SelectedValuePath="f_gaspricetype" ItemsSource="{m:Exp Str=CoboxGasPro.SelectedItem.pricetype}" SelectedValue="{m:Bind Path=f_gaspricetype}"  Grid.Column="5" Margin="0,3,0,2" Grid.Row="9" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3" >
+                                        </TextBox>
+                                        <TextBox Text="{m:Bind Path=f_stair1price}"   Grid.Column="9" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_gaspricetype" NotNull="True" Value="{m:Exp Str=areafiles.SelectedItem.f_gaspricetype}" Default="{m:Exp Str=userfilego.f_gaspricetype}"/>
-                                            </a:Data.Prop>
-                                        </ComboBox>
-                                        <TextBox Text="{m:Bind Path=f_gasprice}"   Grid.Column="9" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.RowSpan="1">
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_gasprice" NotNull="True" Value="{m:Exp Str=CoboxGas.SelectedItem.f_gasprice}"  Default="{m:Exp Str=userfilego.f_gasprice}" />
+                                                <o:PropertySetter PropertyName="f_stair1price" NotNull="True" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stair1price}"  />
                                             </a:Data.Prop>
                                         </TextBox>
                                         
@@ -756,58 +758,8 @@
                                         <!--a:Data.Prop>
 											<o:PropertySetter PropertyName="f_payment" NotNull="True" />          
 											</a:Data.Prop-->
-                                        <TextBlock Grid.Row="13" TextWrapping="Wrap" Text="阶梯气价类型：" TextAlignment="Right" Height="25" Margin="0,3,0,2"/>
-                                        <ComboBox x:Name="CoboxStair" SelectedValuePath="f_stairtype"  ItemsSource="{m:Exp Str=stairlist}" SelectedValue="{m:Bind Path=f_stairtype}" Grid.Column="1" Margin="0,2,0,3" Grid.Row="13" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"   >
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Height="20" Text="{Binding f_stairtype}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stairtype" NoDependValue="{m:Exp Str=stairlist.SelectedItem.f_stairtype}" NotNull="True"/>
-                                            </a:Data.Prop>
-                                        </ComboBox>
-                                        <!--阶梯气价隐藏域-->
-                                        <TextBox Text="{m:Bind Path=f_stair1amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1amount}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair1price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1price}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair2amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2amount}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair2price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair2price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2price}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair3amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair3amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair3amount}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair3price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair3price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair3price}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stair4price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stair4price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair4price}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
-                                        <TextBox Text="{m:Bind Path=f_stairmonths}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                                            <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_stairmonths" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stairmonths}"  />
-                                            </a:Data.Prop>
-                                        </TextBox>
+                                        <TextBlock Grid.Row="9" TextWrapping="Wrap" Text="阶梯气价类型：" TextAlignment="Right" Height="25" Margin="0,3,0,2" Grid.Column="4"/>
+                                       
                                         <TextBlock Margin="1,4,1,1" TextWrapping="Wrap" Text="卡      号：" TextAlignment="Right" Grid.Row="6" Height="25"/>
                                         <TextBox Text="{m:Bind Path=f_cardid}"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="25" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
                                             <a:Data.Prop>
@@ -985,6 +937,11 @@
                                         <TextBox Text="{m:Bind Path=f_send}" Grid.Column="5" Margin="0,0,0,2" Grid.Row="12" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" Grid.ColumnSpan="3" IsReadOnly="True"    >
                                         	<a:Data.Prop>
                                         		<o:PropertySetter PropertyName="f_send" Value="{m:Exp Str=CoboxPinpai.SelectedItem.send}" Default="否" />
+                                        	</a:Data.Prop>
+                                        </TextBox>
+                                        <TextBox Text="{m:Bind Path=f_stairtype}"   Grid.Column="5" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.RowSpan="1" Grid.ColumnSpan="3">
+                                        	<a:Data.Prop>
+                                        		<o:PropertySetter PropertyName="f_stairtype" NotNull="True" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_stairtype}"  />
                                         	</a:Data.Prop>
                                         </TextBox>
                                     </Grid>

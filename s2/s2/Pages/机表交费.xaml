@@ -105,7 +105,7 @@
                                     <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBlock TextWrapping="Wrap" Text="户编号：" Margin="0,5,-1,-2" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                            <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,5,-1,-2" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
                             <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,3,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" Grid.Row="0" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
@@ -168,7 +168,7 @@
             			ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridCheckBoxColumn Binding="{Binding IsChecked}"/>
-                            <sdk:DataGridTextColumn Header="编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn Header="气量" Binding="{Binding oughtamount, StringFormat=0.#}"/>
                             <sdk:DataGridTextColumn Header="金额" Binding="{Binding oughtfee, StringFormat=0.##}"/>
 

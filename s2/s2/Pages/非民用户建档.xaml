@@ -534,8 +534,8 @@
 															Value="{m:Exp Str=userfile.DataContext.f_jisuannum+1}"/>
                                                 </a:Data.Prop>
                                             </TextBox>
-                                            <TextBlock Text="卡　　号：" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" Grid.Row="8" Grid.ColumnSpan="1"/>
-                                            <TextBox Text="{m:Bind Path=f_cardid}" Grid.Column="5" Margin="0" Grid.Row="8" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                                            <TextBlock Text="卡　　号：" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" Grid.Row="5" Grid.ColumnSpan="1"/>
+                                            <TextBox Text="{m:Bind Path=f_cardid}" Grid.Column="5" Margin="0" Grid.Row="5" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
                                                 <a:Data.Prop>
                                                     <o:PropertySetter PropertyName="f_cardid" />
                                                 </a:Data.Prop>
@@ -556,11 +556,6 @@
                                             <TextBox Text="{m:Bind Path=f_unitid}" Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" d:LayoutOverrides="VerticalAlignment" Grid.ColumnSpan="3" IsReadOnly="True" >
                                                 <a:Data.Prop>
                                                     <o:PropertySetter PropertyName="f_unitid" Value="{m:Exp Str=unitinfos.SelectedItem.f_unitid}" />
-                                                </a:Data.Prop>
-                                            </TextBox>
-                                            <TextBox Text="{m:Bind Path=f_credentials}"  Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="0.368,-0.68" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1"  >
-                                                <a:Data.Prop>
-                                                    <o:PropertySetter PropertyName="f_credentials" Value="{m:Exp Str=unitinfos.SelectedItem.f_credentials}"/>
                                                 </a:Data.Prop>
                                             </TextBox>
                                             <TextBox Text="{m:Bind Path=f_comtype}" Grid.Column="2" Margin="0,3,0,2" Grid.Row="25" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Left" Width="12">
@@ -590,18 +585,18 @@
                                                     <o:PropertySetter PropertyName="sxrq" />
                                                 </a:Data.Prop>
                                             </TextBox>
-                                            <TextBlock Text="计算气损：" Grid.Column="4" Margin="-1,5,-0.5,0" Grid.Row="10" TextWrapping="Wrap" TextAlignment="Right" Height="25" d:LayoutOverrides="HorizontalMargin"/>
-                                            <ComboBox  DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_jsqs}"  Grid.Column="5" Margin="1.5,3,2,2" Grid.Row="10" Height="25" VerticalAlignment="Stretch" >
+                                            <TextBlock Text="计算气损：" Grid.Column="4" Margin="-1,5,-0.5,0" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25" d:LayoutOverrides="HorizontalMargin"/>
+                                            <ComboBox  DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_jsqs}"  Grid.Column="5" Margin="1.5,3,2,2" Grid.Row="4" Height="25" VerticalAlignment="Stretch" >
                                                 <a:Data.Items>
                                                     <o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='计算气损'"/>
                                                 </a:Data.Items>
                                             </ComboBox>
-                                            <TextBlock Grid.Column="4" Margin="1,1,0,4" Grid.Row="6" TextWrapping="Wrap" Text="交费类型：" TextAlignment="Right" Height="25"/>
+                                            <TextBlock Grid.Column="4" Margin="1,1,0,4" Grid.Row="3" TextWrapping="Wrap" Text="交费类型：" TextAlignment="Right" Height="25"/>
                                             <!--TextBox Text="{m:Bind Path=f_payment}" IsReadOnly="True" Grid.Column="5" Margin="2,3,-1,2" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch"  Grid.ColumnSpan="1" >
 													<a:Data.Prop>
 														<o:PropertySetter PropertyName="f_payment" Default="现金" NotNull="True"/>
 													</a:Data.Prop-->
-                                            <ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="0" Grid.Row="6" Height="25">
+                                            <ComboBox x:Name="CoboxPin" ItemsSource="{m:Exp Str=jiaofeilist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_payment}" Grid.Column="5" Margin="0" Grid.Row="3" Height="25">
                                                 <a:Data.Prop>
                                                     <o:PropertySetter PropertyName="f_payment"  Value="{m:Exp Str=userfilego.f_payment}" NotNull="True"/>
                                                 </a:Data.Prop>
@@ -617,6 +612,11 @@
 													Default="{m:Exp Str=LoginUser.orgpathstr}"/>
                                                 </a:Data.Prop>
                                             </TextBox>
+                                            <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=zhengjianlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_credentials}" Grid.Column="1" Margin="0,2.5" Grid.Row="4" Height="25" IsEnabled="true" FontSize="13.333" RenderTransformOrigin="-5.111,4.2">
+                                            	<a:Data.Prop>
+                                            		<o:PropertySetter PropertyName="f_credentials"  Default="{m:Exp Str=zhengjianlist.Count &gt; 0 :zhengjianlist.First().name\,null}"/>
+                                            	</a:Data.Prop>
+                                            </ComboBox>
                                         </Grid>
 
                                         <sdk:DataGrid ItemsSource="{m:Exp Str=devicelist}" AutoGenerateColumns="False" x:Name="devices" HorizontalAlignment="Stretch"  Margin="0" >

@@ -25,14 +25,17 @@ namespace Com.Aote.Pages
         public 阶梯气价设置()
         {
             InitializeComponent();
+            /*
             ui_StairSearch.DataContext = stairSearch;
             ui_stairDataGaid.ItemsSource = stairList;
             this.Loaded += 阶梯气价设置_Loaded;
             kbfee = (ObjectList)(from r in loader.Res where r.Name.Equals("SecondStairlist") select r).First();
             ThirdStairStairlist1 = (ObjectList)(from r in loader.Res where r.Name.Equals("ThirdStairStairlist") select r).First();
             FourthStairlist1 = (ObjectList)(from r in loader.Res where r.Name.Equals("FourthStairlist") select r).First();
+             */
         }
 
+        /*
         void 阶梯气价设置_Loaded(object sender, RoutedEventArgs e)
         {
             loginUser = (GeneralObject)FrameworkElementExtension.FindResource(this, "LoginUser");
@@ -51,7 +54,7 @@ namespace Com.Aote.Pages
             ui_searchBusy.IsBusy = true;
             string f_parentname = loginUser.GetPropertyValue("orgpathstr").ToString(); ;
             stairSearch.Search();
-            string sql = "from t_stairprice where " + stairSearch.Condition + "and (f_OrgStr  like " + "'%" + f_parentname + "%'" + ")";
+            string sql = "from t_stairprice where " + stairSearch.Condition;
             stairList.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
             stairList.LoadOnPathChanged = false;
             stairList.Path = "hql";
@@ -71,7 +74,7 @@ namespace Com.Aote.Pages
         {
             if (count == 1)
             {
-                if (ui_stairtype.Text != "" || ui_stair1amount.Text != "" || ui_stair1price.Text != "" || ui_stair2amount.Text != "" || ui_stair2price.Text != "" || ui_stair3amount.Text != "" || ui_stair3price.Text != "" || ui_stairmonths.SelectedValue != null || ui_f_gasproperties.SelectedValue != null || f_OrgStr.Text != "")
+                if (ui_stairtype.Text != "" || ui_stair1amount.Text != "" || ui_stair1price.Text != "" || ui_stair2amount.Text != "" || ui_stair2price.Text != "" || ui_stair3amount.Text != "" || ui_stair3price.Text != "" || ui_stairmonths.SelectedValue != null || ui_f_gasproperties.SelectedValue != null)
                 {
                     ui_searchBusy.IsBusy = true;
                     // 通过执行sql语句进行设置
@@ -108,11 +111,6 @@ namespace Com.Aote.Pages
                     obj.SetPropertyValue("f_stair4price", ui_stair4price.Text, false);
                     obj.SetPropertyValue("f_stairmonths", ui_stairmonths.SelectedValue, false);
                     obj.SetPropertyValue("f_gasproperties", ui_f_gasproperties.SelectedValue, false);
-                    obj.SetPropertyValue("FirstStair", FirstStair.Text, false);
-                    obj.SetPropertyValue("SecondStair", SecondStair.SelectedValue, false);
-                    obj.SetPropertyValue("ThirdStair", ThirdStair.SelectedValue, false);
-                    obj.SetPropertyValue("FourthStair", FourthStair.SelectedValue, false);
-                    obj.SetPropertyValue("f_OrgStr", f_OrgStr.Text, false);
                     obj.Name = "t_stairprice";
                     obj.Completed += obj_Completed;
                     obj.Save();
@@ -272,6 +270,6 @@ namespace Com.Aote.Pages
                 }
 
             }
-        }
+        }*/
     }
 }

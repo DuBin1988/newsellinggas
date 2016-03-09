@@ -87,15 +87,15 @@ namespace Com.Aote.Pages
                 ui_sellid.Text = Seriabx.Key.ToString() + item["id"].ToString();
                 string date = (string)item["f_deliverydate"];
                 ui_day.Text = date;
-                ui_onegas1.Text = item["f_stair1amount1"].ToString();
+                ui_onegas1.Text = item["f_stair1amount"].ToString();
                 ui_oneprice1.Text = item["f_stair1price"].ToString();
-                ui_onefee1.Text = item["f_stair1fee1"].ToString();
-                ui_twogas1.Text = item["f_stair2amount1"].ToString();
+                ui_onefee1.Text = item["f_stair1fee"].ToString();
+                ui_twogas1.Text = item["f_stair2amount"].ToString();
                 ui_twoprice1.Text = item["f_stair2price"].ToString();
-                ui_twofee1.Text = item["f_stair2fee1"].ToString();
-                ui_threegas1.Text = item["f_stair3amount1"].ToString();
+                ui_twofee1.Text = item["f_stair2fee"].ToString();
+                ui_threegas1.Text = item["f_stair3amount"].ToString();
                 ui_threeprice1.Text = item["f_stair3price"].ToString();
-                ui_threefee1.Text = item["f_stair3fee1"].ToString();
+                ui_threefee1.Text = item["f_stair3fee"].ToString();
                 /*
                 ui_minnum1.Text = item["minnum1"].ToString();
                 ui_maxnum1.Text = item["maxnum1"].ToString();

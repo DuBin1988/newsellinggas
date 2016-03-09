@@ -15,24 +15,42 @@
     xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
     mc:Ignorable="d"
     x:Class="Com.Aote.Pages.阶梯气价设置" FontSize="13" 
-    d:DesignHeight="768" d:DesignWidth="1024">
+    d:DesignHeight="568" d:DesignWidth="1024">
 
     <Grid x:Name="LayoutRoot" Background="White">
         <m:ResourceLoad x:Name="loader">
-            <!--总公司名称-->
-            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
-		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
-            </o:GeneralObject>
-            <o:ObjectList Name="SecondStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 2:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,1)\}\'$\,$from t_organization where f_parentname\=\'\{ui_stairprice.DataContext.FirstStair\}\'$}" />
-            <o:ObjectList Name="ThirdStairStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 3:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,2)\}\'$\,$from t_organization where f_parentname\=\'\{ui_stairprice.DataContext.SecondStair\}\'$}" />
-            <o:ObjectList Name="FourthStairlist"  WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 4:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,3)\}\'$\,$from t_organization where f_parentname\=\'\{ui_stairprice.DataContext.ThirdStair\}\'$}" />
+			 <!--阶梯列表-->
+			<o:PagedObjectList Name="stairlist" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=$from t_stairprice where \{ui_StairSearch.DataContext.Condition\}}"
+				IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or deleteAction.State\=\=$End$}" 
+				PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+            <o:ObjectList Name="stairmonthslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='阶段月数'"/>
+            <!--用气性质列表-->
+            <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype}"/>
+           
+		    <!--阶梯对象-->
+            <o:GeneralObject Name="stair" WebClientInfo="{StaticResource dbclient}" EntityType="t_stairprice"
+				Source="{m:Exp Str=ui_stairDataGaid.SelectedItem}" 
+				IsInit="{m:Exp Str=SaveAction.State\=\=$End$}"/>
 
+			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+				 <b:BatchInfo Source="{m:Exp Str=stair}" MethodName="SaveToJson"/>
+            </b:BatchExcuteAction>
+			
+			<b:HQLAction Name="delete"   WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from t_stairprice where id \= \{stair.id\}}"/> 
+
+			<b:BatchExcuteAction Name="deleteAction" WebClientInfo="{StaticResource dbclient}">
+			
+                        <b:BatchInfo Source="{m:Exp Str=delete}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+            
         </m:ResourceLoad>
-        <c:BusyIndicatorEx x:Name="ui_searchBusy" BusyContent="正在工作，请稍等！">
+        <c:BusyIndicatorEx x:Name="ui_searchBusy" IsBusy="{m:Exp Str=stairlist.IsBusy or SaveAction.IsBusy}" BusyContent="正在工作，请稍等！">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="350"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.4*"/>
+                    <ColumnDefinition Width="0.6*"/>
                 </Grid.ColumnDefinitions>
                 <toolkit:DockPanel>
                     <Grid x:Name="ui_StairSearch" toolkit:DockPanel.Dock="Top"  Background="#FFCFEFFF">
@@ -46,6 +64,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
+						 <a:Data.Context>
+                            <o:SearchObject  ></o:SearchObject>
+                        </a:Data.Context>
                         <TextBlock Text="阶梯气价类型：" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
                         <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_stairtype}" Width="Auto" Margin="0,2,0,0" Height="25" FontSize="13.333" VerticalAlignment="Top" d:LayoutOverrides="Height" >
                             <a:Data.Prop>
@@ -59,11 +80,16 @@
                             </a:Data.Prop>
                         </TextBox>
 
-                        <Button x:Name="ui_StairSearchButton" Click="ui_StairSearchButton_Click" Grid.Column="2" Grid.Row="2" Width="70" Margin="0,2">查询</Button>
+                        <Button x:Name="ui_StairSearchButton" Click="{m:Exp Str=ui_StairSearch.DataContext.Search()}" Grid.Column="2" Grid.Row="2" Width="70" Margin="0,2">查询</Button>
                     </Grid>
-                    <sdk:DataGrid x:Name="ui_stairDataGaid" SelectionChanged="ui_stairDataGaid_SelectionChanged" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+					 <Grid toolkit:DockPanel.Dock="Bottom" Margin="0" Background="#94a8cd" Height="25">
+                        <!--信息列表翻页-->
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=ui_stairDataGaid}"  Margin="0,1,0,0" PageSize="20" Height="24" Foreground="#FF140000"/>
+							<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{ui_stairDataGaid.ItemsSource.Count\}项}" Width="122" HorizontalAlignment="Left" Margin="0" Foreground="#FF140000"/>
+                        </Grid>
+                    <sdk:DataGrid x:Name="ui_stairDataGaid"  ItemsSource="{m:Exp Str=stairlist}" AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <sdk:DataGrid.Columns>
-                            <sdk:DataGridTextColumn d:IsLocked="True" Header="编号" Binding="{Binding id}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="ID编号" Binding="{Binding id}"/>
                             <sdk:DataGridTextColumn Header="阶梯气价类型" Binding="{Binding f_stairtype}"/>
                             <sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gasproperties}"/>
                             <sdk:DataGridTextColumn Header="阶段一气量" Binding="{Binding f_stair1amount}"/>
@@ -77,15 +103,34 @@
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
-                <Grid Grid.Column="1" x:Name="ui_stairprice" >
+				 <c:BusyIndicatorEx 
+		BusyContent="{m:Exp Str=$正在工作，请稍等...$}" 
+		IsBusy="{m:Exp Str=stair.IsBusy or deleteAction.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+                <toolkit:DockPanel Background="{x:Null}" x:Name="apply" >
+					<c:MessageTipObj  Name="submittip" Tip="您确认删除该项吗？" OK="{m:Exp Str=deleteAction.Invoke()}" />
+	
+                    <Grid toolkit:DockPanel.Dock="Bottom" Background="#FFDBE4F3">
+						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
+						    <Button Content="删除" Margin="5"
+							IsEnabled="{m:Exp Str=stair.id!\=null}" Click="{m:Exp Str=submittip.Show()}" Height="30" Width="75"  />
+					</StackPanel>
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
+						
+
+                        <Button x:Name="save" Content="保存" Margin="5" 
+                			IsEnabled="{m:Exp Str=!ui_stairprice.DataContext.HasErrors}"
+                			Click="{m:Exp Str=SaveAction.Invoke()}" Height="30" Width="85"  />
+                        <Button Content="清空" Margin="5" Click="{m:Exp Str=stair.New()}" Height="30" Width="58"  />
+
+                    </StackPanel>
+					</Grid>
+                <Grid Grid.Column="1" x:Name="ui_stairprice" DataContext="{m:Exp Str=stair}" Background="#FFDBE4F3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="0.4*"/>
                         <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="50"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -97,7 +142,6 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
-                        <RowDefinition Height="Auto"/>
 
                         <RowDefinition Height="40" />
                         <RowDefinition Height="40"/>
@@ -122,60 +166,23 @@
                     <TextBlock Text="阶段三单价：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Grid.Column="2" Margin="0,6,0,5"></TextBlock>
                     <TextBox x:Name="ui_stair3price" Text="{m:Bind Path=f_stair3price}" Margin="0,2" Grid.Column="3" Grid.Row="4"></TextBox>
                     <TextBlock Text="超过阶段三单价：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" Margin="0,6,0,5"></TextBlock>
-                    <TextBox x:Name="ui_stair4price" Text="{m:Bind Path=ui_stair4price}" Margin="0,2" Grid.Column="1" Grid.Row="5"></TextBox>
+                    <TextBox x:Name="ui_stair4price" Text="{m:Bind Path=f_stair4price}" Margin="0,2" Grid.Column="1" Grid.Row="5"></TextBox>
                     <TextBlock Text="阶段月数：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0" Margin="0,6,0,5"></TextBlock>
-                    <ComboBox x:Name="ui_stairmonths" MinWidth="80" SelectedValuePath="Content" SelectedValue="{m:Bind Path=f_stairmonths}" Margin="0,2" Grid.Column="1" Grid.Row="6">
-                        <ComboBoxItem Content="1"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                        <ComboBoxItem Content="4"/>
-                        <ComboBoxItem Content="6"/>
-                        <ComboBoxItem Content="12"/>
-                    </ComboBox>
-                    <ComboBox x:Name="ui_f_gasproperties" MinWidth="80" SelectedValuePath="Content" SelectedValue="{m:Bind Path=f_gasproperties}" Margin="0,4,0,0" Grid.Column="3" Grid.Row="1">
-                        <ComboBoxItem Content="普通民用"/>
-                        <ComboBoxItem Content="商业用户新"/>
-                        <ComboBoxItem Content="低保用户"/>
-                        <ComboBoxItem Content="公福用户"/>
-                        <ComboBoxItem Content="民用"/>
-                        <ComboBoxItem Content="非民用"/>
-                    </ComboBox>
-                    <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="7"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
-                    <TextBox Name="FirstStair" TextWrapping="Wrap" Grid.Row="7" Grid.Column="1" Text="{m:Bind Path=FirstStair}" IsEnabled="False"  Width="Auto" Margin="0,3,0,2" Height="25" HorizontalAlignment="Stretch" >
+                    <ComboBox  ItemsSource="{m:Exp Str=stairmonthslist}" DisplayMemberPath="name" SelectedValuePath="name"  SelectedValue="{m:Bind Path=f_stairmonths}" Margin="0,2" Grid.Column="1" Grid.Row="6">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="FirstStair"  Default="{m:Exp Str=ui_stairprice.DataContext.FirstStair}"  NoDependValue="{m:Exp Str= zonggongsi.value}" NotNull="True"/>
-                        </a:Data.Prop>
-                    </TextBox>
-                    <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="0" Grid.Row="8"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
-                    <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="8" Grid.Column="1" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,3,0,2" Height="25" HorizontalAlignment="Stretch" Width="Auto">
-
-                        <a:Data.Prop>
-                            <o:PropertySetter PropertyName="SecondStair" Default="{m:Exp Str=ui_stairprice.DataContext.SecondStair}" />
+                            <o:PropertySetter PropertyName="f_stairmonths" NotNull="True" />
                         </a:Data.Prop>
                     </ComboBox>
-                    <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="0" Grid.Row="9"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
-                    <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="9" Grid.Column="1" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,3,0,2" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
-
+                    <ComboBox x:Name="ui_f_gasproperties"  ItemsSource="{m:Exp Str=usegaslist}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}" Margin="0,4,0,0" Grid.Column="3" Grid.Row="1">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="ThirdStair" Default="{m:Exp Str=ui_stairprice.DataContext.ThirdStair}"  />
+                            <o:PropertySetter PropertyName="f_gasproperties" NotNull="True" />
                         </a:Data.Prop>
                     </ComboBox>
-                    <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="0" Grid.Row="10"  Height="25" TextAlignment="Right" Margin="0,3,0,2"/>
-                    <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="10" Grid.Column="1" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,0,0,7" DisplayMemberPath="name" SelectedValuePath="name" HorizontalAlignment="Stretch" Width="Auto">
-                        <a:Data.Prop>
-                            <o:PropertySetter PropertyName="FourthStair" Default="{m:Exp Str=ui_stairprice.DataContext.FourthStair}"  />
-                        </a:Data.Prop>
-                    </ComboBox>
-                    <TextBox Visibility="Collapsed"  x:Name="f_OrgStr" Text="{m:Bind Path=f_OrgStr}" Grid.Row="23" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" >
-                        <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_OrgStr" NotNull="True"
-													NoDependValue="{m:Exp Str=$\{ui_stairprice.DataContext.FirstStair\}\{$.$\}\{ui_stairprice.DataContext.SecondStair\!\=null:ui_stairprice.DataContext.SecondStair\,$$\}\{$.$\}\{ui_stairprice.DataContext.ThirdStair\!\=null:ui_stairprice.DataContext.ThirdStair\,$$\}\{$.$\}\{ui_stairprice.DataContext.FourthStair\!\=null:ui_stairprice.DataContext.FourthStair\,$$\}$}"/>
-                        </a:Data.Prop>
-                    </TextBox>
-                    <Button x:Name="ui_SaveStairButton" IsEnabled="{m:Exp Str=!ui_stairprice.DataContext.HasErrors}"  Click="ui_SaveStairButton_Click" Margin="10,2" Grid.Column="2" Grid.Row="12" Width="80">保存</Button>
-                    <Button x:Name="ui_CancelStairButton" Click="ui_CancelStairButton_Click" Margin="20,2" Grid.Column="3" Grid.Row="12" Width="80">撤销</Button>
                     <TextBlock Text="用气性质：" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="2" Margin="0,0,0,4"/>
-                </Grid>
+                
+				</Grid>
+				</toolkit:DockPanel>
+				</c:BusyIndicatorEx>
             </Grid>
         </c:BusyIndicatorEx>
     </Grid>

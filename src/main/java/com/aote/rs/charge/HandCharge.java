@@ -94,7 +94,7 @@ public class HandCharge {
 	@Path("download")
 	public String downLoadRecord(String condition) {
 
-		String sql = "select top 1000 u.f_userid,u.f_username,u.f_address,u.lastinputgasnum "
+		String sql = "select top 1000 u.f_userinfoid,u.f_userid,u.f_username,u.f_address,u.lastinputgasnum "
 				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid where h.shifoujiaofei='·ñ' and u.f_userstate!='×¢Ïú' and h.f_state='Î´³­±í' and "
 				+ condition + "	order by u.f_address,u.f_apartment";
 		List<Object> list = this.hibernateTemplate
