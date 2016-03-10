@@ -28,7 +28,7 @@ namespace Com.Aote.Pages
 
         private void ui_grossproceeds_lostfocus(object sender, RoutedEventArgs e)
         {
-            f_benqizhye.Text = (double.Parse(ui_grossproceeds.Text) * double.Parse(f_zhye.Text)).ToString();
+            f_benqizhye.Text = (double.Parse(ui_grossproceeds.Text) + double.Parse(f_zhye.Text)).ToString();
         }
 
         private void save12_Click(object sender, RoutedEventArgs e)
