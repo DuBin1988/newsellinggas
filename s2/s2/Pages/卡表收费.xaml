@@ -146,6 +146,60 @@
 
             </o:GeneralObject>
 
+			 <!--用户对象-->
+            <o:GeneralObject Name="kbuserinfo" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
+             Path="{m:Exp Str=kbfee.f_userinfoid !\= null:$one/from t_userinfo where f_userstate !\=\'注销\' and f_userid\=\'\{kbfee.f_userinfoid\}\'$\,$null$}"
+             LoadOnPathChanged="False"
+             IsOld="{m:Exp Str=kbfee.f_userinfoid !\= null}"
+			 IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$ |or| print.State\=\=$Cancle$}">
+                <!--折子号-->
+                <o:PropertySetter PropertyName="f_zherownum"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_zherownum.ToInt()\,0}"></o:PropertySetter>
+                <!--初始化卡购气标记-->
+                <o:PropertySetter PropertyName="f_initcardsellgas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$$\,null}"></o:PropertySetter>
+                <!--当前表累计购气量-->
+                <o:PropertySetter PropertyName="f_metergasnums"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_premetergasnums+kbfee.f_pregas+kbfee.f_surplusgas\,null}"></o:PropertySetter>
+                <!--用户总累计购气量-->
+                <o:PropertySetter PropertyName="f_cumulativepurchase"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_upbuynum+kbfee.f_pregas\,null}"></o:PropertySetter>
+                <!--剩余补气量-->
+                <o:PropertySetter PropertyName="f_surplusgas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:0\,null}"></o:PropertySetter>
+                <!--最后一次写入卡里的气量-->
+                <o:PropertySetter PropertyName="f_finallygas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:card.Gas\,null}"></o:PropertySetter>
+				<!--最后一次购日期-->
+                <o:PropertySetter PropertyName="f_finabuygasdate" Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
+                <!--最后一次购时间-->
+                <o:PropertySetter PropertyName="f_finabuygastime" Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
+                <!--最后一次购气量-->
+                <o:PropertySetter PropertyName="f_finallybought"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_pregas\,null}"></o:PropertySetter>
+                <!--结余-->
+                <o:PropertySetter PropertyName="f_zhye"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_benqizhye\,null}"/>
+                <!--平价气累计购气量-->
+                <o:PropertySetter PropertyName="f_OrdinaryNum"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_OrdinaryNum\,null}"/>
+
+                <!--表号f_meternumber-->
+                <o:PropertySetter PropertyName="f_meternumber"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_meternumber\,null}"/>
+                <!--上上上次购气量f_LastLastPreGas-->
+                <o:PropertySetter PropertyName="f_LastLastPreGas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_LastPreGas\,null}"/>
+                <!--上上次购气量f_LastPreGas-->
+                <o:PropertySetter PropertyName="f_LastPreGas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_ThePreGas\,null}"/>
+                <!--上次购气量f_ThePreGas-->
+                <o:PropertySetter PropertyName="f_ThePreGas"
+				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_pregas\,null}"/>
+
+
+            </o:GeneralObject>
+
             <!--收费对象-->
             <o:GeneralObject Name="kbfee" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
             IsInit="{m:Exp Str=SaveAction.State\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$ |or| print.State\=\=$Cancle$}">
@@ -217,6 +271,8 @@
             <!--保存-->
             <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str='checkcardid.State\=>ReadCompleted\=\=$Loaded$:checkcardid.CardId \=\=kbfee.f_cardid.Trim()\,False'}" WebClientInfo="{StaticResource dbclient}">
                 <!--用户对象-->
+                <b:BatchInfo Source="{m:Exp Str=kbuserinfo}" MethodName="SaveToJson"/>
+                <!--表对象-->
                 <b:BatchInfo Source="{m:Exp Str=kbusers}" MethodName="SaveToJson"/>
                 <!--更新维护费开始日期-->
                 <!--b:BatchInfo Source="{m:Exp Str=UpdateBeginFeeAction}" MethodName="InvokeToJson"/-->
@@ -373,7 +429,7 @@
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="系统编号：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Height="25"/>
+                                <TextBlock Text="表编号：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Height="25"/>
                                 <TextBlock Text="用户/单位名称：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2" Height="25"/>
                                 <TextBlock Text="地　　址：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2" RenderTransformOrigin="1.638,0.44"/>
                                 <TextBlock Text="小区名称：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
@@ -799,7 +855,7 @@
                                     </a:Data.Prop>
                                 </TextBox>
 
-                                <TextBlock Text="档案编号：" Foreground="Red" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
+                                <TextBlock Text="用户编号：" Foreground="Red" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
 
                                 <TextBox  Visibility="Collapsed" Text="{m:Bind Path=f_amountmaintenance}" FontWeight="Bold" Foreground="Red" Grid.Column="5" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
                                     <a:Data.Prop>

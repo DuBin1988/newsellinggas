@@ -517,7 +517,7 @@ namespace Com.Aote.Pages
         private void print_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
 
-            print.Completed -= print_Completed;
+            //print.Completed -= print_Completed;
             //打印折子
             PrintObj zzprint = FrameworkElementExtension.FindResource(this.save2, "zzprint") as PrintObj;
             zzprint.Completed += zzprint_Completed;

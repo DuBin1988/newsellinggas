@@ -20,6 +20,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.collection.PersistentSet;
 import org.hibernate.proxy.map.MapProxy;
@@ -70,7 +71,7 @@ public class SellSer {
 				+ // h t_handplan
 				"  from (select * from t_userinfo where f_userid='"
 				+ userid
-				+ "') ui join t_userfiles u on ui.f_userid=u.f_userinfoid "
+				+ "') ui join t_userfiles u on ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
 				+ "left join (select datediff(day,f_endjfdate,GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
 				+ "on u.f_userid=h.f_userid "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
@@ -278,7 +279,7 @@ public class SellSer {
 			ret = insertSell(user, nopayMap, nowye, lastinputgasnum,
 					lastrecord, debts, debtGas, handIds, lastinputdate,
 					payMent, metergasnums, cumuGas, newMeterGasNums,
-					newCumuGas, opid, payments, orgstr,zhinajin);
+					newCumuGas, opid, payments, orgstr, zhinajin);
 			log.debug("售气交费成功!" + ret);
 			ret.put("success", "机表交费成功");
 			// 抓取自定义异常
@@ -315,7 +316,7 @@ public class SellSer {
 			BigDecimal debtGas, String handIds, Date lastinputdate,
 			BigDecimal payMent, BigDecimal metergasnums, BigDecimal cumuGas,
 			BigDecimal newMeterGasNums, BigDecimal newCumuGas, String opid,
-			String payments, String orgstr,double zhinajin) throws Exception {
+			String payments, String orgstr, double zhinajin) throws Exception {
 		JSONObject result = new JSONObject();
 		// 查找登陆用户,获取登陆网点,操作员
 		Map<String, Object> loginUser = this.findloginUser(opid);
@@ -381,7 +382,7 @@ public class SellSer {
 		sale.put("f_amountmaintenance", 0.0);
 		sale.put("f_metergasnums", newMeterGasNums.doubleValue());
 		sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
-
+		sale.put("f_stairtype", userMap.get("f_stairtype"));
 		sale.put("f_stair1price", nopayMap.get("f_stair1price"));
 		sale.put("f_stair1amount", nopayMap.get("f_stair1amount"));
 		sale.put("f_stair1fee", nopayMap.get("f_stair1fee"));
@@ -442,7 +443,7 @@ public class SellSer {
 		String tm = format.format(now);
 		// 折子行号
 		String f_zherownum = user.get("f_zherownum") + "";
-		if (f_zherownum == "") {
+		if (f_zherownum == "" || user.get("f_zherownum") == null) {
 			f_zherownum = "13";
 		}
 		int zherownum = Integer.parseInt(f_zherownum);
@@ -450,7 +451,7 @@ public class SellSer {
 		if (zherownum >= 24) {
 			zherownum = 0;
 		}
-		user.put("f_zherownum", f_zherownum);
+		user.put("f_zherownum", zherownum);
 		// 更新用户
 		String sql = "update t_userinfo  set f_zhye=" + nowye
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
@@ -597,247 +598,89 @@ public class SellSer {
 		return map;
 	}
 
-	// // 定义sell方法，处理交费
-	// @GET
-	// @Path("{userid}/{money}/{zhinajin}/{payment}/{opid}")
-	// public String txSell(@PathParam("userid") String userid,
-	// @PathParam("money") double dMoney,
-	// @PathParam("zhinajin") double dZhinajin,
-	// @PathParam("payment") String payment, @PathParam("opid") String opid) {
-	// // 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
-	// String ret = "";
-	// try {
-	// log.debug("售气交费 开始");
-	// // 查找登陆用户,获取登陆网点,操作员
-	// Map<String, Object> loginUser = this.findUser(opid);
-	// if (loginUser == null) {
-	// log.debug("机表缴费处理时未找到登陆用户,登陆id" + opid);
-	// throw new RSException("机表缴费处理时未找到登陆用户,登陆id" + opid);
-	// }
-	// // 根据用户编号找到用户档案中的信息,以及抄表记录
-	// List<Map<String, Object>> list = this.findHanplans(userid);
-	// // 收款，滞纳金
-	// BigDecimal money = new BigDecimal(dMoney + "");
-	// BigDecimal zhinajin = new BigDecimal(dZhinajin + "");
-	// // 取出第一条记录，以便从用户档案中取数据
-	// Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
-	// // 从用户档案中取出累计购气量
-	// BigDecimal f_metergasnums = new BigDecimal(userinfo.get(
-	// "f_metergasnums").toString());
-	// BigDecimal f_cumulativepurchase = new BigDecimal(userinfo.get(
-	// "f_cumulativepurchase").toString());
-	// // 记录上次购气量（冲正时使用）
-	// BigDecimal oldf_metergasnums = new BigDecimal(userinfo.get(
-	// "f_metergasnums").toString());// 旧的表当前累计购气量
-	// BigDecimal oldf_cumulativepurchase = new BigDecimal(userinfo.get(
-	// "f_cumulativepurchase").toString());// 旧的总累计购气量
-	// // 从用户档案中取出余额
-	// BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye")
-	// .toString());
-	// // 收款减去滞纳金
-	// money.subtract(zhinajin);
-	// // 拿余额+实际收费金额-滞纳金 再和应交金额比较，判断未交费的抄表记录是否能够交费
-	// BigDecimal total = f_zhye.add(money).subtract(zhinajin);
-	// // 上期指数
-	// BigDecimal lastqinum = new BigDecimal("0");
-	// // 本期指数
-	// BigDecimal benqinum = new BigDecimal("0");
-	// // 总气量
-	// BigDecimal gasSum = new BigDecimal("0");
-	// // 总气费
-	// BigDecimal feeSum = new BigDecimal("0");
-	// // 折子行号
-	// String f_zherownum = userinfo.get("f_zherownum") + "";
-	// if (f_zherownum == "") {
-	// f_zherownum = "13";
-	// }
-	//
-	// // 抄表记录id
-	// String handIds = "";
-	// // 账户实际结余,实际收款（收款-滞纳金)
-	// BigDecimal f_accountZhye = new BigDecimal(userinfo.get(
-	// "f_accountzhye").toString());
-	// BigDecimal accReceMoney = money.subtract(zhinajin);
-	// for (int i = 0; i < list.size(); i++) {
-	// Map<String, Object> map = (Map) list.get(i);
-	// // 取出应交金额
-	// String h = (map.get("oughtfee") + "");
-	// if (h.equals("null")) {
-	// h = "0.0";
-	// } else {
-	// }
-	// BigDecimal oughtfee = new BigDecimal(h);
-	// oughtfee = oughtfee.setScale(2, BigDecimal.ROUND_HALF_UP);
-	// // 当前用户实际缴费够交，则扣除，交费记录变为已交
-	// int equals = total.compareTo(oughtfee);// 判断total和oughtfee的大小
-	// if (equals >= 0) {
-	// // 第一条，获取上期指数
-	// if (i == 0) {
-	// String lastinputgasnum1 = (map.get("lastinputgasnum") + "");
-	// if (!lastinputgasnum1.equals("null"))
-	// lastqinum = new BigDecimal(lastinputgasnum1);
-	// }
-	// if (i == list.size() - 1) {
-	// String lastrecordstr = (map.get("lastrecord") + "");
-	// if (!lastrecordstr.equals("null"))
-	// benqinum = new BigDecimal(lastrecordstr);
-	// }
-	// // 扣费，并产生本次余额
-	// total = total.subtract(oughtfee);
-	// // 气量相加
-	// String oughtamount1 = (map.get("oughtamount") + "");
-	// if (oughtamount1.equals("null"))
-	// oughtamount1 = "0.0";
-	// BigDecimal gas = new BigDecimal(oughtamount1);
-	// gasSum = gasSum.add(gas);
-	// // 累计购气量
-	// f_metergasnums = f_metergasnums.add(gasSum);
-	// f_cumulativepurchase = f_cumulativepurchase.add(gasSum);
-	// // 气费相加
-	// feeSum = feeSum.add(oughtfee);
-	// // 获取抄表记录ID
-	// Integer handId1 = (Integer) map.get("handid");
-	// if (handId1 == null)
-	// handId1 = 0;
-	// int handId = handId1;
-	// // 抄表记录Ids
-	// handIds = add(handIds, handId + "");
-	// // 更新抄表记录
-	// if (handId != 0) {
-	// String updateHandplan =
-	// "update t_handplan set shifoujiaofei='是' where id="
-	// + handId;
-	// log.debug("更新抄表记录 sql:" + updateHandplan);
-	// hibernateTemplate.bulkUpdate(updateHandplan);
-	// }
-	// }
-	// }
-	// int zherownum = Integer.parseInt(f_zherownum);
-	// // 折子行号为24，换行
-	// if (zherownum >= 24) {
-	// zherownum = 0;
-	// }
-	// // 更新用户档案
-	// String updateUserinfo = "update t_userfiles set f_zhye=" + total
-	// + " ,f_metergasnums=" + f_metergasnums
-	// + " ,f_cumulativepurchase=" + f_cumulativepurchase
-	// + ",f_zherownum=" + (zherownum + 1)
-	// + ",version=version+1 where f_userid='" + userid + "'";
-	// log.debug("更新用户的档案sql：" + updateUserinfo);
-	// hibernateTemplate.bulkUpdate(updateUserinfo);
-	// // 产生交费记录
-	// Map<String, Object> sell = new HashMap<String, Object>();
-	// sell.put("f_zherownum", Integer.parseInt(f_zherownum));
-	// sell.put("f_userid", userid); // 户的id
-	// sell.put("lastinputgasnum",
-	// lastqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 上期指数
-	// sell.put("lastrecord",
-	// benqinum.setScale(1, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 本期指数
-	// // 应交金额
-	// BigDecimal totalcost = new BigDecimal(0);
-	// if (zhinajin.add(feeSum).compareTo(f_zhye) > 0) {
-	// totalcost = zhinajin.add(feeSum).subtract(f_zhye);
-	// }
-	// sell.put("f_totalcost",
-	// totalcost.setScale(2, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 应交金额
-	// sell.put("f_grossproceeds",
-	// money.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()); // 收款
-	// sell.put("f_zhinajin",
-	// zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 滞纳金
-	//
-	// Date now = new Date();
-	// sell.put("f_deliverydate", now); // 交费日期
-	// sell.put("f_deliverytime", now); // 交费时间
-	//
-	// sell.put("f_zhye", f_zhye.setScale(2, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 上期结余
-	// sell.put("f_benqizhye", total.setScale(2, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 本期结余
-	// sell.put("f_beginfee", userinfo.get("f_beginfee")); // 维管费
-	// sell.put("f_premetergasnums",
-	// oldf_metergasnums.setScale(2, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 表上次累计购气量
-	// sell.put(
-	// "f_upbuynum",
-	// oldf_cumulativepurchase.setScale(2,
-	// BigDecimal.ROUND_HALF_UP).doubleValue()); // 上次总累计购气量
-	// sell.put("f_gasmeterstyle", "机表"); // 气表类型
-	// sell.put("f_comtype", "天然气公司"); // 公司类型，分为天然气公司、银行
-	// sell.put("f_username", userinfo.get("f_username")); // 用户/单位名称
-	// sell.put("f_address", userinfo.get("f_address")); // 地址
-	// sell.put("f_districtname", userinfo.get("f_districtname")); // 地址
-	// sell.put("f_cusDom", userinfo.get("f_cusDom")); // 地址
-	// sell.put("f_books", userinfo.get("f_books")); // 册号
-	// sell.put("f_cusDy", userinfo.get("f_cusDy")); // 地址
-	// sell.put("f_idnumber", userinfo.get("f_idnumber")); // 身份证号
-	// sell.put("f_gaswatchbrand", "机表"); // 气表品牌
-	// sell.put("f_gaspricetype", userinfo.get("f_gaspricetype")); // 气价类型
-	// sell.put("f_gasprice", userinfo.get("f_gasprice")); // 气价
-	// sell.put("f_usertype", userinfo.get("f_usertype")); // 用户类型
-	// sell.put("f_gasproperties", userinfo.get("f_gasproperties"));// 用气性质
-	// // 机表中，将卡号作为存储折子号，磁条卡的信息字段
-	// if (userinfo.containsKey("f_cardid")
-	// && userinfo.get("f_cardid") != null) {
-	// String kh = userinfo.get("f_cardid").toString();
-	// sell.put("f_cardid", kh);
-	// }
-	//
-	// sell.put("f_pregas", gasSum.setScale(1, BigDecimal.ROUND_HALF_UP)
-	// .doubleValue()); // 气量
-	// sell.put("f_preamount", feeSum
-	// .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()); // 气费
-	// sell.put("f_payment", payment); // 付款方式
-	// sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
-	// sell.put("f_sgnetwork", loginUser.get("f_parentname").toString()); // 网点
-	// sell.put("f_sgoperator", loginUser.get("name").toString()); // 操 作 员
-	// sell.put("f_filiale", loginUser.get("f_fengongsi").toString()); // 分公司
-	// sell.put("f_fengongsinum", loginUser.get("f_fengongsinum")
-	// .toString()); // 分公司编号
-	// sell.put("f_payfeetype", "机表收费"); // 交易类型
-	// sell.put("f_payfeevalid", "有效"); // 购气有效类型
-	// sell.put("f_useful", handIds); // 抄表记录id
-	// log.debug("交费记录保存信息：" + sell.toString());
-	// int sellId = (Integer) hibernateTemplate.save("t_sellinggas", sell);
-	// // 格式化交费日期
-	// SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	// String result = "{id:" + sellId + ", f_deliverydate:'"
-	// + f2.format(now) + "'}";
-	// // 更新抄表记录sellid
-	// if (handIds != null && !handIds.equals("") && !handIds.equals("0")) {
-	// String updateHandplan = "update t_handplan set f_sellid ="
-	// + sellId + " where id in (" + handIds + ")";
-	// log.debug("更新抄表记录sql：" + updateHandplan);
-	// hibernateTemplate.bulkUpdate(updateHandplan);
-	// }
-	// log.debug("售气交费 结束");
-	// log.debug("清欠费开始" + userid);
-	// // 清欠处理,账户实际余额如果>0,说明实际不欠费，不处理，加上收款，更新档案
-	// if (f_accountZhye.compareTo(BigDecimal.ZERO) > 0) {
-	// addUserAccountzhye(userid, accReceMoney);
-	// return ret;
-	// }
-	// // 是否真实的抄表记录
-	// if (userinfo.get("handid") == null) {
-	// addUserAccountzhye(userid, accReceMoney);
-	// return ret;
-	// }
-	// // 清欠费处理
-	// financedetailDisp(loginUser, list, accReceMoney, sellId);
-	// // 抓取自定义异常
-	// } catch (RSException e) {
-	// log.debug("售气交费 失败!");
-	// ret = e.getMessage();
-	// } catch (Exception ex) {
-	// log.debug("售气交费 失败!" + ex.getMessage());
-	// ret = ex.getMessage();
-	// } finally {
-	// return ret;
-	// }
-	// }
+	// 定义sell方法，处理交费,冲正插入一条负的交费
+	@GET
+	@Path("{userid}/{id}/{opid}")
+	public JSONObject txSell_cz(@PathParam("userid") String userid,
+			@PathParam("id") String id, @PathParam("opid") String opid) {
+		// 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
+		JSONObject ret = new JSONObject();
+		try {
+//			final String sql_1 = "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
+//					+ "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
+//					+ "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
+//					+ "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
+//					+ "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
+//					+ userid + "' and id='" + id + "'" + "";
+//			List list = (List) hibernateTemplate
+//					.execute(new HibernateCallback() {
+//						public Object doInHibernate(Session session)
+//								throws HibernateException {
+//							SQLQuery query = session.createSQLQuery(sql_1);
+//							return query.list();
+//						}
+//					});
+			
+			String sql = "from t_sellinggas where id="+id;
+			List list = this.hibernateTemplate.find(sql);
+			// 找到安检记录，判断日期和基表读数
+			if (list.size() == 1) {
+				// 查找登陆用户,获取登陆网点,操作员
+				Map<String, Object> loginUser = this.findloginUser(opid);
+				Map<String, Object> userinfo = this.findUserinfo(userid);
+				if (loginUser == null) {
+					log.debug("机表缴费处理时未找到登陆用户,登陆id" + opid);
+					throw new RSException("机表缴费处理时未找到登陆用户,登陆id" + opid);
+				}
+				Map<String, Object> b_sell = (Map<String, Object>) list.get(0);
+				// 产生交费记录
+				Map<String, Object> sell = new HashMap<String, Object>();
+				sell.putAll(b_sell);
+				sell.remove("id");
+				Date now = new Date();
+				sell.put("f_deliverydate", now); // 交费日期
+				sell.put("f_deliverytime", now); // 交费时间
+				// 正常返回购气日期
+				SimpleDateFormat fmt = new SimpleDateFormat(
+						"yyyy-MM-dd HH:mm:ss");
+				// ret=fmt.format(now);
+				sell.put("f_deliverydate_tb", fmt.format(now)); // 同步 交费时间
+				sell.put("f_status_tb", "1"); // 同步 状态
+				sell.put("f_grossproceeds", -Double.parseDouble(sell.get("f_grossproceeds")+""));
+				sell.put("f_pregas", -Double.parseDouble(sell.get("f_pregas")+"")); // 气量
+				sell.put("f_preamount",  -Double.parseDouble(sell.get("f_preamount")+"")); // 气费
+				sell.put("f_payment", "冲正"); // 付款方式
+				sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
+				sell.put("f_sgnetwork", loginUser.get("f_parentname")
+						.toString()); // 网点
+				sell.put("f_sgoperator", loginUser.get("name").toString()); // 操作员
+				sell.put("f_filiale", loginUser.get("f_fengongsi").toString()); // 分公司
+				sell.put("f_fengongsinum", loginUser.get("f_fengongsinum")
+						.toString()); // 分公司编号
+				sell.put("f_payfeevalid", "有效"); // 购气有效类型
+				log.debug("交费记录保存信息：" + sell.toString());
+				int sellId = (Integer) hibernateTemplate.save("t_sellinggas",
+						sell);
+				// ID 返回去
+				if (sellId > 0) {
+					execSQL("update t_sellinggas set f_payfeevalid='有效',f_payment='冲正'  where f_userid='"
+							+ userid + "' and id='" + id + "'" + "");
+				} else
+					ret.put("error", "noid");
+			} else {
+				ret.put("error", "noid");
+			}
+			ret.put("success",  "机表冲正成功");
+		} catch (RSException e) {
+			log.debug("售气交费 失败!");
+			ret.put("error",  e.getMessage());
+		} catch (Exception ex) {
+			log.debug("售气交费 失败!" + ex.getMessage());
+			ret.put("error",  ex.getMessage());
+		} finally {
+			return ret;
+		}
+	}
 
 	/**
 	 * 添加账户结余
@@ -1042,6 +885,20 @@ public class SellSer {
 			result.put(hand.get("name"), hand.get("value"));
 		}
 		return result;
+	}
+	
+	/**
+	 * execute sql in hibernate
+	 * @param sql
+	 */
+	private void execSQL(final String sql) {
+        hibernateTemplate.execute(new HibernateCallback() {
+            public Object doInHibernate(Session session)
+                    throws HibernateException {
+                session.createSQLQuery(sql).executeUpdate();
+                return null;
+            }
+        });		
 	}
 
 	// 转换器，在转换期间会检查对象是否已经转换过，避免重新转换，产生死循环

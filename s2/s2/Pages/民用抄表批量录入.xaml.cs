@@ -12,6 +12,7 @@ using Com.Aote.ObjectTools;
 using System.Net;
 using System.Collections.Generic;
 using System.Json;
+using Com.Aote.Utils;
 
 namespace Com.Aote.Pages
 {
@@ -78,9 +79,13 @@ namespace Com.Aote.Pages
             {
                 list.Remove(go);
             }
+			//获取登录用户组织信息
+			
+            GeneralObject loginUser = (GeneralObject)FrameworkElementExtension.FindResource(this, "LoginUser");
+            string orgpathstr = (string)loginUser.GetPropertyValue("orgpathstr");
             //将产生的json串送后台服务进行处理
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + ui_sgoperator.Text + "/" + chaobiaoriqi.SelectedDate + "/" + meter.SelectedValue.ToString() + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + ui_sgoperator.Text + "/" + chaobiaoriqi.SelectedDate + "/" + meter.SelectedValue.ToString() + "/"+orgpathstr+"?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
             client.UploadStringCompleted += client_UploadStringCompleted;
             client.UploadStringAsync(new Uri(uri), json);
@@ -170,7 +175,9 @@ namespace Com.Aote.Pages
                     try
                     {
                         go.EntityType = "t_handplan";
-                        string f_userid = (string)json["f_userid"];//用户编号
+                        string f_userinfoid = (string)json["f_userinfoid"];//用户编号
+                        go.SetPropertyValue("f_userinfoid", f_userinfoid, false);
+                        string f_userid = (string)json["f_userid"];//表编号
                         go.SetPropertyValue("f_userid", f_userid, false);
                         string f_username = (string)json["f_username"];//用户名
                         go.SetPropertyValue("f_username", f_username, false);

@@ -65,7 +65,7 @@
             <!--用户对象 -->
             <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
 			IsInit="{m:Exp Str=userfile.DataContext.IsInit}"
-            Path="{m:Exp Str=userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userid\=\'\{userfile.DataContext.f_userid\}\'$\,$aaa$}">
+            Path="{m:Exp Str=userfile.DataContext.f_userinfoid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userinfoid\}\'$\,$aaa$}">
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=sellinggas.f_zherownum}"/>
                 <!--用户总累计购气量-->
                 <o:PropertySetter PropertyName="f_cumulativepurchase" 
@@ -94,7 +94,10 @@
                 <!--发卡标记-->
                 <o:PropertySetter PropertyName="f_whethergivecard" 
 				NoDependValue="{m:Exp Str='(SaveAction2\=>Saving!\=null or SaveAction=>Saving!=null):(sellinggas.f_payfeetype==$发卡售气$:$未发$,$已发$),null'}"></o:PropertySetter>
-            </o:GeneralObject>
+				<!--结余-->
+                <o:PropertySetter PropertyName="f_zhye" 
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_zhye\,null}"></o:PropertySetter>
+               </o:GeneralObject>
 
             <!--收费对象-->
             <o:GeneralObject Name="sellinggas" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
@@ -229,7 +232,7 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-								Path="{m:Exp Str=$from t_chongzheng where \{userfilesearch.DataContext.Condition\} and f_comtype \!\=\'银行\'  and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_reversaldate \=\'\{SysTime.Today.ToString($yyyy-MM-dd$)\}\' }"
+								Path="{m:Exp Str=$from t_chongzheng where \{userfilesearch.DataContext.Condition\} and f_comtype \!\=\'银行\'  and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and chongzhengtype\=\'卡表冲正\' and f_reversaldate \=\'\{SysTime.Today.ToString($yyyy-MM-dd$)\}\' }"
 								IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
                         </a:Data.Items>
@@ -296,7 +299,7 @@
                                 <ColumnDefinition Width="130"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="用户编号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right"/>
+                            <TextBlock Text="表编号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right"/>
                             <TextBlock Text="用户姓名：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2" Height="25"/>
                             <TextBlock Text="身份证号：" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right"/>
                             <TextBlock Text="小区地址：" Grid.Column="2" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
@@ -580,6 +583,12 @@
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_comtype" Default="天然气公司" NotNull="True"/>
                                 </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="用户编号：" Foreground="Red" Margin="115,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="3" Height="25" Grid.ColumnSpan="2" />
+                            <TextBox Text="{m:Bind Path=f_userinfoid}" IsReadOnly="True" Grid.Column="5"  Grid.Row="5" TextWrapping="Wrap"  HorizontalAlignment="Stretch" Width="Auto" Margin="0,5,0,0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            	<a:Data.Prop>
+                            		<o:PropertySetter PropertyName="f_userinfoid"  NoDependValue="{m:Exp Str=sellinggas.f_userinfoid}"/>
+                            	</a:Data.Prop>
                             </TextBox>
                         </Grid>
                     </toolkit:DockPanel>

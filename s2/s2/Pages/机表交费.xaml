@@ -239,7 +239,11 @@
                             <TextBlock Text="收　　款：" Grid.Column="2" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                             <TextBlock Text="应交金额：" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
                             <TextBlock Text="本期结余：" Margin="0,5,0,7" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-                            <TextBox x:Name="ui_userid" IsReadOnly="True" a:ControlAttach.FocusToOnEnter="shoukuan"  Text="{Binding f_userid, Mode=TwoWay}"  Grid.Column="1" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"  />
+                            <TextBox x:Name="ui_userid" IsReadOnly="True" a:ControlAttach.FocusToOnEnter="shoukuan"  Text="{Binding f_userid, Mode=TwoWay}"  Grid.Column="1" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"  >
+								<a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userid" NotNull="True"/>
+                                </a:Data.Prop>
+							</TextBox>
                             <TextBox x:Name="ui_username" Text="{Binding f_username, Mode=TwoWay}" IsReadOnly="True" Grid.Column="3" Margin="0,6" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"/>
                             <TextBox x:Name="ui_address" Text="{Binding f_address, Mode=TwoWay}" IsReadOnly="True" Grid.Column="1" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"/>
                             <TextBox x:Name="ui_districtname" Text="{Binding f_districtname, Mode=TwoWay}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch"/>

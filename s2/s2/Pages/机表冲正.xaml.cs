@@ -100,5 +100,11 @@ namespace Com.Aote.Pages
         }
         #endregion
 
+        private void insertsell_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            BatchExcuteAction save = (from p in loader.Res where p.Name.Equals("SaveAction") select p).First() as BatchExcuteAction;
+            save.Invoke();
+        }
+
 	}
 }

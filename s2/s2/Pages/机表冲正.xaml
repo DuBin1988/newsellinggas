@@ -21,7 +21,7 @@
 		<m:ResourceLoad Margin="0" x:Name="loader" > 
 			 <!--用户对象-->
 			<o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=$one/from t_userfiles where f_userstate !\=\'注销\' and f_userid\=\'\{userfilego.f_userid\}\'$}" 
+             Path="{m:Exp Str=$one/from t_userinfo where f_userstate !\=\'注销\' and f_userid\=\'\{userfilego.f_userid\}\'$}" 
 			 IsOld="{m:Exp Str=userfilego.f_userid!\=null}"
 			 IsInit="{m:Exp Str=userfilego.f_userid\=\=null}">
 				</o:GeneralObject>
@@ -115,7 +115,7 @@
 			</o:GeneralObject>-->
 			<!--更新用户对象-->
 			<b:HQLAction Name="UpdateUser" WebClientInfo="{StaticResource dbclient}" 
-				HQL="{m:Exp Str=$update t_userfiles 
+				HQL="{m:Exp Str=$update t_userinfo 
 				set
 				f_metergasnums \= \{userfile.DataContext.f_premetergasnums\}\, 
 				f_cumulativepurchase\=\{userfile.DataContext.f_upbuynum\}\, 
@@ -151,11 +151,24 @@
 		<b:HQLAction Name="updatefinancedatas"   WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_financedetail set f_payfeevalid\= \'无效\'   where f_sellid \= \{sellinggas.id\} }"/> 
 	   
-											
+			<!--添加一笔负记录-->
+			<o:GeneralObject Name="insertsell" EntityType="t" Completed="insertsell_Completed" LoadOnPathChanged="False" WebClientInfo="{StaticResource server}" Path="{m:Exp Str='$sell/{sellinggas.f_userid}/{sellinggas.id}/{LoginUser.id}'}"/>
+
+            <b:HQLAction Name="InsertSellingGas" Type="sql"     WebClientInfo="{StaticResource dbclient}">
+                <b:HQLAction.HQL   >
+                    <m:Exp Str="$insert into t_sellinggas(f_userid, f_pregas, f_preamount, f_grossproceeds,f_gasprice,f_cardid,f_username,f_address,f_districtname
+                           ,f_sgoperator, f_deliverytime, f_deliverydate, f_filiale, f_sgnetwork, f_gaspricetype,f_gaswatchbrand,f_usertype,
+                           f_payfeevalid)
+                           values('{sellinggas.f_userid}', -{sellinggas.f_pregas}, -{sellinggas.f_preamount}, -{sellinggas.f_grossproceeds},{sellinggas.f_gasprice},{sellinggas.f_cardid},'{sellinggas.f_username==null:$null$,sellinggas.f_username}','{sellinggas.f_address==null:$null$,sellinggas.f_address}','{sellinggas.f_districtname==null:$null$,sellinggas.f_districtname}',
+                           '{userfilego.f_reversalname==null:$null$,userfilego.f_reversalname}', '{userfilego.f_reversaltime==null:$null$,userfilego.f_reversaltime}','{userfilego.f_reversaldate==null:$null$,userfilego.f_reversaldate}', '{userfilego.f_filiale==null:$null$,userfilego.f_filiale}', '{userfilego.f_sgnetwork==null:$null$,userfilego.f_sgnetwork}',
+                           '{sellinggas.f_gaspricetype==null:$null$,sellinggas.f_gaspricetype}','{sellinggas.f_gaswatchbrand==null:$null$,sellinggas.f_gaswatchbrand}','{sellinggas.f_usertype==null:$null$,sellinggas.f_usertype}','冲正')"
+                    ></m:Exp>
+                </b:HQLAction.HQL>
+            </b:HQLAction>								
 			<!--保存对象 -->
 			<b:BatchExcuteAction Name="SaveAction"  WebClientInfo="{StaticResource dbclient}">
-				<!--更新售气记录无效-->
-				<b:BatchInfo Source="{m:Exp Str=UpdateSellgas}" MethodName="InvokeToJson"/> 
+				<!--更新售气记录无效
+				<b:BatchInfo Source="{m:Exp Str=UpdateSellgas}" MethodName="InvokeToJson"/> -->
 				
 		  		<!--更新抄表记录未交-->
 				<b:BatchInfo Source="{m:Exp Str=UpdateHandplan}" CanSave="{m:Exp Str=userfile.DataContext.f_useful!\=null and userfile.DataContext.f_useful!\=$$}" MethodName="InvokeToJson"/> 
@@ -176,7 +189,8 @@
 			<!--用户列表部分-->
 			<o:SearchObject Name="search"/>
 			<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-		       	Path="{m:Exp Str='$from t_userfiles where {search.Condition}'}"
+		       	MultiPath="{m:Exp Str='$from t_userinfo where {search.Condition}'}"
+		       	Path="{m:Exp Str='$from t_userinfo where {search.Condition} order by f_finabuygasdate desc'}"
 		       	PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 		</m:ResourceLoad>
 		<Grid >
@@ -208,9 +222,9 @@
 							</TextBox>
 							<Button Content="查  询" x:Name="searchbutton" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=search.Search()}"  FontSize="13.333" HorizontalAlignment="Left" Width="75" Margin="25,0,0,0"/>
 							<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,4,0,0" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
-							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,3,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userinfoid}" Width="Auto" Margin="0,3,0,0" Height="25" FontSize="13.333" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+									<o:PropertySetter PropertyName="f_userinfoid"  Operator="f_userid = 'this'"/>          
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="楼    号：" Margin="0" Height="25" FontSize="13.333" HorizontalAlignment="Right" Grid.Column="2" Grid.Row="1" />
@@ -248,13 +262,7 @@
 							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
 							<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
-							<sdk:DataGridTextColumn Header="气表底数" Binding="{Binding f_gasmeteraccomodations}"/>
-							<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
-							<sdk:DataGridTextColumn Header="表号" Binding="{Binding f_meternumber}"/>
-							<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-							<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-							<sdk:DataGridTextColumn Header="额定流量" Binding="{Binding f_flownum}"/>
-							<sdk:DataGridTextColumn Header="特殊限购" Binding="{Binding f_xiangou}"/>
+							<sdk:DataGridTextColumn Header="最后购气日期" Binding="{Binding f_finabuygasdate, StringFormat=yyyy-MM-dd}"/>
 							<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
 							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
 							<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
@@ -272,7 +280,6 @@
 							<sdk:DataGridTextColumn Header="是否发卡" Binding="{Binding f_whethergivecard}"/>
 							<sdk:DataGridTextColumn Header="用户状态" Binding="{Binding f_userstate}"/>
 							<sdk:DataGridTextColumn Header="最后购气量" Binding="{Binding f_finallybought}"/>
-							<sdk:DataGridTextColumn Header="最后购气日期" Binding="{Binding f_finabuygasdate, StringFormat=yyyy-MM-dd}"/>
 							<sdk:DataGridTextColumn Header="表安装日期" Binding="{Binding f_watchinstalldate, StringFormat=yyyy-MM-dd}"/>
 							<sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
 							<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_yytdepa}"/>
@@ -292,8 +299,8 @@
 							<StackPanel Orientation="Horizontal">
 								<Button x:Name="save" Content="冲    正" Margin="5" 
 									IsEnabled="{m:Exp Str=!userfilego.HasErrors }" 
-									Click="SaveClick" Width="50" />
-								<Button Name="cancle" Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=sellinggas.New()}" Width="50"/>
+									Click="{m:Exp Str=insertsell.Load()}" Width="72" />
+								<Button Name="cancle" Content="清空" Margin="5" FontSize="12" Click="{m:Exp Str=sellinggas.New()}" Width="50"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"/>
 							 
@@ -309,7 +316,7 @@
 								<RowDefinition Height="37"/>
 								<RowDefinition Height="37"/>
 								<RowDefinition Height="37"/>
-								<RowDefinition Height="37"/>
+								<RowDefinition Height="0"/>
 								<RowDefinition Height="1"/>
 								<RowDefinition Height="37"/>
 								<RowDefinition Height="37"/>
@@ -593,8 +600,7 @@
 							<TextBlock Margin="0,8,0,7" Grid.Row="15" Grid.Column="2" TextWrapping="Wrap" Text="冲正原因：" TextAlignment="Right" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_reversalcause}" Grid.Column="3" Margin="0,7,8,8" Grid.Row="15" TextWrapping="Wrap"   VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="5" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_reversalcause"  NotNull="True"
-										 />
+									<o:PropertySetter PropertyName="f_reversalcause" NotNull="True"  />
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Text="抄表记录id号：" Margin="4,4,-4,8" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>

@@ -84,7 +84,7 @@
 
 
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'$\,$null$}"/>
 
             <!--判断用户是否存在-->
             <o:GeneralObject Name="userexist" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}" 
@@ -142,6 +142,7 @@
                 <o:PropertySetter PropertyName="f_stair3price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair3price}"  />
                 <o:PropertySetter PropertyName="f_stair4price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair4price}"  />
                 <o:PropertySetter PropertyName="f_stairmonths" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stairmonths}"  /> 
+                <o:PropertySetter PropertyName="f_zherownum" Default="13" /> 
 
             </o:GeneralObject>
             <o:GeneralObject Name="temp" EntityType="" Source="{m:Exp Str=TabControl.SelectedIndex\=\=0:areafiles.SelectedItem\,areafiles2.SelectedItem}"/>
