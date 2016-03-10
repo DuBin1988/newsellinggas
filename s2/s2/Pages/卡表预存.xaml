@@ -84,7 +84,7 @@
             <!--用户对象-->
             <o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
              Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and card.Factory \=\=$jinka$ :$one/from t_userfiles where f_userstate !\=\'注销\' and f_cardid\=\'\{card.CardId\}\' and dqdm \= \'\{card.Dqdm\}\' and f_aliasname\=\'\{card.Factory\}\'$\,card.CardId !\= null and card.Factory !\=null:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\'$\,$null$}" 
-			 IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$}">
+			 IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| print.State\=\=$End$ |or| print.State\=\=$Cancle$}">
                 <!--折子号-->
                 <o:PropertySetter PropertyName="f_zherownum" 
 				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_zherownum.ToInt()\,0}"></o:PropertySetter>
@@ -110,12 +110,8 @@
 
             <!--收费对象-->
             <o:GeneralObject Name="kbfee" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
-            IsInit="{m:Exp Str=SaveAction.State\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$}">
+            IsInit="{m:Exp Str=SaveAction.State\=\=$Error$ |or| print.State\=\=$End$ |or| print.State\=\=$Cancle$}">
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=kbusers !\= null and kbusers.f_zherownum !\= null and kbusers.f_zherownum.ToInt()^24:kbusers.f_zherownum+1\,1}"/>
-                
-                <!--所包含的补气对象，剩余补气量为0时，为空-->
-                <o:PropertySetter PropertyName="f_fillgas" 
-				NoDependValue="{m:Exp Str=kbfee.f_surplusgas>0:fillgas\,null}"/>
                 <!--册号-->
                 <o:PropertySetter PropertyName="f_books" NoDependValue="{m:Exp Str=kbusers.f_books}"  />
 
@@ -127,7 +123,7 @@
             <o:GeneralObject Name="fpinfosobj" EntityType="t_fapiaoinfos" WebClientInfo="{StaticResource dbclient}" 
          Path="{m:Exp Str=$one/from t_fapiaoinfos where f_invoicenum\=\'\{kbfee1.DataContext.f_invoicenum\}\'}" 
                              
-			IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| card.State\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$}">
+			IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| card.State\=\=$Error$ |or| print.State\=\=$End$}">
                 <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=kbfee1.DataContext.f_username}"/>
                 <o:PropertySetter PropertyName="f_invoicenum" Value="{m:Exp Str=kbfee1.DataContext.f_invoicenum}"/>
                 <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=kbfee1.DataContext.f_userid}" />
@@ -144,37 +140,8 @@
 
             </o:GeneralObject>
             <!--重新获取发票号-->
-            <b:ScriptAction Name="loadfapiao" CanRun="{m:Exp Str=print.State\=\=$End$ |or| print1.State\=\=$End$  }" Start="{m:Exp Str=LoginUserfapiao.IsOld\=True}"></b:ScriptAction>
+            <b:ScriptAction Name="loadfapiao" CanRun="{m:Exp Str=print.State\=\=$End$}" Start="{m:Exp Str=LoginUserfapiao.IsOld\=True}"></b:ScriptAction>
 
-            <!--补气对象-->
-            <o:GeneralObject  Name="fillgas" WebClientInfo="{StaticResource dbclient}" 
-    		EntityType="t_fillgas" 
-    		IsInit="{m:Exp Str=SaveAction\=\=$Error$ |or| print1.State\=\=$End$ |or| print.State\=\=$End$}" >
-                <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=kbusers.f_username}" />
-                <o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=kbusers.f_usertype}" />
-                <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=kbusers.f_userid}"/>
-                <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=kbusers.f_address}" />
-                <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=kbusers.f_cardid}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=kbusers.f_gaswatchbrand}" />
-                <o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=kbusers.f_metertype}" />
-                <o:PropertySetter PropertyName="f_cmnewmeternumber" Value="{m:Exp Str=kbusers.f_meternumber}" />
-                <o:PropertySetter PropertyName="f_cmaddgas" Value="{m:Exp Str=kbusers.f_bugas\=&gt;Completed}" />
-                <o:PropertySetter PropertyName="f_nextaddgasamount" Value="{m:Exp Str=kbusers.f_surplusgas\=&gt;Completed}" />
-                <o:PropertySetter PropertyName="f_thisnextaddgasamount" Default="0" Value="0"/>
-                <o:PropertySetter PropertyName="f_gasprice" Value="{m:Exp Str=kbusers.f_gasprice}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_pregas" NoDependValue="{m:Exp Str=kbusers.f_surplusgas}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=kbusers.f_aliasname}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_times" Value="{m:Exp Str=kbusers.f_times}"/>
-                <o:PropertySetter PropertyName="f_newmaichong" Value="{m:Exp Str=kbusers.f_maichong}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_newwatchnum" Value="{m:Exp Str=kbusers.f_watchnum}" NotNull="True"/>
-                <o:PropertySetter PropertyName="f_addgasdate" Default="{m:Exp Str=SysTime.Today}"/>
-                <o:PropertySetter PropertyName="f_parentname5" Default="{m:Exp Str=LoginUser.f_parentname}"/>
-                <o:PropertySetter PropertyName="f_foperator" Default="{m:Exp Str=LoginUser.name}"/>
-                <o:PropertySetter PropertyName="f_filiale6" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
-                <o:PropertySetter PropertyName="f_yi" Default="0"/>
-                <o:PropertySetter PropertyName="f_addgastype" Default="换表补气"/>
-                <o:PropertySetter PropertyName="f_comtype" Default="天然气公司"/>
-            </o:GeneralObject>
 
             <!--保存-->
             <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str='checkcardid \=>ReadCompleted !\=null \:checkcardid.CardId \=\=kbfee.f_cardid\,False'}" WebClientInfo="{StaticResource dbclient}">
@@ -193,8 +160,6 @@
 
             <!--卡对象-->
             <oo:NewGeneralICCard Name="card"   
-		 CanSellGas="{m:Exp Str='SaveAction.State=>Completed==$End$ and kbfee.f_initcardsellgas!=$初始化卡购气标记$ and kbfee.f_initcardsellgas!=$补卡$' }"
-		 CanRewriteCard="{m:Exp Str='SaveAction.State=>Completed==$End$ and (kbfee.f_initcardsellgas==$初始化卡购气标记$ or kbfee.f_initcardsellgas==$补卡$)'}"
 		 CardId="{m:Exp Str=kbfee1.DataContext.f_cardid}"
 		 Gas="{m:Exp Str=(kbfee.f_pregas+kbfee.f_surplusgas).ToInt()}"
 		 Klx="{m:Exp Str='kbusers != null\:kbusers.klx\,null'}"		
@@ -229,7 +194,7 @@
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="8*"/>
             </Grid.ColumnDefinitions >
-            <c:BusyIndicatorEx x:Name="busy" BusyContent="正在进行卡操作，请稍等" IsBusy="{m:Exp Str=card.IsBusy}" Width="Auto" HorizontalAlignment="Stretch" >
+            <c:BusyIndicatorEx x:Name="busy"  Width="Auto" HorizontalAlignment="Stretch" >
                 <toolkit:DockPanel x:Name="userfilesearch"  Background="#FFCFEFFF" Margin="0" Width="Auto" HorizontalAlignment="Stretch" d:LayoutOverrides="Height" >
                     <Grid Width="Auto">
                         <Grid.ColumnDefinitions>
@@ -481,8 +446,7 @@
                                 </TextBox>
                                 <TextBox Text="{m:Bind Path=f_benqizhye}" x:Name="f_benqizhye" Grid.Column="5" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="9"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_benqizhye" 
-										NoDependValue="{m:Exp Str=kbfee.f_totalcost\=\=0:kbfee.f_zhye-(kbfee.f_preamount+kbfee.f_amountmaintenance+kbfee.f_qsje)\,kbfee.f_grossproceeds-kbfee.f_totalcost}"/>
+                                        <o:PropertySetter PropertyName="f_benqizhye" />
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBox Text="{m:Bind Path=f_meternumber}"  Grid.Column="5" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Grid.Row="4"  HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" Visibility="Collapsed" >
@@ -775,11 +739,11 @@
                         </Grid.RowDefinitions>
                         <toolkit:DockPanel  Background="#FFC3E4FD" Margin="0"     >
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                                <Button x:Name="save2" Content="写  卡" Margin="5" 
+                                <Button x:Name="save2" Content="保    存" Margin="5" 
 									IsEnabled="{m:Exp Str=!kbfee.HasErrors}"		
-									Click="{m:Exp Str=kbfee.f_sgoperator\=LoginUser.name;kbusers.f_times\=kbfee.f_times;card.BuyTimes\=kbfee.f_times.ToInt();card.Sqrq\=kbfee.f_deliverydate.ToString($yyyyMMdd$);kbusers.f_finabuygastime\=kbfee.f_deliverytime;kbusers.f_finabuygasdate\=kbfee.f_deliverydate;kbusers.f_finallybought\=kbfee.f_pregas;fpinfosobj.f_fapiaotype\=$购气$;fpinfosobj.f_fapiaostatue\=$已用$;fpinfosobj.f_sgnetwork\=kbfee1.DataContext.f_sgnetwork;fpinfosobj.f_fapiaodate\=kbfee1.DataContext.f_deliverydate;checkcardid.ReadCard()}" Width="65" />
+									Click="{m:Exp Str=kbfee.f_sgoperator\=LoginUser.name;kbusers.f_times\=kbfee.f_times;card.BuyTimes\=kbfee.f_times.ToInt();card.Sqrq\=kbfee.f_deliverydate.ToString($yyyyMMdd$);kbusers.f_finabuygastime\=kbfee.f_deliverytime;kbusers.f_finabuygasdate\=kbfee.f_deliverydate;kbusers.f_finallybought\=kbfee.f_pregas;fpinfosobj.f_fapiaotype\=$预购$;fpinfosobj.f_fapiaostatue\=$已用$;fpinfosobj.f_sgnetwork\=kbfee1.DataContext.f_sgnetwork;fpinfosobj.f_fapiaodate\=kbfee1.DataContext.f_deliverydate;SaveAction.Invoke()}" Width="65" />
                                 <Button Content=" 显示error" Margin="5"  Click="save12_Click" IsEnabled="{m:Exp Str=kbfee1.DataContext.HasErrors}" Width="80"/>
-                                <Button x:Name="ButtonCancel" Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=kbfee1.DataContext.New();kbusers.New();kbsellgas.New();kbbysellgas.New()}" Width="50"/>
+                                <Button x:Name="ButtonCancel" Content="撤  销" Margin="5" FontSize="12" Click="{m:Exp Str=kbfee1.DataContext.New();kbusers.New();kbsellgas.New()}" Width="50"/>
                             </StackPanel>
                         </toolkit:DockPanel>
                         <sdk:DataGrid Grid.Row="1"  AutoGenerateColumns="False" x:Name="kbgaslist" ItemsSource="{m:Exp Str=kbsellgas}" Margin="0" IsReadOnly="True">
@@ -1141,23 +1105,19 @@ Margin="18.667,280.706,381.139,0"/>
             </Grid>
         </Grid>
         <!--核对卡号提示-->
-        <c:MessageTipObj Name="checkcardidtip" Tip="读卡卡号与卡上卡号不相符，请重新读卡后操作？" IsShow="{m:Exp Str=checkcardid \=>ReadCompleted !\=null \:checkcardid.CardId !\=kbfee.f_cardid\,False}" />
-
-        <c:MessageTipObj Name="submittip" Tip="您确认要结账吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />
         <c:MessageTipObj Tip="{m:Exp Str=$读卡失败，请重试！如果继续失败，请转维修班处理。错误内容：\{card.Error\=\=null:$$\,card.Error\}$}" IsShow="{m:Exp Str=card.State\=\=$LoadError}"/>
 
         <c:MessageTipObj Tip="{m:Exp Str=$连接服务器失败，请重试！如果继续失败，请联系系统管理员。$}" IsShow="{m:Exp Str=SaveAction.State\=\=$Error}"/>
         <!--<c:MessageTipObj Tip="{m:Exp Str=$卡内有气，是否继续购气？$}" IsShow="{m:Exp Str=card.Gas\=>ReadCompleted\>\=0}"/>-->
         <!--打印收费票据-->
         <c:PrintObj Name="print" Area="{m:Res Key=guoshuiprint}" 
+        IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}"
 		Message="是否打印国税发票"/>
-        <c:PrintObj Name="print1" 
-		Message="是否打印国税发票" Area="{m:Res Key=guoshuiprint}"
-/>
-        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{kbfee1.DataContext.f_userid}交费完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or((print.State\=\=$End$ or print1.State\=\=$End$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
+
+        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{kbfee1.DataContext.f_userid}交费完成!'}" IsShow="{m:Exp Str=(zzprint.State\=\=$End$ or zzprint.State\=\=$Cancle$) or ((print.State\=\=$End$ or print.State\=\=$Cancle$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
 
         <c:PrintObj Name="zzprint" 
 		Message="是否打印购气证"
-		IsPrint="{m:Exp Str=(print.State\=\=$End$ or print1.State\=\=$End$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$是$}" Area="{m:Res Key=zheziprint}" />
+		IsPrint="{m:Exp Str=(print.State\=\=$End$ or print.State\=\=$Cancle$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$是$}" Area="{m:Res Key=zheziprint}" />
     </Grid>
 </UserControl>

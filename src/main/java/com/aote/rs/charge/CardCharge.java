@@ -211,7 +211,11 @@ public class CardCharge {
 			sell.put("f_chargenum", chargenum);
 			sell.put("f_stardate", stardate);
 			sell.put("f_enddate", enddate);
-			sell.put("f_totalcost", chargenum - zhye);
+			
+			if(chargenum < zhye)
+				sell.put("f_totalcost", 0);
+			else
+				sell.put("f_totalcost", chargenum - zhye);
 			obj = MapToJson(sell);
 			return obj;
 		} catch (Exception e) {

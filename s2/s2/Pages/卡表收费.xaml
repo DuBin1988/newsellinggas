@@ -1395,10 +1395,10 @@ Margin="18.667,280.706,381.139,0"/>
         <c:PrintObj Name="print1" 
 		Message="是否打印国税发票" Area="{m:Res Key=guoshuiprint}"
 />
-        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{kbfee1.DataContext.f_userid}交费完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or((print.State\=\=$End$ or print1.State\=\=$End$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
+        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{kbfee1.DataContext.f_userid}交费完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or zzprint.State\=\=$Cancle$ or (single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$ and (print.State\=\=$End$ or print1.State\=\=$End$ or print.State\=\=$Cancle$ or print1.State\=\=$Cancle$))}"/>
 
         <c:PrintObj Name="zzprint" 
 		Message="是否打印购气证"
-		IsPrint="{m:Exp Str=(print.State\=\=$End$ or print1.State\=\=$End$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$是$}" Area="{m:Res Key=zheziprint}" />
+		IsPrint="{m:Exp Str=(print.State\=\=$End$ or print1.State\=\=$End$ or print.State\=\=$Cancle$ or print1.State\=\=$Cancle$) and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$是$}" Area="{m:Res Key=zheziprint}" />
     </Grid>
 </UserControl>

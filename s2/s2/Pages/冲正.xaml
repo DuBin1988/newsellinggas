@@ -654,7 +654,7 @@
 
             </Grid>
         </Grid>
-        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}卡表冲正完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or(SaveAction.State\=\=$End$ and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
+        <c:MessageTipObj  Name="savedone" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}卡表冲正完成!'}" IsShow="{m:Exp Str=zzprint.State\=\=$End$ or zzprint.State\=\=$Cancle$ or(SaveAction.State\=\=$End$ and single[data.name\=\=$收费是否打折$].ToObjectList().First().value\=\=$否$)}"/>
         <c:MessageTipObj  Name="save2done" Type="MessageBox" Tip="{m:Exp Str='$用户编号{userfile.DataContext.f_userid}超用冲正完成!'}" IsShow="{m:Exp Str=SaveAction2.State\=\=$End$}"/>
 
     </Grid>
