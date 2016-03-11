@@ -1619,7 +1619,74 @@ public class DBService {
 	 * 档案批量上传处理,,Param,判断的条件
 	*/	
 	@POST
-	@Path("User/{type}/{Param1}/{Param2}/{isuserid}")
+	@Path("table/{Param1}/{Param2}")
+	public JSONObject xtExecutetable(@Context HttpServletResponse response,String values
+			, @PathParam("Param1") String Param1 // 参数1
+			, @PathParam("Param2") String Param2 // 参数2
+			) {
+		log.debug(values);
+		// open a new session since we dont use spring here
+		Session session = sessionFactory.openSession();
+		try {			
+			// 返回后台计算的结果,格式为 {对象名:{对象值}}
+			JSONObject result = new JSONObject();
+			// 一条条执行
+			JSONArray array = new JSONArray(values);
+			for (int i = 0; i < array.length(); i++) {
+				session.beginTransaction();
+				JSONObject object = array.getJSONObject(i);
+				String oper = object.getString("operator");
+				// 保存
+				if (oper.equals("save")) {
+					String entity = object.getString("entity");				
+					JSONObject Dataobj=object.getJSONObject("data");
+					String value1=Dataobj.getString(Param1);
+					String value2=Dataobj.getString(Param2);					
+					if(!"t_userfiles".equals(entity)){
+						Session session1 = sessionFactory.openSession();
+						try {						
+							List list = executeFind(session1,new HibernateCall("from "+entity+" where "+Param1+"='"+value1+"' and "+Param2+"='"+value2+"'", 0, 10000));
+							if(list.size()>=1){							
+							}else{								
+								JSONObject obj = save(session, entity,Dataobj);
+								result.put(object.getString("name"), obj);							
+							}							
+						} catch (Exception e) {							
+							JSONObject obj = save(session, entity,Dataobj);
+							result.put(object.getString("name"), obj);
+						}finally{
+							session1.close();
+						}
+					}else{
+						throw new WebApplicationException(500);
+					}	
+				}else{
+					throw new WebApplicationException(500);
+				}
+				session.getTransaction().commit();
+			}
+			return result;
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			if (e instanceof org.hibernate.StaleObjectStateException) {
+				response.setHeader("Warning",Util.encode("目前的对象过于陈旧，因为它在其他地方已经被修改。"));
+				throw new WebApplicationException(501);
+			} else {
+				response.setHeader("Warning", Util.encode(e.toString()));
+				throw new WebApplicationException(500);
+			}
+		} finally {
+			if (session != null)
+				session.close();
+		}
+	}
+	
+	/*
+	 * 执行一批对象操作，包括保存 用json串表示。 json串格式为 [一批语句]，
+	 * 档案批量上传处理,,Param,判断的条件
+	*/	
+	@POST
+	@Path("user/{type}/{isuserid}/{Param1}/{Param2}")
 	public JSONObject xtExecuteUser(@Context HttpServletResponse response,String values
 			, @PathParam("type") String type // 物联表类型
 			, @PathParam("Param1") String Param1 // 参数1
@@ -1643,79 +1710,65 @@ public class DBService {
 					String entity = object.getString("entity");				
 					JSONObject Dataobj=object.getJSONObject("data");
 					String value1=Dataobj.getString(Param1);
-					String value2=Dataobj.getString(Param2);
-					Session session1 = sessionFactory.openSession();
-					try {						
-						List list = executeFind(session1,new HibernateCall("from "+entity+" where "+Param1+"='"+value1+"' and "+Param2+"='"+value2+"'", 0, 10000));
-						if(list.size()>=1){
-							if("t_userfiles".equals(entity)){
+					String value2=Dataobj.getString(Param2);					
+					if("t_userfiles".equals(entity)){
+						Session session1 = sessionFactory.openSession();
+						try {						
+							List list = executeFind(session1,new HibernateCall("from "+entity+" where "+Param1+"='"+value1+"' and "+Param2+"='"+value2+"'", 0, 10000));
+							if(list.size()>=1){								
 								if("wulian_old".equals(type)){
 									for (Object obj : list) {
 										Map<String, Object> map = (Map<String, Object>) obj;
 										JSONObject json = (JSONObject) new JsonTransfer().MapToJson(map);
 										try {
-												// 把单个map转换成JSON对象								
-												String hql = "update " + entity + " set f_danganstatus='变更',f_danganreturnvalue='1' where " + Param1 + "='" + value1 + "' and "+ Param2 + "='" + value2+"'";
-												log.debug(hql);
-												bulkUpdate(session, hql);
-											} catch (Exception e) {
-												response.setHeader("Warning",Util.encode("更新已有的档案同步标记失败"+Param1 + "='" + value1+"' : "+Param2 + "='" + value2+"'"));
-												throw new WebApplicationException(501);
+											// 把单个map转换成JSON对象								
+											String hql = "update " + entity + " set f_danganstatus='变更',f_danganreturnvalue='1' where " + Param1 + "='" + value1 + "' and "+ Param2 + "='" + value2+"'";
+											log.debug(hql);
+											bulkUpdate(session, hql);
+										} catch (Exception e) {
+											response.setHeader("Warning",Util.encode("更新已有的档案同步标记失败"+Param1 + "='" + value1+"' : "+Param2 + "='" + value2+"'"));
+											throw new WebApplicationException(501);
 										}
 									}
 								}else if("wulian_new".equals(type)){
-									
+										
+								}							
+							}else{
+								//得到编号 getSerialNumber
+								if(Boolean.parseBoolean(isuserid)){
+									Session session2 = sessionFactory.openSession();
+									try {
+										JSONObject bh = SynchronizedTools.getSerialNumber(session2,null, "from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'","value");
+										Dataobj.put("f_userid", Dataobj.getString("f_fengongsinum")+String.format("%06d",Integer.parseInt(bh.getString("value"))));
+									} catch (Exception e) {
+									}finally{
+										session2.close();
+									}
 								}
-							}							
-						}else{
+								JSONObject obj = save(session, entity,Dataobj);
+								result.put(object.getString("name"), obj);							
+							}
+							
+						} catch (Exception e) {
 							//得到编号 getSerialNumber
-							if("t_userfiles".equals(entity) && Boolean.parseBoolean(isuserid)){
+							if(Boolean.parseBoolean(isuserid)){
 								Session session2 = sessionFactory.openSession();
 								try {
 									JSONObject bh = SynchronizedTools.getSerialNumber(session2,null, "from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'","value");
 									Dataobj.put("f_userid", Dataobj.getString("f_fengongsinum")+String.format("%06d",Integer.parseInt(bh.getString("value"))));
-									/*List list1 = executeFind(session2,new HibernateCall("from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'", 0, 10000));
-									if (list1.size() == 1) {
-										Map<String, Object> map = (Map<String, Object>) list1.get(0);
-										JSONObject bh = (JSONObject) new JsonTransfer().MapToJson(map);
-										bulkUpdate(session2, "update t_singlevalue set value=value+1 where name ='" + bh.getString("name") + "'");
-										Dataobj.put("f_userid", Dataobj.getString("f_fengongsinum")+String.format("%06d",Integer.parseInt(bh.getString("value"))));
-									}*/
-								} catch (Exception e) {
+								} catch (Exception ex) {
 								}finally{
 									session2.close();
 								}
 							}
 							JSONObject obj = save(session, entity,Dataobj);
-							result.put(object.getString("name"), obj);							
+							result.put(object.getString("name"), obj);
+						}finally{
+							session1.close();
 						}
-						
-					} catch (Exception e) {
-						//得到编号 getSerialNumber
-						if("t_userfiles".equals(entity) && Boolean.parseBoolean(isuserid)){
-							Session session2 = sessionFactory.openSession();
-							try {
-								JSONObject bh = SynchronizedTools.getSerialNumber(session2,null, "from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'","value");
-								Dataobj.put("f_userid", Dataobj.getString("f_fengongsinum")+String.format("%06d",Integer.parseInt(bh.getString("value"))));
-								/*List list1 = executeFind(session2,new HibernateCall("from t_singlevalue where name = '"+Dataobj.getString("f_filiale")+"用户编号'", 0, 10000));
-								if (list1.size() == 1) {
-									Map<String, Object> map = (Map<String, Object>) list1.get(0);
-									JSONObject bh = (JSONObject) new JsonTransfer().MapToJson(map);
-									bulkUpdate(session2, "update t_singlevalue set value=value+1 where name ='" + bh.getString("name") + "'");
-									Dataobj.put("f_userid", Dataobj.getString("f_fengongsinum")+String.format("%06d",Integer.parseInt(bh.getString("value"))));
-								}*/
-							} catch (Exception ex) {
-							}finally{
-								session2.close();
-							}
-						}
-						JSONObject obj = save(session, entity,Dataobj);
-						result.put(object.getString("name"), obj);
-					}finally{
-						session1.close();
+					}else {
+						throw new WebApplicationException(500);
 					}
-					
-					
 				}else{
 					throw new WebApplicationException(500);
 				}
@@ -1739,4 +1792,6 @@ public class DBService {
 				session.close();
 		}
 	}
+	
+	
 }

@@ -62,11 +62,11 @@ public class ChaoBiaoTask {
 			iesGas.chaobiaodan("insert into t_handplan(f_userid, f_username, lastinputgasnum, f_gaswatchbrand, f_metertype, "+
 								"f_address, f_districtname, f_usertype, f_gasprice, f_gaspricetype, f_dibaohu, f_apartment, "+
 								"f_phone, scinputdate, f_inputtor, f_yhxz, f_weizhi, f_menzhan, "+
-								"f_zerenbumen, f_state, shifoujiaofei, users, f_cusDom, f_cusDy,f_gasmeterstyle,zhye) "+
+								"f_zerenbumen, f_state, shifoujiaofei, users, f_cusDom, f_cusDy,f_gasmeterstyle,f_aliasname,zhye,f_userinfoid,f_stairtype,f_meternumber) "+
 								"select f_userid, f_username, IsNull(lastinputgasnum,0)lastinputgasnum, f_gaswatchbrand, f_metertype, "+
 								"f_address, f_districtname, f_usertype, f_gasprice, f_gaspricetype, f_dibaohu, f_apartment, "+
 								"f_phone, isnull(lastinputdate,GETDATE())lastinputdate, f_inputtor, f_yhxz, f_weizhi, f_menzhan, "+
-								"f_zerenbumen, '未抄表', '否', id, f_cusDom, f_cusDy,f_gasmeterstyle,IsNull(f_zhye,0)f_zhye "+
+								"f_zerenbumen, '未抄表', '否', id, f_cusDom, f_cusDy,f_gasmeterstyle,f_aliasname,IsNull(f_zhye,0)f_zhye,f_userinfoid,f_stairtype,f_meternumber "+
 								"from t_userfiles where f_userstate='正常' and "+iesGas.gasmeterstyle+" and f_userid not in "+
 								"(select distinct f_userid from t_handplan where f_state='未抄表') and f_userid not in "+
 								"(select distinct f_userid from t_handplan where f_state='已抄表' and SUBSTRING(CONVERT(varchar(100),f_inputdate,25),1,10)='"+cbdate.format(now)+"') "+" ");	
