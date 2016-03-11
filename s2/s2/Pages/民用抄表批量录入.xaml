@@ -23,6 +23,8 @@
             <RowDefinition Height="0*"/>
         </Grid.RowDefinitions>
         <m:ResourceLoad Margin="0,0,-12,0">
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
             <!--抄表单信息列表-->
             <o:ObjectList Name="jichalist">
 
@@ -84,13 +86,13 @@
                         		<o:PropertySetter PropertyName="f_inputtor"  Operator="h.f_inputtor = 'this'"/>
                         	</a:Data.Prop>
                         </TextBox-->
-                            <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="3" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}"  Margin="0" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                            <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="3" ItemsSource="{m:Exp Str=inputtorlist}"  Margin="0" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_inputtor"  Operator="h.f_inputtor = 'this'"/>
                                 </a:Data.Prop>
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Height="20" Text="{Binding name}"/>
+                                        <TextBlock Height="20" Text="{Binding f_inputtor}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>

@@ -24,13 +24,9 @@
 
             
             <!--阶梯气价信息列表-->
-            <o:ObjectList Name="stairlist" EntityType="t_stairprice" 
-                          WebClientInfo="{StaticResource dbclient}" 
-                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\' group by a.f_gasproperties}" 
-                             LoadOnPathChanged="True" 
-                          />
+            
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'$\,$null$}"/>
 
             <o:ObjectList Name="chaobiaoyuanlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'"/>
             <!--单位对象 -->
@@ -46,6 +42,8 @@
             <!--用气性质列表-->
             <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\=\'非民用\'}"/>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
+            <!-- 证件类型列表-->
+            <o:ObjectList Name="zhengjianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='证件类型'"/>
             <!--单值用户编号对象ksnumobj.value-->
             <o:GeneralObject Name="ksnumobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 				Path="{m:Exp Str=$one/from t_singlevalue where name \= \'\{userfile.DataContext.f_filiale\}\户\号\'}" 
