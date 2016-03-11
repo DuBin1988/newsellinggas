@@ -19,13 +19,13 @@
     mc:Ignorable="d" >
 	<Grid x:Name="LayoutRoot">
 		<m:ResourceLoad Margin="0,0,-101,0">
-	   			
+
 		<!--卡对象-->
-		<oo:NewGeneralICCard Name="card"    
+		<oo:NewGeneralICCard Name="card"
 	     Gas="{m:Exp Str=userfile.DataContext.f_cmaddgas}"
 		 CardId="{m:Exp Str=userfile.DataContext.f_cardid}"
 		 Factory="{m:Exp Str=userfile.DataContext.f_aliasname}"
-		 Klx="{m:Exp Str='users != null\:users.klx\,null'}"		
+		 Klx="{m:Exp Str='users != null\:users.klx\,null'}"
 		 Kzt="1"
 		 Dqdm="{m:Exp Str='users != null \:users.dqdm\,null'}"
 		 Yhh="{m:Exp Str='users != null \:users.yhh\,null'}"
@@ -34,7 +34,7 @@
 		 Bkcs="{m:Exp Str=users.f_times.ToInt()}"
 		 Bjql="{m:Exp Str='users != null \:users.bjql\,null'}"
 		 Czsx="{m:Exp Str='users != null \:users.czsx\,null'}"
-		 Tzed="{m:Exp Str='users != null \:users.tzed\,null'}"	
+		 Tzed="{m:Exp Str='users != null \:users.tzed\,null'}"
 		 Kmm="{m:Exp Str='users != null \:users.kmm\,null'}"
 		 Sqrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 OldPrice="{m:Exp Str='users != null\:users.f_gasprice*100\,0'}"
@@ -42,28 +42,29 @@
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
          Stairprice1="{m:Exp Str='users != null \:users.f_stair1price\,null'}"
-         Stairgas1="{m:Exp Str='users != null \:users.f_stair1amount\,null'}" 
+         Stairgas1="{m:Exp Str='users != null \:users.f_stair1amount\,null'}"
          Stairprice2="{m:Exp Str='users != null \:users.f_stair2price\,null'}"
-         Stairgas2="{m:Exp Str='users != null \:users.f_stair2amount\,null'}"                         
+         Stairgas2="{m:Exp Str='users != null \:users.f_stair2amount\,null'}"
          Stairprice3="{m:Exp Str='users != null \:users.f_stair3price\,null'}"
-         Stairgas3="{m:Exp Str='users != null \:users.f_stair3amount\,null'}" 
-         Money="{m:Exp Str=userfile.DataContext.f_preamount}"      
+         Stairgas3="{m:Exp Str='users != null \:users.f_stair3amount\,null'}"
+         Money="{m:Exp Str=userfile.DataContext.f_preamount}"       
          TotalMoney="{m:Exp Str=userfile.DataContext.f_totalcost}"
+
 		>
-		</oo:NewGeneralICCard>		
-			
+		</oo:NewGeneralICCard>
+
 		<!--用户对象 -->
 		<o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \!\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">	
+             Path="{m:Exp Str=card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \!\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
 		</o:GeneralObject>
-		
+
 		<!--其他补气对象 Source="{m:Exp Str=userfiles.SelectedItem}"-->
-		<o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
-			EntityType="t_otherfillgas" 
+		<o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}"
+			EntityType="t_otherfillgas"
 			IsInit="{m:Exp Str=SaveAction.State\=\=$End$}"  >
 			<o:PropertySetter PropertyName="f_comtype" Value="天然气公司"/>
 		</o:GeneralObject>
-		
+
 		<!--保存对象-->
 		<b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=card.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
 			<b:BatchInfo Source="{m:Exp Str=users}" MethodName="SaveToJson"/>
@@ -79,9 +80,9 @@
 				<toolkit:DockPanel>
 						<toolkit:DockPanel x:Name="userfilesearch" toolkit:DockPanel.Dock="Top"  Margin="5,0,0,0" Background="#FFCFEFFF" >
 							<a:Data.Context>
-							<o:SearchObject />        	
+							<o:SearchObject />
 						</a:Data.Context>
-						
+
 <Grid>
 							<Grid.RowDefinitions>
 							<RowDefinition Height="28"/>
@@ -98,54 +99,54 @@
 							<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,4" HorizontalAlignment="Right" />
 							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+									<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Grid.Row="3" Text="卡　　号：" Margin="0,4" HorizontalAlignment="Right" />
 							<TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_cardid}" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid = 'this'"/>          
+									<o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid = 'this'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="2,4,0,4" HorizontalAlignment="Right" Grid.Column="2"/>
 							<TextBox TextWrapping="Wrap" Grid.Column="3" Grid.Row="0" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
+									<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<Button Content="查  询" x:Name="searchbutton" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" HorizontalAlignment="Left" Margin="0" Width="50" />
 							<TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="0,4" HorizontalAlignment="Right" Grid.Row="1" />
 							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,1.5" Height="25" Grid.Row="1" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>          
+									<o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="楼    号：" Margin="0,4" HorizontalAlignment="Right" Grid.Column="2" Grid.Row="1"/>
 							<TextBox TextWrapping="Wrap" Grid.Column="3" Grid.Row="1" Text="{m:Bind Path=f_cusDom}" Width="Auto" Margin="0,1.5" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_cusDom"  Operator="f_cusDom = 'this'"/>          
+									<o:PropertySetter PropertyName="f_cusDom"  Operator="f_cusDom = 'this'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="单    元：" Margin="0,4" HorizontalAlignment="Right" Grid.Row="2" />
 							<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_cusDy}" Width="Auto" Margin="0,1.5" Height="25" Grid.Row="2" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_cusDy"  Operator="f_cusDy = 'this'"/>          
+									<o:PropertySetter PropertyName="f_cusDy"  Operator="f_cusDy = 'this'"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock TextWrapping="Wrap" Text="门 牌 号：" Margin="0,4" HorizontalAlignment="Right" Grid.Column="2" Grid.Row="2"/>
 							<TextBox TextWrapping="Wrap" Grid.Column="3" Grid.Row="2" Text="{m:Bind Path=f_apartment}" Width="Auto" Margin="0,1.5" Height="25" >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_apartment"  Operator="f_apartment = 'this'"/>          
+									<o:PropertySetter PropertyName="f_apartment"  Operator="f_apartment = 'this'"/>
 								</a:Data.Prop>
 							</TextBox>
 						</Grid>
 						</toolkit:DockPanel>
 					<toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0" Height="49" >
-						
+
 							<TextBlock TextWrapping="Wrap" Margin="10"  Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom"/>
-						
+
 					</toolkit:DockPanel>
-					<sdk:DataGrid x:Name="userfiles" Margin="0,0,0,27"  
+					<sdk:DataGrid x:Name="userfiles" Margin="0,0,0,27"
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
 						<a:Data.Items>
 							<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
@@ -158,8 +159,8 @@
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="卡号" Binding="{Binding f_cardid}"/>
-							
-							
+
+
 							<sdk:DataGridTextColumn Header="补气量" Binding="{Binding f_cmaddgas}"/>
 							<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_parentname5}"/>
 							<sdk:DataGridTextColumn Header="操作员" Binding="{Binding f_operator}"/>
@@ -175,7 +176,7 @@
 					<!--按钮-->
 					<toolkit:DockPanel Margin="0">
 						<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" >
-							<Button x:Name="save" Content="保  存" Margin="5" 
+							<Button x:Name="save" Content="保  存" Margin="5"
 								IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
 								Click="{m:Exp Str=users.f_times\=userfile.DataContext.f_times.ToInt() +1;card.BuyTimes\=users.f_times.ToInt(); users.f_metergasnums\=userfile.DataContext.f_metergasnums;users.f_cumulativepurchase\=userfile.DataContext.f_cumulativepurchase;card.Sqrq\=userfilego.f_date.ToString($yyyyMMdd$);card.SellGas()}" Width="50" />
 							<Button Content="撤  销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();users.New()}" Width="50"/>
@@ -286,7 +287,7 @@
 							</sdk:DatePicker>
 							<TextBox Text="{m:Bind Path=f_parentname5}" Grid.Column="1" Height="25" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True">
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_parentname5" 
+									<o:PropertySetter PropertyName="f_parentname5"
 										Default="{m:Exp Str=LoginUser.f_parentname}"/>
 								</a:Data.Prop>
 							</TextBox>
@@ -298,18 +299,18 @@
 							</sdk:DatePicker>
 							<TextBox Text="{m:Bind Path=f_operator}" Grid.Column="3" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_operator" 
+									<o:PropertySetter PropertyName="f_operator"
 										Default="{m:Exp Str=LoginUser.name}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<Button  Click="{m:Exp Str=card.ReadCard()}" Content="读卡" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,80,0" Width="50" VerticalAlignment="Center" Foreground="#FF1740E5" Height="30"/>
 							<!--隐藏域-->
 
-		            	
+
 							<TextBlock Margin="0" Grid.Row="8" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" Height="25"/>
 							<TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="8" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_filiale" 
+									<o:PropertySetter PropertyName="f_filiale"
 										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
 								</a:Data.Prop>
 							</TextBox>
@@ -391,7 +392,7 @@
 							</TextBox>
 						</Grid>
 					</toolkit:DockPanel>
-					
+
 				</Grid>
 			</toolkit:BusyIndicator>
 			<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"  Margin="0,0,1,50" PageSize="15" Height="24" VerticalAlignment="Bottom"/>

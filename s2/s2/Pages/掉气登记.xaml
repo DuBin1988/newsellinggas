@@ -19,8 +19,8 @@
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-12,0">
             <!--掉气补气对象-->
-            <o:GeneralObject  Name="fillgas" WebClientInfo="{StaticResource dbclient}" 
-    		EntityType="t_fillgas" 
+            <o:GeneralObject  Name="fillgas" WebClientInfo="{StaticResource dbclient}"
+    		EntityType="t_fillgas"
     		IsInit="{m:Exp Str=card.State\=\=$End}" >
                 <!--o:PropertySetter PropertyName="f_surplusgas" Value="{m:Exp Str=apply.DataContext.f_thisnextaddgasamount}"/-->
                 <o:PropertySetter PropertyName="f_yi" Default="1"/>
@@ -28,12 +28,12 @@
                 <o:PropertySetter PropertyName="f_comtype" Default="天然气公司"/>
             </o:GeneralObject>
             <!--卡对象-->
-            <oo:NewGeneralICCard Name="card"   
+            <oo:NewGeneralICCard Name="card"
 		 CanSellGas="{m:Exp Str='SaveAction.State=>Completed==$End$ and fillgas.f_initcardsellgas!=$补卡$' }"
 		 CanRewriteCard="{m:Exp Str='SaveAction.State=>Completed==$End$ and fillgas.f_initcardsellgas==$补卡$'}"
 		 Gas="{m:Exp Str='apply.DataContext.f_cmaddgas != null \:apply.DataContext.f_cmaddgas\,null'}"
-		 BuyTimes="{m:Exp Str=userfiles.f_times.ToInt()}" 
-		 Klx="{m:Exp Str='userfiles != null\:userfiles.klx\,null'}"		
+		 BuyTimes="{m:Exp Str=userfiles.f_times.ToInt()}"
+		 Klx="{m:Exp Str='userfiles != null\:userfiles.klx\,null'}"
 		 Kzt="0"
 		 Dqdm="{m:Exp Str='userfiles != null \:userfiles.dqdm\,null'}"
 		 Yhh="{m:Exp Str='userfiles != null \:userfiles.yhh\,null'}"
@@ -42,42 +42,44 @@
 		 Bkcs="{m:Exp Str='userfiles != null \:userfiles.f_PatchCard\,null'}"
 		 Bjql="{m:Exp Str='userfiles != null \:userfiles.bjql\,null'}"
 		 Czsx="{m:Exp Str='userfiles != null \:userfiles.czsx\,null'}"
-		 Tzed="{m:Exp Str='userfiles != null \:userfiles.tzed\,null'}"	
+		 Tzed="{m:Exp Str='userfiles != null \:userfiles.tzed\,null'}"
 		 Kmm="{m:Exp Str='userfiles != null \:userfiles.kmm\,null'}"
 		 Sqrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
-	
+
 		 OldPrice="{m:Exp Str='userfiles != null\:userfiles.f_gasprice*100\,0'}"
 		NewPrice="{m:Exp Str='userfiles != null\:userfiles.f_gasprice*100\,0'}"
 		 Sxrq="{m:Exp Str='SysTime.Now.ToString($yyyyMMdd$)'}"
 		 Sxbj="{m:Exp Str=card.Factory \=\= $ZhenLan$ \:null\,$1$}"
+ 
         MeterId="{m:Exp Str='userfiles != null \:userfiles.f_meternumber\,null'}"
-         Scql="{m:Exp Str='userfiles != null \:userfiles.f_LastPreGas\,null'}" 
+         Scql="{m:Exp Str='userfiles != null \:userfiles.f_LastPreGas\,null'}"
          Sscql="{m:Exp Str='userfiles != null \:userfiles.f_LastLastPreGas\,null'}"
-        
+
          Stairprice1="{m:Exp Str='userfiles != null \:userfiles.f_stair1price\,0'}"
-         Stairgas1="{m:Exp Str='userfiles != null \:userfiles.f_stair1amount\,0'}" 
+         Stairgas1="{m:Exp Str='userfiles != null \:userfiles.f_stair1amount\,0'}"
          Stairprice2="{m:Exp Str='userfiles != null \:userfiles.f_stair2price\,0'}"
-         Stairgas2="{m:Exp Str='userfiles != null \:userfiles.f_stair2amount\,0'}"                         
+         Stairgas2="{m:Exp Str='userfiles != null \:userfiles.f_stair2amount\,0'}"
          Stairprice3="{m:Exp Str='userfiles != null \:userfiles.f_stair3price\,0'}"
-         Stairgas3="{m:Exp Str='userfiles != null \:userfiles.f_stair3amount\,0'}" 
-         Money="{m:Exp Str=apply.DataContext.f_preamount}"      
+         Stairgas3="{m:Exp Str='userfiles != null \:userfiles.f_stair3amount\,0'}"
+         Money="{m:Exp Str=apply.DataContext.f_preamount}"
          TotalMoney="{m:Exp Str=apply.DataContext.f_totalcost}"
+
 		>
             </oo:NewGeneralICCard>
 
             <!--是否把气量累计到档案-->
             <o:ObjectList Name="losttypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否累计到档案' order by id"/>
             <!--批量删除语句-->
-            <b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}" 
+            <b:HQLAction Name="DeleteAction"  WebClientInfo="{StaticResource dbclient}"
 		HQL="{m:Exp Str='$delete from t_lostgas where id in ({pipelines.SelectedItems.ToString(id)=>SelectionChanged})'}">
             </b:HQLAction>
             <!--用户对象 {m:Exp Str=card.CardId \!\= null and card.Factory \!\=null and card.Factory \!\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\'$\,card.CardId \!\= null and card.Factory \!\=null and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\'$\,$abc$}-->
             <o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and card.Factory !\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and  f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId !\= null and card.Factory !\=null and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\'$\,$aaa$}"  
+             Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and card.Factory !\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and  f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId !\= null and card.Factory !\=null and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\'$\,$aaa$}"
 			 IsInit="{m:Exp Str=card.State\=\=$End$}">
                 <!--换表回写-->
                 <!--初始化卡购气标记-->
-                <o:PropertySetter PropertyName="f_initcardsellgas" 
+                <o:PropertySetter PropertyName="f_initcardsellgas"
 				NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$$\,null}"></o:PropertySetter>
                 <!--<o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=pipeline.DataContext.f_cmnewgaswatchbrand}"/>
 				<o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=pipeline.DataContext.f_cmnewmetertype}"/-->
@@ -90,7 +92,7 @@
                 <!--b:BatchInfo Source="{m:Exp Str=cardid}" MethodName="SaveToJson"/-->
             </b:BatchExcuteAction>
             <!--提交-->
-            <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+            <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}"
 		HQL="{m:Exp Str=$update t_lostgas set f_dengjistate\=\'完成\' \, f_state\=\'掉气气量核对\' where id in (\{pipelines.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_state \=\'掉气登记\'}"/>
         </m:ResourceLoad>
         <Grid>
@@ -204,7 +206,7 @@
                             <Button Content="查 询" x:Name="searchbutton" Grid.Column="2" Grid.Row="2" Click="{m:Exp Str=pipelinesearch.DataContext.Search()}" Margin="2,-5,5,0" HorizontalAlignment="Right" Width="50"/>
                         </Grid>-->
                     </toolkit:DockPanel>
-                    <sdk:DataGrid x:Name="pipelines" Margin="0,0,0,23"  
+                    <sdk:DataGrid x:Name="pipelines" Margin="0,0,0,23"
             		AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
@@ -233,12 +235,12 @@
             <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy or SaveAction.IsBusy or userfiles.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
                 <Grid Background="{x:Null}" Name="pipeline" >
                     <a:Data.Context>
-                        <!--o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}" 
+                        <!--o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}"
 		                     EntityType="t_changmeter" Source="{m:Exp Str=pipelines.SelectedItem}"
 		                     IsInit="{m:Exp Str='SaveAction.State==$End'}"   >
             			<o:PropertySetter  PropertyName="f_state" Default="换表登记"></o:PropertySetter>
 		            </o:GeneralObject-->
-                        <o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}" 
+                        <o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}"
 		                     EntityType="t_lostgas"
 							 Source="{m:Exp Str=pipelines.SelectedItem}"
 		                     IsInit="{m:Exp Str='SaveAction.State==$End$ or SubmitAction.State==$End$'}"   >
@@ -247,7 +249,7 @@
                         </o:GeneralObject>
                     </a:Data.Context>
                     <toolkit:DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                        <Button x:Name="save" Content="保 存" Margin="5" 
+                        <Button x:Name="save" Content="保 存" Margin="5"
             			IsEnabled="{m:Exp Str=!apply.DataContext.HasErrors}"
             			Click="{m:Exp Str=SaveAction.Invoke()}" Width="50"/>
                         <Button Content="撤 销" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New();userfiles.New()}" Width="50"/>
@@ -334,7 +336,7 @@
 
                         <sdk:DatePicker SelectedDate="{m:Bind Path=f_dateofopening}" Grid.Column="5" Margin="0" Grid.Row="1" VerticalAlignment="Stretch" IsEnabled="False" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_dateofopening" Value="{m:Exp Str=userfiles.f_dateofopening}" 
+                                <o:PropertySetter PropertyName="f_dateofopening" Value="{m:Exp Str=userfiles.f_dateofopening}"
             					/>
                             </a:Data.Prop>
                         </sdk:DatePicker>
@@ -401,7 +403,7 @@
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_parentname5}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="17" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_parentname5" 
+                                <o:PropertySetter PropertyName="f_parentname5"
 								Default="{m:Exp Str=LoginUser.f_parentname}"/>
                             </a:Data.Prop>
                         </TextBox>
@@ -417,7 +419,7 @@
                         </TextBox>
                         <sdk:DatePicker SelectedDate="{m:Bind Path=f_addgasdate}" Grid.Column="5" Margin="0,3,0,2" Grid.Row="17" VerticalAlignment="Stretch" IsEnabled="False" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_addgasdate" NotNull="True" 
+                                <o:PropertySetter PropertyName="f_addgasdate" NotNull="True"
             					Default="{m:Exp Str=SysTime.Today}"/>
                             </a:Data.Prop>
                         </sdk:DatePicker>
@@ -440,7 +442,7 @@
                         <TextBlock Margin="0,3,0,2" Grid.Row="18" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" Height="25"/>
                         <TextBox Text="{m:Bind Path=f_filiale6}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="18" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_filiale6" 
+                                <o:PropertySetter PropertyName="f_filiale6"
 								Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                             </a:Data.Prop>
                         </TextBox>
