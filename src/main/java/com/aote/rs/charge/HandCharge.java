@@ -143,7 +143,7 @@ public class HandCharge {
 		String ret = "";
 		try {
 			return afrecordInput(userid, 0, reading, sgnetwork, sgoperator,
-					lastinputdate, handdate, 0, meterstate, 1);
+					lastinputdate, handdate, 0, meterstate, 1,"");
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			ret = e.getMessage();
@@ -241,13 +241,14 @@ public class HandCharge {
 	 * @param leftgas
 	 * @param meterstate
 	 * @param flag
+	 * @param orgpathstr  操作员组织信息
 	 * @return
 	 * @throws Exception
 	 */
 	public String afrecordInput(String userid, double lastreading,
 			double reading, String sgnetwork, String sgoperator,
 			String lastinputdate, String handdate, double leftgas,
-			String meterstate, int flag) throws Exception {
+			String meterstate, int flag,String orgpathstr) throws Exception {
 		// 查找用户未抄表记录
 		Map map = this.findHandPlan(userid);
 		if (map == null) {
@@ -375,6 +376,7 @@ public class HandCharge {
 			Map<String, Object> sell = new HashMap<String, Object>();
 			sell.put("f_userid", map.get("f_userid")); // 表ID
 			sell.put("f_userinfoid", user.get("f_userid"));// 用户id
+			sell.put("f_orgstr", orgpathstr);// 操作员组织信息
 			sell.put("f_payfeevalid", "有效");// 交费是否有效
 			sell.put("f_payfeetype", "自动下账");// 收费类型
 			// 修改上期指数
@@ -963,7 +965,7 @@ public class HandCharge {
 					} else {
 						re = afrecordInput(userid, lastreading, reading,
 								network, operator, inputdate, handdate,
-								leftgas, meterstate, 2);
+								leftgas, meterstate, 2,"");
 						jo.put(re, "ok");
 					}
 				}
@@ -977,14 +979,15 @@ public class HandCharge {
 
 	// 批量抄表记录上传
 	// data以JSON格式上传，[{userid:'用户编号', showNumber:本期抄表数},{}]
-	@Path("record/batch/{handdate}/{sgnetwork}/{sgoperator}/{lastinputdate}/{meterstate}")
+	@Path("record/batch/{handdate}/{sgnetwork}/{sgoperator}/{lastinputdate}/{meterstate}/{orgpathstr}")
 	@POST
 	public String afRecordInputForMore(String data,
 			@PathParam("sgnetwork") String sgnetwork,
 			@PathParam("sgoperator") String sgoperator,
 			@PathParam("lastinputdate") String lastinputdate,
 			@PathParam("handdate") String handdate,
-			@PathParam("meterstate") String meterstate) {
+			@PathParam("meterstate") String meterstate,
+			@PathParam("orgpathstr") String orgpathstr) {
 		log.debug("批量抄表记录上传 开始");
 		String ret = "";
 		// 错误信息
@@ -1007,7 +1010,7 @@ public class HandCharge {
 				try {
 					afrecordInput(userid, lastreading, reading, sgnetwork,
 							sgoperator, lastinputdate, handdate, leftgas,
-							meterstate, 2);
+							meterstate, 2,orgpathstr);
 					// 获得自定义异常
 				} catch (RSException e) {
 					// 拼接错误信息
