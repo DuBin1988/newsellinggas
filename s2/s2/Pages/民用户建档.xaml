@@ -19,12 +19,6 @@
 
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-101,0">
-            <!--阶梯气价信息列表-->
-            <o:ObjectList Name="stairlist" EntityType="t_stairprice" 
-                          WebClientInfo="{StaticResource dbclient}" 
-                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\' group by a.f_gasproperties}" 
-                             LoadOnPathChanged="True" 
-                          />
 
             <!--抄表员列表-->
             <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>

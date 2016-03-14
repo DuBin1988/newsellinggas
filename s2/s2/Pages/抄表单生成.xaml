@@ -26,6 +26,9 @@
 
             <!--查询条件对象-->
             <o:SearchObject Name="search"/>
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+
 
             <!--气表类型列表-->
             <o:ObjectList Name="gasmeterstylelist"  EntityType="paramvalue"  HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型' order by id"/>
@@ -142,10 +145,10 @@
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="抄 表 员："  Margin="0,2,0,1" Height="Auto" TextAlignment="Right" Width="Auto" d:LayoutOverrides="Height, VerticalMargin" Grid.Row="0" Grid.Column="4" />
-                                <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" ItemsSource="{m:Exp Str=chaobiaoyuanlist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="Auto" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height, VerticalMargin" Grid.Row="0" Grid.Column="5">
+                                <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" ItemsSource="{m:Exp Str=inputtorlist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="Auto" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height, VerticalMargin" Grid.Row="0" Grid.Column="5">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                            <TextBlock Text="{Binding f_inputtor}" Height="20"></TextBlock>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
 
