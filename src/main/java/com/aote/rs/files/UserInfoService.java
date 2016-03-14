@@ -15,10 +15,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
-import com.aote.rs.BankService;
-import com.aote.rs.exception.RSException;
 import com.aote.rs.exception.ResultException;
 import com.aote.rs.util.SynchronizedTools;
+import com.aote.rs.util.UserTools;
 
 /**
  * 档案服务
@@ -44,23 +43,26 @@ public class UserInfoService {
 	 *            产生户编号的参数名
 	 * @param useridname
 	 *            产生表编号的参数名
+	 * @param loginuserid
+	 *            操作员id
 	 * @return
 	 */
 	@SuppressWarnings("finally")
-	@Path("touinfo/{userinfoname}/{useridname}")
+	@Path("touinfo/{userinfoname}/{useridname}/{loginuserid}")
 	@POST
 	public JSONObject txtoinfo(String files,
 			@PathParam("userinfoname") String userinfoname,
-			@PathParam("useridname") String useridname) {
+			@PathParam("useridname") String useridname,
+			@PathParam("loginuserid") String loginuserid) {
 		JSONObject result = new JSONObject();
 		try {
 			JSONArray list = new JSONArray(files);
 			for (int l = 0; l < list.length(); l++) {
 				JSONObject u = list.getJSONObject(l);
 				// 产生户档案,返回产生的户编号
-				String userinfoid = inserthu(u, userinfoname);
+				String userinfoid = inserthu(u, userinfoname, loginuserid);
 				// 产生表档案
-				insertfile(u, userinfoid, useridname);
+				insertfile(u, userinfoid, useridname, loginuserid);
 			}
 			result.put("success", "导入一户多表信息完成！");
 		} catch (Exception e) {
@@ -77,18 +79,20 @@ public class UserInfoService {
 	 * @param json
 	 * @param userinfoname
 	 *            户编号
+	 * @param loginuserid
+	 *            操作员id
 	 * @return 表编号
 	 * @throws ResultException
 	 * @throws JSONException
 	 */
-	private String inserthu(JSONObject json, String userinfoname)
-			throws ResultException, JSONException {
+	private String inserthu(JSONObject json, String userinfoname,
+			String loginuserid) throws ResultException, JSONException {
 		json.remove("id");
 		String result = "";
 		// 获取阶梯信息
 		String f_stairtype = json.getString("f_stairtype");
 		if (f_stairtype == null || f_stairtype.equals("")) {
-			throw new ResultException("属性f_stairtype没有设置导入的阶梯名称！");
+			throw new ResultException("属性f_stairtype没有设置值，不能生成阶梯信息！");
 		}
 		List list = this.hibernateTemplate
 				.find("from t_stairprice where f_stairtype='" + f_stairtype
@@ -106,12 +110,25 @@ public class UserInfoService {
 		json.put("f_stair4amount", map.get("f_stair4amount"));
 		json.put("f_stair4price", map.get("f_stair4price"));
 		json.put("f_stairmonths", map.get("f_stairmonths"));
+		// 获得操作员，网点，分公司，组织信息
+		Map user = UserTools.getUser(loginuserid,
+				this.hibernateTemplate.getSessionFactory());
+		// 操作员
+		json.put("f_yytoper", user.get("name"));
+		// 网点
+		json.put("f_yytdepa", user.get("f_parentname"));
+		// 分公司
+		json.put("f_filiale", user.get("f_fengongsi"));
+		// 分公司编号
+		json.put("f_fengongsinum", user.get("f_fengongsinum"));
+		// 组织
+		json.put("f_OrgStr", user.get("orgpathstr"));
 		// 产生户编号
 		JSONObject j = SynchronizedTools
 				.getSerialNumber(this.hibernateTemplate.getSessionFactory(),
 						"from t_singlevalue where name='" + userinfoname + "'",
 						"value");
-		String userinfoid = j.getString("value");
+		String userinfoid = user.get("f_fengongsinum") + j.getString("value");
 		result = userinfoid;
 		json.put("f_userid", userinfoid);
 		this.hibernateTemplate.save("t_userinfo", json);
@@ -126,12 +143,15 @@ public class UserInfoService {
 	 *            户编号
 	 * @param useridname
 	 *            产生表编号的参数名
+	 * @param loginuserid
+	 *            操作员id
 	 * @return 表编号
 	 * @throws ResultException
 	 * @throws JSONException
 	 */
 	private String insertfile(JSONObject json, String userinfoid,
-			String useridname) throws ResultException, JSONException {
+			String useridname, String loginuserid) throws ResultException,
+			JSONException {
 		json.remove("id");
 		String result = "";
 		// 获取阶梯信息
@@ -155,11 +175,24 @@ public class UserInfoService {
 		json.put("f_stair4amount", map.get("f_stair4amount"));
 		json.put("f_stair4price", map.get("f_stair4price"));
 		json.put("f_stairmonths", map.get("f_stairmonths"));
+		// 获得操作员，网点，分公司，组织信息
+		Map user = UserTools.getUser(loginuserid,
+				this.hibernateTemplate.getSessionFactory());
+		// 操作员
+		json.put("f_yytoper", user.get("name"));
+		// 网点
+		json.put("f_yytdepa", user.get("f_parentname"));
+		// 分公司
+		json.put("f_filiale", user.get("f_fengongsi"));
+		// 分公司编号
+		json.put("f_fengongsinum", user.get("f_fengongsinum"));
+		// 组织
+		json.put("f_OrgStr", user.get("orgpathstr"));
 		// 产生户编号
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate.getSessionFactory(),
 				"from t_singlevalue where name='" + useridname + "'", "value");
-		String userid = j.getString("value");
+		String userid = user.get("f_fengongsinum") + j.getString("value");
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);
