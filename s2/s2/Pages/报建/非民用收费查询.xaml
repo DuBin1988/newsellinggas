@@ -46,16 +46,16 @@
                 <o:PropertySetter PropertyName="applyid" Value="{m:Exp Str=user.SelectedItem.applyid}"/>
             </o:GeneralObject>
 
-            <o:ObjectList Name="devicelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mysfbzInfo.DataContext.State==$End$'}"
-            Path="{m:Exp Str='mysfbzInfo.DataContext.id!=null:$from t_device where applyid={mysfbzInfo.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False" />
+            <o:ObjectList Name="devicelist_fmypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mypgshInfo.DataContext.State==$End$'}"
+            Path="{m:Exp Str='mypgshInfo.DataContext.id!=null:$from t_device where applyid={mypgshInfo.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False" />
 
-            <o:GeneralObject Name="mysfbzObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
+            <o:GeneralObject Name="mypgshObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
                 Source="{m:Exp Str='applys.SelectedItem'}">
                 <!--实交金额-->
-                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmysfbz}"/>
+                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmypgsh}"/>
                 
             </o:GeneralObject>
-            <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=print_mysfbz.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
+            <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=print_mypgsh.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
                 <!--补打对象保存-->
                 <b:BatchInfo Source="{m:Exp Str=makemissing}" MethodName="SaveToJson"/>
             </b:BatchExcuteAction>
@@ -125,7 +125,7 @@
 					</sdk:DataGrid>
 				</c:BusyIndicatorEx>
 			</toolkit:DockPanel>
-            <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="mysfbzInfo" DataContext="{m:Exp Str=mysfbzObj}" Grid.Column="1">
+            <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="mypgshInfo" DataContext="{m:Exp Str=mypgshObj}" Grid.Column="1">
                  	
 					<sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
 						<sdk:TabItem Header="报建基本信息" Margin="0,0,1,3">
@@ -200,9 +200,9 @@
 											</a:Data.Prop>
 										</TextBox>
 										<TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right"/>
-										<TextBox Text="{m:Bind Path=f_applydept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
+										<TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
 											<a:Data.Prop>
-												<o:PropertySetter PropertyName="f_applydept"/>
+												<o:PropertySetter PropertyName="f_minyongdept"/>
 											</a:Data.Prop>
 										</TextBox>
 										<TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="申请用气点数：" TextAlignment="Right"/>
@@ -245,7 +245,7 @@
 										<TextBox Text="{m:Bind Path=f_feedepartment}" Grid.Column="1" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
 											<a:Data.Prop>
 												<o:PropertySetter PropertyName="f_feedepartment" NotNull="True" 
-													Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str=(this.IsModified or devicelist_fmysfbz.IsModified):LoginUser.f_parentname\,this.f_feedepartment}"/>
+													Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str=(this.IsModified or devicelist_fmypgsh.IsModified):LoginUser.f_parentname\,this.f_feedepartment}"/>
 											</a:Data.Prop>
 										</TextBox>
 										<TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right"/>
@@ -314,7 +314,7 @@
 						</sdk:TabItem>
 						<sdk:TabItem Header="用气设备" >
 							<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-								<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmysfbz[data.f_noanzhuang \=\= null]}">
+								<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmypgsh[data.f_noanzhuang \=\= null]}">
 									<sdk:DataGrid.Columns>
 										<sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
 											<sdk:DataGridTemplateColumn.CellTemplate>
@@ -542,13 +542,13 @@
                     </sdk:TabItem>
                 </sdk:TabControl>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,9,10" Width="587">
-                    <Button Content=" 补打收据 " Margin="5" IsEnabled="{m:Exp Str=!makemissing.HasErrors}" Click="{m:Exp Str=print_mysfbz.IsPrint\=True}"/>
-                    <c:PrintObj x:Name="print_mysfbz" UseDefaultPrinter="False" Area="{m:Res Key=print1_mysfbz}" />
+                    <Button Content=" 补打收据 " Margin="5" IsEnabled="{m:Exp Str=!makemissing.HasErrors}" Click="{m:Exp Str=print_mypgsh.IsPrint\=True}"/>
+                    <c:PrintObj x:Name="print_mypgsh" UseDefaultPrinter="False" Area="{m:Res Key=print1_mypgsh}" />
 
                     <!--打印确认单-->
-                    <Grid  x:Name="print1_mysfbz"  Margin="420,0,-584,-1204" HorizontalAlignment="Left" Width="750" Height="1039" VerticalAlignment="Bottom" Visibility="Visible" OpacityMask="{x:Null}">
+                    <Grid  x:Name="print1_mypgsh"  Margin="420,0,-584,-1204" HorizontalAlignment="Left" Width="750" Height="1039" VerticalAlignment="Bottom" Visibility="Visible" OpacityMask="{x:Null}">
                         	<a:Data.Context>
-                        		<o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=mysfbzInfo.DataContext}" IsInit="{m:Exp Str=this.State\=\=$End}"/>
+                        		<o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=mypgshInfo.DataContext}" IsInit="{m:Exp Str=this.State\=\=$End}"/>
                         	</a:Data.Context>
                         	<Grid.RowDefinitions>
                         		<RowDefinition Height="0*"/>
@@ -580,8 +580,8 @@
                           
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="41,121,0,0" Grid.Row="1" TextWrapping="Wrap" Text="缴费日期" VerticalAlignment="Top" Width="76" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" Height="25" Margin="0,151,309,0" Grid.Row="1" TextWrapping="Wrap" Text="用户类型" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74"/>
-                        	<TextBlock x:Name="应缴金额" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_totalfee\}元$}" Grid.Column="1" Height="23" Margin="148,438,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
-                        	<TextBlock x:Name="用户类型" Text="{m:Exp Str=mysfbzInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,149,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="应缴金额" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_totalfee\}元$}" Grid.Column="1" Height="23" Margin="148,438,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="用户类型" Text="{m:Exp Str=mypgshInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,149,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<Path
                         		Data="M72,0 L72,276.02899" Margin="87.493,177.83,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Height="219.126" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Width="1" RenderTransformOrigin="0.5,0.5">
                         		<Path.RenderTransform>
@@ -610,10 +610,10 @@
                         	<TextBlock Grid.Column="1" Height="22" Margin="0,492,309,0" Grid.Row="1" TextWrapping="Wrap" Text="操 作 员" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74" RenderTransformOrigin="0.5,0.5"/>
                         	<TextBlock x:Name="实缴金额" Text="{m:Exp Str=$\{user.SelectedItem.f_fee\}元$}" Grid.Column="1" Height="21" Margin="148,466,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204" RenderTransformOrigin="0.5,0.5"/>
                         	<TextBlock x:Name="交款人" Text="{m:Exp Str=user.SelectedItem.f_jiaokuanren}" Grid.Column="1" Height="22" Margin="148,492,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204" RenderTransformOrigin="0.5,0.5"/>
-                        	<TextBlock x:Name="申请人" Text="{m:Exp Str=mysfbzInfo.DataContext.f_username}" Grid.Column="1" Height="22" Margin="148,152,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
-                        	<TextBlock x:Name="应缴金额大写" Text="{m:Exp Str=mysfbzInfo.DataContext.f_totalfee.ToChinaMoney()}" Grid.Column="1" Height="23" Margin="0,438,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="申请人" Text="{m:Exp Str=mypgshInfo.DataContext.f_username}" Grid.Column="1" Height="22" Margin="148,152,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="应缴金额大写" Text="{m:Exp Str=mypgshInfo.DataContext.f_totalfee.ToChinaMoney()}" Grid.Column="1" Height="23" Margin="0,438,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<TextBlock x:Name="实缴金额大写" Text="{m:Exp Str=user.SelectedItem.f_fee.ToChinaMoney()}" Grid.Column="1" Height="21" Margin="0,466,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
-                        	<TextBlock x:Name="操作员" Text="{m:Exp Str=mysfbzInfo.DataContext.f_opertor}" Grid.Column="1" Height="22" Margin="0,492,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="操作员" Text="{m:Exp Str=mypgshInfo.DataContext.f_opertor}" Grid.Column="1" Height="22" Margin="0,492,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,301,0,0" Grid.Row="1" TextWrapping="Wrap" Text="明" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,246,0,0" Grid.Row="1" TextWrapping="Wrap" Text="缴" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="22" Margin="41,274,0,0" Grid.Row="1" TextWrapping="Wrap" Text="费" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
@@ -621,15 +621,15 @@
                         	<sdk:DatePicker SelectedDate="{m:Exp Str=user.SelectedItem.f_payfeedate}" x:Name="交款日期1"  Grid.Column="1" Height="24" Margin="0,0,436,898" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="166" SelectedDateFormat="Long"/>
                         	<StackPanel  Grid.ColumnSpan="2" Margin="100,181,46,648" Grid.RowSpan="2">
 
-                            <TextBlock x:Name="入户安装费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_materialfee!\=0:$工程材料费：\{mysfbzInfo.DataContext.f_materialfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_materialfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="排空费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_emptyingfee!\=0:$排空费：\{mysfbzInfo.DataContext.f_emptyingfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_emptyingfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<!--<TextBlock x:Name="自闭阀费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_selfclosfee!\=0:$自闭阀费：\{mysfbzInfo.DataContext.f_selfclosfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_selfclosfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="报警器费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_alarmfee!\=0:$报警器费：\{mysfbzInfo.DataContext.f_alarmfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_alarmfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="壁挂锅炉安装费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_bgglf!\=0:$壁挂锅炉安装费：\{mysfbzInfo.DataContext.f_bgglf\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_bgglf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="材料费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_cailiaofei!\=0:$材料费：\{mysfbzInfo.DataContext.f_cailiaofei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_cailiaofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="人工费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_rengongfei!\=0:$人工费：\{mysfbzInfo.DataContext.f_rengongfei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_rengongfei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="热水器安装费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_rsqf!\=0:$热水器安装费：\{mysfbzInfo.DataContext.f_rsqf\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_rsqf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="接驳费" Text="{m:Exp Str=mysfbzInfo.DataContext.f_jiebofei!\=0:$接驳费：\{mysfbzInfo.DataContext.f_jiebofei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_jiebofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>-->
+                            <TextBlock x:Name="入户安装费" Text="{m:Exp Str=mypgshInfo.DataContext.f_materialfee!\=0:$工程材料费：\{mypgshInfo.DataContext.f_materialfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_materialfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="排空费" Text="{m:Exp Str=mypgshInfo.DataContext.f_emptyingfee!\=0:$排空费：\{mypgshInfo.DataContext.f_emptyingfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_emptyingfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<!--<TextBlock x:Name="自闭阀费" Text="{m:Exp Str=mypgshInfo.DataContext.f_selfclosfee!\=0:$自闭阀费：\{mypgshInfo.DataContext.f_selfclosfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_selfclosfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="报警器费" Text="{m:Exp Str=mypgshInfo.DataContext.f_alarmfee!\=0:$报警器费：\{mypgshInfo.DataContext.f_alarmfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_alarmfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="壁挂锅炉安装费" Text="{m:Exp Str=mypgshInfo.DataContext.f_bgglf!\=0:$壁挂锅炉安装费：\{mypgshInfo.DataContext.f_bgglf\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_bgglf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="材料费" Text="{m:Exp Str=mypgshInfo.DataContext.f_cailiaofei!\=0:$材料费：\{mypgshInfo.DataContext.f_cailiaofei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_cailiaofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="人工费" Text="{m:Exp Str=mypgshInfo.DataContext.f_rengongfei!\=0:$人工费：\{mypgshInfo.DataContext.f_rengongfei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_rengongfei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="热水器安装费" Text="{m:Exp Str=mypgshInfo.DataContext.f_rsqf!\=0:$热水器安装费：\{mypgshInfo.DataContext.f_rsqf\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_rsqf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="接驳费" Text="{m:Exp Str=mypgshInfo.DataContext.f_jiebofei!\=0:$接驳费：\{mypgshInfo.DataContext.f_jiebofei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_jiebofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>-->
 							
                         	</StackPanel>
                         	<Path Data="M17,181 L492.26941,181" Height="2" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="35.622,429,22.333,0" Grid.Row="1" Grid.Column="1" RenderTransformOrigin="0.5,0.5">
@@ -638,9 +638,9 @@
                         		</Path.RenderTransform>
                         	</Path>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="22" Margin="37,404,0,0" Grid.Row="1" TextWrapping="Wrap" Text="费用合计" VerticalAlignment="Top" Width="107" TextAlignment="Center" RenderTransformOrigin="0.533,-1.474"/>
-                        	<TextBlock x:Name="费用合计" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_totalfee+mysfbzInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="148,404,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="费用合计" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_totalfee+mypgshInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="148,404,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
                         	<TextBlock Grid.Column="1" Height="19" Margin="0,404,309,0" Grid.Row="1" TextWrapping="Wrap" Text="减免合计" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74" RenderTransformOrigin="0.5,0.5"/>
-                        	<TextBlock x:Name="减免合计" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="0,404,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="减免合计" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="0,404,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<Path
                         		Data="M72,0 L71.833008,536.86737" HorizontalAlignment="Right" Margin="0,609.584,23.333,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1.167" Height="400.75" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
                         	<Path
@@ -662,8 +662,8 @@
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="41,646,0,0" Grid.Row="1" TextWrapping="Wrap" Text="申 请 人" VerticalAlignment="Top" Width="76" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="41,615,0,0" Grid.Row="1" TextWrapping="Wrap" Text="缴费日期" VerticalAlignment="Top" Width="76" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" Height="25" Margin="0,645,309,0" Grid.Row="1" TextWrapping="Wrap" Text="用户类型" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74"/>
-                        	<TextBlock x:Name="应缴金额_Copy" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_totalfee\}元$}" Grid.Column="1" Height="23" Margin="148,932,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
-                        	<TextBlock x:Name="用户类型_Copy" Text="{m:Exp Str=mysfbzInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,643,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="应缴金额_Copy" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_totalfee\}元$}" Grid.Column="1" Height="23" Margin="148,932,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="用户类型_Copy" Text="{m:Exp Str=mypgshInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,643,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<Path
                         		Data="M72,0 L72,276.02899" Margin="87.493,671.83,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Height="219.126" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Width="1" RenderTransformOrigin="0.5,0.5">
                         		<Path.RenderTransform>
@@ -692,10 +692,10 @@
                         	<TextBlock Grid.Column="1" Height="22" Margin="0,986,309,0" Grid.Row="1" TextWrapping="Wrap" Text="操 作 员" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74" RenderTransformOrigin="0.5,0.5"/>
                         	<TextBlock x:Name="实缴金额_Copy" Text="{m:Exp Str=$\{user.SelectedItem.f_fee\}元$}" Grid.Column="1" Height="21" Margin="148,960,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204" RenderTransformOrigin="0.5,0.5"/>
                         	<TextBlock x:Name="交款人_Copy" Text="{m:Exp Str=user.SelectedItem.f_jiaokuanren}" Grid.Column="1" Height="22" Margin="148,986,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204" RenderTransformOrigin="0.5,0.5"/>
-                        	<TextBlock x:Name="申请人_Copy" Text="{m:Exp Str=mysfbzInfo.DataContext.f_username}" Grid.Column="1" Height="22" Margin="148,646,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
-                        	<TextBlock x:Name="应缴金额大写_Copy" Text="{m:Exp Str=mysfbzInfo.DataContext.f_totalfee.ToChinaMoney()}" Grid.Column="1" Height="23" Margin="0,932,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="申请人_Copy" Text="{m:Exp Str=mypgshInfo.DataContext.f_username}" Grid.Column="1" Height="22" Margin="148,646,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="应缴金额大写_Copy" Text="{m:Exp Str=mypgshInfo.DataContext.f_totalfee.ToChinaMoney()}" Grid.Column="1" Height="23" Margin="0,932,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<TextBlock x:Name="实缴金额大写_Copy" Text="{m:Exp Str=user.SelectedItem.f_fee.ToChinaMoney()}" Grid.Column="1" Height="21" Margin="0,960,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
-                        	<TextBlock x:Name="操作员_Copy" Text="{m:Exp Str=mysfbzInfo.DataContext.f_opertor}" Grid.Column="1" Height="22" Margin="0,986,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="操作员_Copy" Text="{m:Exp Str=mypgshInfo.DataContext.f_opertor}" Grid.Column="1" Height="22" Margin="0,986,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,795,0,0" Grid.Row="1" TextWrapping="Wrap" Text="明" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,740,0,0" Grid.Row="1" TextWrapping="Wrap" Text="缴" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="22" Margin="41,768,0,0" Grid.Row="1" TextWrapping="Wrap" Text="费" VerticalAlignment="Top" Width="34" TextAlignment="Center"/>
@@ -703,15 +703,15 @@
                         	<sdk:DatePicker SelectedDate="{m:Exp Str=user.SelectedItem.f_payfeedate}" x:Name="交款日期1_Copy"  Grid.Column="1" Height="24" Margin="0,0,436,404" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="166" SelectedDateFormat="Long"/>
                         	<StackPanel  Grid.ColumnSpan="2" Margin="100,675,46,154" Grid.RowSpan="2">
 
-                            <TextBlock x:Name="入户安装费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_materialfee!\=0:$工程材料费：\{mysfbzInfo.DataContext.f_materialfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_materialfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="排空费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_emptyingfee!\=0:$排空费：\{mysfbzInfo.DataContext.f_emptyingfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_emptyingfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<!--<TextBlock x:Name="自闭阀费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_selfclosfee!\=0:$自闭阀费：\{mysfbzInfo.DataContext.f_selfclosfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_selfclosfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="报警器费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_alarmfee!\=0:$报警器费：\{mysfbzInfo.DataContext.f_alarmfee\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_alarmfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="壁挂锅炉安装费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_bgglf!\=0:$壁挂锅炉安装费：\{mysfbzInfo.DataContext.f_bgglf\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_bgglf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="材料费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_cailiaofei!\=0:$材料费：\{mysfbzInfo.DataContext.f_cailiaofei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_cailiaofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="人工费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_rengongfei!\=0:$人工费：\{mysfbzInfo.DataContext.f_rengongfei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_rengongfei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="热水器安装费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_rsqf!\=0:$热水器安装费：\{mysfbzInfo.DataContext.f_rsqf\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_rsqf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
-                        		<TextBlock x:Name="接驳费1" Text="{m:Exp Str=mysfbzInfo.DataContext.f_jiebofei!\=0:$接驳费：\{mysfbzInfo.DataContext.f_jiebofei\}元$\,$$}" Visibility="{m:Exp Str=mysfbzInfo.DataContext.f_jiebofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>-->
+                            <TextBlock x:Name="入户安装费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_materialfee!\=0:$工程材料费：\{mypgshInfo.DataContext.f_materialfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_materialfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="排空费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_emptyingfee!\=0:$排空费：\{mypgshInfo.DataContext.f_emptyingfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_emptyingfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<!--<TextBlock x:Name="自闭阀费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_selfclosfee!\=0:$自闭阀费：\{mypgshInfo.DataContext.f_selfclosfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_selfclosfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="报警器费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_alarmfee!\=0:$报警器费：\{mypgshInfo.DataContext.f_alarmfee\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_alarmfee!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="壁挂锅炉安装费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_bgglf!\=0:$壁挂锅炉安装费：\{mypgshInfo.DataContext.f_bgglf\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_bgglf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="材料费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_cailiaofei!\=0:$材料费：\{mypgshInfo.DataContext.f_cailiaofei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_cailiaofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="人工费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_rengongfei!\=0:$人工费：\{mypgshInfo.DataContext.f_rengongfei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_rengongfei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="热水器安装费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_rsqf!\=0:$热水器安装费：\{mypgshInfo.DataContext.f_rsqf\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_rsqf!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>
+                        		<TextBlock x:Name="接驳费1" Text="{m:Exp Str=mypgshInfo.DataContext.f_jiebofei!\=0:$接驳费：\{mypgshInfo.DataContext.f_jiebofei\}元$\,$$}" Visibility="{m:Exp Str=mypgshInfo.DataContext.f_jiebofei!\=0:$Visible$\,$Collapsed$}" Grid.Column="1" Height="18" Margin="5,5,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="558"/>-->
 							
                         	</StackPanel>
                         	<Path Data="M17,181 L492.26941,181" Height="2" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="35.622,923,22.333,0" Grid.Row="1" Grid.Column="1" RenderTransformOrigin="0.5,0.5">
@@ -720,9 +720,9 @@
                         		</Path.RenderTransform>
                         	</Path>
                         	<TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="22" Margin="37,898,0,0" Grid.Row="1" TextWrapping="Wrap" Text="费用合计" VerticalAlignment="Top" Width="107" TextAlignment="Center" RenderTransformOrigin="0.533,-1.474"/>
-                        	<TextBlock x:Name="费用合计_Copy" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_totalfee+mysfbzInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="148,898,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
+                        	<TextBlock x:Name="费用合计_Copy" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_totalfee+mypgshInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="148,898,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="204"/>
                         	<TextBlock Grid.Column="1" Height="19" Margin="0,898,309,0" Grid.Row="1" TextWrapping="Wrap" Text="减免合计" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74" RenderTransformOrigin="0.5,0.5"/>
-                        	<TextBlock x:Name="减免合计_Copy" Text="{m:Exp Str=$\{mysfbzInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="0,898,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
+                        	<TextBlock x:Name="减免合计_Copy" Text="{m:Exp Str=$\{mypgshInfo.DataContext.f_jmhj\}元$}" Grid.Column="1" Height="23" Margin="0,898,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="266" RenderTransformOrigin="0.484,2.24"/>
 					    </Grid>
 
 

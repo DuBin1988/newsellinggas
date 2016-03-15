@@ -122,7 +122,7 @@
                 <!--收费系统中的申请人f_petitionuser-->
 			<o:PropertySetter PropertyName="f_petitionuser" Value="{m:Exp Str=main.DataContext.f_username}"/>
 			<!--用户姓名-->
-	        <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=persons.SelectedItem.f_applydept}"/>
+	        <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=persons.SelectedItem.f_minyongdept}"/>
 			<!--联系人或用户自己本人f_linkname-->
 			<o:PropertySetter PropertyName="f_linkname" Value="{m:Exp Str=main.DataContext.f_username}"/>
 			<!--身份证f_idnumber-->
@@ -246,9 +246,9 @@
 					  </a:Data.Prop>
 					</TextBox>
 												<TextBlock TextWrapping="Wrap" Text="单位：" Margin="3,0,0,0"/>
-		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_applydept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
+		                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" Margin="3,0,0,0" Height="25">
 		                      <a:Data.Prop>
-		                      	   <o:PropertySetter PropertyName="f_applydept" Operator="f_applydept like '%this%'"/>               
+		                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="f_minyongdept like '%this%'"/>               
 							  </a:Data.Prop>
 							</TextBox>
                     <Button Content=" 查  询 " x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="10,0,0,0"/>
@@ -280,7 +280,7 @@
                         <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
 						<sdk:DataGridTextColumn Header="申请几处" Binding="{Binding f_dijichu}"/>
 						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>
-						<sdk:DataGridTextColumn Header="单位" Binding="{Binding f_applydept}"/>
+						<sdk:DataGridTextColumn Header="单位" Binding="{Binding f_minyongdept}"/>
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                   </toolkit:BusyIndicator>
