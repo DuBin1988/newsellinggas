@@ -1,0 +1,126 @@
+﻿<c:CustomChildWindow 
+           x:Class="s2.Pages.小区具体信息"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+		   xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+		   xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+	       xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+           xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+		   xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+		   xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+           xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
+           Width="800" Height="400"   FontSize="14"
+           Title="小区具体信息" Name="child">
+    <Grid >
+        <Grid  x:Name="LayoutRoot2" Grid.Row="3" Grid.Column="3"   Margin="12,0,12,0"  DataContext="{m:Exp Str=child.ParamValue}" >
+            <a:Data.Context>
+                <o:GeneralObject  x:Name="xiaoqucha" WebClientInfo="{StaticResource dbclient}" 
+									EntityType="t_changmeter" Source="{m:Exp Str=userfiles.SelectedItem}"/>
+            </a:Data.Context>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="33"/>
+                <RowDefinition Height="34"/>
+                <RowDefinition Height="34"/>
+                <RowDefinition Height="34"/>
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="0.354*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="0.646*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Margin="0,4" TextWrapping="Wrap" Text="小区名称：" HorizontalAlignment="Right" Height="25"/>
+            <TextBlock Margin="0" Grid.Row="1" TextWrapping="Wrap" Text="地   址：" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25"/>
+            <TextBlock Margin="0,4" Grid.Row="2" TextWrapping="Wrap" Text="气表品牌：" HorizontalAlignment="Right" Height="25"/>
+            <TextBlock Margin="0,5,0,4" Grid.Row="3" TextWrapping="Wrap" Text="气表型号：" HorizontalAlignment="Right" Height="25"/>
+            <TextBlock Margin="0,5,0,4" Grid.Row="4" TextWrapping="Wrap" Text="开始编号：" HorizontalAlignment="Right" Height="25"/>
+            <TextBlock Margin="0,4" TextWrapping="Wrap" Text="户   数：" HorizontalAlignment="Right" Grid.Column="2" Height="25"/>
+            <TextBlock Margin="0,5,0,4" Grid.Row="3" TextWrapping="Wrap" Text="开户气量：" HorizontalAlignment="Right" Grid.Column="2" Height="25"/>
+            <TextBlock Margin="0,5,0,4" Grid.Row="5" TextWrapping="Wrap" Text="结束编号：" HorizontalAlignment="Right" Height="25"/>
+            <TextBlock Margin="0,5,0,4" Grid.Row="5" TextWrapping="Wrap" Text="当前用户编号：" HorizontalAlignment="Right" Grid.Column="2" Height="25"/>
+            <TextBox Text="{m:Bind Path=f_districtname}" Grid.Column="1" Margin="0,4" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_districtname"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_address}" Grid.Column="1" Margin="0,4" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"  Grid.ColumnSpan="1" IsReadOnly="True" Height="25">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_address"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0,4" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_gaswatchbrand"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="1"  Margin="0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_metertype"  />
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_startNumber}" Grid.Column="1"  Margin="0" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_startNumber"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_userNum}" Grid.Column="3"  Margin="0" Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_userNum"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_accountVolume}" Grid.Column="3" Height="25" Margin="0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_accountVolume"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_endNumber}" Grid.Column="1" Height="25" Margin="0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_endNumber"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBox Text="{m:Bind Path=f_usernumber}" IsReadOnly="True" Grid.Column="3" Margin="0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Width="Auto" Height="25" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_usernumber" />
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="0" Grid.Row="6" TextWrapping="Wrap" Text="分  公  司：" Height="25" TextAlignment="Right"/>
+            <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Height="25" Margin="0" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_filiale"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="操  作  员：" Height="25" TextAlignment="Right"/>
+            <TextBox Text="{m:Bind Path=f_operator}" Grid.Column="1" Height="25" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_operator"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Grid.Column="2" Margin="0,5,0,4" Grid.Row="7" TextWrapping="Wrap" Text="操作日期：" TextAlignment="Right" Height="25" />
+            <TextBox Text="{Binding f_date,StringFormat=yyyy-MM-dd}" Grid.Column="3" Height="25" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Grid.ColumnSpan="1">
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_date"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="0" TextWrapping="Wrap" Text="类  型：" HorizontalAlignment="Right" Grid.Column="2" Height="25" Grid.Row="1"/>
+            <TextBox Text="{m:Bind Path=f_type}" Grid.Column="3"  Margin="0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_type"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="0" TextWrapping="Wrap" Text="别  名：" HorizontalAlignment="Right" Grid.Column="2" Height="25" Grid.Row="2"/>
+            <TextBox Text="{m:Bind Path=f_aliasname}" Grid.Column="3"  Margin="0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_aliasname"/>
+                </a:Data.Prop>
+            </TextBox>
+            <Button x:Name="OKButton" Content="确定" Click="OKButton_Click" Width="75" Height="23" HorizontalAlignment="Right"  Grid.Row="8" Grid.Column="2" Margin="0,34,15,-23" />
+
+        </Grid>
+    </Grid>
+</c:CustomChildWindow>
