@@ -19,16 +19,14 @@
     <Grid x:Name="LayoutRoot" >
         <m:ResourceLoad Margin="0,0,-101,0">
            <!--用户信息-->
-            <o:PagedObjectList Name="userlist" 
+            <o:ObjectList Name="userlist" 
 	   WebClientInfo="{StaticResource dbclient}"
 	      Path="{m:Exp Str=$from t_applycustomer as applycus  where applyid\=\{main.DataContext.id\} and (f_isimport is null or  f_isimport\=0 ) and f_username is not null and f_username !\= \'\' and f_meternumber is not null$}"
 		 EntityType="t_applycustomer" 
    IsOld="{m:Exp Str=(main.DataContext.State\=\=$Free$ or main.DataContext.State\=\=$End$)  }"
-							  PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}"
-							  SumNames="f_isimport"
 		>
                 <o:PropertySetter PropertyName="applyid"  Default="{m:Exp Str=main.DataContext.id}"  Value="{m:Exp Str=main.DataContext.id}" />
-            </o:PagedObjectList>
+            </o:ObjectList>
             <!--卡表信息-->
             <o:ObjectList Name="qibiaolist" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from qibiao}" ></o:ObjectList>
 
@@ -55,12 +53,7 @@
                 <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=tempobj.f_code}"/>
                 <!--地址f_address-->
                 <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=tempobj.f_address}"/>
-
-           
-
-
-
-                <!--小区名称f_districtname-->
+                 <!--小区名称f_districtname-->
                 <o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=tempobj.f_district}"/>
                 <!--单元f_cusDy-->
                 <o:PropertySetter PropertyName="f_cusDy" Value="{m:Exp Str=tempobj.f_cusDy}"/>
@@ -527,13 +520,13 @@
                                         </sdk:DataGrid.Columns>
 
                                     </sdk:DataGrid>
-                                    <Grid>
+                                    <!-- <Grid>
 
                                         <sdk:Label HorizontalAlignment="Left"  Width="82" Content="总数"/>
                                         <sdk:Label HorizontalAlignment="Left"    Width="127" Content="{m:Exp Str=applyuser.ItemsSource.Count}" Margin="86,0,0,0"/>
                                         <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=applyuser,Converter={StaticResource DataPagerConverter}}" PageSize="50" Margin="217,0,0,0" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Top" Background="#FFF2F3F4" d:LayoutOverrides="GridBox" />
 
-                                    </Grid>
+                                    </Grid>-->
 
                                 </StackPanel>
 

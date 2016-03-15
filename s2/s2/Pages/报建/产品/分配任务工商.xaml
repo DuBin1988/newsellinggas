@@ -213,8 +213,8 @@
                                 <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}">
                                     <sdk:DataGrid x:Name="people" Margin="0"  MaxHeight="200"  AutoGenerateColumns="False" SelectionMode="Single"  IsReadOnly="True">
                                         <a:Data.Items>
-                                            <!--榆林防线人5253534-->
-                                            <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(survey) as icount) from t_userbz as u left join u.f_applysurvey as survey  where roles like '%5253534%' group by u.id,u.name" 
+                                            <!--榆林防线人6130969-->
+                                            <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(survey) as icount) from t_userbz as u left join u.f_applysurvey as survey  where roles like '%6130969%' group by u.id,u.name" 
 					 IsOld="{m:Exp Str='surveyAction.State\=\=$End$ or unsurveyAction.State\=\=$End$'}" />
                                         </a:Data.Items>
                                         <sdk:DataGrid.Columns>
@@ -236,9 +236,9 @@
 			 <Button Content="取消选择" Height="22" HorizontalAlignment="Right" Click="{m:Exp Str='designer.SelectedIndex=-1'}" IsEnabled="{m:Exp Str='designer.SelectedItems.Count=>SelectionChanged!=0'}" Margin="0,0,0,5"/>
 			 <c:BusyIndicatorEx  BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}"   >
 			 <sdk:DataGrid x:Name="designer" Margin="0" MaxHeight="200" IsReadOnly="True"  AutoGenerateColumns="False" SelectionMode="Single" >
-			 	<a:Data.Items><!-- 榆林设计人 5253539-->
+			 	<a:Data.Items><!-- 榆林设计人 6130964-->
                         <!--test服务 5078369 -->
-                        <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(designer) as icount) from t_userbz as u left join u.f_applydesigner as designer  where roles like '%5253539%' group by u.id,u.name"
+                        <o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="select new map(u.id as id, u.name as name, count(designer) as icount) from t_userbz as u left join u.f_applydesigner as designer  where roles like '%6130964%' group by u.id,u.name"
 					 IsOld="{m:Exp Str='designersAction.State\=\=$End$ or undesignersAction.State\=\=$End$' }"/>
                         </a:Data.Items>
                         <sdk:DataGrid.Columns>

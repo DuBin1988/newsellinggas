@@ -22,11 +22,11 @@
             <!--流程启动对象-->
             <o:GeneralObject  Name="startprocess" WebClientInfo="{StaticResource server}" 
 		        EntityType="t_test" 
-	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/perfomactivity/\{myjgdList.SelectedItem.actid\}/\{LoginUser.name\}/\{LoginUser.id\}}"
+	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/perfomactivity/\{fmyjgysdList.SelectedItem.actid\}/\{LoginUser.name\}/\{LoginUser.id\}}"
                  >
             </o:GeneralObject>
 
-            <o:PagedList Name="myjgd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myjgdInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| myjgdPager.DataContext.State==$End$ |or| myjgdBack=>Click!=null'}"
+            <o:PagedList Name="fmyjgysd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyjgysdInfo.DataContext.State==$End$ |or| SubmitAction.State==$End$ |or| fmyjgysdPager.DataContext.State==$End$ |or| fmyjgysdBack=>Click!=null'}"
                 Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid,f_processid" 
                 HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid\,apply.f_processid
                 from activityins act 
@@ -34,32 +34,38 @@
                 on act.actorexpression \= p.actorid 
                 join t_apply apply 
                 on apply.f_processid\=act.processid 
-                where \{myjgdSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'非民用流程\' and act.defname\=\'竣工验收单\' and p.userid\=\'\{LoginUser.ename\}\'}"
-                Path="sql" PageIndex="{m:Exp Str=myjgdPager.PageIndex}" PageSize="{m:Exp Str=myjgdPager.PageSize}" SumNames="," />
+                where \{fmyjgysdSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'非民用流程\' and act.defname\=\'竣工验收单\' and p.userid\=\'\{LoginUser.ename\}\'}"
+                Path="sql" PageIndex="{m:Exp Str=fmyjgysdPager.PageIndex}" PageSize="{m:Exp Str=fmyjgysdPager.PageSize}" SumNames="," />
 
-            <o:GeneralObject Name="myjgdObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
-			    Path="{m:Exp Str=myjgdList.SelectedItem \!\=null:$one/from t_apply where id\=\{myjgdList.SelectedItem.id\}$\,$null$}"  
-                IsInit="{m:Exp Str='this.State==$End$ or myjgdBack=>Click!=null'}">
-                <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist_myjgd}"/>
-
+            <o:GeneralObject Name="fmyjgysdObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
+			    Path="{m:Exp Str=fmyjgysdList.SelectedItem \!\=null:$one/from t_apply where id\=\{fmyjgysdList.SelectedItem.id\}$\,$null$}"  
+                IsInit="{m:Exp Str='this.State==$End$ or fmyjgysdBack=>Click!=null'}">
+                <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmyjgysd}"/>
+                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_fmyjgysd}" />
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_fmyjgysd}" />
             </o:GeneralObject>
+
+            <o:ObjectList Name="imagelist_fmyjgysd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyjgysdInfo.DataContext.State==$End$ or fmyjgysdBack=>Click!=null'}"
+            Path="{m:Exp Str='fmyjgysdInfo.DataContext.id!=null:$from t_applyimage where applyid={fmyjgysdInfo.DataContext.id}$,null'}" EntityType="t_applyimage" HasEmptyRow="True" />
+            <o:ObjectList Name="annexlist_fmyjgysd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyjgysdInfo.DataContext.State==$End$ or fmyjgysdBack=>Click!=null'}"
+            Path="{m:Exp Str='fmyjgysdInfo.DataContext.id!=null:$from t_applyannex where applyid={fmyjgysdInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
 
             <!--施工资料审核-->
             <o:ObjectList Name="sgzllist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='审核施工资料'"/>
             <!--蓝图审核-->
             <o:ObjectList Name="ltlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='审核蓝图'"/>
              <!--用气设备对象-->
-            <o:ObjectList Name="userlist_myjgd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myjgdInfo.DataContext.State==$End$ or myjgdBack=>Click!=null'}"
-            Path="{m:Exp Str=myjgdInfo.DataContext.id!\=null:$from t_device where applyid\=\{myjgdInfo.DataContext.id\}  and f_noanzhuang is null$\,null}" EntityType="t_device" HasEmptyRow="False" />
+            <o:ObjectList Name="devicelist_fmyjgysd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyjgysdInfo.DataContext.State==$End$ or fmyjgysdBack=>Click!=null'}"
+            Path="{m:Exp Str=fmyjgysdInfo.DataContext.id!\=null:$from t_device where applyid\=\{fmyjgysdInfo.DataContext.id\}  and f_noanzhuang is null$\,null}" EntityType="t_device" HasEmptyRow="False" />
           
             <!--提交下一步-->
             <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
-			HQL="{m:Exp Str=$update t_apply set f_jgysdzt\=\'已完成\' \,f_substate\=null where id in (\{myjgdList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\' and f_huneiover \=\'1\' and f_tingyuanover \=\'1\'}"/>
+			HQL="{m:Exp Str=$update t_apply set f_jgysdzt\=\'已完成\' \,f_substate\=null where id in (\{fmyjgysdList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\' and f_huneiover \=\'1\' and f_tingyuanover \=\'1\'}"/>
         </m:ResourceLoad>
         <!--民用竣工单-->
-        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=myjgd.IsBusy}">
+        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmyjgysd.IsBusy}">
             <StackPanel Margin="2,0,2,8">
-                <toolkit:WrapPanel x:Name="myjgdSearch" Width="488">
+                <toolkit:WrapPanel x:Name="fmyjgysdSearch" Width="488">
                     <a:Data.Context>
                         <o:SearchObject CanSearch="{m:Exp Str='LayoutRoot=>Loaded!=null'}" />
                     </a:Data.Context>
@@ -82,16 +88,16 @@
                             <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                         </a:Data.Prop>
                     </TextBox>
-                    <Button Content="查 询" Click="{m:Exp Str=myjgdSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Left" Width="60" />
+                    <Button Content="查 询" Click="{m:Exp Str=fmyjgysdSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Left" Width="60" />
                 </toolkit:WrapPanel>
-                <sdk:DataGrid Name="myjgdList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" IsReadOnly="True" Height="300" Width="488"
-								ItemsSource="{m:Res Key=myjgd}">
+                <sdk:DataGrid Name="fmyjgysdList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" IsReadOnly="True" Height="300" Width="488"
+								ItemsSource="{m:Res Key=fmyjgysd}">
                     <sdk:DataGrid.Columns >
                         <sdk:DataGridTemplateColumn d:IsLocked="True" Header="序号" >
                             <sdk:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="  ->>  " Click="{m:Exp Str='myjgdPopup.BringToUp(waitGrid);myjgdPopup.IsOpen=True'}" />
+                                        <Button Content="  ->>  " Click="{m:Exp Str='fmyjgysdPopup.BringToUp(waitGrid);fmyjgysdPopup.IsOpen=True'}" />
                                         <TextBlock Text="{Binding Index}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -124,19 +130,19 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交碰口" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='myjgdList.SelectedItem!=null and myjgdList.SelectedItem.f_substate!=null'}" Width="100" />
-                    <c:MessageTipObj Name="submittip" Tip="您确认要提交碰口吗？" OK="{m:Exp Str=startprocess.id\=myjgdList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
-                    <sdk:DataPager Name="myjgdPager" Source="{Binding Path=ItemsSource.Count,ElementName=myjgdList,Converter={StaticResource DataPagerConverter}}"
+                    <Button Content="提交碰口" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmyjgysdList.SelectedItem!=null and fmyjgysdList.SelectedItem.f_substate!=null'}" Width="100" />
+                    <c:MessageTipObj Name="submittip" Tip="您确认要提交碰口吗？" OK="{m:Exp Str=startprocess.id\=fmyjgysdList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
+                    <sdk:DataPager Name="fmyjgysdPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmyjgysdList,Converter={StaticResource DataPagerConverter}}"
 		                        HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
-                    <TextBlock Text="{m:Exp Str='myjgd.Count'}"  Margin="-250,5,210,0" />
+                    <TextBlock Text="{m:Exp Str='fmyjgysd.Count'}"  Margin="-250,5,210,0" />
                 </StackPanel>
             </StackPanel>
         </c:BusyIndicatorEx>
         <!--民用竣工单-->
-        <Popup x:Name="myjgdPopup">
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=myjgdObj.IsBusy or userlist_myjgd.IsBusy}">
-                <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="myjgdInfo" DataContext="{m:Exp Str=myjgdObj}" Width="1000" Height="640">
+        <Popup x:Name="fmyjgysdPopup">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyjgysdObj.IsBusy or annexlist_fmyjgysd.IsBusy}">
+                <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmyjgysdInfo" DataContext="{m:Exp Str=fmyjgysdObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
@@ -254,7 +260,7 @@
                                     <TextBlock Margin="0" TextWrapping="Wrap" Text="设计单位：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="16" VerticalAlignment="Center"/>
                                     <TextBox Text="{m:Bind Path=f_jgysdsjdwqzrdw}" Grid.Column="1" Margin="0,2" Grid.Row="16" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_jgysdsjdwqzrdw" Default="{m:Exp Str=myjgdInfo.DataContext.f_designers}" Value="{m:Exp Str=myjgdInfo.DataContext.f_designers}"/>
+                                            <o:PropertySetter PropertyName="f_jgysdsjdwqzrdw" Default="{m:Exp Str=fmyjgysdInfo.DataContext.f_designers}" Value="{m:Exp Str=fmyjgysdInfo.DataContext.f_designers}"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Margin="0" TextWrapping="Wrap" Text="监理单位：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" Grid.Row="16" VerticalAlignment="Center"/>
@@ -298,7 +304,7 @@
                                     <TextBlock Margin="0" TextWrapping="Wrap" Text="实际竣工日期：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="19" Grid.Column="2" VerticalAlignment="Center"/>
                                     <sdk:DatePicker SelectedDateFormat="Short" SelectedDate="{m:Bind Path=f_jgysdsjjgdate}" IsEnabled="False" Grid.Column="3" Grid.Row="19" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_jgysdsjjgdate" Default="{m:Exp Str=myjgdInfo.DataContext.f_finishdate}"/>
+                                            <o:PropertySetter PropertyName="f_jgysdsjjgdate" Default="{m:Exp Str=fmyjgysdInfo.DataContext.f_finishdate}"/>
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
                                     <TextBlock Margin="0" TextWrapping="Wrap" Text="施工单位签字人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="20" VerticalAlignment="Center"/>
@@ -585,7 +591,7 @@
                         <sdk:TabItem Header="用气设备">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                                 <toolkit:DockPanel Height="536">
-                                    <sdk:DataGrid Name="sqprint_myjgd" AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=userlist_myjgd}"  AreRowDetailsFrozen="False">
+                                    <sdk:DataGrid Name="sqprint_fmyjgysd" AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmyjgysd}"  AreRowDetailsFrozen="False">
                                         <sdk:DataGrid.Columns>
                                             <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
                                                 <sdk:DataGridTemplateColumn.CellTemplate>
@@ -721,23 +727,105 @@
                                 </toolkit:DockPanel>
                             </ScrollViewer>
                         </sdk:TabItem>
+                        <sdk:TabItem Header=" 图 片 ">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmyjgysd}"  Margin="0" MinHeight="200" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="竣工验收单" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                    <Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    <Button Content="全屏"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyjgysd}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="竣工验收单" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="竣工验收单" NoDependValue="竣工验收单" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
-                                        Click="{m:Exp Str=myjgdInfo.DataContext.f_jgysdzt\=$未完成$;myjgdInfo.DataContext.f_substate\=$完成$;myjgdInfo.DataContext.Save();myjgdPopup.BringToDown();myjgdPopup.IsOpen\=False}" />
+                                        Click="{m:Exp Str=fmyjgysdInfo.DataContext.f_jgysdzt\=$未完成$;fmyjgysdInfo.DataContext.f_substate\=$完成$;fmyjgysdInfo.DataContext.Save();fmyjgysdPopup.BringToDown();fmyjgysdPopup.IsOpen\=False}" />
                         <Button Content="  保存并提交碰口  " Margin="5" IsEnabled="{m:Exp Str=data.f_huneiover and data.f_tingyuanover and !data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
-						OK="{m:Exp Str=startprocess.id\=myjgdList.SelectedItem.f_processid;myjgdInfo.DataContext.f_isdownloads\=$否$;myjgdInfo.DataContext.f_jgysdzt\=$已完成$;myjgdInfo.DataContext.f_substate\=null;myjgdInfo.DataContext.Save();myjgdPopup.BringToDown();myjgdPopup.IsOpen\=False;startprocess.Save()}" />
-                        <Button Content="打印工程竣工报告单" Click="{m:Exp Str=print_mysfbz.Print()}" HorizontalAlignment="Right" Margin="5" Width="130"/>
-                         <Button Content="打印竣工送气验收单" Click="{m:Exp Str=print_mysfbz1.Print()}" HorizontalAlignment="Right" Margin="5" Width="123"/>
+						OK="{m:Exp Str=startprocess.id\=fmyjgysdList.SelectedItem.f_processid;fmyjgysdInfo.DataContext.f_isdownloads\=$否$;fmyjgysdInfo.DataContext.f_jgysdzt\=$已完成$;fmyjgysdInfo.DataContext.f_substate\=null;fmyjgysdInfo.DataContext.Save();fmyjgysdPopup.BringToDown();fmyjgysdPopup.IsOpen\=False;startprocess.Save()}" />
+                        <!--<Button Content="打印工程竣工报告单" Click="{m:Exp Str=print_mypgsh.Print()}" HorizontalAlignment="Right" Margin="5" Width="130"/>
+                         <Button Content="打印竣工送气验收单" Click="{m:Exp Str=print_mypgsh1.Print()}" HorizontalAlignment="Right" Margin="5" Width="123"/>-->
                        
-						<Button Name="myjgdBack" Content="  返  回  " Click="{m:Exp Str=myjgdPopup.BringToDown();myjgdPopup.IsOpen\=False}" Margin="5" Width="60" />
-                        <c:PrintObj x:Name="print_mysfbz" UseDefaultPrinter="False" Area="{m:Res Key=print1_mysfbz}" />
-                         <c:PrintObj x:Name="print_mysfbz1" UseDefaultPrinter="False" Area="{m:Res Key=print1_mysfbz2}" />
-                       <Grid x:Name="print1_mysfbz" Margin="0,-1500,-1500,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
+						<Button Name="fmyjgysdBack" Content="  返  回  " Click="{m:Exp Str=fmyjgysdPopup.BringToDown();fmyjgysdPopup.IsOpen\=False}" Margin="5" Width="60" />
+                        <!--<c:PrintObj x:Name="print_mypgsh" UseDefaultPrinter="False" Area="{m:Res Key=print1_mypgsh}" />
+                         <c:PrintObj x:Name="print_mypgsh1" UseDefaultPrinter="False" Area="{m:Res Key=print1_mypgsh2}" />-->
+                       <Grid x:Name="print1_mypgsh" Margin="0,-1500,-1500,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
                             <a:Data.Context>
-                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=myjgdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
+                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmyjgysdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
                             </a:Data.Context>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="0*"/>
@@ -796,21 +884,21 @@
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="644,823,0,0" Grid.Row="1" Text="（公章）" TextWrapping="Wrap" FontSize="18" TextAlignment="Center" VerticalAlignment="Top" Height="27" Width="100"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="572,850,0,0" Grid.Row="1" Text="监理工程师：" TextWrapping="Wrap" FontSize="18" TextAlignment="Center" VerticalAlignment="Top"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="624,973,0,0" Grid.Row="1" Text="年   月   日 " TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Top" Height="27" Width="120"/>
-                            <!--数据区先左后上Text="{m:Exp Str=myjgdObj.f_cardfees}"-->
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,120,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_code}" Width="350" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="50"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,170,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_buildunit}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,220,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_jgysdsjdwqzrdw}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,270,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_jgysdsjkgdate.ToString($yyyy-MM-dd$)}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="47,362,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_projectcontent}" TextWrapping="Wrap" Width="345" Height="335" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="555,120,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_pgdgcbh}" Width="190" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="50"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,170,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_constructionunit}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,220,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_supervisionunit}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,270,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_jgysdsjjgdate.ToString($yyyy-MM-dd$)}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="397,362,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_pgdgzl}" TextWrapping="Wrap" Width="345" Height="335" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <!--数据区先左后上Text="{m:Exp Str=fmyjgysdObj.f_cardfees}"-->
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,120,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_code}" Width="350" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="50"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,170,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_buildunit}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,220,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_jgysdsjdwqzrdw}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,270,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_jgysdsjkgdate.ToString($yyyy-MM-dd$)}" Width="260" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="47,362,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_projectcontent}" TextWrapping="Wrap" Width="345" Height="335" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="555,120,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_pgdgcbh}" Width="190" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="50"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,170,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_constructionunit}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,220,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_supervisionunit}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,270,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_jgysdsjjgdate.ToString($yyyy-MM-dd$)}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="397,362,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_pgdgzl}" TextWrapping="Wrap" Width="345" Height="335" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
                         </Grid>
-						 <Grid x:Name="print1_mysfbz2" Margin="0,-4000,-4000,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
+						 <Grid x:Name="print1_mypgsh2" Margin="0,-4000,-4000,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
                             <a:Data.Context>
-                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=myjgdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
+                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmyjgysdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
                             </a:Data.Context>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="0*"/>
@@ -868,12 +956,12 @@
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="222,860,0,0" Grid.Row="1" Text="工程部签字：" FontSize="18" VerticalAlignment="Top" TextAlignment="Center"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="397,860,0,0" Grid.Row="1" Text="客户市务部签字：" FontSize="18" VerticalAlignment="Top" TextAlignment="Center"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="572,860,0,0" Grid.Row="1" Text="施工单位签字：" FontSize="18" VerticalAlignment="Top" TextAlignment="Center"/>
-                            <!--数据区先左后上Text="{m:Exp Str=myjgdObj.f_cardfees}"-->
+                            <!--数据区先左后上Text="{m:Exp Str=fmyjgysdObj.f_cardfees}"-->
                             <!--  -->
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,90,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_buildunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="26"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,90,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_constructionunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,125,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_minyongdept}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,125,0,0" Grid.Row="1" Text="{m:Exp Str=myjgdInfo.DataContext.f_address}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,90,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_buildunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="26"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,90,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_constructionunit}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="132,125,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_minyongdept}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="482,125,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_address}" Width="260" FontSize="16" TextAlignment="Center" VerticalAlignment="Top" Height="30"/>
             
                         </Grid>
                     </StackPanel>

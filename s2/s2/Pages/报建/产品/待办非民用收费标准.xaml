@@ -41,7 +41,9 @@
 			    Path="{m:Exp Str=fmysfbzList.SelectedItem \!\=null:$one/from t_apply where id\=\{fmysfbzList.SelectedItem.id\}$\,$null$}"  
                 IsInit="{m:Exp Str='this.State==$End$ or fmysfbzBack=>Click!=null'}">
                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmysfbz}"/>
-
+                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_fmysfbz}" />
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_fmysfbz}" />
+                <o:PropertySetter PropertyName="f_costreduction" Default="{m:Exp Str=costreductionlist_fmysfbz}"/>
             </o:GeneralObject>
 
 
@@ -49,16 +51,25 @@
             <o:ObjectList Name="fmygastype" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" EntityType="t_gasproperties" />
             <o:ObjectList Name="fmypricetype" Source="{m:Exp Str=CoboxPinpl.SelectedItem.qijiatype}" EntityType="t_qijiatype" />
             <!--非民用收费标准-->
-           <o:ObjectList Name="devicelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or fmysfbzBack=>Click!=null'}"
+            <o:ObjectList Name="devicelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or fmysfbzBack=>Click!=null'}"
             Path="{m:Exp Str='fmysfbzInfo.DataContext.id!=null:$from t_device where applyid={fmysfbzInfo.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False"  >
 
                 <o:PropertySetter PropertyName="f_count"  NoDependValue="{m:Exp Str='this.f_count!\=null :this.f_count\,1'}"/>
                 <o:PropertySetter PropertyName="f_price"  NoDependValue="{m:Exp Str=devicename[data.name\=\=this.f_name].First().code.ToDouble() }"/>
                 <o:PropertySetter PropertyName="f_money"  NoDependValue="{m:Exp Str=this.f_name!\=$模块炉$ and this.f_name!\=$茶水炉$ and this.f_name!\=$采暖炉$ :(this.f_count * this.f_price.ToDouble()).MathRound(2)\,(dwlist[data.name\=\=this.f_unit].First().code.ToDouble() * this.f_usegasnum *this.f_count * this.f_price.ToDouble()).MathRound(2)}"/>
             </o:ObjectList>
-            <o:ObjectList Name="costreductionlist_fmysfbz" EntityType="t_costreduction" HasEmptyRow="True" />
+            <o:ObjectList Name="imagelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or fmysfbzBack=>Click!=null'}"
+            Path="{m:Exp Str='fmysfbzInfo.DataContext.id!=null:$from t_applyimage where applyid={fmysfbzInfo.DataContext.id}$,null'}" EntityType="t_applyimage" HasEmptyRow="True" />
+            <o:ObjectList Name="annexlist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or SubmitAction.State==$End$ or fmysfbzPager.DataContext.State==$End$ or  fmysfbzBack=>Click!=null'}"
+            Path="{m:Exp Str='fmysfbzInfo.DataContext.id!=null:$from t_applyannex where applyid={fmysfbzInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
+            <o:ObjectList Name="costreductionlist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or SubmitAction.State==$End$ or fmysfbzPager.DataContext.State==$End$ or  fmysfbzBack=>Click!=null'}"
+            Path="{m:Exp Str='fmysfbzInfo.DataContext.id!=null:$from t_costreduction where applyid={fmysfbzInfo.DataContext.id}$,null'}" EntityType="t_costreduction"   HasEmptyRow="True"/>
 
-          <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+
+
+
+
+            <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_apply set f_sfbzzt\=\'已完成\' \,f_substate\=null where id in (\{fmysfbzList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
         </m:ResourceLoad>
         <!--非民用收费标准-->
@@ -130,7 +141,7 @@
         <!--非民用收费标准-->
         <!-- -->
         <Popup x:Name="fmysfbzPopup">
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmysfbzObj.IsBusy or devicelist_fmysfbz.IsBusy or costreductionlist_fmysfbz.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmysfbzObj.IsBusy or devicelist_fmysfbz.IsBusy or annexlist_fmysfbz.IsBusy or imagelist_fmysfbz.IsBusy or costreductionlist_fmysfbz.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmysfbzInfo" DataContext="{m:Exp Str=fmysfbzObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
@@ -253,7 +264,7 @@
                                     <TextBox Text="{m:Bind Path=f_feedepartment}" Grid.Column="5" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_feedepartment" NotNull="True" 
-									Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='(this.IsModified or devicelist_fmysfbz.IsModified):LoginUser.f_parentname,this.f_feedepartment'}"/>
+									Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='this.IsModified:LoginUser.f_parentname,this.f_feedepartment'}"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right"/>
@@ -687,6 +698,88 @@
                                 </sdk:DataGrid>
                             </ScrollViewer>
                         </sdk:TabItem>
+                        <sdk:TabItem Header=" 图 片 ">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmysfbz}"  Margin="0" MinHeight="200" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="收费标准" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                    <Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    <Button Content="全屏"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmysfbz}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="收费标准" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="收费标准" NoDependValue="收费标准" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="511">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
@@ -702,7 +795,7 @@
 						OK="{m:Exp Str=fmysfbzInfo.DataContext.f_state\=$现场勘查$;fmysfbzInfo.DataContext.f_substate\=null;fmysfbzInfo.DataContext.Save();fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" />
 						-->
                        <Button Name="fmysfbzBack" Content="  返  回  " Click="{m:Exp Str=fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" Margin="5" Width="60" />
-                        <Button Content=" 打印确认单 " Margin="5" Click="{m:Exp Str=print_fmysfbz.Print()}"/>
+                        <!--<Button Content=" 打印确认单 " Margin="5" Click="{m:Exp Str=print_fmysfbz.Print()}"/>-->
                         <c:PrintObj x:Name="print_fmysfbz" UseDefaultPrinter="False" Area="{m:Res Key=print1_fmysfbz}" Grid.ColumnSpan="4" />
                         <!--打印确认单-->
                         <Grid x:Name="print1_fmysfbz"  Margin="-600,0,180,-1204" HorizontalAlignment="Stretch" Width="750" Height="1039" VerticalAlignment="Bottom" Visibility="Visible">

@@ -40,20 +40,22 @@
             <o:GeneralObject Name="myyhfdObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
 			    Path="{m:Exp Str=myyhfdList.SelectedItem \!\=null:$one/from t_apply where id\=\{myyhfdList.SelectedItem.id\}$\,$null$}"  
                 IsInit="{m:Exp Str='this.State==$End$ or myyhfdBack=>Click!=null'}">
-                <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=humingce_myyhfd}" />
-                
 
+                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_myyhfd}" />
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_myyhfd}" />
             </o:GeneralObject>
 
+            <o:ObjectList Name="imagelist_myyhfd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myyhfdInfo.DataContext.State==$End$ or myyhfdBack=>Click!=null'}"
+            Path="{m:Exp Str='myyhfdInfo.DataContext.id!=null:$from t_applyimage where applyid={myyhfdInfo.DataContext.id}$,null'}" EntityType="t_applyimage" HasEmptyRow="True" />
+            <o:ObjectList Name="annexlist_myyhfd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myyhfdInfo.DataContext.State==$End$ or myyhfdBack=>Click!=null'}"
+            Path="{m:Exp Str='myyhfdInfo.DataContext.id!=null:$from t_applyannex where applyid={myyhfdInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
 
 
 
 
 
             <!--民用银行返单-->
-            <o:ObjectList Name="humingce_myyhfd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myyhfdInfo.DataContext.State==$End$ or myyhfdBack=>Click!=null'}"
-            Path="{m:Exp Str='myyhfdInfo.DataContext.id!=null:$from t_applycustomer where applyid={myyhfdInfo.DataContext.id}$,$null$'}" EntityType="t_applycustomer" HasEmptyRow="False" />
-            <o:ObjectList Name="userlist_myyhfd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myyhfdInfo.DataContext.State==$End$ or myyhfdBack=>Click!=null'}"
+            <o:ObjectList Name="feelist_myyhfd" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myyhfdInfo.DataContext.State==$End$ or myyhfdBack=>Click!=null'}"
             Path="{m:Exp Str=myyhfdInfo.DataContext.id!\=null:$from t_paydetail where applyid\=\{myyhfdInfo.DataContext.id\}$\,$null$}" EntityType="t_paydetail" HasEmptyRow="True" />
         
          
@@ -143,11 +145,11 @@
                                         <RowDefinition Height="29"/>
                                         <RowDefinition Height="29"/>
                                         <RowDefinition Height="29"/>
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="49"/>
+                                        <RowDefinition Height="49"/>
+                                        <RowDefinition Height="49"/>
+                                        <RowDefinition Height="49"/>
+                                        <RowDefinition Height="49"/>
                                         <RowDefinition Height="29"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
@@ -271,14 +273,14 @@
                                     <TextBox Text="{m:Bind Path=f_bankdepartment}" Grid.Column="1" Margin="0,2" Grid.Row="14" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_bankdepartment" NotNull="True" 
-        										Default="{m:Exp Str=LoginUser.f_parentname}" Value="{m:Exp Str=(this.IsModified or userlist_myyhfd.IsModified):LoginUser.f_parentname\,this.f_bankdepartment}"/>
+        										Default="{m:Exp Str=LoginUser.f_parentname}" Value="{m:Exp Str=this.IsModified:LoginUser.f_parentname\,this.f_bankdepartment}"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="14" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right"/>
                                     <TextBox Text="{m:Bind Path=f_bankopertor}" Grid.Column="3" Margin="0,2" Grid.Row="14" TextWrapping="Wrap" Height="Auto" IsReadOnly="True">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_bankopertor" NotNull="True"  
-        										Default="{m:Exp Str=LoginUser.name}" Value="{m:Exp Str=(this.IsModified or userlist_myyhfd.IsModified):LoginUser.name\,this.f_bankopertor}"/>
+        										Default="{m:Exp Str=LoginUser.name}" Value="{m:Exp Str=this.IsModified :LoginUser.name\,this.f_bankopertor}"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="14" TextWrapping="Wrap" Text="日 期：" TextAlignment="Right"/>
@@ -395,99 +397,9 @@
                         </ScrollViewer>
 
                     </sdk:TabItem>
-                    <sdk:TabItem Header="用户花名单" >
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <sdk:DataGrid AutoGenerateColumns="False" ItemsSource="{m:Exp Str=humingce_myyhfd[data.f_isok \=\= null or data.f_isok]}" >
-                                <sdk:DataGrid.Columns>
-                                    <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" Style="{StaticResource TextBoxDatagridStyle}"   IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="姓名">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="小区">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="证件号码">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="门牌号">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="地址">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="电话">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="是否壁挂锅炉用户" >
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <CheckBox IsChecked="{m:Bind Path=f_isbgglyh}" IsEnabled="False">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_isbgglyh" Default="{m:Exp Str=False}" />
-                                                    </a:Data.Prop>
-                                                </CheckBox>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="是否热水器用户">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <CheckBox IsChecked="{m:Bind Path=f_isrsqyh}" IsEnabled="False">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_isrsqyh" Default="{m:Exp Str=False}" />
-                                                    </a:Data.Prop>
-                                                </CheckBox>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="费用是否已结清">
-                                        <sdk:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <CheckBox IsChecked="{m:Bind Path=f_isfysfyjq}" IsEnabled="False">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_isfysfyjq" Default="{m:Exp Str=False}" />
-                                                    </a:Data.Prop>
-                                                </CheckBox>
-                                            </DataTemplate>
-                                        </sdk:DataGridTemplateColumn.CellTemplate>
-                                    </sdk:DataGridTemplateColumn>
-                                </sdk:DataGrid.Columns>
-                            </sdk:DataGrid>
-                        </ScrollViewer>
-                    </sdk:TabItem>
                     <sdk:TabItem Header="交费明细 " VerticalAlignment="Stretch">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <sdk:DataGrid AutoGenerateColumns="False" x:Name="users_myyhfd" ItemsSource="{m:Exp Str=userlist_myyhfd}" HorizontalAlignment="Stretch">
+                            <sdk:DataGrid AutoGenerateColumns="False" x:Name="fee_myyhfd" ItemsSource="{m:Exp Str=feelist_myyhfd}" HorizontalAlignment="Stretch">
                                 <sdk:DataGrid.Columns>
                                    <!-- <sdk:DataGridTemplateColumn>
                                         <sdk:DataGridTemplateColumn.CellTemplate>
@@ -566,6 +478,89 @@
                             </sdk:DataGrid>
 							</ScrollViewer>
 						</sdk:TabItem>
+                    <sdk:TabItem Header=" 图 片 ">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_myyhfd}"  Margin="0" MinHeight="200" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="银行返单" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                    <Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    <Button Content="全屏"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                    <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_myyhfd}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="银行返单" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate >
+                                                                <StackPanel>
+                                                                    <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                                        <a:Data.Prop>
+                                                                            <o:PropertySetter PropertyName="state"  Default="银行返单" NoDependValue="银行返单" />
+                                                                        </a:Data.Prop>
+                                                                    </TextBox>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                    
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="534" d:LayoutOverrides="HorizontalAlignment">
                         <Button Content="  保  存  " Margin="5" Width="60"   IsEnabled="{m:Exp Str=!data.HasErrors}" 
@@ -575,121 +570,7 @@
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=myyhfdList.SelectedItem.f_processid;myyhfdInfo.DataContext.f_yhfdzt\=$已完成$;myyhfdInfo.DataContext.f_substate\=null;myyhfdInfo.DataContext.Save();myyhfdPopup.BringToDown();myyhfdPopup.IsOpen\=False;startprocess.Save()}" />
 					<Button Name="myyhfdBack" Content="  返  回  " Click="{m:Exp Str=myyhfdPopup.BringToDown();myyhfdPopup.IsOpen\=False}" Margin="5" Width="60" />
-                        <Button Content="打印花名册"  Click="{m:Exp Str=hmcprint_myyhfd.Print()}" HorizontalAlignment="Left"   Height="25" Margin="3,0,0,0"/>
-                        <!--Button Content="  打 印  " Margin="5" Click="{m:Exp Str=print_myyhfd.Print()}"/-->
-                                                    <c:PrintPageObj x:Name="hmcprint_myyhfd" Area="{m:Res Key=hmcuserlist_Copy_myyhfd}"  List="{m:Exp Str=humingce_myyhfd[data.f_isok \=\= null or data.f_isok].ToObjectList()}"  PageRow="26"  />
-                                                    <c:PrintObj x:Name="print_myyhfd" UseDefaultPrinter="False" Area="{m:Res Key=gridprint_myyhfd}" Grid.ColumnSpan="4" />
-                                                    <Grid x:Name="gridprint_myyhfd" Margin="26,0,-141,-394" HorizontalAlignment="Stretch" Width="750" Height="231" VerticalAlignment="Bottom">
-                                                        <a:Data.Context>
-                                                            <o:GeneralObject  Name="sjprint_myyhfd" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=myyhfdInfo.DataContext}" >
-                                                                <o:PropertySetter PropertyName="f_paydetail" Default="{m:Exp Str=userlist_myyhfd}"/>
-                                                             
-                                                            </o:GeneralObject>
-                                                        </a:Data.Context>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="0*"/>
-                                                            <RowDefinition Height="0.16*"/>
-                                                            <RowDefinition Height="0.351*"/>
-                                                            <RowDefinition Height="0.264*"/>
-                                                            <RowDefinition Height="0.121*"/>
-                                                            <RowDefinition Height="0.104*"/>
-                                                        </Grid.RowDefinitions>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="0.024*"/>
-                                                            <ColumnDefinition Width="0.791*"/>
-                                                            <ColumnDefinition Width="0.185*"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <sdk:Label HorizontalAlignment="Left" Margin="260,16,0,0" Width="16" Content="日" Grid.Column="1" Grid.Row="3" Height="22" VerticalAlignment="Top"/>
-                                                        <sdk:Label HorizontalAlignment="Left" Margin="163,16,0,0" Width="16" Content="年" RenderTransformOrigin="0.438,0.579" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-                                                        <sdk:Label HorizontalAlignment="Left" Margin="213,16,0,0" Width="16" Content="月" Grid.Column="1" Grid.Row="3" Height="22" VerticalAlignment="Top"/>
-                                                        <sdk:Label Margin="31,46,0,0" Content="交款人：" FontSize="13.333" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="70" Height="25" VerticalAlignment="Top"/>
-                                                        <sdk:Label Margin="91,0,70,6" Content="备注" FontSize="13.333" Grid.Column="2" Grid.Row="3" Height="25" VerticalAlignment="Bottom"/>
-                                                        <Path
-				Data="M72,0 L72,276.02899" HorizontalAlignment="Right" Margin="0,36.943,51,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="138.767" VerticalAlignment="Top" Grid.Column="1" Grid.Row="3" Grid.RowSpan="3"/>
-                                                        <Path
-				Data="M72,0 L72,276.02899" HorizontalAlignment="Right" Margin="0,36.512,23.333,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="134.198" VerticalAlignment="Top" Grid.Column="2" Grid.Row="3" Grid.RowSpan="3"/>
-                                                        <Path
-				Data="M72,0 L72,276.02899" HorizontalAlignment="Left" Margin="17.091,36.512,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Width="1" Height="139.198" VerticalAlignment="Top" Grid.Row="3" Grid.RowSpan="3" Grid.Column="1"/>
-                                                        <Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="17.091,37.012,23.333,0" Grid.ColumnSpan="2" Grid.Row="3" Grid.Column="1"/>
-                                                        <Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Bottom" Margin="17.091,0,23.333,2.449" Grid.ColumnSpan="2" Grid.Row="3" Grid.Column="1"/>
-                                                        <Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="17.091,57.092,23.333,0" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="1"/>
-                                                        <Path Data="M17,186 L492.26941,186" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="16.622,1.71,23.333,0" Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
-
-                                                        <sdk:Label Height="25" Margin="26,3,0,0" VerticalAlignment="Top" Content="合计(小写)：" RenderTransformOrigin="0.5,0.52" FontSize="13.333" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Width="78"/>
-                                                        <sdk:Label HorizontalAlignment="Left" Height="25" Margin="228,3,0,0" VerticalAlignment="Top" Width="76" Content="合计(大写)：" RenderTransformOrigin="0.5,0.52" FontSize="13.333" Grid.Column="1" Grid.Row="5"/>
-                                                        <sdk:Label HorizontalAlignment="Right" Height="25" Margin="0,1,-3,0" VerticalAlignment="Top" Width="50" Content="操作人：" RenderTransformOrigin="0.5,0.52" Grid.Column="1" Grid.Row="5"/>
-                                                        <TextBlock Grid.Column="1" Margin="23,-23,0,0" TextWrapping="Wrap" Text="阿拉善盟昆仑燃气有限责任公司收据" Grid.Row="3" FontSize="21.333" FontWeight="Bold" TextAlignment="Center" Grid.ColumnSpan="2" Height="47" VerticalAlignment="Top"/>
-                                                        <TextBlock Text="{m:Bind Path=f_username}" Grid.Column="1" Margin="90,0,99,11" Grid.Row="3" TextWrapping="Wrap"  Height="25" VerticalAlignment="Bottom"/>
-                                                        <sdk:Label Margin="33,8,76,18" Content="收款事由：天然气工程材料费" FontSize="13.333" Grid.Row="4" Grid.Column="1"/>
-                                                        <TextBlock Grid.Column="1" Text="{m:Exp Str=users_myyhfd.SelectedItem.f_fee}" HorizontalAlignment="Left" Margin="108,3,0,3" Grid.Row="5" TextWrapping="Wrap"  Width="116"/>
-                                                        <TextBlock Grid.Column="1" Text="{m:Exp Str=SysTime.Now.ToString($yyyy$)}" HorizontalAlignment="Left" Margin="116,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="43" Height="18" VerticalAlignment="Top"/>
-                                                        <TextBlock Grid.Column="1" Text="{m:Exp Str=SysTime.Now.ToString($MM$)}" HorizontalAlignment="Left" Margin="183,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="26" Height="18" VerticalAlignment="Top"/>
-                                                        <TextBlock Grid.Column="1" Text="{m:Exp Str=SysTime.Now.ToString($dd$)}" HorizontalAlignment="Left" Margin="229,16,0,0" Grid.Row="3" TextWrapping="Wrap" Width="26" Height="18" VerticalAlignment="Top"/>
-                                                        <TextBlock Grid.Column="2" Text="{m:Exp Str=LoginUser.name}" HorizontalAlignment="Stretch" Margin="3,1,28,2" Grid.Row="5" TextWrapping="Wrap" Width="Auto" Height="25" VerticalAlignment="Stretch"/>
-                                                        <sdk:Label Margin="0,43,-19,0" Content="付款方式：" FontSize="13.333" Grid.Row="3" Grid.Column="1" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Width="70"/>
-                                                        <TextBlock Grid.Column="1" Text="{m:Exp Str=users_myyhfd.SelectedItem.f_fee.ToChinaMoney()}" HorizontalAlignment="Stretch" Margin="308,3,56,3" Grid.Row="5" TextWrapping="Wrap"  Width="Auto"/>
-                                                        <TextBlock Text="{m:Exp Str=users_myyhfd.SelectedItem.f_paytype}" Grid.Column="2" Margin="21,0,28,14" Grid.Row="3" TextWrapping="Wrap"  Height="25" VerticalAlignment="Bottom" Grid.ColumnSpan="1"/>
-                                                    </Grid>
-                                                    <sdk:DataGrid x:Name="hmcuserlist_Copy_myyhfd" AutoGenerateColumns="False"   Grid.Column="1" Margin="16,0,6,-2525" d:LayoutOverrides="Width" Height="Auto" VerticalAlignment="Bottom" Background="{x:Null}" RowBackground="{x:Null}"
-						 Style="{StaticResource PrintDataGrid}" ColumnHeaderStyle="{StaticResource PrintDataGridColumnHeader}" CellStyle="{StaticResource PrintDataGridCell}" RowHeaderStyle="{StaticResource PrintDataGridRowHeader}" RowStyle="{StaticResource PrintDataGridRow}">
-                                                        <sdk:DataGrid.Columns>
-                                                            <sdk:DataGridTextColumn Header="序号" Binding="{Binding Path=Index}"/>
-                                                            <sdk:DataGridTemplateColumn Header="姓名">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                            <sdk:DataGridTemplateColumn Header="小区">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                            <sdk:DataGridTemplateColumn Header="证件号码">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                            <sdk:DataGridTemplateColumn Header="门牌号">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                            <sdk:DataGridTemplateColumn Header="地址">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                            <sdk:DataGridTemplateColumn Header="电话">
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource PrintTextBox}"/>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>
-                                                         <!--  <sdk:DataGridTemplateColumn>
-                                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                                    <DataTemplate>
-                                                                        <CheckBox IsChecked="{m:Bind Path=f_isnullmin}" IsEnabled="False">
-                                                                            <a:Data.Prop>
-                                                                                <o:PropertySetter PropertyName="f_isnullmin" Default="{m:Exp Str=True}" />
-                                                                            </a:Data.Prop>
-                                                                        </CheckBox>
-                                                                    </DataTemplate>
-                                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                                            </sdk:DataGridTemplateColumn>--> 
-                                                        </sdk:DataGrid.Columns>
-                                                    </sdk:DataGrid>
-                                                    </StackPanel>
+                 </StackPanel>
             </Grid>
             <!--   </toolkit:BusyIndicator> -->
         </Popup>

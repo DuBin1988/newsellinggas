@@ -45,7 +45,7 @@
                 IsInit="{m:Exp Str=this.State\=\=$End$ |or| fmyxckcBack\=>Click!\=null}">
                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmyxckc}"/>
                 <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_fmyxckc}"/>
-
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_fmyxckc}" />
             </o:GeneralObject>
 
             <o:ObjectList Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
@@ -57,6 +57,8 @@
 			Path="{m:Exp Str='device_fmyxckc.SelectedItem.id!=null:$from t_deviceimage where deviceid={device_fmyxckc.SelectedItem.id}$,null'}" HasEmptyRow="True" />
             <o:ObjectList Name="imagelist_fmyxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyxckcInfo.DataContext.State==$End$ or fmyxckcBack=>Click!=null'}"
             Path="{m:Exp Str='fmyxckcInfo.DataContext.id!=null:$from t_applyimage where applyid={fmyxckcInfo.DataContext.id}$,null'}" EntityType="t_applyimage" />
+            <o:ObjectList Name="annexlist_fmyxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmyxckcInfo.DataContext.State==$End$ or SubmitAction.State==$End$ or  fmyxckcBack=>Click!=null'}"
+            Path="{m:Exp Str='fmyxckcInfo.DataContext.id!=null:$from t_applyannex where applyid={fmyxckcInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
 
 
 
@@ -160,7 +162,7 @@
         </c:BusyIndicatorEx>
         <!--非民用现场勘查-->
         <Popup x:Name="fmyxckcPopup">
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyxckcObj.IsBusy or devicelist_fmyxckc.IsBusy or imagelist_fmyxckc.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyxckcObj.IsBusy or devicelist_fmyxckc.IsBusy or imagelist_fmyxckc.IsBusy or annexlist_fmyxckc.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmyxckcInfo" DataContext="{m:Exp Str=fmyxckcObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
@@ -562,6 +564,60 @@
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyxckc}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="现场勘查" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="现场勘查" NoDependValue="现场勘查" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
 
                             </ScrollViewer>
                         </sdk:TabItem>

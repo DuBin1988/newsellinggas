@@ -19,16 +19,37 @@
 		<property name="f_isminzhsha" type="boolean"/> 	
 		<!-- 是否下发 -->
 		<property name="f_isdownloads" type="string"/>
+		<!-- 合同约定-->
+		<property name="f_htyuding" type="string"/>
 		
-<!-- 收费新增字段 -->
-		<!-- 收费操作人 -->
-		<property name="f_chargeopertor" type="string"/>
-		<property name="f_chargeopertdate" type="date"/>
-		
+		<!--小区名称 -->
+		<property name="f_district" type="string"/>
+		<!--门牌号-->
+		<property name="f_doorplate" type="string"/>
+		<!--楼号-->
+		<property name="f_cusDy" type="string"/>
+		<!--单元-->
+		<property name="f_cusDom" type="string"/>
+		<!--楼层-->
+		<property name="f_cusFloor" type="string"/>
+		<!--身份证-->
+		<property name="f_sfzcode" type="string"/>
+		<!-- 报建类型 -->
+		<property name="f_projecttype" type="string"/>
 		<!--导库是否完成-->
 		<property name="f_daokuover" type="boolean"/>
 		<property name="f_daokustate" type="string"/>
-		<property name="f_nodaodevices" type="boolean"/>		
+		<property name="f_nodaodevices" type="boolean"/>	
+		
+<!-- 费用变更字段 -->
+		<!-- 部门 -->
+		<property name="f_fybgdepartment" type="string"/>
+		<!-- 操作人 -->
+		<property name="f_chargeopertor" type="string"/>
+		<!-- 时间 -->
+		<property name="f_chargeopertdate" type="date"/>
+		
+			
 		
 <!-- 申请登记 -->	
 	<!-- 常用基本字段 -->
@@ -132,6 +153,8 @@
 		<property name="f_xckczt" type="string"/>	
 		<!--民用安装户数、非民用安装几处-->
 		<property name="f_installnum" type="int"/>
+		<!--交费户数-->
+		<property name="f_payfeenum" type="int"/>
 		<!--民用用气类型-->
 		<property name="f_gastype" type="string"/>
 		<!--实际现场勘查人员-->
@@ -679,9 +702,6 @@
 
 
 
-
-
-			
 	 	<!-- 下面是对于的花名册表 -->
 	    <set name="f_applycustomer"  cascade="delete-orphan" order-by="id">
           <key column="applyid" /> 

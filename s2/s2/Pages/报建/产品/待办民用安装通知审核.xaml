@@ -326,7 +326,7 @@
                                         Click="{m:Exp Str=myaztzshInfo.DataContext.f_aztzshzt\=$未完成$;myaztzshInfo.DataContext.f_substate\=$完成$;myaztzshInfo.DataContext.Save();myaztzshPopup.BringToDown();myaztzshPopup.IsOpen\=False}" />
                         <Button Content="  保存并提交定表型  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
-                        <!--userlist_mysfbz.Save();-->
+                        <!--userlist_mypgsh.Save();-->
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=myaztzshList.SelectedItem.f_processid;myaztzshInfo.DataContext.f_aztzshzt\=$已完成$;myaztzshInfo.DataContext.f_substate\=null;myaztzshInfo.DataContext.Save();myaztzshPopup.BringToDown();myaztzshPopup.IsOpen\=False;startprocess.Save()}" />
 						<!--

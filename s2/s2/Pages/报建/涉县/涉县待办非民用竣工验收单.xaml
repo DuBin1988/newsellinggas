@@ -789,13 +789,13 @@
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmyjgysdList.SelectedItem.f_processid;fmyjgysdInfo.DataContext.f_isdownloads\=$否$;fmyjgysdInfo.DataContext.f_jgysdzt\=$已完成$;fmyjgysdInfo.DataContext.f_substate\=null;fmyjgysdInfo.DataContext.Save();fmyjgysdPopup.BringToDown();fmyjgysdPopup.IsOpen\=False;startprocess.Save()}" />
-                        <!-- <Button Content="打印工程竣工报告单" Click="{m:Exp Str=print_mysfbz.Print()}" HorizontalAlignment="Right" Margin="5" Width="130"/>
-                        <Button Content="打印竣工送气验收单" Click="{m:Exp Str=print_mysfbz1.Print()}" HorizontalAlignment="Right" Margin="5" Width="123"/>
+                        <!-- <Button Content="打印工程竣工报告单" Click="{m:Exp Str=print_mypgsh.Print()}" HorizontalAlignment="Right" Margin="5" Width="130"/>
+                        <Button Content="打印竣工送气验收单" Click="{m:Exp Str=print_mypgsh1.Print()}" HorizontalAlignment="Right" Margin="5" Width="123"/>
 -->
                         <Button Name="fmyjgysdBack" Content="  返  回  " Click="{m:Exp Str=fmyjgysdPopup.BringToDown();fmyjgysdPopup.IsOpen\=False}" Margin="5" Width="60" />
-                        <c:PrintObj x:Name="print_mysfbz" UseDefaultPrinter="False" Area="{m:Res Key=print1_mysfbz}" />
-                        <c:PrintObj x:Name="print_mysfbz1" UseDefaultPrinter="False" Area="{m:Res Key=print1_mysfbz2}" />
-                        <Grid x:Name="print1_mysfbz" Margin="0,-1500,-1500,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
+                        <c:PrintObj x:Name="print_mypgsh" UseDefaultPrinter="False" Area="{m:Res Key=print1_mypgsh}" />
+                        <c:PrintObj x:Name="print_mypgsh1" UseDefaultPrinter="False" Area="{m:Res Key=print1_mypgsh2}" />
+                        <Grid x:Name="print1_mypgsh" Margin="0,-1500,-1500,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
                             <a:Data.Context>
                                 <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmyjgysdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
                             </a:Data.Context>
@@ -868,7 +868,7 @@
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="487,270,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_jgysdsjjgdate.ToString($yyyy-MM-dd$)}" Width="255" Height="50" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="397,362,0,0" Grid.Row="1" Text="{m:Exp Str=fmyjgysdInfo.DataContext.f_pgdgzl}" TextWrapping="Wrap" Width="345" Height="335" FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
                         </Grid>
-                        <Grid x:Name="print1_mysfbz2" Margin="0,-4000,-4000,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
+                        <Grid x:Name="print1_mypgsh2" Margin="0,-4000,-4000,0" HorizontalAlignment="Center" Width="778" Height="1039" VerticalAlignment="Stretch" >
                             <a:Data.Context>
                                 <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmyjgysdInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
                             </a:Data.Context>

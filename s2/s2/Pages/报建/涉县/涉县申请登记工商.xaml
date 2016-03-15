@@ -111,7 +111,7 @@
 				 SelectedItem="{m:Exp Str='main.DataContext.IsInit:null,persons.SelectedItem'}">
                                     <a:Data.Items>
                                         <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_device left join fetch apply.f_applyimage  left join fetch apply.f_applyannex  where \{personsearch.DataContext.Condition\} and f_usertype \=\'非民用\' and f_substate \=\'已完成\' }"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_device left join fetch apply.f_applyimage  left join fetch apply.f_applyannex  where \{personsearch.DataContext.Condition\} and f_usertype \=\'非民用\' and f_substate \=\'已完成\'  and f_sqdjzt!\=\'已完成\'}"
 					         IsOld="{m:Exp Str='(SubmitAction.State\=\=$Free$ or SubmitAction.State\=\=$End$) and (DeleteAction.State==$Free$ or DeleteAction.State==$End$) and (BatchSave.State==$Free$ or BatchSave.State==$End$)'}">
                                         </o:ObjectList>
                                     </a:Data.Items>

@@ -24,27 +24,27 @@
             <o:ObjectList Name="fmygastype" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" EntityType="t_gasproperties" />
             <o:ObjectList Name="fmypricetype" Source="{m:Exp Str=CoboxPinpl.SelectedItem.qijiatype}" EntityType="t_qijiatype" />
 			<!--非民用收费标准-->
-            <o:PagedObjectList Name="fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or SubmitAction.State==$End$'}"
-			Path="{m:Exp Str=$from t_apply where \{fmysfbzSearch.DataContext.Condition\} and f_usertype\=\'非民用\' and f_state \=\'收费\'$}"
-            PageIndex="{m:Exp Str=fmysfbzPager.PageIndex}" PageSize="{m:Exp Str=fmysfbzPager.PageSize}" SumNames="id" />
-            <o:ObjectList Name="devicelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$ or fmysfbzBack=>Click!=null'}"
-            Path="{m:Exp Str='fmysfbzInfo.DataContext.id!=null:$from t_device where applyid={fmysfbzInfo.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False" />
-            <o:ObjectList Name="costreductionlist_fmysfbz" EntityType="t_costreduction" HasEmptyRow="True" />
+            <o:PagedObjectList Name="fmypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmypgshInfo.DataContext.State==$End$ or SubmitAction.State==$End$'}"
+			Path="{m:Exp Str=$from t_apply where \{fmypgshSearch.DataContext.Condition\} and f_usertype\=\'非民用\' and f_state \=\'收费\'$}"
+            PageIndex="{m:Exp Str=fmypgshPager.PageIndex}" PageSize="{m:Exp Str=fmypgshPager.PageSize}" SumNames="id" />
+            <o:ObjectList Name="devicelist_fmypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmypgshInfo.DataContext.State==$End$ or fmypgshBack=>Click!=null'}"
+            Path="{m:Exp Str='fmypgshInfo.DataContext.id!=null:$from t_device where applyid={fmypgshInfo.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False" />
+            <o:ObjectList Name="costreductionlist_fmypgsh" EntityType="t_costreduction" HasEmptyRow="True" />
 			
-			            <o:GeneralObject Name="fmysfbzObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
-                                Source="{m:Exp Str='fmysfbzList.SelectedItem !=null and fmysfbzPopup.IsOpen:fmysfbzList.SelectedItem,null'}"
-		                        IsInit="{m:Exp Str='this.State==$End$ or fmysfbzBack=>Click!=null'}">
-                            <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmysfbz}"/>
-                            <o:PropertySetter PropertyName="f_costreduction" Default="{m:Exp Str=costreductionlist_fmysfbz}"/>
+			            <o:GeneralObject Name="fmypgshObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
+                                Source="{m:Exp Str='fmypgshList.SelectedItem !=null and fmypgshPopup.IsOpen:fmypgshList.SelectedItem,null'}"
+		                        IsInit="{m:Exp Str='this.State==$End$ or fmypgshBack=>Click!=null'}">
+                            <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmypgsh}"/>
+                            <o:PropertySetter PropertyName="f_costreduction" Default="{m:Exp Str=costreductionlist_fmypgsh}"/>
                         </o:GeneralObject>
                     
 			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
-			HQL="{m:Exp Str=$update t_apply set f_state\=\'银行返单\' \,f_substate\=null where id in (\{fmysfbzList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
+			HQL="{m:Exp Str=$update t_apply set f_state\=\'银行返单\' \,f_substate\=null where id in (\{fmypgshList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
         </m:ResourceLoad>
         <!--非民用收费标准-->
-       <!----> <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmysfbz.IsBusy}">
+       <!----> <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmypgsh.IsBusy}">
             <StackPanel Margin="2,0,2,8">
-                <toolkit:WrapPanel x:Name="fmysfbzSearch" Width="488">
+                <toolkit:WrapPanel x:Name="fmypgshSearch" Width="488">
                     <a:Data.Context>
                         <o:SearchObject CanSearch="{m:Exp Str='LayoutRoot=>Loaded!=null'}" />
                     </a:Data.Context>
@@ -73,16 +73,16 @@
                             <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                         </a:Data.Prop>
                     </TextBox>
-                    <Button Content="查 询" Click="{m:Exp Str=fmysfbzSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Left" Width="60" />
+                    <Button Content="查 询" Click="{m:Exp Str=fmypgshSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Left" Width="60" />
                 </toolkit:WrapPanel>
-                <sdk:DataGrid Name="fmysfbzList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" IsReadOnly="True" Height="300" Width="488"
-								ItemsSource="{m:Res Key=fmysfbz}">
+                <sdk:DataGrid Name="fmypgshList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" IsReadOnly="True" Height="300" Width="488"
+								ItemsSource="{m:Res Key=fmypgsh}">
                     <sdk:DataGrid.Columns >
                         <sdk:DataGridTemplateColumn d:IsLocked="True" Header="序号" >
                             <sdk:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="  ->>  " Click="{m:Exp Str='fmysfbzPopup.BringToUp(waitGrid);fmysfbzPopup.IsOpen=True'}" />
+                                        <Button Content="  ->>  " Click="{m:Exp Str='fmypgshPopup.BringToUp(waitGrid);fmypgshPopup.IsOpen=True'}" />
                                         <TextBlock Text="{Binding Index}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -98,19 +98,19 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交银行返单" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmysfbzList.SelectedItems.Count=>SelectionChanged!=0'}" Width="100" />
+                    <Button Content="提交银行返单" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmypgshList.SelectedItems.Count=>SelectionChanged!=0'}" Width="100" />
 					<c:MessageTipObj Name="submittip" Tip="您确认要提交银行返单吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />
-					<sdk:DataPager Name="fmysfbzPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmysfbzList,Converter={StaticResource DataPagerConverter}}"
+					<sdk:DataPager Name="fmypgshPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmypgshList,Converter={StaticResource DataPagerConverter}}"
 		                    HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
-                    <TextBlock Text="{m:Exp Str='fmysfbz.Count'}"  Margin="-250,5,210,0" />
+                    <TextBlock Text="{m:Exp Str='fmypgsh.Count'}"  Margin="-250,5,210,0" />
                 </StackPanel>
             </StackPanel>
        </toolkit:BusyIndicator>
         <!--非民用收费标准-->
-      <Popup x:Name="fmysfbzPopup">
-           <!---->  <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmysfbzObj.IsBusy or devicelist_fmysfbz.IsBusy or costreductionlist_fmysfbz.IsBusy}">
-            	<Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmysfbzInfo" DataContext="{m:Exp Str=fmysfbzObj}" Width="1000" Height="640">
+      <Popup x:Name="fmypgshPopup">
+           <!---->  <toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmypgshObj.IsBusy or devicelist_fmypgsh.IsBusy or costreductionlist_fmypgsh.IsBusy}">
+            	<Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmypgshInfo" DataContext="{m:Exp Str=fmypgshObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
                     		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0.273,0,-0.273,86" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
@@ -229,7 +229,7 @@
                                 <TextBox Text="{m:Bind Path=f_feedepartment}" Grid.Column="1" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_feedepartment" NotNull="True" 
-									Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='(this.IsModified or devicelist_fmysfbz.IsModified):LoginUser.f_parentname,this.f_feedepartment'}"/>
+									Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='(this.IsModified or devicelist_fmypgsh.IsModified):LoginUser.f_parentname,this.f_feedepartment'}"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right"/>
@@ -289,7 +289,7 @@
 				        </sdk:TabItem>
                         <sdk:TabItem Header="用气设备">
                 			<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            				<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmysfbz[data.f_noanzhuang \=\= null]}">
+            				<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmypgsh[data.f_noanzhuang \=\= null]}">
                                 <sdk:DataGrid.Columns>
                                     <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
                                         <sdk:DataGridTemplateColumn.CellTemplate>
@@ -367,7 +367,7 @@
 				        </sdk:TabItem>
                         <sdk:TabItem Header="减免明细">
                 			<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            				<sdk:DataGrid ItemsSource="{m:Exp Str=costreductionlist_fmysfbz}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
+            				<sdk:DataGrid ItemsSource="{m:Exp Str=costreductionlist_fmypgsh}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
                                 <sdk:DataGrid.Columns>
                                     <sdk:DataGridTemplateColumn>
                                         <sdk:DataGridTemplateColumn.CellTemplate>
@@ -458,28 +458,28 @@
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="511">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
-                                        Click="{m:Exp Str=fmysfbzInfo.DataContext.f_substate\=$完成$;fmysfbzInfo.DataContext.Save();fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" />
+                                        Click="{m:Exp Str=fmypgshInfo.DataContext.f_substate\=$完成$;fmypgshInfo.DataContext.Save();fmypgshPopup.BringToDown();fmypgshPopup.IsOpen\=False}" />
                         <Button Content="  保存并提交银行返单  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
-						OK="{m:Exp Str=fmysfbzInfo.DataContext.f_state\=$银行返单$;fmysfbzInfo.DataContext.f_substate\=null;fmysfbzInfo.DataContext.Save();fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" />
+						OK="{m:Exp Str=fmypgshInfo.DataContext.f_state\=$银行返单$;fmypgshInfo.DataContext.f_substate\=null;fmypgshInfo.DataContext.Save();fmypgshPopup.BringToDown();fmypgshPopup.IsOpen\=False}" />
 						<!--
 						<Button Content="  保存并返回现场勘查  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=backsubmittip.Show()}" />
                         <c:MessageTipObj Name="backsubmittip" Tip="您确认要返回该报建信息吗？" 
-						OK="{m:Exp Str=fmysfbzInfo.DataContext.f_state\=$现场勘查$;fmysfbzInfo.DataContext.f_substate\=null;fmysfbzInfo.DataContext.Save();fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" />
+						OK="{m:Exp Str=fmypgshInfo.DataContext.f_state\=$现场勘查$;fmypgshInfo.DataContext.f_substate\=null;fmypgshInfo.DataContext.Save();fmypgshPopup.BringToDown();fmypgshPopup.IsOpen\=False}" />
 						-->
 						<Button Content="  返回收费标准  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=backsubmittip1.Show()}" />
                         <c:MessageTipObj Name="backsubmittip1" Tip="您确认要返回该报建信息吗？" 
-						OK="{m:Exp Str=fmysfbzInfo.DataContext.f_state\=$收费标准$;fmysfbzInfo.DataContext.f_substate\=null;fmysfbzInfo.DataContext.Save();fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" />
-						<Button Name="fmysfbzBack" Content="  返  回  " Click="{m:Exp Str=fmysfbzPopup.BringToDown();fmysfbzPopup.IsOpen\=False}" Margin="5" Width="60" />
-						<Button Content=" 打印收据 " Margin="5" Click="{m:Exp Str=print_fmysfbz.Print()}"/>
-                        <c:PrintObj x:Name="print_fmysfbz" UseDefaultPrinter="False" Area="{m:Res Key=print1_sj}" Grid.ColumnSpan="4" />
+						OK="{m:Exp Str=fmypgshInfo.DataContext.f_state\=$收费标准$;fmypgshInfo.DataContext.f_substate\=null;fmypgshInfo.DataContext.Save();fmypgshPopup.BringToDown();fmypgshPopup.IsOpen\=False}" />
+						<Button Name="fmypgshBack" Content="  返  回  " Click="{m:Exp Str=fmypgshPopup.BringToDown();fmypgshPopup.IsOpen\=False}" Margin="5" Width="60" />
+						<Button Content=" 打印收据 " Margin="5" Click="{m:Exp Str=print_fmypgsh.Print()}"/>
+                        <c:PrintObj x:Name="print_fmypgsh" UseDefaultPrinter="False" Area="{m:Res Key=print1_sj}" Grid.ColumnSpan="4" />
                         <!--打印确认单-->
-                        <Grid x:Name="print1_fmysfbz"  Margin="104,0,180,-1204" HorizontalAlignment="Stretch" Width="750" Height="1039" VerticalAlignment="Bottom">
+                        <Grid x:Name="print1_fmypgsh"  Margin="104,0,180,-1204" HorizontalAlignment="Stretch" Width="750" Height="1039" VerticalAlignment="Bottom">
                             <a:Data.Context>
-                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmysfbzInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
+                                <o:GeneralObject WebClientInfo="{StaticResource dbclient}" EntityType="t_apply" Source="{m:Exp Str=fmypgshInfo.DataContext}" IsInit="{m:Exp Str='this.State==$End'}"/>
                             </a:Data.Context>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="0*"/>
@@ -517,30 +517,30 @@
                             <TextBlock Grid.Column="1" Height="25" Margin="280,245,0,0" Grid.Row="1" TextWrapping="Wrap" Text="安装几处" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Left" Width="75"/>
                             <TextBlock Grid.Column="1" Height="25" Margin="0,213,164,0" Grid.Row="1" TextWrapping="Wrap" Text="放线日期" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74"/>
                             <TextBlock Grid.Column="1" Margin="69,463,73,506" Grid.Row="1" TextWrapping="Wrap"><Run Text="　　"/><Run Text="1、用户"/><Run Text="联系人在组织用户过程中须对片区居民全部通知，在设计和安装过程中须每户留人配合"/><Run Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="2"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="未申请或不安装住户，在施工过程中不得增户，且无正当理由不得阻挠施工"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="3"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="用户之间存在矛盾纠纷请提前协商解决，否则由此造成的一切责任，我公司概不负责"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="4"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="用户接到该单后，请于三日内到我们公司完善合同及交款"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/></TextBlock>
-                            <TextBlock x:Name="联系人11b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_address}" Grid.Column="1" Height="25" Margin="157,181,284,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="HorizontalAlignment"/>
-                            <TextBlock x:Name="电话11b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_phone}" Grid.Column="1" Height="25" Margin="0,181,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_date}" x:Name="交款日期11b"  Grid.Column="1" Height="25" Margin="0,117,10,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <TextBlock x:Name="联系人11b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_address}" Grid.Column="1" Height="25" Margin="157,181,284,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="HorizontalAlignment"/>
+                            <TextBlock x:Name="电话11b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_phone}" Grid.Column="1" Height="25" Margin="0,181,28,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="124"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_date}" x:Name="交款日期11b"  Grid.Column="1" Height="25" Margin="0,117,10,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <TextBlock Grid.Column="1" Height="25" Margin="0,182,164,0" Grid.Row="1" TextWrapping="Wrap" Text="联系电话" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74"/>
-                            <TextBlock x:Name="设计人11b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_designers}" Grid.Column="1" Height="25" Margin="126,213,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="124"/>
-                            <TextBlock x:Name="报建编号11b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_code}" Grid.Column="1" Height="25" Margin="125,117,496,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto"/>
-                            <TextBlock x:Name="安装通知备注11b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_gcbkcopinion}" Grid.Column="1" Height="60" Margin="40,299,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>
-                            <TextBlock x:Name="名称11" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_username}" Grid.Column="1" Height="25" Margin="157,149,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
-                            <TextBlock x:Name="交费户数1" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_installnum}" Grid.Column="1" Height="25" Margin="0,245,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="128" RenderTransformOrigin="0.484,2.24"/>
-                            <TextBlock x:Name="放线人1" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_survey}" Grid.Column="1" Height="25" Margin="0,212,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="128"/>
-                            <TextBlock x:Name="用户类型1b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,117,284,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="87" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="设计人11b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_designers}" Grid.Column="1" Height="25" Margin="126,213,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="124"/>
+                            <TextBlock x:Name="报建编号11b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_code}" Grid.Column="1" Height="25" Margin="125,117,496,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="Auto"/>
+                            <TextBlock x:Name="安装通知备注11b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_gcbkcopinion}" Grid.Column="1" Height="60" Margin="40,299,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>
+                            <TextBlock x:Name="名称11" Text="{m:Exp Str=fmypgshInfo.DataContext.f_username}" Grid.Column="1" Height="25" Margin="157,149,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+                            <TextBlock x:Name="交费户数1" Text="{m:Exp Str=fmypgshInfo.DataContext.f_installnum}" Grid.Column="1" Height="25" Margin="0,245,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="128" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="放线人1" Text="{m:Exp Str=fmypgshInfo.DataContext.f_survey}" Grid.Column="1" Height="25" Margin="0,212,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="128"/>
+                            <TextBlock x:Name="用户类型1b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,117,284,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="87" RenderTransformOrigin="0.484,2.24"/>
                             <TextBlock Grid.Column="1" Height="25" Margin="41,247,0,0" Grid.Row="1" TextWrapping="Wrap" Text="用气类型" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Left" Width="74"/>
-                            <TextBlock x:Name="用气类型1b" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_gastype}" Grid.Column="1" Height="25" Margin="126,245,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" RenderTransformOrigin="0.484,2.24"/>
-                            <TextBlock x:Name="安装通知备注11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_sjexambz}" Grid.Column="1" Height="55" Margin="0,301,41,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="330"/>
+                            <TextBlock x:Name="用气类型1b" Text="{m:Exp Str=fmypgshInfo.DataContext.f_gastype}" Grid.Column="1" Height="25" Margin="126,245,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="安装通知备注11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_sjexambz}" Grid.Column="1" Height="55" Margin="0,301,41,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="330"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Height="21" Margin="0,276,299,0" Grid.Row="1" TextWrapping="Wrap" Text="设计意见：" VerticalAlignment="Top" Width="71" TextAlignment="Center"/>
                             <TextBlock Grid.Column="1" Margin="39,365,0,0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center" Height="21" VerticalAlignment="Top" Text="" HorizontalAlignment="Left" Width="332"/>
-                            <TextBlock x:Name="安装通知备注1_Copy11" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_opinion}" Grid.Column="1" Height="68" Margin="41,389,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="400" HorizontalAlignment="Left"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_surveydate}" x:Name="交款日期11_Copy"  Grid.Column="1" Height="25" Margin="0,212,9,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <TextBlock x:Name="安装通知备注1_Copy11" Text="{m:Exp Str=fmypgshInfo.DataContext.f_opinion}" Grid.Column="1" Height="68" Margin="41,389,247,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="400" HorizontalAlignment="Left"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_surveydate}" x:Name="交款日期11_Copy"  Grid.Column="1" Height="25" Margin="0,212,9,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <Path
 				Data="M72,0 L72,276.02899" Margin="258.493,210,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Height="63.83" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" d:LayoutOverrides="VerticalAlignment" HorizontalAlignment="Left" Width="1"/>
                             <Path
 				Data="M72,0 L72,276.02899" Margin="370.493,210,0,0" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" Height="152.83" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" d:LayoutOverrides="VerticalAlignment" HorizontalAlignment="Left" Width="1"/>
                             <TextBlock Grid.Column="1" Height="25" Margin="0,248,164,0" Grid.Row="1" TextWrapping="Wrap" Text="制单日期" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Right" Width="74"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_gcbshoperdate}" x:Name="交款日期11_Copy1"  Grid.Column="1" Height="25" Margin="0,245,9,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_gcbshoperdate}" x:Name="交款日期11_Copy1"  Grid.Column="1" Height="25" Margin="0,245,9,0" Grid.Row="1"  VerticalAlignment="Top" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="0,375,154,0" Grid.Row="1" TextWrapping="Wrap" Width="81" TextAlignment="Center" Height="21" VerticalAlignment="Top"><Run Text="用户签字"/><Run Text="："/></TextBlock>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="0,419,154,0" Grid.Row="1" TextWrapping="Wrap" Width="81" TextAlignment="Center" Height="21" VerticalAlignment="Top"><Run Text="日"/><Run Text="　　"/><Run Text="期"/><Run Text="："/></TextBlock>
                             <Path Data="M17,181 L492.26941,181" Height="1" Stretch="Fill" Stroke="Black" StrokeThickness="1" UseLayoutRounding="False" VerticalAlignment="Top" Margin="34.622,362.83,23.333,0" Grid.Row="1" Grid.Column="1" d:LayoutOverrides="VerticalAlignment"/>
@@ -582,26 +582,26 @@
                             <TextBlock Grid.Column="1" Margin="280,0,0,307" Grid.Row="1" TextWrapping="Wrap" Text="安装几处" TextAlignment="Center" HorizontalAlignment="Left" Width="75" Height="25" VerticalAlignment="Bottom"/>
                             <TextBlock Grid.Column="1" Margin="0,0,164,339" Grid.Row="1" TextWrapping="Wrap" Text="放线日期" TextAlignment="Center" HorizontalAlignment="Right" Width="74" Height="25" VerticalAlignment="Bottom"/>
                             <TextBlock Grid.Column="1" Margin="69,0,64,44" Grid.Row="1" TextWrapping="Wrap" Height="70" VerticalAlignment="Bottom"><Run Text="　　"/><Run Text="1、用户"/><Run Text="联系人在组织用户过程中须对片区居民全部通知，在设计和安装过程中须每户留人配合"/><Run Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="2"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="未申请或不安装住户，在施工过程中不得增户，且无正当理由不得阻挠施工"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="3"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="用户之间存在矛盾纠纷请提前协商解决，否则由此造成的一切责任，我公司概不负责"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/><LineBreak/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="　　"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="4"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="、"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="用户接到该单后，请于三日内到我们公司完善合同及交款"/><Run FontFamily="Verdana, Arial, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande" Text="。"/></TextBlock>
-                            <TextBlock x:Name="联系人11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_address}" Grid.Column="1" Height="25" Margin="157,0,284,371" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="HorizontalAlignment"/>
-                            <TextBlock x:Name="电话11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_phone}" Grid.Column="1" Height="25" Margin="0,0,28,371" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="124"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_date}" x:Name="交款日期11_Copy2"  Grid.Column="1" Height="25" Margin="0,0,10,435" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <TextBlock x:Name="联系人11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_address}" Grid.Column="1" Height="25" Margin="157,0,284,371" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="HorizontalAlignment"/>
+                            <TextBlock x:Name="电话11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_phone}" Grid.Column="1" Height="25" Margin="0,0,28,371" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="124"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_date}" x:Name="交款日期11_Copy2"  Grid.Column="1" Height="25" Margin="0,0,10,435" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <TextBlock Grid.Column="1" Margin="0,0,164,370" Grid.Row="1" TextWrapping="Wrap" Text="联系电话" TextAlignment="Center" HorizontalAlignment="Right" Width="74" Height="25" VerticalAlignment="Bottom"/>
-                            <TextBlock x:Name="设计人11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_designers}" Grid.Column="1" Height="25" Margin="126,0,0,339" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="124"/>
-                            <TextBlock x:Name="报建编号11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_code}" Grid.Column="1" Height="25" Margin="124,0,496,435" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto"/>
-                            <TextBlock x:Name="安装通知备注11_Copy2" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_gcbkcopinion}" Grid.Column="1" Height="60" Margin="40,0,0,218" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="300"/>
-                            <TextBlock x:Name="名称11_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_username}" Grid.Column="1" Height="25" Margin="157,0,309,403" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto"/>
-                            <TextBlock x:Name="交费户数1_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_installnum}" Grid.Column="1" Height="25" Margin="0,0,247,307" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="128" RenderTransformOrigin="0.484,2.24"/>
-                            <TextBlock x:Name="放线人1_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_survey}" Grid.Column="1" Height="25" Margin="0,0,247,340" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="128"/>
-                            <TextBlock x:Name="用户类型1_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,0,278,435" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="87" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="设计人11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_designers}" Grid.Column="1" Height="25" Margin="126,0,0,339" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="124"/>
+                            <TextBlock x:Name="报建编号11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_code}" Grid.Column="1" Height="25" Margin="124,0,496,435" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto"/>
+                            <TextBlock x:Name="安装通知备注11_Copy2" Text="{m:Exp Str=fmypgshInfo.DataContext.f_gcbkcopinion}" Grid.Column="1" Height="60" Margin="40,0,0,218" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="300"/>
+                            <TextBlock x:Name="名称11_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_username}" Grid.Column="1" Height="25" Margin="157,0,309,403" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto"/>
+                            <TextBlock x:Name="交费户数1_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_installnum}" Grid.Column="1" Height="25" Margin="0,0,247,307" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="128" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="放线人1_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_survey}" Grid.Column="1" Height="25" Margin="0,0,247,340" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="128"/>
+                            <TextBlock x:Name="用户类型1_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_usertype}" Grid.Column="1" Height="25" Margin="0,0,278,435" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="87" RenderTransformOrigin="0.484,2.24"/>
                             <TextBlock Grid.Column="1" Margin="41,0,0,305" Grid.Row="1" TextWrapping="Wrap" Text="用气类型" TextAlignment="Center" HorizontalAlignment="Left" Width="74" Height="25" VerticalAlignment="Bottom"/>
-                            <TextBlock x:Name="用气类型1_Copy" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_gastype}" Grid.Column="1" Height="25" Margin="126,0,0,307" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="128" RenderTransformOrigin="0.484,2.24"/>
-                            <TextBlock x:Name="安装通知备注11_Copy3" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_sjexambz}" Grid.Column="1" Height="55" Margin="0,0,41,221" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="330"/>
+                            <TextBlock x:Name="用气类型1_Copy" Text="{m:Exp Str=fmypgshInfo.DataContext.f_gastype}" Grid.Column="1" Height="25" Margin="126,0,0,307" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="128" RenderTransformOrigin="0.484,2.24"/>
+                            <TextBlock x:Name="安装通知备注11_Copy3" Text="{m:Exp Str=fmypgshInfo.DataContext.f_sjexambz}" Grid.Column="1" Height="55" Margin="0,0,41,221" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="330"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,299,280" Grid.Row="1" TextWrapping="Wrap" Text="设计意见：" Width="71" TextAlignment="Center" Height="21" VerticalAlignment="Bottom"/>
                             <TextBlock Grid.Column="1" Margin="39,0,0,191" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center" Height="21" VerticalAlignment="Bottom" Text="" HorizontalAlignment="Left" Width="332"/>
-                            <TextBlock x:Name="安装通知备注11_Copy4" Text="{m:Exp Str=fmysfbzInfo.DataContext.f_opinion}" Grid.Column="1" Height="68" Margin="41,0,247,120" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="400" HorizontalAlignment="Left"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_surveydate}" x:Name="交款日期11_Copy3"  Grid.Column="1" Height="25" Margin="0,0,9,340" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <TextBlock x:Name="安装通知备注11_Copy4" Text="{m:Exp Str=fmypgshInfo.DataContext.f_opinion}" Grid.Column="1" Height="68" Margin="41,0,247,120" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="400" HorizontalAlignment="Left"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_surveydate}" x:Name="交款日期11_Copy3"  Grid.Column="1" Height="25" Margin="0,0,9,340" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <TextBlock Grid.Column="1" Margin="0,0,164,304" Grid.Row="1" TextWrapping="Wrap" Text="制单日期" TextAlignment="Center" HorizontalAlignment="Right" Width="74" Height="25" VerticalAlignment="Bottom"/>
-                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmysfbzInfo.DataContext.f_gcbshoperdate}" x:Name="交款日期11_Copy4"  Grid.Column="1" Height="25" Margin="0,0,9,307" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
+                            <sdk:DatePicker SelectedDate="{m:Exp Str=fmypgshInfo.DataContext.f_gcbshoperdate}" x:Name="交款日期11_Copy4"  Grid.Column="1" Height="25" Margin="0,0,9,307" Grid.Row="1"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="145" SelectedDateFormat="Long"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,154,181" Grid.Row="1" TextWrapping="Wrap" Width="81" TextAlignment="Center" Height="21" VerticalAlignment="Bottom"><Run Text="用户签字"/><Run Text="："/></TextBlock>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,154,137" Grid.Row="1" TextWrapping="Wrap" Width="81" TextAlignment="Center" Height="21" VerticalAlignment="Bottom"><Run Text="日"/><Run Text="　　"/><Run Text="期"/><Run Text="："/></TextBlock>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="39,0,0,83" Grid.Row="1" TextWrapping="Wrap" Text="说" Width="20" TextAlignment="Center" Height="21" VerticalAlignment="Bottom"/>
@@ -626,12 +626,12 @@
                     </StackPanel>
 						<Grid  x:Name="print1_sj" HorizontalAlignment="Left" Margin="-1012,108,0,127" Width="817">
             		<sdk:Label x:Name="year1" Content="{m:Exp Str=SysTime.Today.ToString($yyyy$)}" HorizontalAlignment="Left" Height="25" Margin="222,70,0,0"  VerticalAlignment="Top" Width="56" d:LayoutOverrides="HorizontalAlignment"/>
-						<sdk:Label x:Name="name" Content="{m:Exp Str=fmysfbzObj.f_username}" Height="25" Margin="265,90,315,-103"  VerticalAlignment="Top"/>
+						<sdk:Label x:Name="name" Content="{m:Exp Str=fmypgshObj.f_username}" Height="25" Margin="265,90,315,-103"  VerticalAlignment="Top"/>
 						<sdk:Label x:Name="weihuf" Content="工程材料费"   FontSize="15" HorizontalAlignment="Left" Margin="122,120,0,191" Width="113"/>
-						<sdk:Label x:Name="money"  Content="{m:Exp Str=fmysfbzObj.f_totalfee}"  HorizontalAlignment="Left" Margin="501,120,3,188" Width="113"/>
+						<sdk:Label x:Name="money"  Content="{m:Exp Str=fmypgshObj.f_totalfee}"  HorizontalAlignment="Left" Margin="501,120,3,188" Width="113"/>
 						<sdk:Label x:Name="year1_Copy" Content="{m:Exp Str=SysTime.Today.ToString($MM$)}" Height="25" Margin="300,70,370,0"  VerticalAlignment="Top" RenderTransformOrigin="1.018,0.76"/>
 						<sdk:Label x:Name="year1_Copy1" Content="{m:Exp Str=SysTime.Today.ToString($dd$)}" Height="25" Margin="355,70,263,0"  VerticalAlignment="Top" RenderTransformOrigin="1.018,0.76" HorizontalAlignment="left" Width="56"/>
-						<sdk:Label x:Name="money_Copy"  Content="{m:Exp Str=fmysfbzObj.f_totalfee.ToChinaMoney()}" Height="25" Margin="142,293,75,0"  VerticalAlignment="Top" Width="600" HorizontalAlignment="Left"/>
+						<sdk:Label x:Name="money_Copy"  Content="{m:Exp Str=fmypgshObj.f_totalfee.ToChinaMoney()}" Height="25" Margin="142,293,75,0"  VerticalAlignment="Top" Width="600" HorizontalAlignment="Left"/>
 						<sdk:Label x:Name="money_Copy1"  Content="{m:Exp Str=LoginUser.name}" Height="25" Margin="285,323,104,0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="185"/>
 						
             		</Grid>

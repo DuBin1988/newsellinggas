@@ -44,17 +44,25 @@
                 IsInit="{m:Exp Str='this.State==$End$ or fmydbxBack=>Click!=null'}">
                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmydbx}"/>
 
+                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_fmydbx}" />
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_fmydbx}" />
             </o:GeneralObject>
 
+            <o:ObjectList Name="imagelist_fmydbx" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmydbxInfo.DataContext.State==$End$ or fmydbxBack=>Click!=null'}"
+            Path="{m:Exp Str='fmydbxInfo.DataContext.id!=null:$from t_applyimage where applyid={fmydbxInfo.DataContext.id}$,null'}" EntityType="t_applyimage" HasEmptyRow="True" />
+            <o:ObjectList Name="annexlist_fmydbx" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmydbxInfo.DataContext.State==$End$ or  fmydbxBack=>Click!=null'}"
+            Path="{m:Exp Str='fmydbxInfo.DataContext.id!=null:$from t_applyannex where applyid={fmydbxInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
+
+
             <!--非民用定表型-->
-           <o:ObjectList Name="devicelist_fmydbx" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmydbxInfo.DataContext.State==$End$ or fmydbxBack=>Click!=null'}"
+            <o:ObjectList Name="devicelist_fmydbx" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmydbxInfo.DataContext.State==$End$ or fmydbxBack=>Click!=null'}"
             Path="{m:Exp Str='fmydbxInfo.DataContext.id!=null:$from t_device where applyid={fmydbxInfo.DataContext.id} and f_noanzhuang is null$,null'}" EntityType="t_device" HasEmptyRow="False" />
-        
-			
-		
-			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+
+
+
+            <b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_apply set f_dbxzt\=\'已完成\' \,f_substate\=null where id in (\{fmydbxList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
-		</m:ResourceLoad>
+        </m:ResourceLoad>
         <!--非民用定表型-->
         <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmydbx.IsBusy}">
             <StackPanel Margin="2,0,2,8">
@@ -72,7 +80,8 @@
                     <TextBlock TextWrapping="Wrap" Text="单位：" Margin="5,0,0,0"/>
                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_minyongdept}" MinWidth="30" Margin="5,0,0,0" Height="22">
                         <a:Data.Prop>
-                            <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>                        </a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_minyongdept"  Operator="f_minyongdept like 'this%'"/>
+                        </a:Data.Prop>
                     </TextBox>
                     <TextBlock TextWrapping="Wrap" Text="电 话：" Margin="5,0,0,0"/>
                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_phone}" MinWidth="30" Margin="5,0,0,0" Height="22">
@@ -112,7 +121,7 @@
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
                     <Button Content="提交设计出图" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmydbxList.SelectedItem!=null and fmydbxList.SelectedItem.f_substate!=null'}" Width="100" />
                     <c:MessageTipObj Name="submittip" Tip="您确认要提交设计出图吗？" OK="{m:Exp Str=startprocess.id\=fmydbxList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
-					<sdk:DataPager Name="fmydbxPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmydbxList,Converter={StaticResource DataPagerConverter}}"
+                    <sdk:DataPager Name="fmydbxPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmydbxList,Converter={StaticResource DataPagerConverter}}"
 		                        HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
                     <TextBlock Text="{m:Exp Str='fmydbx.Count'}"  Margin="-250,5,210,0" />
@@ -121,7 +130,7 @@
         </c:BusyIndicatorEx>
         <!--非民用定表型-->
         <Popup x:Name="fmydbxPopup">
-			<c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmydbxObj.IsBusy or devicelist_fmydbx.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmydbxObj.IsBusy or devicelist_fmydbx.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmydbxInfo" DataContext="{m:Exp Str=fmydbxObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
@@ -288,16 +297,31 @@
                                             <o:PropertySetter PropertyName="f_pressure"  ></o:PropertySetter>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="设计周期：" TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_designcycle}" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto">
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="气表品牌：" TextAlignment="Right"/>
+                                    <ComboBox x:Name="CoboxPinp"  DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" ItemsSource="{m:Exp Str=qbpplist}" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0,3" Grid.Row="6" Height="Auto" IsEnabled="true" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_designcycle" />
+                                            <o:PropertySetter PropertyName="f_gaswatchbrand" NotNull="True" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="气表型号：" TextAlignment="Right"/>
+                                    <ComboBox DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber" ItemsSource="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber}"  SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,3" Grid.Row="6" Height="Auto" IsEnabled="true" Width="Auto"/>
+
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="气表厂家：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="4" Margin="0,14,0,9" Grid.Row="7" TextWrapping="Wrap" Text="气表类型：" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="4" Grid.Row="8" TextWrapping="Wrap" Text="别名：" TextAlignment="Right" Margin="0,6,0,0"/>
+                                    <TextBox Text="{m:Bind Path=f_changjia}" Grid.Column="5" Margin="0,2,0,0" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" VerticalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_changjia" Value="{m:Exp Str=CoboxPinp.SelectedItem.f_changjia}"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="工期：" TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_projecttime}" Grid.Column="3" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto">
+                                    <TextBox Text="{m:Bind Path=f_type}" Grid.Column="5" Margin="0,10,0,12" Grid.Row="7" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" VerticalAlignment="Stretch" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_projecttime" />
+                                            <o:PropertySetter PropertyName="f_type" Value="{m:Exp Str=CoboxPinp.SelectedItem.f_type}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_aliasname}" Grid.Column="5" Margin="0,2,0,0" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" VerticalAlignment="Top" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=CoboxPinp.SelectedItem.f_aliasname}" NotNull="True"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                 </Grid>
@@ -351,96 +375,112 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text=" 部门 "  TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_department}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_department" />
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <TextBlock Text=" 操作人 "  TextAlignment="Right"/>
-                                    <TextBox Text="{m:Bind Path=f_opertor}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_opertor" />
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <TextBlock Text=" 时间 "  TextAlignment="Right"/>
-                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Margin="0,0,0,0"   Height="22" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_date" />
-                                        </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    </StackPanel>
-                                    </DataTemplate>
-                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <TextBox Text="{m:Bind Path=f_department}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
+                                                        <a:Data.Prop>
+                                                            <o:PropertySetter PropertyName="f_department" />
+                                                        </a:Data.Prop>
+                                                    </TextBox>
+                                                    <TextBlock Text=" 操作人 "  TextAlignment="Right"/>
+                                                    <TextBox Text="{m:Bind Path=f_opertor}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
+                                                        <a:Data.Prop>
+                                                            <o:PropertySetter PropertyName="f_opertor" />
+                                                        </a:Data.Prop>
+                                                    </TextBox>
+                                                    <TextBlock Text=" 时间 "  TextAlignment="Right"/>
+                                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Margin="0,0,0,0"   Height="22" >
+                                                        <a:Data.Prop>
+                                                            <o:PropertySetter PropertyName="f_date" />
+                                                        </a:Data.Prop>
+                                                    </sdk:DatePicker>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
                                     </sdk:DataGridTemplateColumn>
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
-                         </sdk:TabItem>
-                        <!--
-                        <sdk:TabItem Header="用气设备">
+                        </sdk:TabItem>
+                        <sdk:TabItem Header=" 图 片 ">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                <ListBox ItemsSource="{m:Exp Str=devicelist_fmydbx}" a Margin="0" MinHeight="200" MinWidth="200" Background="{x:Null}" d:LayoutOverrides="Width, Height">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmydbx}"  Margin="0" MinHeight="200" MinWidth="200">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel  Orientation="Horizontal">
-                                                <TextBox Text="{m:Bind Path=f_dijichu}"  IsReadOnly="True"  Width="50"/>
-                                                <TextBlock Text=" 设备名称 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_name}" IsReadOnly="True"   Width="60"/>
-                                                <TextBlock Text=" 单 位 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_unit}" IsReadOnly="True"/>
-                                                <TextBlock Text=" 功率/台 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_usegasnum}" IsReadOnly="True"/>
-                                                <TextBlock Text=" 数  量 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_count}"  IsReadOnly="True"/>
-                                                <TextBlock Text=" 选择气表品牌 "  TextAlignment="Right"/>
-                                                <ComboBox x:Name="CoboxPinpw"  ItemsSource="{m:Exp Str=qbpplist}" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" SelectedValue="{m:Bind Path=f_gaswatchbrand}"  Margin="0,0,0,0"   Height="22" />
-                                                <TextBlock Text=" 选择气表型号 "  TextAlignment="Right"/>
-                                                <ComboBox  x:Name="ComboXh" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber" ItemsSource="{m:Exp Str=CoboxPinpw.SelectedItem.qbnumber}" SelectedValue="{m:Bind Path=f_metertype}"  Margin="0,0,0,0"   Height="22" />
-                                                <TextBox Text="{m:Bind Path=f_flownum}"   IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_flownum"  Value="{m:Exp Str=ComboXh.SelectedItem.f_flownum}"/>
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBox Text="{m:Bind Path=f_changjia}"   IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_changjia"  Value="{m:Exp Str=CoboxPinpw.SelectedItem.f_changjia}"/>
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBox Text="{m:Bind Path=f_type}"   IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_type"  Value="{m:Exp Str=CoboxPinpw.SelectedItem.f_type}"/>
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBox Text="{m:Bind Path=f_aliasname}"   IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_aliasname"  Value="{m:Exp Str=CoboxPinpw.SelectedItem.f_aliasname}"/>
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBlock Text=" 部门 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_department}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_department" />
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBlock Text=" 操作人 "  TextAlignment="Right"/>
-                                                <TextBox Text="{m:Bind Path=f_opertor}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_opertor" />
-                                                    </a:Data.Prop>
-                                                </TextBox>
-                                                <TextBlock Text=" 时间 "  TextAlignment="Right"/>
-                                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Margin="0,0,0,0"   Height="22" >
-                                                    <a:Data.Prop>
-                                                        <o:PropertySetter PropertyName="f_date" />
-                                                    </a:Data.Prop>
-                                                </sdk:DatePicker>
-
+                                            <StackPanel>
+                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="定表型" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                    <Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    <Button Content="全屏"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
                                 </ListBox>
                             </ScrollViewer>
                         </sdk:TabItem>
-                        -->
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmydbx}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="定表型" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="定表型" NoDependValue="定表型" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
@@ -449,10 +489,10 @@
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmydbxList.SelectedItem.f_processid;fmydbxInfo.DataContext.f_dbxzt\=$已完成$;fmydbxInfo.DataContext.f_substate\=null;fmydbxInfo.DataContext.Save();fmydbxPopup.BringToDown();fmydbxPopup.IsOpen\=False;startprocess.Save()}" />
-						<Button Name="fmydbxBack" Content="  返  回  " Click="{m:Exp Str=fmydbxPopup.BringToDown();fmydbxPopup.IsOpen\=False}" Margin="5" Width="60" />
+                        <Button Name="fmydbxBack" Content="  返  回  " Click="{m:Exp Str=fmydbxPopup.BringToDown();fmydbxPopup.IsOpen\=False}" Margin="5" Width="60" />
                     </StackPanel>
                 </Grid>
-			</c:BusyIndicatorEx>
-		</Popup>
+            </c:BusyIndicatorEx>
+        </Popup>
     </Grid>
 </UserControl>

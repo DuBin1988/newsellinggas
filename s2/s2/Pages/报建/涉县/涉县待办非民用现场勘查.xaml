@@ -162,7 +162,7 @@
         </c:BusyIndicatorEx>
         <!--非民用现场勘查-->
         <Popup x:Name="fmyxckcPopup">
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyxckcObj.IsBusy or devicelist_fmyxckc.IsBusy or imagelist_fmyxckc.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyxckcObj.IsBusy or devicelist_fmyxckc.IsBusy or imagelist_fmyxckc.IsBusy or annexlist_fmyxckc.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmyxckcInfo" DataContext="{m:Exp Str=fmyxckcObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
@@ -598,7 +598,7 @@
                                             <sdk:DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate >
                                                     <StackPanel Orientation="Horizontal">
-                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="现场勘查" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
                                                         <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
                                                     </StackPanel>
                                                 </DataTemplate>

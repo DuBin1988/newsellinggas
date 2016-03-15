@@ -44,7 +44,15 @@
                 IsInit="{m:Exp Str='this.State==$End$ or fmysjctBack=>Click!=null'}">
                 <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmysjct}"/>
 
+                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_fmysjct}" />
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_fmysjct}" />
             </o:GeneralObject>
+
+            <o:ObjectList Name="imagelist_fmysjct" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjctInfo.DataContext.State==$End$ or fmysjctBack=>Click!=null'}"
+            Path="{m:Exp Str='fmysjctInfo.DataContext.id!=null:$from t_applyimage where applyid={fmysjctInfo.DataContext.id}$,null'}" EntityType="t_applyimage" HasEmptyRow="True" />
+            <o:ObjectList Name="annexlist_fmysjct" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjctInfo.DataContext.State==$End$ or fmysjctBack=>Click!=null'}"
+            Path="{m:Exp Str='fmysjctInfo.DataContext.id!=null:$from t_applyannex where applyid={fmysjctInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
+
 
             <!--非民用设计出图-->
             <o:ObjectList Name="devicelist_fmysjct" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjctInfo.DataContext.State==$End$ or fmysjctBack=>Click!=null'}"
@@ -279,19 +287,13 @@
 
                                 </TextBox>
                                 <TextBlock Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="设计周期：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_designcycle}" Grid.Column="1" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
+                                <TextBox Text="{m:Bind Path=f_designcycle}" Grid.Column="1" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto">
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_designcycle" />
                                     </a:Data.Prop>
                                 </TextBox>
-                                <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="施工工期：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_projecttime}" Grid.Column="5" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_projecttime" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="设计派工日期：" TextAlignment="Right"/>
-                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_watchdate}" IsEnabled="False" Grid.Column="3" Margin="0,3" Grid.Row="5"  Height="Auto" IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Width="Auto" >
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="设计派工日期：" TextAlignment="Right"/>
+                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_watchdate}" IsEnabled="True" Grid.Column="3" Margin="0,3" Grid.Row="5"  Height="Auto" IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Width="Auto" >
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_watchdate" />
                                     </a:Data.Prop>
@@ -360,6 +362,88 @@
                             </ListBox>
 							</ScrollViewer>
 					    </sdk:TabItem>
+                        <sdk:TabItem Header=" 图 片 ">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmysjct}"  Margin="0" MinHeight="200" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="设计出图" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                    <Button Content="X" 
+				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+				    						Click="{m:Exp Str=data.Remove()}"/>
+                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    <Button Content="全屏"
+            									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmysjct}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="设计出图" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="设计出图" NoDependValue="设计出图" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 

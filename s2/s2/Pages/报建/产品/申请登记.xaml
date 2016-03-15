@@ -28,9 +28,7 @@
                  >
             </o:GeneralObject>
 
-            <!--用户信息,以门牌号为主键ExcelKey="f_doorplate"-->
-            <o:ObjectList Name="userlist" WebClientInfo="{StaticResource dbclient}"    EntityType="t_applycustomer" HasEmptyRow="True" ExcelKey="f_doorplate"></o:ObjectList>
-            <o:ObjectList Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
+           <o:ObjectList  Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
             <o:ObjectList Name="fwlxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='房屋类型'"/>
             <!--批量删除语句-->
             <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
@@ -45,20 +43,22 @@
 			HQL="{m:Exp Str='$delete from t_applyimage where applyid in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
             </b:HQLAction>
             <b:HQLAction Name="DeleteApplycustomer"  WebClientInfo="{StaticResource dbclient}" 
-			HQL="{m:Exp Str='$delete from t_applycustomer where applyid in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
+			HQL="{m:Exp Str='$delete from t_applyannex where applyid in ({persons.SelectedItems.ToString(id)=>SelectionChanged})'}">
             </b:HQLAction>
-           
+
             <!--图片信息-->
-            <o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True"></o:ObjectList>
+            <o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True" >
+                <o:PropertySetter PropertyName="state" Default="申请登记" Value="申请登记"></o:PropertySetter>
+            </o:ObjectList>
             <!--附件信息-->
             <o:ObjectList Name="annexlist" EntityType="t_applyannex" HasEmptyRow="True"></o:ObjectList>
             <!--清除列表中的垃圾数据-->
             <b:HQLAction Name="DeleteDirty" 
-		HQL="{m:Exp Str='userlist.Dirty.Count!=0:$delete from t_applycustomer where id in ({userlist.Dirty[True].ToString(id)})$,null'}">
+		HQL="{m:Exp Str='imagelist.Dirty.Count!=0:$delete from t_applyannex where id in ({imagelist.Dirty[True].ToString(id)})$,null'}">
              <!--清除列表中的垃圾数据-->
             </b:HQLAction>
             <b:HQLAction Name="DeleteDirty1" 
-		HQL="{m:Exp Str='userlist.Dirty.Count!=0:$delete from t_applyimage where id in ({userlist.Dirty[True].ToString(id)})$,null'}">
+		HQL="{m:Exp Str='annexlist.Dirty.Count!=0:$delete from t_applyimage where id in ({annexlist.Dirty[True].ToString(id)})$,null'}">
 
                 </b:HQLAction>
             <!--保存，保存时要删除列表里的垃圾数据-->
@@ -114,7 +114,7 @@
 				         SelectedItem="{m:Exp Str='main.DataContext.IsInit:null,persons.SelectedItem'}" IsReadOnly="True" >
                                         <a:Data.Items>
                                             <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage left join fetch apply.f_applycustomer where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_substate \=\'已完成\'}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage left join fetch apply.f_applyannex where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_substate \=\'已完成\'}"
 					         IsOld="{m:Exp Str='DeleteAction=>Completed!=null and BatchSave=>Completed!=null'}">
                                             </o:ObjectList>
                                         </a:Data.Items>
@@ -198,7 +198,7 @@
                             <o:PropertySetter PropertyName="f_state" Default="报建登记"></o:PropertySetter>
                             <o:PropertySetter PropertyName="f_issurvey" Default="{m:Exp Str=False}"></o:PropertySetter>
                             <o:PropertySetter PropertyName="f_isdesigners" Default="{m:Exp Str=True}"></o:PropertySetter>
-                            <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist}"/>
+                            <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist}"/>
                             <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist}"/>
                         </o:GeneralObject>
                     </a:Data.Context>
@@ -298,7 +298,7 @@
             				<TextBox Text="{m:Bind Path=f_department}" IsReadOnly="True" Grid.Column="3" Margin="0"   Height="25" Grid.Row="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
             					<a:Data.Prop>
             						<o:PropertySetter PropertyName="f_department" NotNull="True" 
-            							Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='(this.IsModified or userlist.IsModified):LoginUser.f_parentname,this.f_department'}"/>
+            							Default="{m:Exp Str=LoginUser.f_parentname}"  Value="{m:Exp Str='this.IsModified:LoginUser.f_parentname,this.f_department'}"/>
             					</a:Data.Prop>
             				</TextBox>
             				<TextBlock Margin="0" TextWrapping="Wrap" Text="操 作 人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="5" Grid.Column="4"   Height="25"/>
@@ -329,233 +329,99 @@
             			</Grid>
 						</ScrollViewer>
             		</sdk:TabItem>
-            		<sdk:TabItem Header="用户花名册" HorizontalAlignment="Stretch" Width="Auto" >
-            			<toolkit:DockPanel>
-            				<Button Content="移除" VerticalAlignment="Top" Visibility="Collapsed"/>  
-            				<sdk:DataGrid x:Name="hmcuserlist" AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userlist}">
-            					<sdk:DataGrid.Columns>
-            						<sdk:DataGridTemplateColumn>
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<Button Content="X" 
-            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-            										Click="{m:Exp Str=data.Remove()}"/>	
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox   Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}"  Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="姓名">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="小区">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-						
-            						<sdk:DataGridTemplateColumn Header="证件号码">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-						
-            						<sdk:DataGridTemplateColumn Header="门牌号">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="地址">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="电话">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}"/> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            						<sdk:DataGridTemplateColumn Header="是否壁挂锅炉用户">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<CheckBox IsChecked="{m:Bind Path=f_isbgglyh}">
-														<a:Data.Prop>
-        													<o:PropertySetter PropertyName="f_isbgglyh" Default="{m:Exp Str=False}" />
-        												</a:Data.Prop>
-													</CheckBox> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-                                    <sdk:DataGridTemplateColumn Header="是否热水器用户">
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<CheckBox IsChecked="{m:Bind Path=f_isrsqyh}">
-														<a:Data.Prop>
-        													<o:PropertySetter PropertyName="f_isrsqyh" Default="{m:Exp Str=False}" />
-        												</a:Data.Prop>
-													</CheckBox> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-                                <!--    <sdk:DataGridTemplateColumn>
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<CheckBox IsChecked="{m:Bind Path=f_isnullmin}" IsEnabled="False">
-														<a:Data.Prop>
-        													<o:PropertySetter PropertyName="f_isnullmin" Default="{m:Exp Str=True}" />
-        												</a:Data.Prop>
-													</CheckBox> 
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-            			<sdk:DataGridTextColumn Header="名称" Binding="{Binding f_username}"/>
-                        <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_district}"/>
-                        <sdk:DataGridTextColumn Header="证件号码" Binding="{Binding f_code}"/>
-						<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_doorplate}"/>
-						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
-						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-						<sdk:DataGridTextColumn Header="备注" Binding="{Binding f_descript}"/>-->
-                                    </sdk:DataGrid.Columns>
-                                    </sdk:DataGrid>
-
-                                    </toolkit:DockPanel>
-                        </sdk:TabItem>
-                        <sdk:TabItem Header="图片">
-                            <ListBox ItemsSource="{m:Exp Str=imagelist}"  Margin="0" MinHeight="200" MinWidth="200">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
-                                                <Button Content="X" 
+            		 <sdk:TabItem Header="图片">
+                                        <ListBox ItemsSource="{m:Exp Str=imagelist}"  Margin="0" MinHeight="200" MinWidth="200">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                                            <Button Content="X" 
 				    						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
 				    						Click="{m:Exp Str=data.Remove()}"/>
-                                                <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
-                                                <Button Content="全屏"
+                                                            <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                            <Button Content="全屏"
             									Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
 												Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <toolkit:WrapPanel />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                            </ListBox>
-                        </sdk:TabItem>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <toolkit:WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
+                                        </ListBox>
+                                    </sdk:TabItem>
+                                    <sdk:TabItem Header="附件" >
+                                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                            <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist}" AutoGenerateColumns="False" Margin="0" >
+                                                <sdk:DataGrid.Columns >
+                                                    <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                            </DataTemplate>
+                                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    </sdk:DataGridTemplateColumn>
+                                                    <sdk:DataGridTemplateColumn Header="文件"  >
+                                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate >
+                                                                <StackPanel>
+                                                                    <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    </sdk:DataGridTemplateColumn>
+                                                    <sdk:DataGridTemplateColumn Header="上传"   >
+                                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate >
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                                    <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    </sdk:DataGridTemplateColumn>
+                                                    <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate >
+                                                                <StackPanel>
+                                                                    <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                                        <a:Data.Prop>
+                                                                            <o:PropertySetter PropertyName="state"  Default="申请登记" NoDependValue="申请登记" />
+                                                                        </a:Data.Prop>
+                                                                    </TextBox>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                                    </sdk:DataGridTemplateColumn>
+                                                </sdk:DataGrid.Columns>
+                                            </sdk:DataGrid>
+
+
+                                        </ScrollViewer>
+                                    </sdk:TabItem>
                     </sdk:TabControl>
 
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
                         <!--and data.f_state\=\=$报建登记$-->
                         <Button x:Name="save" Content="  提交任务分配  " Margin="5" 
-            			IsEnabled="{m:Exp Str=!data.HasErrors and !userlist.HasErrors}"
-            			Click="{m:Exp Str=startprocess.id\=$$;startprocess.MakeID();main.DataContext.f_processid\=startprocess.id;main.DataContext.f_sqdjzt\=$已完成$;main.DataContext.f_substate\=null;userlist.MakeDirty();BatchSave.Invoke();startprocess.Save()}" />
+            			IsEnabled="{m:Exp Str=!data.HasErrors}"
+            			Click="{m:Exp Str=startprocess.id\=$$;startprocess.MakeID();main.DataContext.f_processid\=startprocess.id;main.DataContext.f_sqdjzt\=$已完成$;main.DataContext.f_substate\=null;BatchSave.Invoke();startprocess.Save()}" />
                         <Button x:Name="save1" Content="  保  存  " Margin="5" 
-            			IsEnabled="{m:Exp Str=(data.IsModified or userlist.IsModified)  and !data.HasErrors and !userlist.HasErrors}"
-            			Click="{m:Exp Str=main.DataContext.f_sqdjzt\=$未完成$;main.DataContext.f_substate\=$已完成$;userlist.MakeDirty();BatchSave.Invoke()}" />
+            			IsEnabled="{m:Exp Str=data.IsModified   and !data.HasErrors}"
+            			Click="{m:Exp Str=main.DataContext.f_sqdjzt\=$未完成$;main.DataContext.f_substate\=$已完成$;BatchSave.Invoke()}" />
 
                         <Button Content="  新  建  " Margin="5" Click="{m:Exp Str=main.DataContext.New()}"/>
 
-                        <Button Content="  导入Excel数据  "  Click="{m:Exp Str=userlist.ExcelString\=Clipboard.Text}" HorizontalAlignment="Left"   Height="25"/>
-                        <Button Content="打印花名册"  Click="{m:Exp Str=hmcprint.Print()}" HorizontalAlignment="Left"   Height="25" Margin="3,0,0,0"/>
-
-                    </StackPanel>
-                    <c:PrintPageObj x:Name="hmcprint" Area="{m:Res Key=hmcuserlist_Copy}"  List="{m:Exp Str=userlist}"  PageRow="26"  />
-                    <sdk:DataGrid x:Name="hmcuserlist_Copy" AutoGenerateColumns="False"   Grid.Column="1" Margin="16,0,6,-2525" d:LayoutOverrides="Width" Height="Auto" VerticalAlignment="Bottom">
-                        <sdk:DataGrid.Columns>
-                            <!--<sdk:DataGridTextColumn Header="名称" Binding="{Binding f_username}"/>
-                        <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_district}"/>
-                        <sdk:DataGridTextColumn Header="证件号码" Binding="{Binding f_code}"/>
-						<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_doorplate}"/>
-						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
-						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-						<sdk:DataGridTextColumn Header="备注" Binding="{Binding f_descript}"/>-->
-                            <sdk:DataGridTemplateColumn>
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="X" 
-        						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-        						Click="{m:Exp Str=data.Remove()}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-                            <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox   Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-                            <sdk:DataGridTemplateColumn Header="姓名">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-                            <sdk:DataGridTemplateColumn Header="小区">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-
-                            <sdk:DataGridTemplateColumn Header="证件号码">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-
-                            <sdk:DataGridTemplateColumn Header="门牌号">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-                            <sdk:DataGridTemplateColumn Header="地址">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-                            <sdk:DataGridTemplateColumn Header="电话">
-                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                    </DataTemplate>
-                                </sdk:DataGridTemplateColumn.CellTemplate>
-                            </sdk:DataGridTemplateColumn>
-
-                        </sdk:DataGrid.Columns>
-                    </sdk:DataGrid>
+                                    </StackPanel>
                 </Grid>
             </c:BusyIndicatorEx>
 

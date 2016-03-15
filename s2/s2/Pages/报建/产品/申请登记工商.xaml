@@ -32,7 +32,9 @@
 		<!--用气设备信息-->
 		<o:ObjectList Name="devicelist" EntityType="t_device" HasEmptyRow="True"></o:ObjectList>
 		<!--图片信息-->
-		<o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True"></o:ObjectList>		
+		<o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True"></o:ObjectList>	
+        <!--附件信息-->
+            <o:ObjectList Name="annexlist" EntityType="t_applyannex" HasEmptyRow="True"></o:ObjectList>
 		<!--批量删除语句-->
          <b:BatchExcuteAction Name="DeleteAction" WebClientInfo="{StaticResource dbclient}">
 				<b:BatchInfo Source="{m:Exp Str=DeleteImage}" MethodName="InvokeToJson"/>
@@ -68,65 +70,64 @@
     	</Grid.ColumnDefinitions>
 		<Grid Margin="0,0,5,0">
 			<sdk:TabControl Margin="0,0,0,45">
-				<sdk:TabItem Header=" 待 办 ">	
-        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}" Grid.ColumnSpan="1">
-            <toolkit:DockPanel LastChildFill="True">
-                <StackPanel x:Name="personsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Orientation="Horizontal" >
-                   <a:Data.Context>
-            		  	<o:SearchObject  ></o:SearchObject>        	
-				   </a:Data.Context>
-					<TextBlock TextWrapping="Wrap" Text="申请人："  Height="25"/>
-                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" >
-                      <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_username" Operator="apply.f_username like 'this%'"/>               
-					  </a:Data.Prop>
-					</TextBox>
-					<TextBlock TextWrapping="Wrap" Text="单位："  Height="25"/>
-                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" >
-                      <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>               
-					  </a:Data.Prop>
-					</TextBox>
-					<TextBlock TextWrapping="Wrap" Text="电话："  Height="25"/>
-                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_phone}" a:ControlAttach.DefaultButton="searchbutton" >
-                      <a:Data.Prop>
-                      	   <o:PropertySetter PropertyName="f_phone" Operator="apply.f_phone like 'this%'"/>               
-					  </a:Data.Prop>
-					</TextBox>
-                    <Button Content="  查 询  " x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="2,0,0,0"/>
-                </StackPanel>
-				<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-			            <TextBlock Height="23" TextWrapping="Wrap" Text="{m:Exp Str='$共{persons.ItemsSource.Count}项'}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
-                      
-						<Button Content="  删 除  " Margin="5" Click="{m:Exp Str=deletettip.Show()}"
+				<sdk:TabItem Header=" 待 办 ">
+                        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=persons.ItemsSource.IsBusy}">
+                            <toolkit:DockPanel LastChildFill="True">
+                                <StackPanel x:Name="personsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Orientation="Horizontal" >
+                                    <a:Data.Context>
+                                        <o:SearchObject  />
+                                    </a:Data.Context>
+                                    <TextBlock TextWrapping="Wrap" Text="申请人："  Height="25"/>
+                                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_username}" a:ControlAttach.DefaultButton="searchbutton" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_username" Operator="apply.f_username like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="单位："  Height="25"/>
+                                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_minyongdept}" a:ControlAttach.DefaultButton="searchbutton" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_minyongdept" Operator="apply.f_minyongdept like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="电话："  Height="25"/>
+                                    <TextBox TextWrapping="Wrap" MinWidth="30" Text="{m:Bind Path=f_phone}" a:ControlAttach.DefaultButton="searchbutton" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_phone" Operator="apply.f_phone like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <Button Content="  查 询  " x:Name="searchbutton" Click="{m:Exp Str=personsearch.DataContext.Search()}" Margin="2,0,0,0"/>
+                                </StackPanel>
+                                <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                                    <TextBlock Height="23" TextWrapping="Wrap" Text="{m:Exp Str=$共\{persons.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000"/>
+
+                                    <Button Content="  删 除  " Margin="5" Click="{m:Exp Str=deletettip.Show()}"
         				IsEnabled="{m:Exp Str=persons.SelectedItem!\=null}" Width="50" />
-			      </toolkit:DockPanel>
-                <sdk:DataGrid x:Name="persons" Margin="0"  AutoGenerateColumns="False" IsReadOnly="True"
-				 SelectedItem="{m:Exp Str='main.DataContext.IsInit:null,persons.SelectedItem'}">
-                	<a:Data.Items>
-                		<o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_device left join fetch apply.f_applyimage  where \{personsearch.DataContext.Condition\} and f_usertype \=\'非民用\' and f_substate \=\'已完成\' }"
-					         IsOld="{m:Exp Str='(SubmitAction.State\=\=$Free$ or SubmitAction.State\=\=$End$) and (DeleteAction.State==$Free$ or DeleteAction.State==$End$) and (BatchSave.State==$Free$ or BatchSave.State==$End$)'}">
-                		</o:ObjectList>
-					</a:Data.Items>
-					
-                       <sdk:DataGrid.Columns>
-                        <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
-						<sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
-                        <sdk:DataGridTextColumn Header="报建编号" Binding="{Binding f_code}"/>
-						<sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
-						<sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
-                        <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
-                        <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
-						<sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gastype}"/>
-						<sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
-						<sdk:DataGridTextColumn Header="申请安装几处" Binding="{Binding f_applycount}"/>
-                    </sdk:DataGrid.Columns>
-                </sdk:DataGrid>
-               
-			</toolkit:DockPanel>
-        </c:BusyIndicatorEx>
-				</sdk:TabItem>
+                                </toolkit:DockPanel>
+                                <sdk:DataGrid x:Name="persons" Margin="0"  AutoGenerateColumns="False" IsReadOnly="True"
+				 SelectedItem="{m:Exp Str=main.DataContext.IsInit:null\,persons.SelectedItem}">
+                                    <a:Data.Items>
+                                        <o:ObjectList x:Name="personslist" WebClientInfo="{StaticResource dbclient}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_device left join fetch apply.f_applyimage  left join fetch apply.f_applyannex where \{personsearch.DataContext.Condition\} and f_usertype \=\'非民用\' and f_substate \=\'已完成\'}"
+					         IsOld="{m:Exp Str=(SubmitAction.State\=\=$Free$ or SubmitAction.State\=\=$End$) and (DeleteAction.State\=\=$Free$ or DeleteAction.State\=\=$End$) and (BatchSave.State\=\=$Free$ or BatchSave.State\=\=$End$)}"/>
+                                    </a:Data.Items>
+
+                                    <sdk:DataGrid.Columns>
+                                        <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
+                                        <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
+                                        <sdk:DataGridTextColumn Header="报建编号" Binding="{Binding f_code}"/>
+                                        <sdk:DataGridTextColumn Header="申请单位" Binding="{Binding f_minyongdept}"/>
+                                        <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
+                                        <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
+                                        <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+                                        <sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gastype}"/>
+                                        <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
+                                        <sdk:DataGridTextColumn Header="申请安装几处" Binding="{Binding f_applycount}"/>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+                            </toolkit:DockPanel>
+                        </c:BusyIndicatorEx>
+                    </sdk:TabItem>
 				<!--<sdk:TabItem Header=" 已 办	">
 					<toolkit:DockPanel LastChildFill="True">
 						<StackPanel x:Name="ybpersonsearch"  Background="{x:Null}" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Orientation="Horizontal" >
@@ -188,8 +189,8 @@
         				<o:PropertySetter PropertyName="f_isdesigners" Default="{m:Exp Str=True}"/>
 						<o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist}"/> 
 						<o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist}"/>
-						
-        			</o:GeneralObject>
+                       <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist}"/>
+                        </o:GeneralObject>
         		</a:Data.Context>
         		<StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
                     
@@ -551,8 +552,61 @@
         		</ListBox.ItemsPanel>
 				    </ListBox>
         				</sdk:TabItem>
-						
-        			</sdk:TabControl>
+                        <sdk:TabItem Header="附件" >
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="X" 
+            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										Click="{m:Exp Str=data.Remove()}"/>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传"   >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="申请登记" NoDependValue="申请登记" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+
+
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                    </sdk:TabControl>
 				
         	</Grid>
         </c:BusyIndicatorEx>

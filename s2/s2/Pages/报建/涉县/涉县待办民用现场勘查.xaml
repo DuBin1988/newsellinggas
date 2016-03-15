@@ -44,7 +44,7 @@
                 IsInit="{m:Exp Str='this.State==$End$ or myxckcBack=>Click!=null'}">
                 <!--<o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist_myxckc}"/>-->
                 <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_myxckc}"/>
-                <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=annexlist_myxckc}"/>
+                <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_myxckc}"/>
 
             </o:GeneralObject>
 
@@ -736,7 +736,7 @@
                                             <sdk:DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate >
                                                     <StackPanel Orientation="Horizontal">
-                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="现场勘查" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
                                                         <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
                                                     </StackPanel>
                                                 </DataTemplate>

@@ -21,34 +21,34 @@
 			<o:ObjectList Name="dwlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='设备单位'"/>
 			<o:ObjectList Name="fmygastype" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" EntityType="t_gasproperties" />
 			<o:ObjectList Name="fmypricetype" Source="{m:Exp Str=CoboxPinpl.SelectedItem.qijiatype}" EntityType="t_qijiatype" />
-			 <o:ObjectList Name="devicelist_fmysfbz" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysfbzInfo.DataContext.State==$End$'}"
+			 <o:ObjectList Name="devicelist_fmypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmypgshInfo.DataContext.State==$End$'}"
             Path="{m:Exp Str='apply.DataContext.id!=null:$from t_device where applyid={apply.DataContext.id}$,null'}" EntityType="t_device" HasEmptyRow="False" >
 				<o:PropertySetter PropertyName="f_usegasnum"  NoDependValue="{m:Exp Str='this.f_usegasnum!\=null :this.f_usegasnum\,1'}"/>
 				<o:PropertySetter PropertyName="f_count"  NoDependValue="{m:Exp Str='this.f_count!\=null :this.f_count\,1'}"/>
 				<o:PropertySetter PropertyName="f_price"  NoDependValue="{m:Exp Str=devicename[data.name\=\=this.f_name].First().code.ToDouble() }"/>
 				<o:PropertySetter PropertyName="f_money"  NoDependValue="{m:Exp Str=(dwlist[data.name\=\=this.f_unit].First().code.ToDouble() * this.f_usegasnum *this.f_count * this.f_price.ToDouble()).MathRound(2)}"/>
 			</o:ObjectList>
-			<o:ObjectList Name="costreductionlist_fmysfbz" EntityType="t_costreduction" HasEmptyRow="True" />
+			<o:ObjectList Name="costreductionlist_fmypgsh" EntityType="t_costreduction" HasEmptyRow="True" />
 			
-			<o:GeneralObject Name="fmysfbzObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
-                    Source="{m:Exp Str='fmysfbzList.SelectedItem !=null :fmysfbzList.SelectedItem,null'}"
+			<o:GeneralObject Name="fmypgshObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
+                    Source="{m:Exp Str='fmypgshList.SelectedItem !=null :fmypgshList.SelectedItem,null'}"
 		            IsInit="{m:Exp Str='this.State==$End$'}">
-                <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmysfbz}"/>
-                <o:PropertySetter PropertyName="f_costreduction" Default="{m:Exp Str=costreductionlist_fmysfbz}"/>
+                <o:PropertySetter PropertyName="f_device" Default="{m:Exp Str=devicelist_fmypgsh}"/>
+                <o:PropertySetter PropertyName="f_costreduction" Default="{m:Exp Str=costreductionlist_fmypgsh}"/>
             </o:GeneralObject>
            <!--非民用收费标准-->
-              <!-- <o:ObjectList Name="costreductionlist_fmysfbz" EntityType="t_costreduction" HasEmptyRow="True" />
+              <!-- <o:ObjectList Name="costreductionlist_fmypgsh" EntityType="t_costreduction" HasEmptyRow="True" />
 			
 			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
-			HQL="{m:Exp Str=$update t_apply set f_state\=\'银行返单\' \,f_substate\=null where id in (\{fmysfbzList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>-->
+			HQL="{m:Exp Str=$update t_apply set f_state\=\'银行返单\' \,f_substate\=null where id in (\{fmypgshList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>-->
         </m:ResourceLoad>
     <Grid >
     	<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="0.3*"/>
     		<ColumnDefinition Width="0.7*"/>
     	</Grid.ColumnDefinitions>
-       <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmysfbzList.ItemsSource.IsBusy}">
-	   <Grid Grid.Column="0" x:Name="fmysfbzInfo">
+       <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmypgshList.ItemsSource.IsBusy}">
+	   <Grid Grid.Column="0" x:Name="fmypgshInfo">
 	   	<Grid.ColumnDefinitions>
 	   		<ColumnDefinition Width="221*"/>
 	   		<ColumnDefinition Width="23*"/>
@@ -57,7 +57,7 @@
 				<RowDefinition Height="90"/>
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
-				<Grid  Grid.ColumnSpan="2"  x:Name="fmysfbzSearch">
+				<Grid  Grid.ColumnSpan="2"  x:Name="fmypgshSearch">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="30"/>
 						<RowDefinition Height="30"/>
@@ -117,16 +117,16 @@
 								Operator=" f_chargeopertdate ^= substring('this',1,10)"/>
 						</a:Data.Prop>
 					</sdk:DatePicker>
-                    <Button Content="查 询" Click="{m:Exp Str=fmysfbzSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="right" Width="60"  />
+                    <Button Content="查 询" Click="{m:Exp Str=fmypgshSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="right" Width="60"  />
 				</toolkit:DockPanel>
 				</Grid>
 				
-                <sdk:DataGrid Name="fmysfbzList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" 
-				SelectedItem="{m:Exp Str='fmysfbzList.SelectedItem'}"
+                <sdk:DataGrid Name="fmypgshList" AutoGenerateColumns="False" AlternatingRowBackground="{x:Null}" Background="{x:Null}" 
+				SelectedItem="{m:Exp Str='fmypgshList.SelectedItem'}"
 				 IsReadOnly="True"  Width="auto" Grid.Row="1" Grid.ColumnSpan="2">
 					<a:Data.Items>
                 		<o:ObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-                      Path="{m:Exp Str=$select distinct apply from  t_apply as apply left join fetch apply.f_applyannex where \{fmysfbzSearch.DataContext.Condition\} and f_usertype\=\'民用\' and f_state\=\'收费\'}"/>
+                      Path="{m:Exp Str=$select distinct apply from  t_apply as apply left join fetch apply.f_applyannex where \{fmypgshSearch.DataContext.Condition\} and f_usertype\=\'民用\' and f_state\=\'收费\'}"/>
 					</a:Data.Items>
                     <sdk:DataGrid.Columns >
 						<sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
@@ -140,10 +140,10 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
               <!-- <StackPanel Orientation="Horizontal" Width="488" Height="25"  Grid.Row="3">
-					<sdk:DataPager Name="fmysfbzPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmysfbzList,Converter={StaticResource DataPagerConverter}}"
+					<sdk:DataPager Name="fmypgshPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmypgshList,Converter={StaticResource DataPagerConverter}}"
 		                    HorizontalAlignment="Left" PageSize="20" Width="488" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="已办数:" Margin="-300,5,260,0" />
-                    <TextBlock Text="{m:Exp Str='fmysfbz.Count'}"  Margin="-250,5,210,0" />
+                    <TextBlock Text="{m:Exp Str='fmypgsh.Count'}"  Margin="-250,5,210,0" />
                 </StackPanel>--> 
 			</Grid>
 			</toolkit:BusyIndicator>
@@ -152,7 +152,7 @@
             	<a:Data.Context>
             		<o:GeneralObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
 						EntityType="t_apply" 
-						Source="{m:Exp Str='fmysfbzList.SelectedItem'}"
+						Source="{m:Exp Str='fmypgshList.SelectedItem'}"
 						IsInit="{m:Exp Str='this.State==$End'}" >
             	    <o:PropertySetter  PropertyName="f_substate" Default="{m:Exp Str='applyslist.SelectedItem != null:$完成$,null'}"></o:PropertySetter>     		
 		           </o:GeneralObject>
@@ -333,7 +333,7 @@
 				        </sdk:TabItem>
 			<sdk:TabItem Header="用户花名单">
 				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-					<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmysfbz[data.f_noanzhuang \=\= null]}">
+					<sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmypgsh[data.f_noanzhuang \=\= null]}">
                                 <sdk:DataGrid.Columns>
                                     <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
                                         <sdk:DataGridTemplateColumn.CellTemplate>
@@ -390,7 +390,7 @@
 			</sdk:TabItem>
 			<sdk:TabItem Header="收费记录">
 				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-					<sdk:DataGrid ItemsSource="{m:Exp Str=costreductionlist_fmysfbz}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
+					<sdk:DataGrid ItemsSource="{m:Exp Str=costreductionlist_fmypgsh}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
                                <sdk:DataGrid.Columns>
                                     <sdk:DataGridTemplateColumn>
                                         <sdk:DataGridTemplateColumn.CellTemplate>
