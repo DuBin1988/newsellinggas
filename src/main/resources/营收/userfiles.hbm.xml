@@ -312,7 +312,11 @@
           <key column="parentid" on-delete="noaction" /> 
           <one-to-many entity-name="t_devices" not-found="exception" /> 
         </set>
-        
+        <!--下面是联系方式 -->
+        <set name="f_telphone" cascade="all-delete-orphan">
+          <key column="parentid" on-delete="noaction" /> 
+          <one-to-many entity-name="t_phone" not-found="exception" /> 
+        </set>
       	<!--下面是档案变更 --> 
 	   	<set name="f_hallchange" cascade="all-delete-orphan">
           <key column="parentid" on-delete="noaction" /> 

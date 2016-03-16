@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--联系方式-->
+    <class   entity-name="t_phone" table="t_phone" >
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+		<!--电话-->
+		<property name="f_phone" type="string"/>
+		<!--备用电话1-->
+		<property name="f_phone1" type="string"/>
+		<!--备用电话2-->
+		<property name="f_phone2" type="string"/>
+		<!--备用电话3-->
+		<property name="f_phone3" type="string"/>
+		<!--备用电话4-->
+		<property name="f_phone4" type="string"/>
+		
+	</class>
+</hibernate-mapping>
