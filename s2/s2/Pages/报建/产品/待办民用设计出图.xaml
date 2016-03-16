@@ -109,8 +109,8 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交开材料" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='mysjctList.SelectedItem!=null and mysjctList.SelectedItem.f_substate!=null'}" Width="100" />
-                    <c:MessageTipObj Name="submittip" Tip="您确认要提交开材料吗？" OK="{m:Exp Str=startprocess.id\=mysjctList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
+                    <Button Content="提交" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='mysjctList.SelectedItem!=null and mysjctList.SelectedItem.f_substate!=null'}" Width="100" />
+                    <c:MessageTipObj Name="submittip" Tip="您确认要提交该项目吗？" OK="{m:Exp Str=startprocess.id\=mysjctList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
 					<sdk:DataPager Name="mysjctPager" Source="{Binding Path=ItemsSource.Count,ElementName=mysjctList,Converter={StaticResource DataPagerConverter}}"
 		                        HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
