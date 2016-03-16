@@ -24,7 +24,7 @@
             <!--流程启动对象-->
             <o:GeneralObject  Name="startprocess" WebClientInfo="{StaticResource server}" 
 		        EntityType="t_test" 
-	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/startprocess/报装流程/\{LoginUser.name\}/\{LoginUser.id\}}"
+	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/startprocess/散户流程/\{LoginUser.name\}/\{LoginUser.id\}}"
                  >
             </o:GeneralObject>
 
@@ -114,7 +114,7 @@
 				         SelectedItem="{m:Exp Str='main.DataContext.IsInit:null,persons.SelectedItem'}" IsReadOnly="True" >
                                         <a:Data.Items>
                                             <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage left join fetch apply.f_applyannex where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_substate \=\'已完成\'}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage left join fetch apply.f_applyannex where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_projecttype\=\'散户\' and f_substate \=\'已完成\'}"
 					         IsOld="{m:Exp Str='DeleteAction=>Completed!=null and BatchSave=>Completed!=null'}">
                                             </o:ObjectList>
                                         </a:Data.Items>
@@ -196,6 +196,7 @@
 		Source="{m:Exp Str='persons.SelectedItem !=null:persons.SelectedItem,null'}"
 		IsInit="{m:Exp Str='BatchSave.State==$End$'}">
                             <o:PropertySetter PropertyName="f_state" Default="报建登记"></o:PropertySetter>
+                            <o:PropertySetter PropertyName="f_projecttype" Default="散户"></o:PropertySetter>
                             <o:PropertySetter PropertyName="f_issurvey" Default="{m:Exp Str=False}"></o:PropertySetter>
                             <o:PropertySetter PropertyName="f_isdesigners" Default="{m:Exp Str=True}"></o:PropertySetter>
                             <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist}"/>
