@@ -130,7 +130,7 @@ public class UserInfoService {
 		// 分公司编号
 		json.put("f_fengongsinum", user.get("f_fengongsinum") + "");
 		// 组织
-		json.put("f_OrgStr", user.get("orgpathstr"));
+		json.put("f_orgstr", user.get("orgpathstr"));
 		// 产生户编号
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate, "from t_singlevalue where name='"
@@ -202,7 +202,7 @@ public class UserInfoService {
 		// 分公司编号
 		json.put("f_fengongsinum", user.get("f_fengongsinum"));
 		// 组织
-		json.put("f_OrgStr", user.get("orgpathstr"));
+		json.put("f_orgstr", user.get("orgpathstr"));
 		// 产生户编号
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate, "from t_singlevalue where name='"
