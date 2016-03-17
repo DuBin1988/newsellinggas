@@ -18,32 +18,76 @@
 
     <Grid x:Name="LayoutRoot" >
         <m:ResourceLoad Margin="0,0,-101,0">
-           <!--用户信息-->
-            <o:ObjectList Name="userlist" 
+
+            <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice"  HasEmptyRow="True" />
+
+
+            <o:PagedObjectList Name="userlist" 
 	   WebClientInfo="{StaticResource dbclient}"
-	      Path="{m:Exp Str=$from t_applycustomer as applycus  where applyid\=\{main.DataContext.id\} and (f_isimport is null or  f_isimport\=0 ) and f_username is not null and f_username !\= \'\' and f_meternumber is not null$}"
+	      Path="{m:Exp Str=$from t_applycustomer as applycus  where applyid\=\{main.DataContext.id\} and (f_isimport is null or  f_isimport\=0 ) and f_username is not null$}"
 		 EntityType="t_applycustomer" 
-   IsOld="{m:Exp Str=(main.DataContext.State\=\=$Free$ or main.DataContext.State\=\=$End$)  }"
+         IsOld="{m:Exp Str=(main.DataContext.State\=\=$Free$ or main.DataContext.State\=\=$End$)}"
+							  PageIndex="0" PageSize="10000"
+							  SumNames="f_isimport"
 		>
                 <o:PropertySetter PropertyName="applyid"  Default="{m:Exp Str=main.DataContext.id}"  Value="{m:Exp Str=main.DataContext.id}" />
-            </o:ObjectList>
+
+            </o:PagedObjectList>
             <!--卡表信息-->
             <o:ObjectList Name="qibiaolist" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from qibiao}" ></o:ObjectList>
 
             <b:HQLAction Name="UpdateAllAction"  WebClientInfo="{StaticResource dbclient}" 
-		HQL="{m:Exp Str=$update t_apply set f_daokustate\=\'完成\' where id \= \{main.DataContext.id\}$\,null}"/>
+		HQL="{m:Exp Str=$update t_apply set f_daokustate\=\'完成\' where id \= \{main.DataContext.id\}$}"/>
 
             <o:ObjectList  Name="dangans"  
 									   WebClientInfo="{StaticResource dbclient}"  TempObj="{m:Res Key=tempobj}" 
 									  SelectObject="{m:Exp Str='userlist[True].ToObjectList()'}" 
-									   TempletObject="{m:Res Key=tobj}"/>
-            <b:BatchExcuteAction Name="AllImportSubmitAction" WebClientInfo="{StaticResource dbclient}">
+									   TempletObject="{m:Res Key=tobj}" />
+            <b:BatchExcuteAction Name="AllImportSubmitAction" Completed="AllImportSubmitAction_Completed" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=userlist}" MethodName="SaveToJson"/>
-                <b:BatchInfo Source="{m:Exp Str=dangans}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=UpdateAllAction}" MethodName="InvokeToJson"/>
+                <!--
+                <b:BatchInfo Source="{m:Exp Str=dangans}" MethodName="SaveToJson"/>-->
             </b:BatchExcuteAction>
             <o:GeneralObject Name="tempobj" EntityType="t_userfiles"></o:GeneralObject>
             <o:GeneralObject Name="tobj" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}">
+
+                <!-- 报建从表id -->
+                <!--<o:PropertySetter PropertyName="cbid" Value="{m:Exp Str=tempobj.id}"/> -->
+                <!-- 客户签名 -->
+                <!--<o:PropertySetter PropertyName="USER_SIGN" Value="{m:Exp Str=tempobj.USER_SIGN}"/>-->
+                <!--客户评价-->
+                <!--<o:PropertySetter PropertyName="f_kehupingjia" Value="{m:Exp Str=tempobj.f_kehupingjia}"/>-->
+                <!-- 照片1 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FIRST" Value="{m:Exp Str=tempobj.PHOTO_FIRST}"/>-->
+                <!-- 照片2 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_SECOND" Value="{m:Exp Str=tempobj.PHOTO_SECOND}"/>-->
+                <!-- 照片3 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_THIRD" Value="{m:Exp Str=tempobj.PHOTO_THIRD}"/>-->
+                <!-- 照片4 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FOUTH" Value="{m:Exp Str=tempobj.PHOTO_FOUTH}"/>-->
+                <!-- 照片5 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FIFTH" Value="{m:Exp Str=tempobj.PHOTO_FIFTH}"/>-->
+                <!--基表读书-->
+                <!--<o:PropertySetter PropertyName="F_METERDUSHU" Value="{m:Exp Str=tempobj.F_METERDUSHU}"/>-->
+                <!--通气情况-->
+                <!--<o:PropertySetter PropertyName="F_TQQK" Value="{m:Exp Str=tempobj.F_TQQK}"/>-->
+                <!--通气状态-->
+                <!--<o:PropertySetter PropertyName="F_TQSTATUS" Value="{m:Exp Str=tempobj.F_TQSTATUS}"/>-->
+                <!-- 安检日期-->
+                <!--<o:PropertySetter PropertyName="f_anjianriqi" Value="{m:Exp Str=tempobj.f_anjianriqi}"/>-->
+                <!-- 到达时间 -->
+                <!--<o:PropertySetter PropertyName="ARRIVAL_TIME" Value="{m:Exp Str=tempobj.ARRIVAL_TIME}"/>-->
+                <!-- 离开时间 -->
+                <!--<o:PropertySetter PropertyName="DEPARTURE_TIME" Value="{m:Exp Str=tempobj.DEPARTURE_TIME}"/>-->
+                <!--验收状态-->
+                <!--<o:PropertySetter PropertyName="F_YSSTATUS" Value="{m:Exp Str=tempobj.F_YSSTATUS}"/>-->
+                <!-- 验收情况-->
+                <!--<o:PropertySetter PropertyName="F_YSQK" Value="{m:Exp Str=tempobj.F_YSQK}"/>-->
+                <!-- 验收人员 -->
+                <!-- <o:PropertySetter PropertyName="F_YSY" Value="{m:Exp Str=tempobj.F_YSY}"/>-->
+                <!-- 通气人员 -->
+                <!--<o:PropertySetter PropertyName="F_TQY" Value="{m:Exp Str=tempobj.F_TQY}"/>-->
 
                 <!--用户姓名-->
                 <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=tempobj.f_username}"/>
@@ -53,7 +97,7 @@
                 <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=tempobj.f_code}"/>
                 <!--地址f_address-->
                 <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=tempobj.f_address}"/>
-                 <!--小区名称f_districtname-->
+                <!--小区名称f_districtname-->
                 <o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=tempobj.f_district}"/>
                 <!--单元f_cusDy-->
                 <o:PropertySetter PropertyName="f_cusDy" Value="{m:Exp Str=tempobj.f_cusDy}"/>
@@ -65,13 +109,12 @@
                 <o:PropertySetter PropertyName="f_apartment" Value="{m:Exp Str=tempobj.f_doorplate}"/>
                 <!--电话f_phone-->
                 <o:PropertySetter PropertyName="f_phone" Value="{m:Exp Str=tempobj.f_phone}"/>
-
                 <!--片区-->
                 <o:PropertySetter PropertyName="f_area" Default="{m:Exp Str=main.DataContext.f_area}" Value="{m:Exp Str=main.DataContext.f_area}"/>
                 <!--用户类型f_usertype * -->
                 <o:PropertySetter PropertyName="f_usertype" Default="民用" Value="民用"/>
                 <!-- 用户状态f_userstate正常 * -->
-                <o:PropertySetter PropertyName="f_userstate" Default="报建建档" Value="报建建档"/>
+                <o:PropertySetter PropertyName="f_userstate" Default="正常" Value="正常"/>
                 <!--营业厅建档状态f_yytjdstate未完成 *-->
                 <o:PropertySetter PropertyName="f_yytjdstate" Default="未完成" Value="未完成"/>
                 <!--当前表累计购气量 f_metergasnums0 *-->
@@ -98,25 +141,57 @@
                 <o:PropertySetter PropertyName="pregasnum" Default="0" Value="0"/>
                 <!--身份类型-->
                 <o:PropertySetter PropertyName="f_credentials" Default="身份证" Value="身份证"/>
-                
                 <!--用户是否刚补卡f_buka否-->
                 <o:PropertySetter PropertyName="f_buka" Default="否" Value="否"/>
+                <!--公司类型-->
+                <o:PropertySetter PropertyName="f_comtype" Default="天然气公司"/>
+                <!--限购-->
+                <o:PropertySetter PropertyName="f_xiangou" Default="0"/>
+                <!--结余-->
+                <o:PropertySetter PropertyName="f_zhye" Default="0"/>
+                <!--账户实际结余-->
+                <o:PropertySetter PropertyName="f_accountzhye" Default="0"/>
+                <!--是否有壁挂锅炉-->
+                <o:PropertySetter PropertyName="f_wallhangboiler" Default="{m:Exp Str=False}"/>
+                <!--是否有灶具-->
+                <o:PropertySetter PropertyName="f_kitchen" Default="{m:Exp Str=False}"/>
+                <!--是否有热水器--> 
+                <o:PropertySetter PropertyName="f_waterheater" Default="{m:Exp Str=False}"/>
+                <!--表底数-->
+                <o:PropertySetter PropertyName="f_gasmeteraccomodations" Default="0"/>
+                <!--额定流量-->
+                <o:PropertySetter PropertyName="f_flownum" Default="0" Value="0"/>
+                <!--脉冲(表系数)-->
+                <o:PropertySetter PropertyName="f_maichong" Default="0" Value="0"/>
+                <!--海力表型编码-->
+                <o:PropertySetter PropertyName="f_watchnum" Default="0" Value="0"/>
 
-                <!--用气性质f_gasproperties
+                <!--用气性质f_gasproperties-->
                 <o:PropertySetter PropertyName="f_gasproperties" Default="{m:Exp Str=main.DataContext.f_gasproperties}" Value="{m:Exp Str=main.DataContext.f_gasproperties}"/>
-                -->
-                <!--气价类型f_gaspricetype
+                <!--气价类型f_gaspricetype -->
                 <o:PropertySetter PropertyName="f_gaspricetype" Default="{m:Exp Str=main.DataContext.f_gaspricetype}" Value="{m:Exp Str=main.DataContext.f_gaspricetype}"/>
-                -->
-                <!--气价f_gasprice
+                <!--气价f_gasprice   -->
                 <o:PropertySetter PropertyName="f_gasprice" Default="{m:Exp Str=main.DataContext.f_gasprice}" Value="{m:Exp Str=main.DataContext.f_gasprice}"/>
-                -->
-
+                <!--阶梯气价类型f_stairtype  <o:PropertySetter PropertyName="f_stairtype" Default="民用阶梯气价" Value="民用阶梯气价"/> -->
+                <o:PropertySetter PropertyName="f_stairtype" Default="{m:Exp Str=main.DataContext.f_stairtype}" Value="{m:Exp Str=main.DataContext.f_stairtype}"/>
+                <!--合同编号f_metertitles   -->
+                <o:PropertySetter PropertyName="f_metertitles" Default="{m:Exp Str=main.DataContext.f_htnum}" Value="{m:Exp Str=main.DataContext.f_htnum}"/>
+                <!--气表品牌f_gaswatchbrand   -->
+                <o:PropertySetter PropertyName="f_gaswatchbrand" Default="{m:Exp Str=main.DataContext.f_gaswatchbrand}" Value="{m:Exp Str=main.DataContext.f_gaswatchbrand}"/>
+                <!--气表型号f_metertype   -->
+                <o:PropertySetter PropertyName="f_metertype" Default="{m:Exp Str=main.DataContext.f_metertype}" Value="{m:Exp Str=main.DataContext.f_metertype}"/>
+                <!--气表类型f_gasmeterstyle   -->
+                <o:PropertySetter PropertyName="f_gasmeterstyle" Default="{m:Exp Str=main.DataContext.f_type}" Value="{m:Exp Str=main.DataContext.f_type}"/>
+                <!--别名f_aliasname   -->
+                <o:PropertySetter PropertyName="f_aliasname" Default="{m:Exp Str=main.DataContext.f_aliasname}" Value="{m:Exp Str=main.DataContext.f_aliasname}"/>
+                <!--气表厂家f_gasmetermanufacturers   -->
+                <o:PropertySetter PropertyName="f_gasmetermanufacturers" Default="{m:Exp Str=main.DataContext.f_changjia}" Value="{m:Exp Str=main.DataContext.f_changjia}"/>
+                <!--对应报建编号-->
                 <o:PropertySetter PropertyName="applyid"  Default="{m:Exp Str=main.DataContext.id}"  Value="{m:Exp Str=main.DataContext.id}" />
             </o:GeneralObject>
 
 
-            <b:PageAction Name="trans" SourceObject="{m:Exp Str=userlist}" Action="{m:Exp Str=AllImportSubmitAction}"/>
+            <!--<b:PageAction Name="trans" SourceObject="{m:Exp Str=userlist}" Action="{m:Exp Str=AllImportSubmitAction}"/>-->
 
 
         </m:ResourceLoad>
@@ -161,10 +236,9 @@
 				         IsReadOnly="True" >
                                         <a:Data.Items>
                                             <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_daokustate is null and (f_tqdjzt is null or f_tqdjzt!\=\'已完成\')}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_sendopertor is not null and f_daokustate is null and (f_tqdjzt is null or f_tqdjzt!\=\'已完成\')}"
 					          IsOld="{m:Exp Str=(main.DataContext.State\=\=$Free$ or main.DataContext.State\=\=$End$) 
-                                                and (AllImportSubmitAction.State\=\=$Free$ or AllImportSubmitAction.State\=\=$End$)
-							 }">
+                                                and (AllImportSubmitAction.State\=\=$Free$ or AllImportSubmitAction.State\=\=$End$)}">
                                             </o:ObjectList>
                                         </a:Data.Items>
                                         <sdk:DataGrid.Columns>
@@ -195,8 +269,8 @@
                         <o:GeneralObject  Name="persongo" WebClientInfo="{StaticResource dbclient}" 
 		EntityType="t_apply" 
 		Source="{m:Exp Str='persons.SelectedItem'}"
-		IsInit="{m:Exp Str='this.State==$End or BatchSave.State==$End$'}">
-                            <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist}"/>      		 
+		IsInit="{m:Exp Str='this.State==$End$'}">
+                            <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist}"/>
                         </o:GeneralObject>
 
                     </a:Data.Context>
@@ -215,14 +289,18 @@
                                         <RowDefinition Height="30"/>
                                         <RowDefinition Height="30"/>
                                         <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="110"/>
-                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="210" />
                                         <ColumnDefinition Width="110"/>
-                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="210"/>
                                         <ColumnDefinition Width="110"/>
-                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="210"/>
                                     </Grid.ColumnDefinitions>
                                     <!---->
             				<TextBlock Margin="0" TextWrapping="Wrap" Text="申请人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"   Height="25"/>
@@ -294,14 +372,14 @@
             				<TextBox Text="{m:Bind Path=f_gastype}" Grid.Column="3" Margin="0" Grid.Row="3"   Height="25" IsReadOnly="True">
             					
             				</TextBox>
-            				<TextBlock TextWrapping="Wrap" Text="气表品牌：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="6"   Height="25"/>
-            				<TextBox Text="{m:Bind Path=f_gaswatchbrand}" IsReadOnly="True" Grid.Column="1" Margin="0"   Height="25" Grid.Row="6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+            				<TextBlock TextWrapping="Wrap" Text="气表品牌：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="8"   Height="25"/>
+            				<TextBox Text="{m:Bind Path=f_gaswatchbrand}" IsReadOnly="True" Grid.Column="1" Margin="0,5,0,0"   Height="25" Grid.Row="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
             					<a:Data.Prop>
             						<o:PropertySetter PropertyName="f_gaswatchbrand" />
             					</a:Data.Prop>
             				</TextBox>
-            				<TextBlock TextWrapping="Wrap" Text="气表型号：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="6"   Height="25" Grid.Column="2"/>
-            				<TextBox Text="{m:Bind Path=f_metertype}" IsReadOnly="True" Grid.Column="3" Margin="0"   Height="25" Grid.Row="6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+            				<TextBlock TextWrapping="Wrap" Text="气表型号：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="8"   Height="25" Grid.Column="2"/>
+            				<TextBox Text="{m:Bind Path=f_metertype}" IsReadOnly="True" Grid.Column="3" Margin="0,5,0,0"   Height="25" Grid.Row="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
             					<a:Data.Prop>
             						<o:PropertySetter PropertyName="f_metertype" />
             					</a:Data.Prop>
@@ -311,6 +389,9 @@
             					<a:Data.Items>
             						<o:ObjectList WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" />
             					</a:Data.Items>	
+                                <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gasproperties"  NotNull="True" />
+                                 </a:Data.Prop>
             				</ComboBox>
             				<TextBlock Grid.Column="2" Margin="0" Grid.Row="5" TextWrapping="Wrap" Text="气价类型：" Height="25" TextAlignment="Right"/>
             				<ComboBox  Name="pricetype" DisplayMemberPath="f_gaspricetype"  SelectedValuePath="f_gaspricetype" ItemsSource="{m:Exp Str=CoboxPinp.SelectedItem.qijiatype}"   SelectedValue="{m:Bind Path=f_gaspricetype}"  Grid.Column="3" Margin="0" Grid.Row="5" Height="25" IsEnabled="true" Grid.ColumnSpan="1"/>
@@ -318,35 +399,35 @@
             				<!--ComboBox Name="xx" DisplayMemberPath="f_gasprice" SelectedValuePath="f_gasprice" ItemsSource="{m:Exp Str=CoboxPinp.SelectedItem.qijiatype}"  SelectedValue="{m:Bind Path=f_gasprice}" Grid.Column="5" Margin="0" Grid.Row="5" Height="25" IsEnabled="true" Grid.ColumnSpan="1"/-->
                                     <TextBox Text="{m:Bind Path=f_gasprice}"   IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_gasprice"  Value="{m:Exp Str=pricetype.SelectedItem.f_gasprice}"/>
+                                            <o:PropertySetter PropertyName="f_gasprice" Default="{m:Exp Str=pricetype.SelectedItem.f_gasprice}"  Value="{m:Exp Str=pricetype.SelectedItem.f_gasprice}"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock Margin="0,6,0,-1" TextWrapping="Wrap" Text="气表厂家：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="6" Grid.Column="4"   Height="25"/>
-                                    <TextBox Text="{m:Bind Path=f_changjia}" IsReadOnly="True" Grid.Column="5" Margin="0"   Height="25" Grid.Row="6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                    <TextBlock Margin="0,9,0,26" TextWrapping="Wrap" Text="气表厂家：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="8" Grid.Column="4"   Height="25" Grid.RowSpan="2"/>
+                                    <TextBox Text="{m:Bind Path=f_changjia}" IsReadOnly="True" Grid.Column="5" Margin="0,5,0,0"   Height="25" Grid.Row="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_changjia" />
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="气表类型：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="7"   Height="25"/>
-                                    <TextBox Text="{m:Bind Path=f_type}" IsReadOnly="True" Grid.Column="1" Margin="0"   Height="25" Grid.Row="7" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                    <TextBlock TextWrapping="Wrap" Text="气表类型：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="9"   Height="25"/>
+                                    <TextBox Text="{m:Bind Path=f_type}" IsReadOnly="True" Grid.Column="1" Margin="0,5,0,0"   Height="25" Grid.Row="9" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_type" />
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="别名：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="7"   Height="25" Grid.Column="2"/>
-                                    <TextBox Text="{m:Bind Path=f_aliasname}" IsReadOnly="True" Grid.Column="3" Margin="0"   Height="25" Grid.Row="7" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                    <TextBlock TextWrapping="Wrap" Text="别名：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="9"   Height="25" Grid.Column="2"/>
+                                    <TextBox Text="{m:Bind Path=f_aliasname}" IsReadOnly="True" Grid.Column="3" Margin="0,5,0,0"   Height="25" Grid.Row="9" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_aliasname" />
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="工程部名称：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="8"   Height="25"/>
-                                    <TextBlock TextWrapping="Wrap" Text="工程部操作人：" TextAlignment="Right" Margin="0" RenderTransformOrigin="0.827,0.333" Grid.Row="8"   Height="25" Grid.Column="2"/>
-                                    <TextBox Text="{m:Bind Path=f_finishdepartment}" IsReadOnly="True" Grid.Column="1" Margin="0"   Height="25" Grid.Row="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                    <TextBlock TextWrapping="Wrap" Text="工程部名称：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="11"   Height="25"/>
+                                    <TextBlock TextWrapping="Wrap" Text="工程部操作人：" TextAlignment="Right" Margin="0,5,0,0" RenderTransformOrigin="0.827,0.333" Grid.Row="11"   Height="25" Grid.Column="2"/>
+                                    <TextBox Text="{m:Bind Path=f_finishdepartment}" IsReadOnly="True" Grid.Column="1" Margin="0,5,0,0"   Height="25" Grid.Row="11" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_finishdepartment" />
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBox Text="{m:Bind Path=f_finishopertor}" IsReadOnly="True" Grid.Column="3" Margin="0"   Height="25" Grid.Row="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                    <TextBox Text="{m:Bind Path=f_finishopertor}" IsReadOnly="True" Grid.Column="3" Margin="0,5,0,0"   Height="25" Grid.Row="11" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_finishopertor" />
                                         </a:Data.Prop>
@@ -357,6 +438,64 @@
                                             <o:PropertySetter PropertyName="f_installnum"  />
                                         </a:Data.Prop>
                                     </TextBox>
+                                    <TextBlock Grid.Row="6" TextWrapping="Wrap" Text="阶梯气价类型：" TextAlignment="Right" Height="25" Margin="0,2,0,3"/>
+                                    <ComboBox x:Name="CoboxStair" SelectedValuePath="f_stairtype"  ItemsSource="{m:Exp Str=stairlist}" SelectedValue="{m:Bind Path=f_stairtype}" Grid.Column="1" Margin="0,0,0,5" Grid.Row="6" Height="25" VerticalAlignment="Stretch"   >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Height="20" Text="{Binding f_stairtype}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stairtype" NotNull="True" Default="{m:Exp Str=stairlist.SelectedItem.f_stairtype}" NoDependValue="{m:Exp Str=stairlist.SelectedItem.f_stairtype}" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <!--阶梯气价隐藏域-->
+                                    <TextBox Text="{m:Bind Path=f_stair1amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1amount}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair1price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1price}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair2amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2amount}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair2price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair2price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2price}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair3amount}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair3amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair3amount}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair3price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair3price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair3price}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stair4price}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stair4price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair4price}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_stairmonths}"  Visibility="Collapsed" Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stairmonths" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stairmonths}"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="合同编号：" TextAlignment="Right" Margin="0,3,0,2" RenderTransformOrigin="0.827,0.333" Grid.Row="2"   Height="25" Grid.Column="4"/>
+                                    <TextBox Text="{m:Bind Path=f_htnum}" Grid.Column="5" Margin="0,3,0,2"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="2" IsReadOnly="True" Grid.ColumnSpan="1">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_htnum"  />
+                                        </a:Data.Prop>
+                                    </TextBox>
                                 </Grid>
                             </ScrollViewer>
                         </sdk:TabItem>
@@ -365,7 +504,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.ColumnSpan="1" Margin="0,0,20,0">
+                                <StackPanel Grid.ColumnSpan="1" Margin="0,0,0,0">
                                     <sdk:DataGrid AutoGenerateColumns="False" x:Name="applyuser" ItemsSource="{m:Exp Str=userlist}" IsReadOnly="True" Margin="0" Height="560">
                                         <sdk:DataGrid.Columns>
                                             <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}"/>
@@ -538,14 +677,16 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
 
-                        <Button Content="全部导入档案保存" Click="{m:Exp Str=trans.Invoke()}" HorizontalAlignment="Right" Height="26" Margin="0" VerticalAlignment="Bottom" Width="160"/>
+                        <Button Content="全部导入档案保存" IsEnabled="{m:Exp Str=!userlist.HasErrors}" Click="{m:Exp Str=AllImportSubmitAction.Invoke()}" HorizontalAlignment="Right" Height="26" Margin="0" VerticalAlignment="Bottom" Width="160"/>
                         <Button Content="  导入Excel数据  "  Click="{m:Exp Str=userlist.ExcelString\=Clipboard.Text}" HorizontalAlignment="Left"   Height="25"/>
+                        <!--<Button Content="保存" Click="{m:Exp Str=submittip2.Show()}" HorizontalAlignment="Right" Height="26" Margin="0" VerticalAlignment="Bottom" Width="160"/>-->
 
                     </StackPanel>
                 </Grid>
             </c:BusyIndicatorEx>
 
         </Grid>
-        <c:MessageTipObj  Name="daokusucc" Tip="操作完成！" IsShow="{m:Exp Str=AllImportSubmitAction.State\=\=$End$}"/>
+        <!--<c:MessageTipObj  Name="daokusucc" Tip="操作完成！" IsShow="{m:Exp Str=AllImportSubmitAction.State\=\=$End$}"/>-->
+        <!--<c:MessageTipObj  Name="submittip2" Tip="您确认要提交选择的项吗？" OK="saveinfo" />-->
     </Grid>
 </UserControl>

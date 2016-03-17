@@ -1,4 +1,5 @@
 ﻿using Com.Aote.ObjectTools;
+using Com.Aote.Utils;
 using System;
 using System.Net;
 using System.Windows;
@@ -21,13 +22,14 @@ namespace Com.Aote.Pages
         //提及时的处理过程
         private void submittip2_OK(object sender, EventArgs e)
         {
-            WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            GeneralObject go = persons.SelectedItem as GeneralObject;
+            ObjectList ObjectList = FrameworkElementExtension.FindResource(this.searchbutton, "dangans") as ObjectList;
+            WebClientInfo server = FrameworkElementExtension.FindResource(this.searchbutton, "server") as WebClientInfo;
+            GeneralObject user = FrameworkElementExtension.FindResource(this.searchbutton, "LoginUser") as GeneralObject;
             string uuid = System.Guid.NewGuid().ToString();
-            string url = wci.BaseAddress + "/id/" + go.GetPropertyValue("id") + "?uuid=" + uuid;
+            Uri uri = new Uri(server.BaseAddress + "/files/touinfo/用户编号/表编号/" + user.GetPropertyValue("id") + "?uuid=" + uuid);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += client_DownloadStringCompleted;
-            client.DownloadStringAsync(new Uri(url));
+            client.UploadStringAsync(uri, ObjectList.ToJson().ToString());
         }
 
         void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)

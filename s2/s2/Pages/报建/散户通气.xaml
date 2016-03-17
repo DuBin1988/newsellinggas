@@ -26,14 +26,169 @@
                  >
             </o:GeneralObject>
 
-
-            <!--用户信息,以门牌号为主键ExcelKey="f_doorplate"-->
-            <o:ObjectList Name="userlist" WebClientInfo="{StaticResource dbclient}"    EntityType="t_applycustomer" HasEmptyRow="True" ExcelKey="f_doorplate"></o:ObjectList>
             <o:ObjectList Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
             <o:ObjectList Name="fwlxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='房屋类型'"/>
-         
-            
-          
+
+            <o:PagedObjectList Name="userlist" 
+	   WebClientInfo="{StaticResource dbclient}"
+	      Path="{m:Exp Str=$from t_apply as applycus  where id\=\{main.DataContext.id\} and f_username is not null$}"
+		 EntityType="t_apply" 
+         IsOld="{m:Exp Str=(main.DataContext.State\=\=$Free$ or main.DataContext.State\=\=$End$)}"
+							  PageIndex="0" PageSize="10000"
+							  SumNames="id"
+		/>
+
+            <o:ObjectList  Name="dangans"  
+									   WebClientInfo="{StaticResource dbclient}"  TempObj="{m:Res Key=tempobj}" 
+									  SelectObject="{m:Exp Str='userlist[True].ToObjectList()'}" 
+									   TempletObject="{m:Res Key=tobj}" />
+
+            <o:GeneralObject Name="tempobj" EntityType="t_userfiles"></o:GeneralObject>
+            <o:GeneralObject Name="tobj" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}">
+
+                <!-- 报建从表id -->
+                <!--<o:PropertySetter PropertyName="cbid" Value="{m:Exp Str=tempobj.id}"/> -->
+                <!-- 客户签名 -->
+                <!--<o:PropertySetter PropertyName="USER_SIGN" Value="{m:Exp Str=tempobj.USER_SIGN}"/>-->
+                <!--客户评价-->
+                <!--<o:PropertySetter PropertyName="f_kehupingjia" Value="{m:Exp Str=tempobj.f_kehupingjia}"/>-->
+                <!-- 照片1 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FIRST" Value="{m:Exp Str=tempobj.PHOTO_FIRST}"/>-->
+                <!-- 照片2 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_SECOND" Value="{m:Exp Str=tempobj.PHOTO_SECOND}"/>-->
+                <!-- 照片3 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_THIRD" Value="{m:Exp Str=tempobj.PHOTO_THIRD}"/>-->
+                <!-- 照片4 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FOUTH" Value="{m:Exp Str=tempobj.PHOTO_FOUTH}"/>-->
+                <!-- 照片5 -->
+                <!--<o:PropertySetter PropertyName="PHOTO_FIFTH" Value="{m:Exp Str=tempobj.PHOTO_FIFTH}"/>-->
+                <!--基表读书-->
+                <!--<o:PropertySetter PropertyName="F_METERDUSHU" Value="{m:Exp Str=tempobj.F_METERDUSHU}"/>-->
+                <!--通气情况-->
+                <!--<o:PropertySetter PropertyName="F_TQQK" Value="{m:Exp Str=tempobj.F_TQQK}"/>-->
+                <!--通气状态-->
+                <!--<o:PropertySetter PropertyName="F_TQSTATUS" Value="{m:Exp Str=tempobj.F_TQSTATUS}"/>-->
+                <!-- 安检日期-->
+                <!--<o:PropertySetter PropertyName="f_anjianriqi" Value="{m:Exp Str=tempobj.f_anjianriqi}"/>-->
+                <!-- 到达时间 -->
+                <!--<o:PropertySetter PropertyName="ARRIVAL_TIME" Value="{m:Exp Str=tempobj.ARRIVAL_TIME}"/>-->
+                <!-- 离开时间 -->
+                <!--<o:PropertySetter PropertyName="DEPARTURE_TIME" Value="{m:Exp Str=tempobj.DEPARTURE_TIME}"/>-->
+                <!--验收状态-->
+                <!--<o:PropertySetter PropertyName="F_YSSTATUS" Value="{m:Exp Str=tempobj.F_YSSTATUS}"/>-->
+                <!-- 验收情况-->
+                <!--<o:PropertySetter PropertyName="F_YSQK" Value="{m:Exp Str=tempobj.F_YSQK}"/>-->
+                <!-- 验收人员 -->
+                <!-- <o:PropertySetter PropertyName="F_YSY" Value="{m:Exp Str=tempobj.F_YSY}"/>-->
+                <!-- 通气人员 -->
+                <!--<o:PropertySetter PropertyName="F_TQY" Value="{m:Exp Str=tempobj.F_TQY}"/>-->
+
+                <!--用户姓名-->
+                <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=tempobj.f_username}"/>
+                <!--联系人或用户自己本人f_linkname-->
+                <o:PropertySetter PropertyName="f_linkname" Default="{m:Exp Str=tempobj.f_username}" Value="{m:Exp Str=tempobj.f_username}"/>
+                <!--身份证f_idnumber-->
+                <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=tempobj.f_code}"/>
+                <!--地址f_address-->
+                <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=tempobj.f_address}"/>
+                <!--小区名称f_districtname-->
+                <o:PropertySetter PropertyName="f_districtname" Value="{m:Exp Str=tempobj.f_district}"/>
+                <!--单元f_cusDy-->
+                <o:PropertySetter PropertyName="f_cusDy" Value="{m:Exp Str=tempobj.f_cusDy}"/>
+                <!--楼号f_cusDom-->
+                <o:PropertySetter PropertyName="f_cusDom" Value="{m:Exp Str=tempobj.f_cusDom}"/>
+                <!--楼层f_cusFloor-->
+                <o:PropertySetter PropertyName="f_cusFloor" Value="{m:Exp Str=tempobj.f_cusFloor}"/>
+                <!--门牌号f_apartment-->
+                <o:PropertySetter PropertyName="f_apartment" Value="{m:Exp Str=tempobj.f_doorplate}"/>
+                <!--电话f_phone-->
+                <o:PropertySetter PropertyName="f_phone" Value="{m:Exp Str=tempobj.f_phone}"/>
+                <!--片区-->
+                <o:PropertySetter PropertyName="f_area" Default="{m:Exp Str=main.DataContext.f_area}" Value="{m:Exp Str=main.DataContext.f_area}"/>
+                <!--用户类型f_usertype * -->
+                <o:PropertySetter PropertyName="f_usertype" Default="民用" Value="民用"/>
+                <!-- 用户状态f_userstate正常 * -->
+                <o:PropertySetter PropertyName="f_userstate" Default="正常" Value="正常"/>
+                <!--营业厅建档状态f_yytjdstate未完成 *-->
+                <o:PropertySetter PropertyName="f_yytjdstate" Default="未完成" Value="未完成"/>
+                <!--当前表累计购气量 f_metergasnums0 *-->
+                <o:PropertySetter PropertyName="f_metergasnums" Default="0" Value="0"/>
+                <!--用户总累计购气量f_cumulativepurchase0 * -->
+                <o:PropertySetter PropertyName="f_cumulativepurchase" Default="0" Value="0"/>
+                <!--是否发卡f_whethergivecard未发* -->
+                <o:PropertySetter PropertyName="f_whethergivecard" Default="未发" Value="未发"/>
+                <!--是否发折f_whethergivepassbook未发  *-->
+                <o:PropertySetter PropertyName="f_whethergivepassbook" Default="未发" Value="未发"/>
+                <!--最后购气量finallybought0 *-->
+                <o:PropertySetter PropertyName="finallybought" Default="0" Value="0"/>
+                <!--购气次数f_times1 * -->
+                <o:PropertySetter PropertyName="f_times" Default="0" Value="0"/>
+                <!--应交气量oughtamount0 *-->
+                <o:PropertySetter PropertyName="oughtamount" Default="0" Value="0"/>
+                <!--应交金额oughtfee0 *-->
+                <o:PropertySetter PropertyName="oughtfee" Default="0" Value="0"/>
+                <!--最后抄表气量lastinputgasnum0 *-->
+                <o:PropertySetter PropertyName="lastinputgasnum" Default="0" Value="0"/>
+                <!--最后一次抄表底数lastrecord0 * -->
+                <o:PropertySetter PropertyName="lastrecord" Default="0" Value="0"/>
+                <!--机表预购气量pregasnum0-->
+                <o:PropertySetter PropertyName="pregasnum" Default="0" Value="0"/>
+                <!--身份类型-->
+                <o:PropertySetter PropertyName="f_credentials" Default="身份证" Value="身份证"/>
+                <!--用户是否刚补卡f_buka否-->
+                <o:PropertySetter PropertyName="f_buka" Default="否" Value="否"/>
+                <!--公司类型-->
+                <o:PropertySetter PropertyName="f_comtype" Default="天然气公司"/>
+                <!--限购-->
+                <o:PropertySetter PropertyName="f_xiangou" Default="0"/>
+                <!--结余-->
+                <o:PropertySetter PropertyName="f_zhye" Default="0"/>
+                <!--账户实际结余-->
+                <o:PropertySetter PropertyName="f_accountzhye" Default="0"/>
+                <!--是否有壁挂锅炉-->
+                <o:PropertySetter PropertyName="f_wallhangboiler" Default="{m:Exp Str=False}"/>
+                <!--是否有灶具-->
+                <o:PropertySetter PropertyName="f_kitchen" Default="{m:Exp Str=False}"/>
+                <!--是否有热水器-->
+                <o:PropertySetter PropertyName="f_waterheater" Default="{m:Exp Str=False}"/>
+                <!--表底数-->
+                <o:PropertySetter PropertyName="f_gasmeteraccomodations" Default="0"/>
+                <!--额定流量-->
+                <o:PropertySetter PropertyName="f_flownum" Default="0" Value="0"/>
+                <!--脉冲(表系数)-->
+                <o:PropertySetter PropertyName="f_maichong" Default="0" Value="0"/>
+                <!--海力表型编码-->
+                <o:PropertySetter PropertyName="f_watchnum" Default="0" Value="0"/>
+
+                <!--用气性质f_gasproperties-->
+                <o:PropertySetter PropertyName="f_gasproperties" Default="{m:Exp Str=main.DataContext.f_gasproperties}" Value="{m:Exp Str=main.DataContext.f_gasproperties}"/>
+                <!--气价类型f_gaspricetype -->
+                <o:PropertySetter PropertyName="f_gaspricetype" Default="{m:Exp Str=main.DataContext.f_gaspricetype}" Value="{m:Exp Str=main.DataContext.f_gaspricetype}"/>
+                <!--气价f_gasprice   -->
+                <o:PropertySetter PropertyName="f_gasprice" Default="{m:Exp Str=main.DataContext.f_gasprice}" Value="{m:Exp Str=main.DataContext.f_gasprice}"/>
+                <!--阶梯气价类型f_stairtype  <o:PropertySetter PropertyName="f_stairtype" Default="民用阶梯气价" Value="民用阶梯气价"/> -->
+                <o:PropertySetter PropertyName="f_stairtype" Default="{m:Exp Str=main.DataContext.f_stairtype}" Value="{m:Exp Str=main.DataContext.f_stairtype}"/>
+                <!--合同编号f_metertitles   -->
+                <o:PropertySetter PropertyName="f_metertitles" Default="{m:Exp Str=main.DataContext.f_htnum}" Value="{m:Exp Str=main.DataContext.f_htnum}"/>
+                <!--气表品牌f_gaswatchbrand   -->
+                <o:PropertySetter PropertyName="f_gaswatchbrand" Default="{m:Exp Str=main.DataContext.f_gaswatchbrand}" Value="{m:Exp Str=main.DataContext.f_gaswatchbrand}"/>
+                <!--气表型号f_metertype   -->
+                <o:PropertySetter PropertyName="f_metertype" Default="{m:Exp Str=main.DataContext.f_metertype}" Value="{m:Exp Str=main.DataContext.f_metertype}"/>
+                <!--气表类型f_gasmeterstyle   -->
+                <o:PropertySetter PropertyName="f_gasmeterstyle" Default="{m:Exp Str=main.DataContext.f_type}" Value="{m:Exp Str=main.DataContext.f_type}"/>
+                <!--别名f_aliasname   -->
+                <o:PropertySetter PropertyName="f_aliasname" Default="{m:Exp Str=main.DataContext.f_aliasname}" Value="{m:Exp Str=main.DataContext.f_aliasname}"/>
+                <!--气表厂家f_gasmetermanufacturers   -->
+                <o:PropertySetter PropertyName="f_gasmetermanufacturers" Default="{m:Exp Str=main.DataContext.f_changjia}" Value="{m:Exp Str=main.DataContext.f_changjia}"/>
+                <!--对应报建编号-->
+                <o:PropertySetter PropertyName="applyid"  Default="{m:Exp Str=main.DataContext.id}"  Value="{m:Exp Str=main.DataContext.id}" />
+            </o:GeneralObject>
+
+
+
+
+
+
             <!--保存，保存时要删除列表里的垃圾数据-->
             <b:BatchExcuteAction Name="BatchSave"  WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=main.DataContext}" MethodName="SaveToJson"></b:BatchInfo>
@@ -122,7 +277,7 @@
 		EntityType="t_apply" 
 		  Path="{m:Exp Str=persons.SelectedItem \!\=null:$one/from t_apply where id\=\{persons.SelectedItem.id\}$\,$null$}"  
         IsInit="{m:Exp Str='BatchSave.State==$End$'}">
-                            
+
                         </o:GeneralObject>
                     </a:Data.Context>
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
@@ -309,7 +464,8 @@ Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
                                         </a:Data.Prop>
                                     </TextBox>
                                     <!--<TextBlock Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="派工类型：" TextAlignment="Right"/>
-                                    --><!--<CheckBox IsChecked="{m:Bind Path=f_indoortype}" IsEnabled="False" Content="民用户内" Grid.Column="1" Margin="0,5,0,3" Grid.Row="9" Height="22" RenderTransformOrigin="0.51,-0.909"/>
+                                    -->
+                                    <!--<CheckBox IsChecked="{m:Bind Path=f_indoortype}" IsEnabled="False" Content="民用户内" Grid.Column="1" Margin="0,5,0,3" Grid.Row="9" Height="22" RenderTransformOrigin="0.51,-0.909"/>
                                     <CheckBox IsChecked="{m:Bind Path=f_outdoortype}" IsEnabled="False" Content="民用庭院" Grid.Column="2" Margin="0,5,0,3" Grid.Row="9" Height="22"/>-->
                                     <TextBlock Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" Text="已通气户数：" TextAlignment="Right" Grid.Column="2"/>
                                     <TextBox Text="{m:Bind Path=f_ventilausernum}" Grid.Column="3" Margin="0,2" Grid.Row="7" IsReadOnly="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
@@ -332,94 +488,94 @@ Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
                                 </Grid>
                             </ScrollViewer>
                         </sdk:TabItem>
-                        
+
                     </sdk:TabControl>
 
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" >
                         <!--and data.f_state\=\=$报建登记$-->
-                                    <Button x:Name="save" Content="  提交  " Margin="5" 
+                        <Button x:Name="save" Content="  提交  " Margin="5" 
             			IsEnabled="{m:Exp Str=main.DataContext.f_substate\=\=$已完成$ and !data.HasErrors}"
-            			Click="{m:Exp Str=startprocess.id\=persons.SelectedItem.f_processid;main.DataContext.f_tqdjzt\=$已完成$;submittip2.Show();startprocess.Save()}" />
-                                    <Button x:Name="save1" Content="  保  存  " Margin="5" 
+            			Click="{m:Exp Str=startprocess.id\=persons.SelectedItem.f_processid;main.DataContext.f_tqdjzt\=$已完成$;submittip2.Show();BatchSave.Invoke()startprocess.Save()}" />
+                        <Button x:Name="save1" Content="  保  存  " Margin="5" 
             			IsEnabled="{m:Exp Str=!data.HasErrors}"
             			Click="{m:Exp Str=main.DataContext.f_tqdjzt\=$未完成$;main.DataContext.f_substate\=$已完成$;BatchSave.Invoke()}" />
 
                     </StackPanel>
-                                    <c:PrintPageObj x:Name="hmcprint" Area="{m:Res Key=hmcuserlist_Copy}"  List="{m:Exp Str=userlist}"  PageRow="26"  />
-                                    <sdk:DataGrid x:Name="hmcuserlist_Copy" AutoGenerateColumns="False"   Grid.Column="1" Margin="16,0,6,-2525" d:LayoutOverrides="Width" Height="Auto" VerticalAlignment="Bottom">
-                                        <sdk:DataGrid.Columns>
-                                            <!--<sdk:DataGridTextColumn Header="名称" Binding="{Binding f_username}"/>
+                    <!--<c:PrintPageObj x:Name="hmcprint" Area="{m:Res Key=hmcuserlist_Copy}"  List="{m:Exp Str=userlist}"  PageRow="26"  />-->
+                    <sdk:DataGrid x:Name="hmcuserlist_Copy" AutoGenerateColumns="False"   Grid.Column="1" Margin="16,0,6,-2525" d:LayoutOverrides="Width" Height="Auto" VerticalAlignment="Bottom">
+                        <sdk:DataGrid.Columns>
+                            <!--<sdk:DataGridTextColumn Header="名称" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="小区" Binding="{Binding f_district}"/>
                         <sdk:DataGridTextColumn Header="证件号码" Binding="{Binding f_code}"/>
 						<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_doorplate}"/>
 						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
 						<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
 						<sdk:DataGridTextColumn Header="备注" Binding="{Binding f_descript}"/>-->
-                                            <sdk:DataGridTemplateColumn>
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Button Content="X" 
+                            <sdk:DataGridTemplateColumn>
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="X" 
         						Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
         						Click="{m:Exp Str=data.Remove()}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox   Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="姓名">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="小区">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox   Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="姓名">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="小区">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
 
-                                            <sdk:DataGridTemplateColumn Header="证件号码">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="证件号码">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
 
-                                            <sdk:DataGridTemplateColumn Header="门牌号">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="地址">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="电话">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="门牌号">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="地址">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
+                            <sdk:DataGridTemplateColumn Header="电话">
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
 
-                                        </sdk:DataGrid.Columns>
-                                    </sdk:DataGrid>
-                                </Grid>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </Grid>
             </c:BusyIndicatorEx>
 
         </Grid>
