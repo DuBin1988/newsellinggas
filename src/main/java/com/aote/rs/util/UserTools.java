@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.SessionFactory;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import com.aote.rs.exception.ResultException;
 
@@ -26,17 +27,17 @@ public class UserTools {
 	 * @throws ResultException
 	 */
 	public static Map<String, Object> getUser(String loginuserid,
-			SessionFactory sessionFactory) throws ResultException {
+			HibernateTemplate hibernateTemplate) throws ResultException {
 		Map<String, Object> user = new HashMap<String, Object>();
 		String hql = "from t_user where id=" + loginuserid;
-		List list = sessionFactory.getCurrentSession().find(hql);
+		List list = hibernateTemplate.find(hql);
 		if (list.size() == 0) {
 			throw new ResultException("没有找到id为" + loginuserid + "的操作员信息");
 		}
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
 		user.putAll(map);
 		// 获得组织信息
-		String orgstr = getOrgStr(loginuserid, sessionFactory);
+		String orgstr = getOrgStr(loginuserid, hibernateTemplate);
 		user.put("orgpathstr", orgstr);
 		return user;
 	}
@@ -50,10 +51,10 @@ public class UserTools {
 	 * @throws ResultException
 	 */
 	private static String getOrgStr(String loginuserid,
-			SessionFactory sessionFactory) throws ResultException {
+			HibernateTemplate hibernateTemplate) throws ResultException {
 		String result = "";
 		String hql = "from t_user where id=" + loginuserid;
-		List list = sessionFactory.getCurrentSession().find(hql);
+		List list = hibernateTemplate.find(hql);
 		if (list.size() == 0) {
 			throw new ResultException("没有找到id为" + loginuserid + "的操作员信息");
 		}
@@ -61,7 +62,7 @@ public class UserTools {
 		String PARENTID = (String) map.get("parentid");
 		for (;;) {
 			hql = "from t_organization where id=" + PARENTID;
-			list = sessionFactory.getCurrentSession().find(hql);
+			list = hibernateTemplate.find(hql);
 			if (list.size() == 0)
 				break;
 			map = (Map<String, Object>) list.get(0);
@@ -70,7 +71,7 @@ public class UserTools {
 			result = name + ".";
 		}
 		if (result != "") {
-			result = result.substring(0,result.length() - 1);
+			result = result.substring(0, result.length() - 1);
 		}
 		return result;
 	}
