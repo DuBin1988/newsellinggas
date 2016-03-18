@@ -445,7 +445,7 @@ public class HandCharge {
 							reading, lastinputDate,
 							f_metergasnums.add(gas).doubleValue(),
 							f_cumulativepurchase.add(gas).doubleValue(),
-							gas.doubleValue(), inputdate, inputdate, userid });
+							gas.doubleValue(), inputdate, inputdate, user.get("f_userid") });
 			String sellId = sellid + "";
 			// 更新抄表记录
 			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate=?,f_stairtype='"
@@ -511,8 +511,8 @@ public class HandCharge {
 					+ lrg
 					+ " , f_inputdate=?,f_meterstate=?,f_network='"
 					+ sgnetwork
-					+",f_filiale='"+map.get("f_filiale")+"'"
-					+ "',f_operator='"
+					+"',f_filiale='"+map.get("f_filiale")+"'"
+					+ ",f_operator='"
 					+ sgoperator
 					+ "'  "
 					+ "where f_userid='"
@@ -1017,6 +1017,8 @@ public class HandCharge {
 					error += e.getMessage();
 				}
 			}
+			
+			
 			// 如果有错误信息则抛出异常，返回到前台提示
 			if (!error.equals("")) {
 				throw new RSException(error);
