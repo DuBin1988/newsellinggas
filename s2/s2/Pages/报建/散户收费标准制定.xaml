@@ -33,6 +33,10 @@
             <o:ObjectList Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
             <o:ObjectList Name="fwlxlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='房屋类型'"/>
 
+            <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="from t_stairprice"  HasEmptyRow="True" />
+
+            <o:ObjectList Name="mygastype" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" EntityType="t_gasproperties" />
+            <o:ObjectList Name="mypricetype" Source="{m:Exp Str=CoboxPinps.SelectedItem.qijiatype}" EntityType="t_qijiatype" />
 
             <!--图片信息-->
             <o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True"></o:ObjectList>
@@ -174,8 +178,8 @@
             							Default="{m:Exp Str=SysTime.Today}"/>
             					</a:Data.Prop>		 
             				</sdk:DatePicker>
-            				<TextBlock Margin="0,3,0,2" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"   Height="25" Grid.Row="9"/>
-            				<TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="1" Margin="0,3,0,2"   Height="25" Grid.Row="9" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+            				<TextBlock Margin="0,5,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"   Height="25" Grid.Row="9" Grid.Column="4"/>
+            				<TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="5" Margin="0,5,0,0"   Height="25" Grid.Row="9" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
             					<a:Data.Prop>
             						<o:PropertySetter PropertyName="f_code" 
             							Default="{m:Exp Str=$\{SysTime.Now.ToString($yyyy$)\}SH\{Seriabj.Value\}}"/>
@@ -273,8 +277,8 @@
 								</a:Data.Prop>
 							</TextBox>
                                     <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="6" TextWrapping="Wrap" Text="报警器费：" TextAlignment="Right"/>
-                                        <TextBlock  Margin="0,6,0,0" Grid.Row="8" Grid.Column="0"  TextWrapping="Wrap" Text="费用合计：" TextAlignment="Right"/>
-                                        <TextBox Text="{m:Bind Path=f_totalfee}" Grid.Column="1" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <TextBlock  Margin="0,8,0,28" Grid.Row="8" Grid.Column="4"  TextWrapping="Wrap" Text="费用合计：" TextAlignment="Right" Grid.RowSpan="2"/>
+                                        <TextBox Text="{m:Bind Path=f_totalfee}" Grid.Column="5" Margin="0,4,0,0" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="true" Width="Auto" HorizontalAlignment="Stretch">
                                          <a:Data.Prop>
                                              <!--(this.f_materialfee+this.f_cailiaofei+this.f_rengongfei+this.f_jiebofei+this.f_bgglf+this.f_rsqf+this.f_selfclosfee+this.f_alarmfee+this.f_emptyingfee)-costreductionlist_mysfbz[True].Sum(f_fee)-->
                                     <o:PropertySetter PropertyName="f_totalfee" 
@@ -343,6 +347,41 @@
                                             <o:PropertySetter PropertyName="f_jiebofei"/>
                                         </a:Data.Prop>
                                     </TextBox>
+
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="用气性质：" TextAlignment="Right"/>
+                                    <ComboBox x:Name="CoboxPinps" ItemsSource="{m:Exp Str=mygastype}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}" 
+								Grid.Column="1" Margin="0,3" Grid.Row="8" Height="Auto" IsEnabled="true" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gasproperties" 
+									Default="{m:Exp Str='mygastype[data.f_gasproperties==$民用$].ToObjectList().Count > 0 :$民用$,null'}" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right"/>
+                                    <ComboBox  x:Name="pricetype1" ItemsSource="{m:Exp Str=mypricetype}" DisplayMemberPath="f_gaspricetype"  SelectedValuePath="f_gaspricetype" SelectedValue="{m:Bind Path=f_gaspricetype}"  
+								Grid.Column="3" Margin="0,3" Grid.Row="8" Height="Auto" IsEnabled="true" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gaspricetype" NotNull="True"
+									Default="{m:Exp Str='mypricetype[data.f_gaspricetype==$民用气价$].ToObjectList().Count > 0 :$民用气价$,null'}" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="气价：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_gasprice}"   IsReadOnly="True" Grid.Column="3" Margin="0,2"   Height="Auto" Grid.Row="9" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gasprice" NotNull="True" Value="{m:Exp Str=pricetype1.SelectedItem.f_gasprice}" Default="2.19" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock Grid.Row="9" TextWrapping="Wrap" Text="阶梯气价类型：" TextAlignment="Right" Height="25" Margin="0,1,0,4"/>
+                                    <ComboBox x:Name="CoboxStair" SelectedValuePath="f_stairtype"  ItemsSource="{m:Exp Str=stairlist}" SelectedValue="{m:Bind Path=f_stairtype}" Grid.Column="1" Margin="0,2,0,3" Grid.Row="9" Height="25" VerticalAlignment="Stretch"   >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Height="20" Text="{Binding f_stairtype}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_stairtype" NotNull="True" Default="{m:Exp Str=stairlist.SelectedItem.f_stairtype}" NoDependValue="{m:Exp Str=stairlist.SelectedItem.f_stairtype}" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
                                 </Grid>
                             </ScrollViewer>
                         </sdk:TabItem>

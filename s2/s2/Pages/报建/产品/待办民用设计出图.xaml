@@ -403,7 +403,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=mysjctInfo.DataContext.f_sjctzt\=$未完成$;mysjctInfo.DataContext.f_substate\=$完成$;mysjctInfo.DataContext.Save();mysjctPopup.BringToDown();mysjctPopup.IsOpen\=False}" />
-                        <Button Content="  保存并提交开材料  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                        <Button Content="  保存并提交  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
 					
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 

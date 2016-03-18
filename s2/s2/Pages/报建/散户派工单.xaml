@@ -388,7 +388,7 @@
                                     <TextBlock Grid.Column="3" Margin="208,10,0,5" Grid.Row="9" TextWrapping="Wrap" Text="别名：" Height="25" TextAlignment="Right" Grid.ColumnSpan="2"/>
                                     <TextBox  Text="{m:Bind Path=f_aliasname}" IsReadOnly="True" Grid.Column="4" Margin="107,10,1,5" Grid.Row="9" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="2" RenderTransformOrigin="1.195,2.28">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_aliasname"/>
+                                            <o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=CoboxPinp.SelectedItem.f_aliasname}" NotNull="True"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                 </Grid>
