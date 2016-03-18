@@ -61,7 +61,6 @@ public class SmsService {
 				String key = (String)iter.next();
 				msg=msg.replace("#"+key+"#", p.getString(key));
 			}
-			msg = "2" + msg;
 			// 获得配置的短信实现类
 			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
 			JSONObject attr = new JSONObject();
