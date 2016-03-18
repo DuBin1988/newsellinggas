@@ -56,10 +56,10 @@ public class HandCharge {
 	private String stardate;
 	private String enddate;
 
-	// ×ÜÀÛ¼Æ¹ºÆøÁ¿
+	// æ€»ç´¯è®¡è´­æ°”é‡
 	BigDecimal sumamont = new BigDecimal(0);
 
-	// ¼ÆËã½×ÌİÆø¼ÛµÄÖĞ¼ä½á¹û
+	// è®¡ç®—é˜¶æ¢¯æ°”ä»·çš„ä¸­é—´ç»“æœ
 	BigDecimal stair1num = new BigDecimal(0);
 	BigDecimal stair2num = new BigDecimal(0);
 	BigDecimal stair3num = new BigDecimal(0);
@@ -70,18 +70,18 @@ public class HandCharge {
 	BigDecimal stair4fee = new BigDecimal(0);
 	private int stairmonths;
 
-	// ³­±íµ¥ÏÂÔØ£¬·µ»ØJSON´®
-	// operator ³­±íÔ±ÖĞÎÄÃû
+	// æŠ„è¡¨å•ä¸‹è½½ï¼Œè¿”å›JSONä¸²
+	// operator æŠ„è¡¨å‘˜ä¸­æ–‡å
 	@GET
 	@Path("{operator}")
 	@Produces("application/json")
 	public JSONArray ReadRecordInput(@PathParam("operator") String operator) {
 		JSONArray array = new JSONArray();
 		List<Object> list = this.hibernateTemplate.find(
-				"from t_handplan where f_inputtor=? and f_state='Î´³­±í'",
+				"from t_handplan where f_inputtor=? and f_state='æœªæŠ„è¡¨'",
 				operator);
 		for (Object obj : list) {
-			// °Ñµ¥¸ömap×ª»»³ÉJSON¶ÔÏó
+			// æŠŠå•ä¸ªmapè½¬æ¢æˆJSONå¯¹è±¡
 			Map<String, Object> map = (Map<String, Object>) obj;
 			JSONObject json = (JSONObject) new JsonTransfer().MapToJson(map);
 			array.put(json);
@@ -89,13 +89,13 @@ public class HandCharge {
 		return array;
 	}
 
-	// ²éÑ¯ÅúÁ¿³­±íµ¥
+	// æŸ¥è¯¢æ‰¹é‡æŠ„è¡¨å•
 	@POST
 	@Path("download")
 	public String downLoadRecord(String condition) {
 
 		String sql = "select top 1000 u.f_userinfoid,u.f_userid,u.f_username,u.f_address,u.lastinputgasnum "
-				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid where h.shifoujiaofei='·ñ' and u.f_userstate!='×¢Ïú' and h.f_state='Î´³­±í' and "
+				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid where h.shifoujiaofei='å¦' and u.f_userstate!='æ³¨é”€' and h.f_state='æœªæŠ„è¡¨' and "
 				+ condition + "	order by u.f_address,u.f_apartment";
 		List<Object> list = this.hibernateTemplate
 				.executeFind(new HibernateSQLCall(sql));
@@ -110,7 +110,7 @@ public class HandCharge {
 			// result+=",";
 			// }
 			// String item="";
-			// //¼Æ»®ÔÂ·İÓÃ»§±àºÅÓÃ»§ĞÕÃûµØÖ·ÉÏ´Îµ×Êı±¾´Îµ×ÊıÓÃÆøÁ¿
+			// //è®¡åˆ’æœˆä»½ç”¨æˆ·ç¼–å·ç”¨æˆ·å§“ååœ°å€ä¸Šæ¬¡åº•æ•°æœ¬æ¬¡åº•æ•°ç”¨æ°”é‡
 			// item+="{";
 			// item+="f_userid:'"+map.get("f_userid")+"',";
 			// item+="f_username:'"+map.get("f_username")+"',";
@@ -127,8 +127,8 @@ public class HandCharge {
 		return array.toString();
 	}
 
-	// µ¥¿é±í³­±íÂ¼Èë
-	// ±¾·½·¨²»¿ÉÖØÈë
+	// å•å—è¡¨æŠ„è¡¨å½•å…¥
+	// æœ¬æ–¹æ³•ä¸å¯é‡å…¥
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("record/one/{userid}/{reading}/{sgnetwork}/{sgoperator}/{lastinputdate}/{handdate}/{meterstate}")
@@ -152,14 +152,14 @@ public class HandCharge {
 		}
 	}
 
-	// ¸ù¾İÇ°Ì¨Â¼Èë¹ºÆøÁ¿¼ÆËã¸÷½×ÌİÆøÁ¿½ğ¶î
+	// æ ¹æ®å‰å°å½•å…¥è´­æ°”é‡è®¡ç®—å„é˜¶æ¢¯æ°”é‡é‡‘é¢
 	@GET
 	@Path("/num/{userid}/{pregas}/{enddate}")
-	public JSONObject pregas(@PathParam("userid") String userid, // ÓÃ»§±àºÅ
-			@PathParam("pregas") double pregas, // ÓÃÆøÁ¿
-			@PathParam("enddate") String enddate // ½áÊøÈÕÆÚ, ¸ñÊ½Îªyyyymmdd
+	public JSONObject pregas(@PathParam("userid") String userid, // ç”¨æˆ·ç¼–å·
+			@PathParam("pregas") double pregas, // ç”¨æ°”é‡
+			@PathParam("enddate") String enddate // ç»“æŸæ—¥æœŸ, æ ¼å¼ä¸ºyyyymmdd
 	) {
-		final String usersql = "select isnull(f_stairtype,'Î´Éè')f_stairtype, isnull(f_gasprice,0)f_gasprice, "
+		final String usersql = "select isnull(f_stairtype,'æœªè®¾')f_stairtype, isnull(f_gasprice,0)f_gasprice, "
 				+ "isnull(f_stair1amount,0)f_stair1amount,isnull(f_stair2amount,0)f_stair2amount,"
 				+ "isnull(f_stair3amount,0)f_stair3amount,isnull(f_stair1price,0)f_stair1price,"
 				+ "isnull(f_stair2price,0)f_stair2price,isnull(f_stair3price,0)f_stair3price,"
@@ -175,7 +175,7 @@ public class HandCharge {
 						return result;
 					}
 				});
-		// È¡³ö½×ÌİÆø¼Û×ÊÁÏ
+		// å–å‡ºé˜¶æ¢¯æ°”ä»·èµ„æ–™
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
 		BigDecimal gasprice = new BigDecimal(map.get("f_gasprice").toString());
 		BigDecimal stair1amount = new BigDecimal(map.get("f_stair1amount")
@@ -195,7 +195,7 @@ public class HandCharge {
 		int stairmonths = Integer.parseInt(map.get("f_stairmonths").toString());
 		String stairtype = map.get("f_stairtype").toString();
 
-		// ×ª»»½áÊøÈÕÆÚ
+		// è½¬æ¢ç»“æŸæ—¥æœŸ
 		Calendar cal = Calendar.getInstance();
 		int year = Integer.parseInt(enddate.substring(0, 4));
 		int month = Integer.parseInt(enddate.substring(4, 6));
@@ -230,7 +230,7 @@ public class HandCharge {
 	}
 
 	/**
-	 * µ¥¿é±í³­±íÂ¼ÈëµÄÄÚ²¿·½·¨£¬Ö§³Ö¿¨±í¼°»ú±í£¬¿¨±í¿ÉÂ¼ÈëÓàÆøÁ¿¡£
+	 * å•å—è¡¨æŠ„è¡¨å½•å…¥çš„å†…éƒ¨æ–¹æ³•ï¼Œæ”¯æŒå¡è¡¨åŠæœºè¡¨ï¼Œå¡è¡¨å¯å½•å…¥ä½™æ°”é‡ã€‚
 	 * @param userid
 	 * @param lastreading
 	 * @param reading
@@ -241,7 +241,7 @@ public class HandCharge {
 	 * @param leftgas
 	 * @param meterstate
 	 * @param flag
-	 * @param orgpathstr  ²Ù×÷Ô±×éÖ¯ĞÅÏ¢
+	 * @param orgpathstr  æ“ä½œå‘˜ç»„ç»‡ä¿¡æ¯
 	 * @return
 	 * @throws Exception
 	 */
@@ -249,17 +249,17 @@ public class HandCharge {
 			double reading, String sgnetwork, String sgoperator,
 			String lastinputdate, String handdate, double leftgas,
 			String meterstate, int flag,String orgpathstr) throws Exception {
-		// ²éÕÒÓÃ»§Î´³­±í¼ÇÂ¼
+		// æŸ¥æ‰¾ç”¨æˆ·æœªæŠ„è¡¨è®°å½•
 		Map map = this.findHandPlan(userid);
 		if (map == null) {
 			return "";
 		}
 		Map user = this.findUser(userid);
-		// »ñÈ¡±íÀàĞÍ
+		// è·å–è¡¨ç±»å‹
 		String meterType = map.get("f_gasmeterstyle").toString();
-		// ÏÂÃæ³ÌĞòÖ´ĞĞhql±äÁ¿
+		// ä¸‹é¢ç¨‹åºæ‰§è¡Œhqlå˜é‡
 		String hql = "";
-		// Map<String, String> singles = getSingles();// »ñÈ¡ËùÓĞµ¥Öµ
+		// Map<String, String> singles = getSingles();// è·å–æ‰€æœ‰å•å€¼
 		// BigDecimal chargenum = new BigDecimal(0);
 		// BigDecimal sumamont = new BigDecimal(0);
 		BigDecimal gasprice = new BigDecimal(map.get("f_gasprice").toString());
@@ -280,137 +280,137 @@ public class HandCharge {
 				.toString());
 		stairmonths = Integer.parseInt(user.get("f_stairmonths").toString());
 
-		BigDecimal gas = new BigDecimal(0);// ÓÃÆøÁ¿
-		BigDecimal lrg = new BigDecimal(0);// ÉÏ´ÎÖ¸Êı
+		BigDecimal gas = new BigDecimal(0);// ç”¨æ°”é‡
+		BigDecimal lrg = new BigDecimal(0);// ä¸Šæ¬¡æŒ‡æ•°
 		if (1 == flag) {
-			// Èç¹ûÊÇµ¥¿é±íµ÷ÓÃµÄ(ÊÖ»ú)£¬ÉÏÆÚ¶ÁÊı£¨ÉÏÆÚµÄ±¾´Î³­±íµ×Êı£©´Óµµ°¸ÖĞÈ¡
+			// å¦‚æœæ˜¯å•å—è¡¨è°ƒç”¨çš„(æ‰‹æœº)ï¼Œä¸ŠæœŸè¯»æ•°ï¼ˆä¸ŠæœŸçš„æœ¬æ¬¡æŠ„è¡¨åº•æ•°ï¼‰ä»æ¡£æ¡ˆä¸­å–
 			BigDecimal lastReading = new BigDecimal(map.get("lastinputgasnum")
 					+ "");
 			lrg = lastReading;
-			// ÆøÁ¿
+			// æ°”é‡
 			gas = new BigDecimal(reading).subtract(lastReading);
 		} else {
-			// ÆøÁ¿ ·ñÔò´Ó½çÃæÉÏ»ñÈ¡ÉÏÆÚÖ¸Êı
+			// æ°”é‡ å¦åˆ™ä»ç•Œé¢ä¸Šè·å–ä¸ŠæœŸæŒ‡æ•°
 			gas = new BigDecimal(reading).subtract(new BigDecimal(lastreading));
 			lrg = new BigDecimal(lastreading);
 		}
-		// Èç¹ûÆøÁ¿Îª¸ºÊıÅ×³öÒì³££¬Ö÷ÒªÕë¶ÔÆäËû³­±íÏµÍ³·¢À´µÄÊı¾İ
+		// å¦‚æœæ°”é‡ä¸ºè´Ÿæ•°æŠ›å‡ºå¼‚å¸¸ï¼Œä¸»è¦é’ˆå¯¹å…¶ä»–æŠ„è¡¨ç³»ç»Ÿå‘æ¥çš„æ•°æ®
 		if (gas.compareTo(BigDecimal.ZERO) < 0) {
-			throw new RSException(map.get("f_userid") + "ÓÃÆøÁ¿Îª£º"
-					+ gas.doubleValue() + ",²»ÄÜÂ¼Èë!");
+			throw new RSException(map.get("f_userid") + "ç”¨æ°”é‡ä¸ºï¼š"
+					+ gas.doubleValue() + ",ä¸èƒ½å½•å…¥!");
 		}
 
-		// ÉÏÆÚ¶ÁÊı£¨ÉÏÆÚµÄ±¾´Î³­±íµ×Êı£©ÉÏÆÚµ×Êı£¨£©
+		// ä¸ŠæœŸè¯»æ•°ï¼ˆä¸ŠæœŸçš„æœ¬æ¬¡æŠ„è¡¨åº•æ•°ï¼‰ä¸ŠæœŸåº•æ•°ï¼ˆï¼‰
 		// BigDecimal lastReading = new BigDecimal(map.get("lastinputgasnum") +
 		// "");
-		// ÆøÁ¿
+		// æ°”é‡
 		// BigDecimal gas = new BigDecimal(reading).subtract(lastReading);
-		// ´Ó»§ÀïÈ¡³öÓà¶î(ÉÏÆÚÓà¶î)
+		// ä»æˆ·é‡Œå–å‡ºä½™é¢(ä¸ŠæœŸä½™é¢)
 		BigDecimal f_zhye = new BigDecimal(user.get("f_zhye") + "");
-		// ÓÃ»§µØÖ·
+		// ç”¨æˆ·åœ°å€
 		String address = map.get("f_address").toString();
-		// ÓÃ»§ĞÕÃû
+		// ç”¨æˆ·å§“å
 		String username = map.get("f_username").toString();
-		// ÒÔÇ°Ç··ÑÌõÊı
+		// ä»¥å‰æ¬ è´¹æ¡æ•°
 		int items = Integer.parseInt(map.get("c") + "");
-		// ³­±íid
+		// æŠ„è¡¨id
 		String handid = map.get("id") + "";
-		// ÓÃ»§½É·ÑÀàĞÍ
+		// ç”¨æˆ·ç¼´è´¹ç±»å‹
 		String payment = map.get("f_payment").toString();
-		// ÔğÈÎ²¿ÃÅ
-		String zerenbumen = "¿Õ";
-		// ÃÅÕ¾
-		String menzhan = "¿Õ";
-		// ³­±íÔ±
+		// è´£ä»»éƒ¨é—¨
+		String zerenbumen = "ç©º";
+		// é—¨ç«™
+		String menzhan = "ç©º";
+		// æŠ„è¡¨å‘˜
 		String inputtor = map.get("f_inputtor") + "";
-		// Èç¹û³­±íÔ±Îª¿ÕÔòÅ×³öÒì³££¬½»ÓÉÉÏ²ã´¦Àí
+		// å¦‚æœæŠ„è¡¨å‘˜ä¸ºç©ºåˆ™æŠ›å‡ºå¼‚å¸¸ï¼Œäº¤ç”±ä¸Šå±‚å¤„ç†
 		if (inputtor.equals("")) {
-			throw new RSException(map.get("f_userid") + "Ã»ÓĞ³­±íÔ±£¬²»ÄÜÂ¼Èë¡£");
+			throw new RSException(map.get("f_userid") + "æ²¡æœ‰æŠ„è¡¨å‘˜ï¼Œä¸èƒ½å½•å…¥ã€‚");
 		}
-		// ¼Æ»®Äê·İ£¬ÓÃÓÚ½×Ìİ»®¼Û£¬´¦Àí¿çÄêÂ¼ÈëµÄÎÊÌâ
+		// è®¡åˆ’å¹´ä»½ï¼Œç”¨äºé˜¶æ¢¯åˆ’ä»·ï¼Œå¤„ç†è·¨å¹´å½•å…¥çš„é—®é¢˜
 		String handdatee = map.get("f_handdate") + "";
-		if ("¼Æ»®¿Õ".equals(handdatee)) {
+		if ("è®¡åˆ’ç©º".equals(handdatee)) {
 			throw new RSException(map.get("f_userid")
-					+ "³­±í¼Æ»®ÈÕÆÚ¿Õ£¬²»ÄÜÂ¼Èë¡£ÇëÖØĞÂÉú³É³­±íµ¥£¡");
+					+ "æŠ„è¡¨è®¡åˆ’æ—¥æœŸç©ºï¼Œä¸èƒ½å½•å…¥ã€‚è¯·é‡æ–°ç”ŸæˆæŠ„è¡¨å•ï¼");
 		}
 		Calendar cald = Calendar.getInstance();
 		int year = Integer.parseInt(handdatee.substring(0, 4));
 		cald.set(Calendar.YEAR, year);
-		// ×îºóÒ»´Î³­±íÈÕÆÚ
+		// æœ€åä¸€æ¬¡æŠ„è¡¨æ—¥æœŸ
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
-		// È¡³ö³­±íÈÕÆÚµÃµ½½É·Ñ½ØÖ¹ÈÕÆÚDateFormat.parse(String s)
-		Date date = endDate(lastinputdate, userid);// ½É·Ñ½ØÖ¹ÈÕÆÚ
-		// Â¼ÈëÈÕÆÚ
+		// å–å‡ºæŠ„è¡¨æ—¥æœŸå¾—åˆ°ç¼´è´¹æˆªæ­¢æ—¥æœŸDateFormat.parse(String s)
+		Date date = endDate(lastinputdate, userid);// ç¼´è´¹æˆªæ­¢æ—¥æœŸ
+		// å½•å…¥æ—¥æœŸ
 		Date inputdate = new Date();
-		// ¼Æ»®ÔÂ·İ
+		// è®¡åˆ’æœˆä»½
 		DateFormat hd = new SimpleDateFormat("yyyy-MM");
 		String dateStr1 = handdate.substring(0, 7);
 		Date handDate = hd.parse(dateStr1);
-		// µ±Ç°±íÀÛ¼Æ¹ºÆøÁ¿ £¨Ôİ£©
+		// å½“å‰è¡¨ç´¯è®¡è´­æ°”é‡ ï¼ˆæš‚ï¼‰
 		BigDecimal f_metergasnums = new BigDecimal(map.get("f_metergasnums")
 				+ "");
-		// f_cumulativepurchase ×ÜÀÛ¼Æ¹ºÆøÁ¿
+		// f_cumulativepurchase æ€»ç´¯è®¡è´­æ°”é‡
 		BigDecimal f_cumulativepurchase = new BigDecimal(
 				map.get("f_cumulativepurchase") + "");
-		// »§ÀÛ¼Æ¹ºÆøÁ¿ £¨Ôİ£©
+		// æˆ·ç´¯è®¡è´­æ°”é‡ ï¼ˆæš‚ï¼‰
 		BigDecimal f_metergasnumsu = new BigDecimal(user.get("f_metergasnums")
 				+ "");
-		// f_cumulativepurchase ×ÜÀÛ¼Æ¹ºÆøÁ¿
+		// f_cumulativepurchase æ€»ç´¯è®¡è´­æ°”é‡
 		BigDecimal f_cumulativepurchaseu = new BigDecimal(
 				user.get("f_cumulativepurchase") + "");
-		// ±í×´Ì¬
+		// è¡¨çŠ¶æ€
 		String meterState = meterstate;
-		// Õë¶ÔÉèÖÃ½×ÌİÆø¼ÛµÄÓÃ»§ÔËËã
-		// ½×ÌİÆğ¼Û´¦Àí
+		// é’ˆå¯¹è®¾ç½®é˜¶æ¢¯æ°”ä»·çš„ç”¨æˆ·è¿ç®—
+		// é˜¶æ¢¯èµ·ä»·å¤„ç†
 		BigDecimal chargenum = stair(userid, gas, Calendar.getInstance(),
 				stairtype, gasprice, stairmonths, stair1amount, stair2amount,
 				stair3amount, stair1price, stair2price, stair3price,
 				stair4price);
-		// Æø·Ñ´óÓÚ0,½áÓà¹»£¬Ç°ÃæÎŞÇ··Ñ£¬×Ô¶¯ÏÂÕË
+		// æ°”è´¹å¤§äº0,ç»“ä½™å¤Ÿï¼Œå‰é¢æ— æ¬ è´¹ï¼Œè‡ªåŠ¨ä¸‹è´¦
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
-			// ×Ô¶¯ÏÂÕË
+			// è‡ªåŠ¨ä¸‹è´¦
 			double grossproceeds = 0;
 			Map<String, Object> sell = new HashMap<String, Object>();
-			sell.put("f_userid", map.get("f_userid")); // ±íID
-			sell.put("f_userinfoid", user.get("f_userid"));// ÓÃ»§id
-			sell.put("f_orgstr", orgpathstr);// ²Ù×÷Ô±×éÖ¯ĞÅÏ¢
-			sell.put("f_payfeevalid", "ÓĞĞ§");// ½»·ÑÊÇ·ñÓĞĞ§
-			sell.put("f_payfeetype", "×Ô¶¯ÏÂÕË");// ÊÕ·ÑÀàĞÍ
-			// ĞŞ¸ÄÉÏÆÚÖ¸Êı
-			sell.put("lastinputgasnum", lrg.doubleValue()); // ÉÏÆÚµ×Êı
-			sell.put("lastrecord", reading); // ±¾ÆÚµ×Êı
-			sell.put("f_totalcost", chargenum.doubleValue()); // Ó¦½»½ğ¶î
-			sell.put("f_grossproceeds", grossproceeds); // ÊÕ¿î
-			sell.put("f_deliverydate", new Date()); // ½»·ÑÈÕÆÚ
-			sell.put("f_deliverytime", new Date()); // ½»·ÑÊ±¼ä
-			sell.put("f_zhye", f_zhye.doubleValue()); // ÉÏÆÚ½áÓà
-			sell.put("f_benqizhye", f_zhye.subtract(chargenum).doubleValue()); // ±¾ÆÚ½áÓà
-			sell.put("f_gasmeterstyle", map.get("f_gasmeterstyle")); // Æø±íÀàĞÍ
-			sell.put("f_comtype", "ÌìÈ»Æø¹«Ë¾"); // ¹«Ë¾ÀàĞÍ£¬·ÖÎªÌìÈ»Æø¹«Ë¾¡¢ÒøĞĞ
-			sell.put("f_username", map.get("f_username")); // ÓÃ»§/µ¥Î»Ãû³Æ
-			sell.put("f_address", map.get("f_address")); // µØÖ·
-			sell.put("f_districtname", map.get("f_districtname")); // Ğ¡ÇøÃû³Æ
-			sell.put("f_cusDom", map.get("f_cusDom")); // Â¥ºÅ
-			sell.put("f_cusDy", map.get("f_cusDy")); // µ¥Ôª
-			sell.put("f_idnumber", map.get("f_idnumber")); // Éí·İÖ¤ºÅ
-			sell.put("f_gaswatchbrand", map.get("f_gaswatchbrand")); // Æø±íÆ·ÅÆ
-			sell.put("f_gaspricetype", map.get("f_gaspricetype")); // Æø¼ÛÀàĞÍ
-			sell.put("f_gasprice", gasprice.doubleValue()); // Æø¼Û
-			sell.put("f_usertype", map.get("f_usertype")); // ÓÃ»§ÀàĞÍ
-			sell.put("f_gasproperties", map.get("f_gasproperties")); // ÓÃÆøĞÔÖÊ
-			sell.put("f_pregas", gas.doubleValue()); // ÆøÁ¿
-			sell.put("f_preamount", chargenum.doubleValue()); // ½ğ¶î
-			sell.put("f_payment", "ÏÖ½ğ"); // ¸¶¿î·½Ê½
-			sell.put("f_sgnetwork", sgnetwork); // Íøµã
-			sell.put("f_sgoperator", sgoperator); // ²Ù ×÷ Ô±
-			sell.put("f_cardid", map.get("f_cardid"));// ¿¨ºÅ
-			sell.put("f_filiale", map.get("f_filiale")); // ·Ö¹«Ë¾
-			sell.put("f_useful", handid); // ³­±íid
+			sell.put("f_userid", map.get("f_userid")); // è¡¨ID
+			sell.put("f_userinfoid", user.get("f_userid"));// ç”¨æˆ·id
+			sell.put("f_orgstr", orgpathstr);// æ“ä½œå‘˜ç»„ç»‡ä¿¡æ¯
+			sell.put("f_payfeevalid", "æœ‰æ•ˆ");// äº¤è´¹æ˜¯å¦æœ‰æ•ˆ
+			sell.put("f_payfeetype", "è‡ªåŠ¨ä¸‹è´¦");// æ”¶è´¹ç±»å‹
+			// ä¿®æ”¹ä¸ŠæœŸæŒ‡æ•°
+			sell.put("lastinputgasnum", lrg.doubleValue()); // ä¸ŠæœŸåº•æ•°
+			sell.put("lastrecord", reading); // æœ¬æœŸåº•æ•°
+			sell.put("f_totalcost", chargenum.doubleValue()); // åº”äº¤é‡‘é¢
+			sell.put("f_grossproceeds", grossproceeds); // æ”¶æ¬¾
+			sell.put("f_deliverydate", new Date()); // äº¤è´¹æ—¥æœŸ
+			sell.put("f_deliverytime", new Date()); // äº¤è´¹æ—¶é—´
+			sell.put("f_zhye", f_zhye.doubleValue()); // ä¸ŠæœŸç»“ä½™
+			sell.put("f_benqizhye", f_zhye.subtract(chargenum).doubleValue()); // æœ¬æœŸç»“ä½™
+			sell.put("f_gasmeterstyle", map.get("f_gasmeterstyle")); // æ°”è¡¨ç±»å‹
+			sell.put("f_comtype", "å¤©ç„¶æ°”å…¬å¸"); // å…¬å¸ç±»å‹ï¼Œåˆ†ä¸ºå¤©ç„¶æ°”å…¬å¸ã€é“¶è¡Œ
+			sell.put("f_username", map.get("f_username")); // ç”¨æˆ·/å•ä½åç§°
+			sell.put("f_address", map.get("f_address")); // åœ°å€
+			sell.put("f_districtname", map.get("f_districtname")); // å°åŒºåç§°
+			sell.put("f_cusDom", map.get("f_cusDom")); // æ¥¼å·
+			sell.put("f_cusDy", map.get("f_cusDy")); // å•å…ƒ
+			sell.put("f_idnumber", map.get("f_idnumber")); // èº«ä»½è¯å·
+			sell.put("f_gaswatchbrand", map.get("f_gaswatchbrand")); // æ°”è¡¨å“ç‰Œ
+			sell.put("f_gaspricetype", map.get("f_gaspricetype")); // æ°”ä»·ç±»å‹
+			sell.put("f_gasprice", gasprice.doubleValue()); // æ°”ä»·
+			sell.put("f_usertype", map.get("f_usertype")); // ç”¨æˆ·ç±»å‹
+			sell.put("f_gasproperties", map.get("f_gasproperties")); // ç”¨æ°”æ€§è´¨
+			sell.put("f_pregas", gas.doubleValue()); // æ°”é‡
+			sell.put("f_preamount", chargenum.doubleValue()); // é‡‘é¢
+			sell.put("f_payment", "ç°é‡‘"); // ä»˜æ¬¾æ–¹å¼
+			sell.put("f_sgnetwork", sgnetwork); // ç½‘ç‚¹
+			sell.put("f_sgoperator", sgoperator); // æ“ ä½œ å‘˜
+			sell.put("f_cardid", map.get("f_cardid"));// å¡å·
+			sell.put("f_filiale", map.get("f_filiale")); // åˆ†å…¬å¸
+			sell.put("f_useful", handid); // æŠ„è¡¨id
 			sell.put("f_stair1amount", stair1num.doubleValue());
-			sell.put("f_stairtype", user.get("f_stairtype")); //½×ÌİÆø¼ÛÀàĞÍ
+			sell.put("f_stairtype", user.get("f_stairtype")); //é˜¶æ¢¯æ°”ä»·ç±»å‹
 			sell.put("f_stair2amount", stair2num.doubleValue());
 			sell.put("f_stair3amount", stair3num.doubleValue());
 			sell.put("f_stair4amount", stair4num.doubleValue());
@@ -431,12 +431,12 @@ public class HandCharge {
 
 			hql = "update t_userfiles set f_zhye=?,lastinputgasnum=?,"
 					+
-					// ±¾´Î³­±íÈÕÆÚ
+					// æœ¬æ¬¡æŠ„è¡¨æ—¥æœŸ
 					"  lastinputdate=? "
 					+
-					// µ±Ç°±íÀÛ¼Æ¹ºÆøÁ¿ £¨Ôİ£© ×ÜÀÛ¼Æ¹ºÆøÁ¿
+					// å½“å‰è¡¨ç´¯è®¡è´­æ°”é‡ ï¼ˆæš‚ï¼‰ æ€»ç´¯è®¡è´­æ°”é‡
 					",f_metergasnums=  ?, f_cumulativepurchase= ? ,"
-					// ×îºó¹ºÆøÁ¿ ×îºó¹ºÆøÈÕÆÚ ×îºó¹ºÆøÊ±¼ä
+					// æœ€åè´­æ°”é‡ æœ€åè´­æ°”æ—¥æœŸ æœ€åè´­æ°”æ—¶é—´
 					+ "f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
 					+ "where f_userid=?";
 			hibernateTemplate.bulkUpdate(
@@ -447,8 +447,8 @@ public class HandCharge {
 							f_cumulativepurchase.add(gas).doubleValue(),
 							gas.doubleValue(), inputdate, inputdate, userid });
 			String sellId = sellid + "";
-			// ¸üĞÂ³­±í¼ÇÂ¼
-			hql = "update t_handplan set f_state='ÒÑ³­±í',shifoujiaofei='ÊÇ',f_handdate=?,f_stairtype='"
+			// æ›´æ–°æŠ„è¡¨è®°å½•
+			hql = "update t_handplan set f_state='å·²æŠ„è¡¨',shifoujiaofei='æ˜¯',f_handdate=?,f_stairtype='"
 					+ stairtype
 					+ "',lastinputdate=?,f_zerenbumen='"
 					+ zerenbumen
@@ -507,33 +507,33 @@ public class HandCharge {
 					+ sellId
 					+ ", f_leftgas="
 					+ leftgas
-					+ ", lastinputgasnum=" // ÉÏÆÚÖ¸Êı
+					+ ", lastinputgasnum=" // ä¸ŠæœŸæŒ‡æ•°
 					+ lrg
 					+ " , f_inputdate=?,f_meterstate=?,f_network='"
 					+ sgnetwork
-					+",f_filiale='"+map.get("f_filiale")+"'"
-					+ "',f_operator='"
+					+"',f_filiale='"+map.get("f_filiale")+"'"
+					+ ",f_operator='"
 					+ sgoperator
 					+ "'  "
 					+ "where f_userid='"
 					+ userid
-					+ "' and f_state='Î´³­±í' and id=" + handid;
+					+ "' and f_state='æœªæŠ„è¡¨' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
 					lastinputDate, inputdate, meterState });
 		} else {
-			// ¸üĞÂÓÃ»§µµ°¸
+			// æ›´æ–°ç”¨æˆ·æ¡£æ¡ˆ
 			hql = "update t_userfiles " +
-			// ±¾´Î³­±íµ×Êı ±¾´Î³­±íÈÕÆÚ
+			// æœ¬æ¬¡æŠ„è¡¨åº•æ•° æœ¬æ¬¡æŠ„è¡¨æ—¥æœŸ
 					"set lastinputgasnum=? ,  lastinputdate=?  where f_userid=?";
 			hibernateTemplate.bulkUpdate(hql, new Object[] { reading,
 					lastinputDate, userid });
-			// Ç··Ñ,¸üĞÂ³­±í¼ÇÂ¼µÄ×´Ì¬f_state¡¢³­±íÈÕÆÚ¡¢±¾´Î³­±íµ×Êı
-			// Èç¹ûÆø·Ñ =0 ,ÊÇ·ñ½»·ÑÎª"ÊÇ"
-			String shifoujiaofei = "·ñ";
+			// æ¬ è´¹,æ›´æ–°æŠ„è¡¨è®°å½•çš„çŠ¶æ€f_stateã€æŠ„è¡¨æ—¥æœŸã€æœ¬æ¬¡æŠ„è¡¨åº•æ•°
+			// å¦‚æœæ°”è´¹ =0 ,æ˜¯å¦äº¤è´¹ä¸º"æ˜¯"
+			String shifoujiaofei = "å¦";
 			if (chargenum.compareTo(BigDecimal.ZERO) <= 0) {
-				shifoujiaofei = "ÊÇ";
+				shifoujiaofei = "æ˜¯";
 			}
-			hql = "update t_handplan set f_state ='ÒÑ³­±í', shifoujiaofei='"
+			hql = "update t_handplan set f_state ='å·²æŠ„è¡¨', shifoujiaofei='"
 					+ shifoujiaofei
 					+ "',f_handdate=?,lastinputdate=?,f_zerenbumen='"
 					+ zerenbumen + "', f_menzhan='" + menzhan
@@ -555,23 +555,23 @@ public class HandCharge {
 					+ stardate + "',f_enddate='" + enddate + "',f_allamont="
 					+ sumamont + ", f_leftgas= "
 					+ leftgas
-					+ ", lastinputgasnum=" // ÉÏÆÚÖ¸Êı
+					+ ", lastinputgasnum=" // ä¸ŠæœŸæŒ‡æ•°
 					+ lrg + " where f_userid='" + userid
-					+ "' and f_state='Î´³­±í' and id=" + handid;
+					+ "' and f_state='æœªæŠ„è¡¨' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
 					lastinputDate, date, inputdate, meterState });
 		}
-		// ±£´æÓÃ»§ÇåÇ·ÕËÎñ,²¢¸üĞÂµµ°¸ÖĞÕË»§Óà¶î
-		if (meterType != null && meterType.equals("»ú±í")
+		// ä¿å­˜ç”¨æˆ·æ¸…æ¬ è´¦åŠ¡,å¹¶æ›´æ–°æ¡£æ¡ˆä¸­è´¦æˆ·ä½™é¢
+		if (meterType != null && meterType.equals("æœºè¡¨")
 				&& gas.doubleValue() > 0) {
 			financedetailDisp(map, gas, chargenum, sgnetwork, sgoperator);
 		}
 		return userid;
 	}
 
-	// ¼ÆËã½×ÌİÆø¼Û£¬ÓÉÓÚÖØ¹¹Ô­Òò£¬»á·µ»Øsumamont£¬·ÅÔÚÈ«¾Ö±äÁ¿Àï
-	// ¼ÆËã³öÀ´µÄ¸÷½×¶Î½×ÌİÆøÁ¿¼°½×Ìİ½ğ¶î´æ·ÅÔÚÀà±äÁ¿Àï
-	// ·µ»Ø£º×Ü¼Û¸ñ
+	// è®¡ç®—é˜¶æ¢¯æ°”ä»·ï¼Œç”±äºé‡æ„åŸå› ï¼Œä¼šè¿”å›sumamontï¼Œæ”¾åœ¨å…¨å±€å˜é‡é‡Œ
+	// è®¡ç®—å‡ºæ¥çš„å„é˜¶æ®µé˜¶æ¢¯æ°”é‡åŠé˜¶æ¢¯é‡‘é¢å­˜æ”¾åœ¨ç±»å˜é‡é‡Œ
+	// è¿”å›ï¼šæ€»ä»·æ ¼
 	private BigDecimal stair(String userid, BigDecimal gas, Calendar cal,
 			String stairtype, BigDecimal gasprice, int stairmonths,
 			BigDecimal stair1amount, BigDecimal stair2amount,
@@ -587,9 +587,9 @@ public class HandCharge {
 		stair3fee = new BigDecimal(0);
 		stair4num = new BigDecimal(0);
 		stair4fee = new BigDecimal(0);
-		// Õë¶ÔÉèÖÃ½×ÌİÆø¼ÛµÄÓÃ»§ÔËËã
+		// é’ˆå¯¹è®¾ç½®é˜¶æ¢¯æ°”ä»·çš„ç”¨æˆ·è¿ç®—
 		CountDate(userid, hibernateTemplate);
-		if (!stairtype.equals("Î´Éè")) {
+		if (!stairtype.equals("æœªè®¾")) {
 			final String gassql = " select isnull(sum(h.oughtamount),0)oughtamount "
 					+ "from t_handplan h left join t_userfiles u on u.f_userid=h.f_userid "
 					+ "where u.f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
@@ -609,12 +609,12 @@ public class HandCharge {
 						}
 					});
 			Map<String, Object> gasmap = (Map<String, Object>) gaslist.get(0);
-			// µ±Ç°¹ºÆøÁ¿
+			// å½“å‰è´­æ°”é‡
 			BigDecimal sumamont = new BigDecimal(gasmap.get("oughtamount")
 					.toString());
-			// ÀÛ¼Æ¹ºÆøÁ¿
+			// ç´¯è®¡è´­æ°”é‡
 			BigDecimal allamont = sumamont.add(gas);
-			// µ±Ç°¹ºÆøÁ¿ÔÚµÚÒ»½×Ìİ
+			// å½“å‰è´­æ°”é‡åœ¨ç¬¬ä¸€é˜¶æ¢¯
 			if (sumamont.compareTo(stair1amount) < 0) {
 				if (allamont.compareTo(stair1amount) < 0) {
 					stair1num = gas;
@@ -657,7 +657,7 @@ public class HandCharge {
 					chargenum = stair1fee.add(stair2fee).add(stair3fee)
 							.add(stair4fee);
 				}
-				// µ±Ç°ÒÑ¹ºÆøÁ¿ÔÚ½×Ìİ¶şÄÚ
+				// å½“å‰å·²è´­æ°”é‡åœ¨é˜¶æ¢¯äºŒå†…
 			} else if (sumamont.compareTo(stair1amount) >= 0
 					&& sumamont.compareTo(stair2amount) < 0) {
 				if (allamont.compareTo(stair2amount) < 0) {
@@ -685,7 +685,7 @@ public class HandCharge {
 							.multiply(stair4price);
 					chargenum = stair2fee.add(stair3fee).add(stair4fee);
 				}
-				// µ±Ç°ÒÑ¹ºÆøÁ¿ÔÚ½×ÌİÈıÄÚ
+				// å½“å‰å·²è´­æ°”é‡åœ¨é˜¶æ¢¯ä¸‰å†…
 			} else if (sumamont.compareTo(stair2amount) >= 0
 					&& sumamont.compareTo(stair3amount) < 0) {
 				if (allamont.compareTo(stair3amount) < 0) {
@@ -701,13 +701,13 @@ public class HandCharge {
 							.multiply(stair4price);
 					chargenum = stair3fee.add(stair4fee);
 				}
-				// µ±Ç°ÒÑ¹ºÆøÁ¿³¬¹ı½×ÌİÈı
+				// å½“å‰å·²è´­æ°”é‡è¶…è¿‡é˜¶æ¢¯ä¸‰
 			} else if (sumamont.compareTo(stair3amount) >= 0) {
 				stair4num = gas;
 				stair4fee = gas.multiply(stair4price);
 				chargenum = stair4fee;
 			}
-			// ¸ÃÓÃ»§Î´ÉèÖÃ½×ÌİÆø¼Û
+			// è¯¥ç”¨æˆ·æœªè®¾ç½®é˜¶æ¢¯æ°”ä»·
 		} else {
 			chargenum = gas.multiply(gasprice);
 			stair1num = new BigDecimal(0);
@@ -724,128 +724,128 @@ public class HandCharge {
 	}
 
 	/**
-	 * ±£´æÓÃ»§²ÆÎñÃ÷Ï¸
+	 * ä¿å­˜ç”¨æˆ·è´¢åŠ¡æ˜ç»†
 	 */
 	private void financedetailDisp(Map<String, Object> handplan,
 			BigDecimal gas, BigDecimal money, String sgnetwork,
 			String sgoperator) throws Exception {
-		// È¡³öÕË»§½áÓà
+		// å–å‡ºè´¦æˆ·ç»“ä½™
 		String acczhyeStr = handplan.get("f_accountzhye").toString();
 		if (acczhyeStr == null || acczhyeStr.equals("")) {
-			throw new RSException(handplan.get("f_userid") + "Ã»ÓĞÕË»§Êµ¼Ê½á!");
+			throw new RSException(handplan.get("f_userid") + "æ²¡æœ‰è´¦æˆ·å®é™…ç»“!");
 		}
 		BigDecimal accountzhye = new BigDecimal(acczhyeStr);
-		// Èç¹ûÕË»§Óà¶î = 0£¬³­±íÆø·ÑÎªÇ··Ñ£¬²»²úÉúÇåÇ·¼ÇÂ¼
+		// å¦‚æœè´¦æˆ·ä½™é¢ = 0ï¼ŒæŠ„è¡¨æ°”è´¹ä¸ºæ¬ è´¹ï¼Œä¸äº§ç”Ÿæ¸…æ¬ è®°å½•
 		if (accountzhye.doubleValue() <= 0) {
 			String handId = handplan.get("id").toString();
 			noBalance(handId, money);
 			return;
 		}
-		// ÇåÇ·´¦Àí ,¼ÆËãÊµÊÕ£¬Ç··Ñ£¬ÕË»§×îĞÂ½áÓà
+		// æ¸…æ¬ å¤„ç† ,è®¡ç®—å®æ”¶ï¼Œæ¬ è´¹ï¼Œè´¦æˆ·æœ€æ–°ç»“ä½™
 		BigDecimal realmony = new BigDecimal(0);
 		BigDecimal debtmoney = new BigDecimal(0);
 		BigDecimal newaccountzhye = new BigDecimal(0);
-		// ½áÓà > Ó¦ÊÕ £¬ ÒÑÊÕ½ğ¶î =Ó¦ÊÕ½ğ¶î, Ç··Ñ½ğ¶î= 0,ÕË»§Óà¶î = ½áÓà- Ó¦ÊÕ
+		// ç»“ä½™ > åº”æ”¶ ï¼Œ å·²æ”¶é‡‘é¢ =åº”æ”¶é‡‘é¢, æ¬ è´¹é‡‘é¢= 0,è´¦æˆ·ä½™é¢ = ç»“ä½™- åº”æ”¶
 		if (accountzhye.compareTo(money) >= 0) {
 			realmony = money;
 			debtmoney = new BigDecimal(0);
 			newaccountzhye = accountzhye.subtract(money);
 		}
-		// ½áÓàĞ¡ÓÚÓ¦ÊÕ, ÒÑÊÕ½ğ¶î=½áÓà½ğ¶î, ,Ç··Ñ½ğ¶î=Ó¦ÊÕ½ğ¶î-½áÓà½ğ¶î,
-		// ÕË»§Óà¶î= 0
+		// ç»“ä½™å°äºåº”æ”¶, å·²æ”¶é‡‘é¢=ç»“ä½™é‡‘é¢, ,æ¬ è´¹é‡‘é¢=åº”æ”¶é‡‘é¢-ç»“ä½™é‡‘é¢,
+		// è´¦æˆ·ä½™é¢= 0
 		else if (accountzhye.compareTo(money) < 0) {
 			realmony = accountzhye;
 			debtmoney = money.subtract(accountzhye);
 			newaccountzhye = new BigDecimal(0);
 		}
-		// ·ÅÈëÇåÇ·Êı¾İ
+		// æ”¾å…¥æ¸…æ¬ æ•°æ®
 		Date now = new Date();
 		Map<String, Object> finance = new HashMap<String, Object>();
-		// <!--ÒÑÊÕ½ğ¶î-->
+		// <!--å·²æ”¶é‡‘é¢-->
 		finance.put("f_realmoney", realmony.doubleValue());
-		// <!--Ç··Ñ½ğ¶î-->
+		// <!--æ¬ è´¹é‡‘é¢-->
 		finance.put("f_debtmoney", debtmoney.doubleValue());
-		// <!--ÕË»§½áÓà-->
+		// <!--è´¦æˆ·ç»“ä½™-->
 		finance.put("f_accountzhye", newaccountzhye.doubleValue());
-		// <!--ÓÃ»§±àºÅ-->
+		// <!--ç”¨æˆ·ç¼–å·-->
 		finance.put("f_userid", handplan.get("f_userid"));
-		// Ô­ÕË»§Óà¶î
+		// åŸè´¦æˆ·ä½™é¢
 		finance.put("f_prevaccountzhye", accountzhye.doubleValue());
-		// <!--Ó¦ÊÕÆøÁ¿-->
+		// <!--åº”æ”¶æ°”é‡-->
 		finance.put("f_oughtamount", gas.doubleValue());
-		// <!--Ó¦ÊÕ½ğ¶î-->
+		// <!--åº”æ”¶é‡‘é¢-->
 		finance.put("f_oughtfee", money.doubleValue());
-		// µ¥¼Û
+		// å•ä»·
 		BigDecimal gasPrice = new BigDecimal(handplan.get("f_gasprice")
 				.toString());
 		finance.put("f_gasprice", gasPrice.doubleValue());
-		// ³­±í¼ÇÂ¼µÄÈÕÆÚ
+		// æŠ„è¡¨è®°å½•çš„æ—¥æœŸ
 		finance.put("f_debtdate", now);
-		// <!--ÊÇ·ñÓĞĞ§(ÓĞĞ§/ÎŞĞ§)-->
-		finance.put("f_payfeevalid", "ÓĞĞ§");
-		finance.put("f_payfeetype", "³­±í");
-		// <!--Íøµã-->
+		// <!--æ˜¯å¦æœ‰æ•ˆ(æœ‰æ•ˆ/æ— æ•ˆ)-->
+		finance.put("f_payfeevalid", "æœ‰æ•ˆ");
+		finance.put("f_payfeetype", "æŠ„è¡¨");
+		// <!--ç½‘ç‚¹-->
 		finance.put("f_sgnetwork", sgnetwork);
-		// <!--²Ù×÷Ô±-->
+		// <!--æ“ä½œå‘˜-->
 		finance.put("f_opertor", sgoperator);
-		// ²Ù×÷ÈÕÆÚ£¬Ê±¼ä
+		// æ“ä½œæ—¥æœŸï¼Œæ—¶é—´
 		finance.put("f_deliverydate", now);
 		finance.put("f_deliverytime", now);
-		// ³­±íid
+		// æŠ„è¡¨id
 		finance.put("f_handid", handplan.get("id"));
-		// ±£´æ
+		// ä¿å­˜
 		JSONObject financeJson = (JSONObject) new JsonTransfer()
 				.MapToJson(finance);
-		log.debug("±£´æÇåÇ·Ã÷Ï¸Êı¾İ" + financeJson);
+		log.debug("ä¿å­˜æ¸…æ¬ æ˜ç»†æ•°æ®" + financeJson);
 		Object idObj = hibernateTemplate.save("t_financedetail", finance);
 		int saveId = Integer.parseInt(idObj.toString());
-		log.debug("±£´æ³É¹¦,Êı¾İid" + saveId);
-		// ¸üĞÂµµ°¸ÕË»§½áÓàf_accountzhye
+		log.debug("ä¿å­˜æˆåŠŸ,æ•°æ®id" + saveId);
+		// æ›´æ–°æ¡£æ¡ˆè´¦æˆ·ç»“ä½™f_accountzhye
 		String uid = finance.get("f_userid").toString();
 		String accZhye = finance.get("f_accountzhye").toString();
 		String updateUserFile = "update t_userfiles set f_accountzhye="
 				+ accZhye + " where f_userid='" + uid + "'";
-		log.debug("¸üĞÂµµ°¸ÕË»§½áÓà" + updateUserFile);
+		log.debug("æ›´æ–°æ¡£æ¡ˆè´¦æˆ·ç»“ä½™" + updateUserFile);
 		this.hibernateTemplate.bulkUpdate(updateUserFile);
-		log.debug("¸üĞÂµµ°¸ÕË»§³É¹¦");
-		// ¸üĞÂ³­±í¼ÇÂ¼Êµ¼ÊÇ··Ñ
+		log.debug("æ›´æ–°æ¡£æ¡ˆè´¦æˆ·æˆåŠŸ");
+		// æ›´æ–°æŠ„è¡¨è®°å½•å®é™…æ¬ è´¹
 		String handId = handplan.get("id").toString();
 		String updateHandplan = "update t_handplan set f_debtmoney="
 				+ debtmoney + " where id='" + handId + "'";
-		log.debug("¸üĞÂ³­±íÇ··Ñ" + updateHandplan);
+		log.debug("æ›´æ–°æŠ„è¡¨æ¬ è´¹" + updateHandplan);
 		this.hibernateTemplate.bulkUpdate(updateHandplan);
 	}
 
-	// ÎŞÕË»§Êµ¼Ê½áÓà´¦Àí
+	// æ— è´¦æˆ·å®é™…ç»“ä½™å¤„ç†
 	private void noBalance(String handId, BigDecimal money) {
 		try {
 			String updateHandplan = "update t_handplan set f_debtmoney="
 					+ money.doubleValue() + " where id='" + handId + "'";
-			log.debug("ÕË»§Êµ¼Ê½áÓà0,¸üĞÂ³­±í" + updateHandplan + "Ç·¿î"
+			log.debug("è´¦æˆ·å®é™…ç»“ä½™0,æ›´æ–°æŠ„è¡¨" + updateHandplan + "æ¬ æ¬¾"
 					+ money.doubleValue());
 			this.hibernateTemplate.bulkUpdate(updateHandplan);
 		} catch (RuntimeException e) {
-			throw new RSException("½áÓàÎª0Ê±,¸üĞÂ³­±í" + handId + "Ê§°Ü");
+			throw new RSException("ç»“ä½™ä¸º0æ—¶,æ›´æ–°æŠ„è¡¨" + handId + "å¤±è´¥");
 		}
 
 	}
 
 	/**
-	 * ²éÕÒÓÃ»§Î´³­±í¼ÇÂ¼
+	 * æŸ¥æ‰¾ç”¨æˆ·æœªæŠ„è¡¨è®°å½•
 	 */
 	private Map<String, Object> findHandPlan(String userid) {
 		Map<String, Object> result = null;
 		String hql = "";
 		final String sql = "select isnull(u.f_userid,'') f_userid, isnull(u.f_zhye,'') f_zhye ,isnull(u.f_accountzhye,'') f_accountzhye ,  isnull(u.lastinputgasnum,'') lastinputgasnum, isnull(u.f_gasprice,0) f_gasprice, isnull(u.f_username,'')  f_username,"
-				+ "isnull(u.f_stair1amount,0)f_stair1amount,isnull(u.f_stair2amount,0)f_stair2amount,isnull(u.f_stair3amount,0)f_stair3amount,isnull(u.f_stair1price,0)f_stair1price,isnull(u.f_stair2price,0)f_stair2price,isnull(u.f_stair3price,0)f_stair3price,isnull(u.f_stair4price,0)f_stair4price,isnull(u.f_stairmonths,0)f_stairmonths,isnull(u.f_stairtype,'Î´Éè')f_stairtype,"
+				+ "isnull(u.f_stair1amount,0)f_stair1amount,isnull(u.f_stair2amount,0)f_stair2amount,isnull(u.f_stair3amount,0)f_stair3amount,isnull(u.f_stair1price,0)f_stair1price,isnull(u.f_stair2price,0)f_stair2price,isnull(u.f_stair3price,0)f_stair3price,isnull(u.f_stair4price,0)f_stair4price,isnull(u.f_stairmonths,0)f_stairmonths,isnull(u.f_stairtype,'æœªè®¾')f_stairtype,"
 				+ "isnull(u.f_address,'')f_address ,isnull(u.f_districtname,'')f_districtname,isnull(u.f_cusDom,'')f_cusDom,isnull(u.f_cusDy,'')f_cusDy,isnull(u.f_gasmeterstyle,'') f_gasmeterstyle, isnull(u.f_idnumber,'') f_idnumber, isnull(u.f_gaswatchbrand,'')f_gaswatchbrand, isnull(u.f_usertype,'')f_usertype, "
 				+ "isnull(u.f_gasproperties,'')f_gasproperties,isnull(u.f_dibaohu,0)f_dibaohu,isnull(u.f_payment,'')f_payment,isnull(u.f_zerenbumen,'')f_zerenbumen,isnull(u.f_menzhan,'')f_menzhan,isnull(u.f_inputtor,'')f_inputtor, isnull(q.c,0) c,"
 				+ "isnull(u.f_metergasnums,0) f_metergasnums,isnull(u.f_cumulativepurchase,0)f_cumulativepurchase, "
 				+ "isnull(u.f_finallybought,0)f_finallybought,isnull(u.f_cardid,'NULL') f_cardid,isnull(u.f_filiale,'NULL')f_filiale,"
-				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'¼Æ»®¿Õ') f_handdate from (select * from t_handplan where f_state='Î´³­±í' and f_userid='"
+				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'è®¡åˆ’ç©º') f_handdate from (select * from t_handplan where f_state='æœªæŠ„è¡¨' and f_userid='"
 				+ userid
 				+ "') h "
-				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='ÒÑ³­±í' and shifoujiaofei='·ñ' "
+				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='å·²æŠ„è¡¨' and shifoujiaofei='å¦' "
 				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid";
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
@@ -857,7 +857,7 @@ public class HandCharge {
 						return result;
 					}
 				});
-		// È¡³öÎ´³­±í¼ÇÂ¼ÒÔ¼°×ÊÁÏ
+		// å–å‡ºæœªæŠ„è¡¨è®°å½•ä»¥åŠèµ„æ–™
 		if (list.size() > 0) {
 			result = (Map<String, Object>) list.get(0);
 			return result;
@@ -866,9 +866,9 @@ public class HandCharge {
 		}
 	}
 
-	// ¼ÆËã¿ªÊ¼Ê±¼ä·½·¨
+	// è®¡ç®—å¼€å§‹æ—¶é—´æ–¹æ³•
 	private void CountDate(String userid, HibernateTemplate hibernateTemplate) {
-		// ÅĞ¶ÏÊÇ·ñÅäÖÃÁË½Ó¿Ú£¬Èç¹ûÓĞÖ´ĞĞ½Ó¿Ú£¬Èç¹ûÃ»ÓĞ°´Ä¬ÈÏ¼ÆËã¡£
+		// åˆ¤æ–­æ˜¯å¦é…ç½®äº†æ¥å£ï¼Œå¦‚æœæœ‰æ‰§è¡Œæ¥å£ï¼Œå¦‚æœæ²¡æœ‰æŒ‰é»˜è®¤è®¡ç®—ã€‚
 		ApplicationContext applicationContext = WebApplicationContextUtils
 				.getWebApplicationContext(ContextListener.getContext());
 		if (applicationContext.containsBean("CountDate")) {
@@ -878,7 +878,7 @@ public class HandCharge {
 			enddate = icount.enddate(userid, hibernateTemplate);
 			return;
 		}
-		// ¼ÆËãµ±Ç°ÔÂÔÚÄÄ¸ö½×ÌİÇø¼ä
+		// è®¡ç®—å½“å‰æœˆåœ¨å“ªä¸ªé˜¶æ¢¯åŒºé—´
 		Calendar cal = Calendar.getInstance();
 		int thismonth = cal.get(Calendar.MONTH) + 1;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -893,18 +893,18 @@ public class HandCharge {
 			enddate = "";
 		} else {
 			/*
-			 * ½×ÌİÆğÊ¼ÔÂÊı¼ÆËãÆğÊ¼ÔÂ = µ±Ç°ÔÂ/½×ÌİÔÂÊı*½×ÌİÔÂÊı+1½áÊøÔÂ = µ±Ç°ÔÂ/½×ÌİÔÂÊı*½×ÌİÔÂÊı+½×ÌİÔÂÊı×¢£º¸ÃÔËËã
-			 * µ±Ç°ÔÂÊÇ12ÔÂÊ±ÔòĞèÒª¼ô1 ÉÏÃæÒÑ¾­Ëã³ö½×ÌİÔÂÊıÎª1¸öÔÂÊ±µÄ½ğ¶îÒ»ÏÂÔËËã½×ÌİÔÂÊıÖÁÉÙÎªÁ½¸öÔÂ ËùÒÔ¶ÔËãÇø¼äÃ»ÓĞÓ°Ïì
+			 * é˜¶æ¢¯èµ·å§‹æœˆæ•°è®¡ç®—èµ·å§‹æœˆ = å½“å‰æœˆ/é˜¶æ¢¯æœˆæ•°*é˜¶æ¢¯æœˆæ•°+1ç»“æŸæœˆ = å½“å‰æœˆ/é˜¶æ¢¯æœˆæ•°*é˜¶æ¢¯æœˆæ•°+é˜¶æ¢¯æœˆæ•°æ³¨ï¼šè¯¥è¿ç®—
+			 * å½“å‰æœˆæ˜¯12æœˆæ—¶åˆ™éœ€è¦å‰ª1 ä¸Šé¢å·²ç»ç®—å‡ºé˜¶æ¢¯æœˆæ•°ä¸º1ä¸ªæœˆæ—¶çš„é‡‘é¢ä¸€ä¸‹è¿ç®—é˜¶æ¢¯æœˆæ•°è‡³å°‘ä¸ºä¸¤ä¸ªæœˆ æ‰€ä»¥å¯¹ç®—åŒºé—´æ²¡æœ‰å½±å“
 			 */
 			if (thismonth == 12) {
 				thismonth = 11;
 			}
-			// ¼ÆËãÆğÊ¼ÔÂ
+			// è®¡ç®—èµ·å§‹æœˆ
 			int star = Math.round(thismonth / stairmonths) * stairmonths + 1;
-			// ¼ÆËã½áÊøÔÂ
+			// è®¡ç®—ç»“æŸæœˆ
 			int end = Math.round(thismonth / stairmonths) * stairmonths
 					+ stairmonths;
-			// »ñµÃÆğÊ¼ÈÕÆÚºÍ½áÊøÈÕÆÚ
+			// è·å¾—èµ·å§‹æ—¥æœŸå’Œç»“æŸæ—¥æœŸ
 			cal.set(Calendar.MONTH, star - 1);
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			stardate = format.format(cal.getTime());
@@ -915,7 +915,7 @@ public class HandCharge {
 		}
 	}
 
-	// »ñÈ¡ËùÓĞµ¥Öµ£¬×ª»»³ÉMap
+	// è·å–æ‰€æœ‰å•å€¼ï¼Œè½¬æ¢æˆMap
 	private Map<String, String> getSingles() {
 		Map result = new HashMap<String, String>();
 
@@ -936,12 +936,12 @@ public class HandCharge {
 	@Path("record/batch/App")
 	@POST
 	public String afAPPUploadBatch(String data) {
-		log.debug("App³­±í¼ÇÂ¼ÉÏ´« ¿ªÊ¼");
+		log.debug("AppæŠ„è¡¨è®°å½•ä¸Šä¼  å¼€å§‹");
 		JSONObject jo = new JSONObject();
 		try {
 			JSONArray rows = new JSONArray(data);
 			String re = "";
-			// ¶ÔÃ¿Ò»¸öÊı¾İ£¬µ÷ÓÃµ¥¸ö³­±íÊı¾İ´¦Àí¹ı³Ì
+			// å¯¹æ¯ä¸€ä¸ªæ•°æ®ï¼Œè°ƒç”¨å•ä¸ªæŠ„è¡¨æ•°æ®å¤„ç†è¿‡ç¨‹
 			for (int i = 0; i < rows.length(); i++) {
 				JSONObject row = rows.getJSONObject(i);
 				String userid = row.getString("f_userid");
@@ -953,7 +953,7 @@ public class HandCharge {
 				String inputdate = row.getString("f_inputdate");
 				String meterstate = row.getString("f_meterstate");
 				double lastreading = row.getDouble("lastreading");
-				// »ñÈ¡ÓàÆøÁ¿£¬»ú±íÂ¼Èë£¬Ã»ÓĞÓàÆøÁ¿£¬´«Double.NaN
+				// è·å–ä½™æ°”é‡ï¼Œæœºè¡¨å½•å…¥ï¼Œæ²¡æœ‰ä½™æ°”é‡ï¼Œä¼ Double.NaN
 				double leftgas = 0;
 				if (row.has("leftgas")) {
 					leftgas = row.getDouble("leftgas");
@@ -977,8 +977,8 @@ public class HandCharge {
 		}
 	}
 
-	// ÅúÁ¿³­±í¼ÇÂ¼ÉÏ´«
-	// dataÒÔJSON¸ñÊ½ÉÏ´«£¬[{userid:'ÓÃ»§±àºÅ', showNumber:±¾ÆÚ³­±íÊı},{}]
+	// æ‰¹é‡æŠ„è¡¨è®°å½•ä¸Šä¼ 
+	// dataä»¥JSONæ ¼å¼ä¸Šä¼ ï¼Œ[{userid:'ç”¨æˆ·ç¼–å·', showNumber:æœ¬æœŸæŠ„è¡¨æ•°},{}]
 	@Path("record/batch/{handdate}/{sgnetwork}/{sgoperator}/{lastinputdate}/{meterstate}/{orgpathstr}")
 	@POST
 	public String afRecordInputForMore(String data,
@@ -988,20 +988,20 @@ public class HandCharge {
 			@PathParam("handdate") String handdate,
 			@PathParam("meterstate") String meterstate,
 			@PathParam("orgpathstr") String orgpathstr) {
-		log.debug("ÅúÁ¿³­±í¼ÇÂ¼ÉÏ´« ¿ªÊ¼");
+		log.debug("æ‰¹é‡æŠ„è¡¨è®°å½•ä¸Šä¼  å¼€å§‹");
 		String ret = "";
-		// ´íÎóĞÅÏ¢
+		// é”™è¯¯ä¿¡æ¯
 		String error = "";
 		try {
-			// È¡³öËùÓĞÊı¾İ
+			// å–å‡ºæ‰€æœ‰æ•°æ®
 			JSONArray rows = new JSONArray(data);
-			// ¶ÔÃ¿Ò»¸öÊı¾İ£¬µ÷ÓÃµ¥¸ö³­±íÊı¾İ´¦Àí¹ı³Ì
+			// å¯¹æ¯ä¸€ä¸ªæ•°æ®ï¼Œè°ƒç”¨å•ä¸ªæŠ„è¡¨æ•°æ®å¤„ç†è¿‡ç¨‹
 			for (int i = 0; i < rows.length(); i++) {
 				JSONObject row = rows.getJSONObject(i);
 				String userid = row.getString("userid");
 				double reading = row.getDouble("reading");
 				double lastreading = row.getDouble("lastreading");
-				// »ñÈ¡ÓàÆøÁ¿£¬»ú±íÂ¼Èë£¬Ã»ÓĞÓàÆøÁ¿£¬´«Double.NaN
+				// è·å–ä½™æ°”é‡ï¼Œæœºè¡¨å½•å…¥ï¼Œæ²¡æœ‰ä½™æ°”é‡ï¼Œä¼ Double.NaN
 				double leftgas = 0;
 				if (row.has("leftgas")) {
 					leftgas = row.getDouble("leftgas");
@@ -1011,20 +1011,20 @@ public class HandCharge {
 					afrecordInput(userid, lastreading, reading, sgnetwork,
 							sgoperator, lastinputdate, handdate, leftgas,
 							meterstate, 2,orgpathstr);
-					// »ñµÃ×Ô¶¨ÒåÒì³£
+					// è·å¾—è‡ªå®šä¹‰å¼‚å¸¸
 				} catch (RSException e) {
-					// Æ´½Ó´íÎóĞÅÏ¢
+					// æ‹¼æ¥é”™è¯¯ä¿¡æ¯
 					error += e.getMessage();
 				}
 			}
-			// Èç¹ûÓĞ´íÎóĞÅÏ¢ÔòÅ×³öÒì³££¬·µ»Øµ½Ç°Ì¨ÌáÊ¾
+			// å¦‚æœæœ‰é”™è¯¯ä¿¡æ¯åˆ™æŠ›å‡ºå¼‚å¸¸ï¼Œè¿”å›åˆ°å‰å°æç¤º
 			if (!error.equals("")) {
 				throw new RSException(error);
 
 			}
-			log.debug("ÅúÁ¿³­±í¼ÇÂ¼ÉÏ´« ½áÊø");
+			log.debug("æ‰¹é‡æŠ„è¡¨è®°å½•ä¸Šä¼  ç»“æŸ");
 		} catch (Exception e) {
-			log.debug("ÅúÁ¿³­±í¼ÇÂ¼ÉÏ´« Ê§°Ü£º" + e.getMessage());
+			log.debug("æ‰¹é‡æŠ„è¡¨è®°å½•ä¸Šä¼  å¤±è´¥ï¼š" + e.getMessage());
 			ret = e.getMessage();
 		} finally {
 			return ret;
@@ -1036,9 +1036,9 @@ public class HandCharge {
 
 	}
 
-	// ²úÉú½»·Ñ½ØÖ¹ÈÕÆÚ
+	// äº§ç”Ÿäº¤è´¹æˆªæ­¢æ—¥æœŸ
 	private Date endDate(String str, String userid) throws ParseException {
-		// ²éÕÒÊÇ·ñÅäÖÃÁË½ØÖ¹ÈÕÆÚ´¦ÀíÀà£¬Èç¹ûÓĞÖ´ĞĞ´¦ÀíÀà
+		// æŸ¥æ‰¾æ˜¯å¦é…ç½®äº†æˆªæ­¢æ—¥æœŸå¤„ç†ç±»ï¼Œå¦‚æœæœ‰æ‰§è¡Œå¤„ç†ç±»
 		ApplicationContext applicationContext = WebApplicationContextUtils
 				.getWebApplicationContext(ContextListener.getContext());
 		if (applicationContext.containsBean("EndDate")) {
@@ -1055,14 +1055,14 @@ public class HandCharge {
 		return c.getTime();
 	}
 
-	// ×ª»»Æ÷£¬ÔÚ×ª»»ÆÚ¼ä»á¼ì²é¶ÔÏóÊÇ·ñÒÑ¾­×ª»»¹ı£¬±ÜÃâÖØĞÂ×ª»»£¬²úÉúËÀÑ­»·
+	// è½¬æ¢å™¨ï¼Œåœ¨è½¬æ¢æœŸé—´ä¼šæ£€æŸ¥å¯¹è±¡æ˜¯å¦å·²ç»è½¬æ¢è¿‡ï¼Œé¿å…é‡æ–°è½¬æ¢ï¼Œäº§ç”Ÿæ­»å¾ªç¯
 	class JsonTransfer {
-		// ±£´æÒÑ¾­×ª»»¹ıµÄ¶ÔÏó
+		// ä¿å­˜å·²ç»è½¬æ¢è¿‡çš„å¯¹è±¡
 		private List<Map<String, Object>> transed = new ArrayList<Map<String, Object>>();
 
-		// °Ñµ¥¸ömap×ª»»³ÉJSON¶ÔÏó
+		// æŠŠå•ä¸ªmapè½¬æ¢æˆJSONå¯¹è±¡
 		public Object MapToJson(Map<String, Object> map) {
-			// ×ª»»¹ı£¬·µ»Ø¿Õ¶ÔÏó
+			// è½¬æ¢è¿‡ï¼Œè¿”å›ç©ºå¯¹è±¡
 			if (contains(map))
 				return JSONObject.NULL;
 			transed.add(map);
@@ -1071,13 +1071,13 @@ public class HandCharge {
 				try {
 					String key = entry.getKey();
 					Object value = entry.getValue();
-					// ¿ÕÖµ×ª»»³ÉJSONµÄ¿Õ¶ÔÏó
+					// ç©ºå€¼è½¬æ¢æˆJSONçš„ç©ºå¯¹è±¡
 					if (value == null) {
 						value = JSONObject.NULL;
 					} else if (value instanceof HashMap) {
 						value = MapToJson((Map<String, Object>) value);
 					}
-					// Èç¹ûÊÇ$type$£¬±íÊ¾ÊµÌåÀàĞÍ£¬×ª»»³ÉEntityType
+					// å¦‚æœæ˜¯$type$ï¼Œè¡¨ç¤ºå®ä½“ç±»å‹ï¼Œè½¬æ¢æˆEntityType
 					if (key.equals("$type$")) {
 						json.put("EntityType", value);
 					} else if (value instanceof Date) {
@@ -1086,10 +1086,10 @@ public class HandCharge {
 						long time = d1.getTime() + c.get(Calendar.ZONE_OFFSET);
 						json.put(key, time);
 					} else if (value instanceof MapProxy) {
-						// MapProxyÃ»ÓĞ¼ÓÔØ£¬²»¹Ü
+						// MapProxyæ²¡æœ‰åŠ è½½ï¼Œä¸ç®¡
 					} else if (value instanceof PersistentSet) {
 						PersistentSet set = (PersistentSet) value;
-						// Ã»¼ÓÔØµÄ¼¯ºÏ²»¹Ü
+						// æ²¡åŠ è½½çš„é›†åˆä¸ç®¡
 						if (set.wasInitialized()) {
 							json.put(key, ToJson(set));
 						}
@@ -1103,7 +1103,7 @@ public class HandCharge {
 			return json;
 		}
 
-		// °Ñ¼¯ºÏ×ª»»³ÉJsonÊı×é
+		// æŠŠé›†åˆè½¬æ¢æˆJsonæ•°ç»„
 		public Object ToJson(PersistentSet set) {
 			JSONArray array = new JSONArray();
 			for (Object obj : set) {
@@ -1114,7 +1114,7 @@ public class HandCharge {
 			return array;
 		}
 
-		// ÅĞ¶ÏÒÑ¾­×ª»»¹ıµÄÄÚÈİÀïÊÇ·ñ°üº¬¸ø¶¨¶ÔÏó
+		// åˆ¤æ–­å·²ç»è½¬æ¢è¿‡çš„å†…å®¹é‡Œæ˜¯å¦åŒ…å«ç»™å®šå¯¹è±¡
 		public boolean contains(Map<String, Object> obj) {
 			for (Map<String, Object> map : this.transed) {
 				if (obj == map) {
@@ -1141,13 +1141,13 @@ public class HandCharge {
 	}
 
 	/**
-	 * ²éÕÒÓÃ»§ĞÅÏ¢
+	 * æŸ¥æ‰¾ç”¨æˆ·ä¿¡æ¯
 	 */
 	private Map<String, Object> findUser(String userid) {
 		final String userSql = "from t_userinfo  where f_userid= (select f_userinfoid from t_userfiles where  f_userid = '"
 				+ userid + "')";
 		// List userlist = session.createQuery(userSql).list();
-		log.debug("²éÑ¯»§ĞÅÏ¢¿ªÊ¼:" + userSql);
+		log.debug("æŸ¥è¯¢æˆ·ä¿¡æ¯å¼€å§‹:" + userSql);
 		List<Object> userlist = this.hibernateTemplate.find(userSql);
 		if (userlist.size() != 1) {
 			return null;
@@ -1157,11 +1157,11 @@ public class HandCharge {
 	}
 
 	/**
-	 * ¸üĞÂÓÃ»§ĞÅÏ¢
+	 * æ›´æ–°ç”¨æˆ·ä¿¡æ¯
 	 */
 	private void updateUser(Map user, BigDecimal nowye,
 			BigDecimal newMeterGasNums, BigDecimal newCumuGas) throws Exception {
-		// ¸üĞÂÓÃ»§
+		// æ›´æ–°ç”¨æˆ·
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		String dt = format.format(now);
@@ -1171,7 +1171,7 @@ public class HandCharge {
 				+ "'," + " f_metergasnums=" + newMeterGasNums.doubleValue()
 				+ ", f_cumulativepurchase=" + newCumuGas.doubleValue()
 				+ " where f_userid='" + user.get("f_userid") + "'";
-		log.debug("¸üĞÂ»§ĞÅÏ¢¿ªÊ¼:" + sql);
+		log.debug("æ›´æ–°æˆ·ä¿¡æ¯å¼€å§‹:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
 	}
 }
