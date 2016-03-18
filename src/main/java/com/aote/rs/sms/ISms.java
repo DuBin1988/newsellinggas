@@ -17,4 +17,9 @@ public interface ISms {
 	 * @return ∑µªÿjson∂‘œÛ
 	 */
 	public JSONObject sendsms(String phone,String msg,JSONObject attr);
+	
+	
+	public void init();
+	
+	public void destroy();
 }
