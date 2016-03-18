@@ -1,6 +1,7 @@
 package com.aote.rs.sms;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.ietf.jgss.Oid;
 
 /**
  * 定时自动发送短信接口
@@ -17,4 +18,8 @@ public interface ISms {
 	 * @return 返回json对象
 	 */
 	public JSONObject sendsms(String phone,String msg,JSONObject attr);
+	
+	public void init();
+	
+	public void destroy();
 }

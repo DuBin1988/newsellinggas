@@ -1,24 +1,37 @@
 package com.aote.rs.sms;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import message.sms.SUBMIT;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import com.browsesoft.oa.InitAttributeGather;
 
 import common.ComFun;
 import common.SmsClient;
 
 public class MianZhuSms implements ISms {
+	
+	public MianZhuSms() {
+		System.out.println("加载短信");
+		init();
+	}
 
 	// static Logger log = Logger.getLogger(MianZhuSms.class);
+	@Autowired
+	private HibernateTemplate hibernateTemplate;
 
 	@Override
 	public JSONObject sendsms(String phone, String msg, JSONObject attr) {
 		// 链接服务
-		SmsClient smsClient = new SmsClient();
-		smsClient.start();
+//		SmsClient smsClient = new SmsClient();
+//		smsClient.start();
 		// 启动线程，发送短信
 		SubmitSms sms = new SubmitSms();
 		sms.phone = phone;
@@ -27,9 +40,34 @@ public class MianZhuSms implements ISms {
 		return null;
 	}
 
+	public JSONObject lastMontQfyh(){
+		JSONObject result = new JSONObject();
+		try {
+		//	String param = "{f_username:刘欢}";
+			JSONObject attr = new JSONObject();
+			
+			String hql = "from t_userfiles";
+			List list = hibernateTemplate.find(hql);
+			for (Object obj : list) {
+				// 获取电话号码及短信内容
+				Map map = (Map) obj;
+				String phone = map.get("f_phone").toString();
+				String userid = map.get("f_userid").toString();
+				
+				String msg =  "【中民燃气】尊敬的天然气用户[#" + userid + "#]：您的上月天然气欠费金额为[#money#]，请于本月24日前到收费大厅缴纳气费，以免停气给您带来不便。退订回N";
+				
+				result = sendsms(phone, msg, attr);
+			}	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return result;
+	}
+
 	public static void main(String[] args) {
 		MianZhuSms sms = new MianZhuSms();
-		sms.sendsms("13689262869,17791214879", "你好", null);
+		sms.sendsms("13201702256", "你好", null);
 	}
 
 	class SubmitSms extends Thread {
@@ -39,7 +77,7 @@ public class MianZhuSms implements ISms {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
 		public void run() {
-			//判断号码或者内容不能为空
+			// 判断号码或者内容不能为空
 			if (phone == null || message == null || phone.equals("")
 					|| message.equals("")) {
 				logger.error("发送的电话号码或者内容不能为空！");
@@ -75,5 +113,18 @@ public class MianZhuSms implements ISms {
 				}
 			}
 		}
+	}
+	
+	SmsClient smsClient;
+	
+	@Override
+	public void init(){
+		smsClient = new SmsClient();
+		smsClient.start();
+	}
+	
+	@Override
+	public void destroy(){
+		smsClient.stop();
 	}
 }
