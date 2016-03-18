@@ -88,15 +88,9 @@ namespace Com.Aote.Pages
         {
             userList.PageIndex = pager2.PageIndex;
         }
-
-
-        //双击事件预先定义变量
         DateTime lastClickTime = DateTime.Now;
 
         object lastClickItem;
-
-
-        // 模拟鼠标双击DataGridItem效果 
         private void dataGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             var eventSource = e.OriginalSource;
@@ -104,16 +98,14 @@ namespace Com.Aote.Pages
             var ts = now.Subtract(lastClickTime);
             var diff = ts.TotalMilliseconds;
             lastClickTime = now;
-            //若两次双击时差小于250ms且点击的是同一项目则激发事件
             var nowClickItem = daninfos.SelectedItem;
             if (diff < 250 && lastClickItem == nowClickItem)
             {
-                //抛出datagrid双击事件
+              
                 OnDataItemDoubleClick(nowClickItem);
             }
             lastClickItem = nowClickItem;
         }
-        //模拟双击
         protected virtual void OnDataItemDoubleClick(object sender)
         {
             ChildWindowObj childpage = (ChildWindowObj)FrameworkElementExtension.FindResource(LayoutRoot, "openchild2");

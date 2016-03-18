@@ -51,10 +51,11 @@
                     </m:ResourceLoad>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="95*"/>
+                            <ColumnDefinition Width="1493*"/>
                             <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
-                        <c:BusyIndicatorEx x:Name="ui_busys" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy or toExcel.IsBusy}">
+                        <c:BusyIndicatorEx x:Name="ui_busys" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy or toExcel.IsBusy}" Grid.ColumnSpan="2">
                             <toolkit:DockPanel>
                                 <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
                                     <Grid.RowDefinitions>
@@ -331,7 +332,7 @@
                                         <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
                                         <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
                                         <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-                                        <sdk:DataGridTextColumn Header="抄表时间" Binding="{Binding lastinputdate, StringFormat=yyyy-MM-dd}"/>
+                                        <sdk:DataGridTextColumn Header="抄表时间" Binding="{Binding lastinputdate,StringFormat=hh:mm:ss tt}"/>
                                         <sdk:DataGridTextColumn Header="抄表表底" Binding="{Binding lastinputgasnum}"/>
                                         <sdk:DataGridTextColumn Header="账户余额" Binding="{Binding f_zhye}"/>
                                         <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
@@ -378,7 +379,7 @@
                                         <sdk:DataGridTextColumn Header="单价同步状态" Binding="{Binding f_returnvaluedj}"/>
                                         <sdk:DataGridTextColumn Header="阀门同步状态" Binding="{Binding f_returnvalueoperate}"/>
                                         <sdk:DataGridTextColumn Header="气表最新状态" Binding="{Binding f_tablestatus}"/>
-                                        <sdk:DataGridTextColumn Header="气表状态时间" Binding="{Binding f_statusdate, StringFormat=yyyy-MM-dd}"/>
+                                        <sdk:DataGridTextColumn Header="气表状态时间" Binding="{Binding f_statusdate,StringFormat=hh:mm:ss tt}"/>
                                         <sdk:DataGridTextColumn Header="气表状态信息" Binding="{Binding f_tablesmessage}"/>
 
                                         <!--sdk:DataGridTextColumn Header="时间" Binding="{Binding f_yyttime,StringFormat=hh:mm:ss tt}"/-->
@@ -423,6 +424,8 @@
                                         <ColumnDefinition Width="70*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Grid.Column="2"  Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+
                                     <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>
@@ -496,7 +499,7 @@
                                     <sdk:DataGridTextColumn Header="当前用户编号" Binding="{Binding f_usernumber}"/>
                                     <sdk:DataGridTextColumn Header="公司" Binding="{Binding f_filiale}"/>
                                     <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
-                                    
+
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
                         </toolkit:DockPanel>
@@ -551,7 +554,7 @@
 											Operator="f_date ^= substring('this',1,10)"/>
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Row="2" Grid.Column="3"  Margin="5.627,2,24,1" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock TextWrapping="Wrap" Text="     到：" Grid.Row="2" Grid.Column="3"   Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 
                                     <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="9,2,9,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
@@ -627,9 +630,9 @@
                                         <RowDefinition Height="28"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="80"/>
                                         <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="80"/>
                                         <ColumnDefinition Width="125"/>
                                         <ColumnDefinition Width="125"/>
                                         <ColumnDefinition Width="70*"/>
@@ -656,7 +659,7 @@
 											Operator="f_yytdate ^= substring('this',1,10)"/>
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock TextWrapping="Wrap" Text="       到：" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 
                                     <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="0" Grid.Row="1" Grid.Column="2" TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
@@ -706,7 +709,7 @@
                                 </a:Data.Items>
                                 <sdk:DataGrid.Columns>
                                     <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-                                    
+
 
                                     <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}"/>
                                     <sdk:DataGridTextColumn Header="表号" Binding="{Binding f_meternumber}"/>
@@ -724,7 +727,7 @@
                                     <sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
                                     <sdk:DataGridTextColumn Header="阶梯气价类型" Binding="{Binding f_stairtype}"/>
                                     <sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
-                                   
+
                                     <sdk:DataGridTextColumn Header="总购气量" Binding="{Binding f_cumulativepurchase}"/>
                                     <sdk:DataGridTextColumn Header="当前表购气量" Binding="{Binding f_metergasnums}"/>
                                     <sdk:DataGridTextColumn Header="维护费日期" Binding="{Binding f_beginfee,StringFormat=yyyy-MM}"/>
@@ -739,7 +742,7 @@
                                     <sdk:DataGridTextColumn Header="气表厂家" Binding="{Binding f_gasmetermanufacturers}"/>
                                     <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
                                     <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-                                    
+
                                     <sdk:DataGridTextColumn Header="交费方式" Binding="{Binding f_payment}"/>
                                     <sdk:DataGridTextColumn Header="银行" Binding="{Binding f_bankname}"/>
                                     <sdk:DataGridTextColumn Header="账户名" Binding="{Binding f_usermc}"/>
@@ -789,12 +792,12 @@
                                         <RowDefinition Height="28"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="80"/>
                                         <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="70"/>
                                         <ColumnDefinition Width="125"/>
                                         <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="70*"/>
+                                        <ColumnDefinition Width="70"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock TextWrapping="Wrap" Text="街道名称：" Margin="0"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_road}" Width="Auto" Margin="0" Grid.Column="1" Height="25" >
@@ -804,7 +807,7 @@
                                     </TextBox>
 
 
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从 :"/>
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从:"/>
                                     <sdk:DatePicker Name="dwxxrq13" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" >
                                         <a:Data.Prop>
                                             <!-- Value="{m:Exp Str=SysTime.Today}"-->
@@ -818,7 +821,7 @@
 											Operator="f_operatedate ^= substring('this',1,10)"/>
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock TextWrapping="Wrap" Text="       到:" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 
                                     <TextBlock TextWrapping="Wrap" Text="街道范围：" Margin="0,0,5,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="70"/>

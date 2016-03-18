@@ -69,13 +69,13 @@ namespace Com.Aote.Pages
         }
         protected virtual void OnDataItemDoubleClick2(object sender)
         {
-            ChildWindowObj childpage = (ChildWindowObj)FrameworkElementExtension.FindResource(LayoutRoot2, "openchild1");
+            ChildWindowObj childpage = (ChildWindowObj)FrameworkElementExtension.FindResource(LayoutRoot2, "openchild2");
             childpage.ParamObj = sender;
             childpage.IsOpen = true;
 
         }
 
-        //换表记录
+        //换表记录信息
         private void dataGrid_MouseLeftButtonUp3(object sender, MouseButtonEventArgs e)
         {
             var eventSource = e.OriginalSource;
@@ -186,7 +186,7 @@ namespace Com.Aote.Pages
         }
         protected virtual void OnDataItemDoubleClick7(object sender)
         {
-            ChildWindowObj childpage = (ChildWindowObj)FrameworkElementExtension.FindResource(LayoutRoot6, "openchild6");
+            ChildWindowObj childpage = (ChildWindowObj)FrameworkElementExtension.FindResource(LayoutRoot7, "openchild7");
             childpage.ParamObj = sender;
             childpage.IsOpen = true;
 
