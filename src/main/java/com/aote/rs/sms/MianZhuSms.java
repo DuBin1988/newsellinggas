@@ -12,18 +12,13 @@ import common.SmsClient;
 
 public class MianZhuSms implements ISms {
 
-	public MianZhuSms() {
-		System.out.println("加载短信");
-		init();
-	}
-
 	// static Logger log = Logger.getLogger(MianZhuSms.class);
 
 	@Override
 	public JSONObject sendsms(String phone, String msg, JSONObject attr) {
 		// 链接服务
-//		SmsClient smsClient = new SmsClient();
-//		smsClient.start();
+		SmsClient smsClient = new SmsClient();
+		smsClient.start();
 		// 启动线程，发送短信
 		SubmitSms sms = new SubmitSms();
 		sms.phone = phone;
@@ -44,7 +39,7 @@ public class MianZhuSms implements ISms {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
 		public void run() {
-			// 判断号码或者内容不能为空
+			//判断号码或者内容不能为空
 			if (phone == null || message == null || phone.equals("")
 					|| message.equals("")) {
 				logger.error("发送的电话号码或者内容不能为空！");
@@ -80,19 +75,5 @@ public class MianZhuSms implements ISms {
 				}
 			}
 		}
-	}
-
-	SmsClient smsClient;
-
-	@Override
-	public void init() {
-		smsClient = new SmsClient();
-		smsClient.start();
-	}
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		smsClient.stop();
 	}
 }

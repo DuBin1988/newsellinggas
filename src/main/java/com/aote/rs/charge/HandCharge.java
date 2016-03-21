@@ -40,6 +40,7 @@ import com.aote.listener.ContextListener;
 import com.aote.rs.charge.countdate.ICountDate;
 import com.aote.rs.charge.enddate.IEndDate;
 import com.aote.rs.exception.RSException;
+import com.aote.rs.util.JSONHelper;
 
 @Path("handcharge")
 @Scope("prototype")
@@ -68,6 +69,12 @@ public class HandCharge {
 	BigDecimal stair2fee = new BigDecimal(0);
 	BigDecimal stair3fee = new BigDecimal(0);
 	BigDecimal stair4fee = new BigDecimal(0);
+	// 一阶梯剩余可购
+	BigDecimal stair1surplus = new BigDecimal(0);
+	// 二阶梯剩余可购
+	BigDecimal stair2surplus = new BigDecimal(0);
+	// 三阶梯剩余可购
+	BigDecimal stair3surplus = new BigDecimal(0);
 	private int stairmonths;
 
 	// 抄表单下载，返回JSON串
@@ -94,8 +101,10 @@ public class HandCharge {
 	@Path("download")
 	public String downLoadRecord(String condition) {
 
-		String sql = "select top 1000 u.f_userinfoid,u.f_userid,u.f_username,u.f_address,u.lastinputgasnum "
-				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid where h.shifoujiaofei='否' and u.f_userstate!='注销' and h.f_state='未抄表' and "
+		String sql = "select top 1000 h.id,u.f_userinfoid,u.f_userid,u.f_username,u.f_address,u.lastinputgasnum,info.f_zhye "
+				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid "
+				+ "left join t_userinfo info on u.f_userinfoid=info.f_userid where h.shifoujiaofei='否' "
+				+ "and u.f_userstate!='注销' and h.f_state='未抄表' and "
 				+ condition + "	order by u.f_address,u.f_apartment";
 		List<Object> list = this.hibernateTemplate
 				.executeFind(new HibernateSQLCall(sql));
@@ -143,7 +152,7 @@ public class HandCharge {
 		String ret = "";
 		try {
 			return afrecordInput(userid, 0, reading, sgnetwork, sgoperator,
-					lastinputdate, handdate, 0, meterstate, 1,"");
+					lastinputdate, handdate, 0, meterstate, 1, "");
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			ret = e.getMessage();
@@ -157,14 +166,14 @@ public class HandCharge {
 	@Path("/num/{userid}/{pregas}/{enddate}")
 	public JSONObject pregas(@PathParam("userid") String userid, // 用户编号
 			@PathParam("pregas") double pregas, // 用气量
-			@PathParam("enddate") String enddate // 结束日期, 格式为yyyymmdd
+			@PathParam("enddate") String endjddate // 结束日期, 格式为yyyymmdd
 	) {
 		final String usersql = "select isnull(f_stairtype,'未设')f_stairtype, isnull(f_gasprice,0)f_gasprice, "
 				+ "isnull(f_stair1amount,0)f_stair1amount,isnull(f_stair2amount,0)f_stair2amount,"
 				+ "isnull(f_stair3amount,0)f_stair3amount,isnull(f_stair1price,0)f_stair1price,"
 				+ "isnull(f_stair2price,0)f_stair2price,isnull(f_stair3price,0)f_stair3price,"
 				+ "isnull(f_stair4price,0)f_stair4price,isnull(f_stairmonths,0)f_stairmonths,isnull(f_zhye,0)f_zhye "
-				+ "from t_userfiles where f_userid = '" + userid + "'";
+				+ "from t_userinfo where f_userid = '" + userid + "'";
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
 					public Object doInHibernate(Session session)
@@ -192,14 +201,14 @@ public class HandCharge {
 				.toString());
 		BigDecimal stair4price = new BigDecimal(map.get("f_stair4price")
 				.toString());
-		int stairmonths = Integer.parseInt(map.get("f_stairmonths").toString());
+		stairmonths = Integer.parseInt(map.get("f_stairmonths").toString());
 		String stairtype = map.get("f_stairtype").toString();
 
 		// 转换结束日期
 		Calendar cal = Calendar.getInstance();
-		int year = Integer.parseInt(enddate.substring(0, 4));
-		int month = Integer.parseInt(enddate.substring(4, 6));
-		int day = Integer.parseInt(enddate.substring(6, 8));
+		int year = Integer.parseInt(endjddate.substring(0, 4));
+		int month = Integer.parseInt(endjddate.substring(4, 6));
+		int day = Integer.parseInt(endjddate.substring(6, 8));
 		cal.set(year, month - 1, day);
 
 		BigDecimal chargenum = stair(userid, new BigDecimal(pregas), cal,
@@ -231,6 +240,7 @@ public class HandCharge {
 
 	/**
 	 * 单块表抄表录入的内部方法，支持卡表及机表，卡表可录入余气量。
+	 * 
 	 * @param userid
 	 * @param lastreading
 	 * @param reading
@@ -241,14 +251,15 @@ public class HandCharge {
 	 * @param leftgas
 	 * @param meterstate
 	 * @param flag
-	 * @param orgpathstr  操作员组织信息
+	 * @param orgpathstr
+	 *            操作员组织信息
 	 * @return
 	 * @throws Exception
 	 */
 	public String afrecordInput(String userid, double lastreading,
 			double reading, String sgnetwork, String sgoperator,
 			String lastinputdate, String handdate, double leftgas,
-			String meterstate, int flag,String orgpathstr) throws Exception {
+			String meterstate, int flag, String orgpathstr) throws Exception {
 		// 查找用户未抄表记录
 		Map map = this.findHandPlan(userid);
 		if (map == null) {
@@ -410,7 +421,7 @@ public class HandCharge {
 			sell.put("f_filiale", map.get("f_filiale")); // 分公司
 			sell.put("f_useful", handid); // 抄表id
 			sell.put("f_stair1amount", stair1num.doubleValue());
-			sell.put("f_stairtype", user.get("f_stairtype")); //阶梯气价类型
+			sell.put("f_stairtype", user.get("f_stairtype")); // 阶梯气价类型
 			sell.put("f_stair2amount", stair2num.doubleValue());
 			sell.put("f_stair3amount", stair3num.doubleValue());
 			sell.put("f_stair4amount", stair4num.doubleValue());
@@ -429,7 +440,7 @@ public class HandCharge {
 			this.updateUser(user, f_zhye.subtract(chargenum),
 					f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
 
-			hql = "update t_userfiles set f_zhye=?,lastinputgasnum=?,"
+			hql = "update t_userfiles set lastinputgasnum=?,"
 					+
 					// 本次抄表日期
 					"  lastinputdate=? "
@@ -441,8 +452,7 @@ public class HandCharge {
 					+ "where f_userid=?";
 			hibernateTemplate.bulkUpdate(
 					hql,
-					new Object[] { f_zhye.subtract(chargenum).doubleValue(),
-							reading, lastinputDate,
+					new Object[] { reading, lastinputDate,
 							f_metergasnums.add(gas).doubleValue(),
 							f_cumulativepurchase.add(gas).doubleValue(),
 							gas.doubleValue(), inputdate, inputdate, userid });
@@ -511,10 +521,11 @@ public class HandCharge {
 					+ lrg
 					+ " , f_inputdate=?,f_meterstate=?,f_network='"
 					+ sgnetwork
-					+",f_filiale='"+map.get("f_filiale")+"'"
+					+ "',f_filiale='"
+					+ map.get("f_filiale")
 					+ "',f_operator='"
 					+ sgoperator
-					+ "'  "
+					+ "'"
 					+ "where f_userid='"
 					+ userid
 					+ "' and f_state='未抄表' and id=" + handid;
@@ -541,7 +552,7 @@ public class HandCharge {
 					+ " ,f_stairtype='" + stairtype + "'," + "oughtamount="
 					+ gas + ",  f_endjfdate=?, oughtfee=" + chargenum
 					+ ", f_inputdate=?,f_meterstate=?,f_network='" + sgnetwork
-					+"',f_filiale='"+map.get("f_filiale")+""
+					+ "',f_filiale='" + map.get("f_filiale") + ""
 					+ "',f_operator='" + sgoperator + "' ,f_address='"
 					+ address + "', f_username='" + username + "',"
 					+ "f_stair1amount=" + stair1num + ",f_stair2amount="
@@ -587,6 +598,9 @@ public class HandCharge {
 		stair3fee = new BigDecimal(0);
 		stair4num = new BigDecimal(0);
 		stair4fee = new BigDecimal(0);
+		stair1surplus = new BigDecimal(0);
+		stair2surplus = new BigDecimal(0);
+		stair3surplus = new BigDecimal(0);
 		// 针对设置阶梯气价的用户运算
 		CountDate(userid, hibernateTemplate);
 		if (!stairtype.equals("未设")) {
@@ -617,11 +631,16 @@ public class HandCharge {
 			// 当前购气量在第一阶梯
 			if (sumamont.compareTo(stair1amount) < 0) {
 				if (allamont.compareTo(stair1amount) < 0) {
+					stair1surplus = stair1amount.subtract(allamont);
+					stair2surplus = stair2amount.subtract(stair1amount);
+					stair3surplus = stair3amount.subtract(stair2amount);
 					stair1num = gas;
 					stair1fee = gas.multiply(stair1price);
 					chargenum = gas.multiply(stair1price);
 				} else if (allamont.compareTo(stair1amount) >= 0
 						&& allamont.compareTo(stair2amount) < 0) {
+					stair2surplus = stair2amount.subtract(allamont);
+					stair3surplus = stair3amount.subtract(stair2amount);
 					stair1num = stair1amount.subtract(sumamont);
 					stair1fee = (stair1amount.subtract(sumamont))
 							.multiply(stair1price);
@@ -631,6 +650,7 @@ public class HandCharge {
 					chargenum = stair1fee.add(stair2fee);
 				} else if (allamont.compareTo(stair2amount) >= 0
 						&& allamont.compareTo(stair3amount) < 0) {
+					stair3surplus = stair3amount.subtract(allamont);
 					stair1num = stair1amount.subtract(sumamont);
 					stair1fee = (stair1amount.subtract(sumamont))
 							.multiply(stair1price);
@@ -661,11 +681,14 @@ public class HandCharge {
 			} else if (sumamont.compareTo(stair1amount) >= 0
 					&& sumamont.compareTo(stair2amount) < 0) {
 				if (allamont.compareTo(stair2amount) < 0) {
+					stair2surplus = stair2amount.subtract(allamont);
+					stair3surplus = stair3amount.subtract(stair2amount);
 					stair2num = gas;
 					stair2fee = gas.multiply(stair2price);
 					chargenum = stair2fee;
 				} else if (allamont.compareTo(stair2amount) >= 0
 						&& allamont.compareTo(stair3amount) < 0) {
+					stair3surplus = stair3amount.subtract(allamont);
 					stair2num = stair2amount.subtract(sumamont);
 					stair2fee = (stair2amount.subtract(sumamont))
 							.multiply(stair2price);
@@ -674,6 +697,7 @@ public class HandCharge {
 							.multiply(stair3price);
 					chargenum = stair2fee.add(stair3fee);
 				} else {
+					stair3surplus = stair3amount.subtract(stair2amount);
 					stair2num = stair2amount.subtract(sumamont);
 					stair2fee = (stair2amount.subtract(sumamont))
 							.multiply(stair2price);
@@ -689,10 +713,12 @@ public class HandCharge {
 			} else if (sumamont.compareTo(stair2amount) >= 0
 					&& sumamont.compareTo(stair3amount) < 0) {
 				if (allamont.compareTo(stair3amount) < 0) {
+					stair3surplus = stair3amount.subtract(allamont);
 					stair3num = gas;
 					stair3fee = gas.multiply(stair3price);
 					chargenum = stair3fee;
 				} else {
+					stair3num = stair3amount.subtract(sumamont);
 					stair3num = stair3amount.subtract(sumamont);
 					stair3fee = (stair3amount.subtract(sumamont))
 							.multiply(stair3price);
@@ -965,7 +991,7 @@ public class HandCharge {
 					} else {
 						re = afrecordInput(userid, lastreading, reading,
 								network, operator, inputdate, handdate,
-								leftgas, meterstate, 2,"");
+								leftgas, meterstate, 2, "");
 						jo.put(re, "ok");
 					}
 				}
@@ -1010,7 +1036,7 @@ public class HandCharge {
 				try {
 					afrecordInput(userid, lastreading, reading, sgnetwork,
 							sgoperator, lastinputdate, handdate, leftgas,
-							meterstate, 2,orgpathstr);
+							meterstate, 2, orgpathstr);
 					// 获得自定义异常
 				} catch (RSException e) {
 					// 拼接错误信息
@@ -1029,6 +1055,240 @@ public class HandCharge {
 		} finally {
 			return ret;
 		}
+	}
+
+	// 批量抄表走收录入
+	@Path("record/payfeeforhand")
+	@POST
+	public String afRecordInputForZS(String data,
+			@PathParam("handdate") String handdate) {
+		log.debug("批量抄表记录上传 开始");
+		String ret = "";
+		// 错误信息
+		String error = "";
+		try {
+			// 取出所有数据
+			JSONArray rows = new JSONArray(data);
+			// 对每一个数据，调用单个抄表数据处理过程
+			for (int i = 0; i < rows.length(); i++) {
+				JSONObject row = rows.getJSONObject(i);
+				Map map = JSONHelper.toHashMap(row);
+				String userid = row.getString("f_userid");
+				double lastinputgasnum = row.getDouble("lastinputgasnum");
+				double lastrecord = row.getDouble("lastrecord");
+				double oughtamount = row.getDouble("oughtamount");
+				afhandinput(map);
+			}
+			log.debug("批量抄表记录上传 结束");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.debug("批量抄表记录上传 失败：" + e.getMessage());
+			ret = e.getMessage();
+		} finally {
+			return ret;
+		}
+	}
+
+	/**
+	 * 单个抄表，只处理抄表记录
+	 * 
+	 * @param hand
+	 * @throws JSONException
+	 */
+	private void afhandinput(Map data) throws Exception {
+		String userid = data.get("f_userid") + "";
+		Map userinfo = this.findUser(userid);
+		Map hand = this.findHandPlan(userid);
+		// 获取表类型
+		String meterType = (String) hand.get("f_gasmeterstyle");
+		String stairtype = (String) userinfo.get("f_stairtype");
+		BigDecimal gas = new BigDecimal(data.get("oughtamount") + "");
+		BigDecimal stair1amount = new BigDecimal(hand.get("f_stair1amount")
+				.toString());
+		BigDecimal stair2amount = new BigDecimal(hand.get("f_stair2amount")
+				.toString());
+		BigDecimal stair3amount = new BigDecimal(hand.get("f_stair3amount")
+				.toString());
+		BigDecimal stair1price = new BigDecimal(hand.get("f_stair1price")
+				.toString());
+		BigDecimal stair2price = new BigDecimal(hand.get("f_stair2price")
+				.toString());
+		BigDecimal stair3price = new BigDecimal(hand.get("f_stair3price")
+				.toString());
+		BigDecimal stair4price = new BigDecimal(hand.get("f_stair4price")
+				.toString());
+		BigDecimal stair1fee = new BigDecimal(data.get("f_stair1fee")
+				.toString());
+		BigDecimal stair2fee = new BigDecimal(data.get("f_stair2fee")
+				.toString());
+		BigDecimal stair3fee = new BigDecimal(data.get("f_stair3fee")
+				.toString());
+		BigDecimal stair4fee = new BigDecimal(data.get("f_stair4fee")
+				.toString());
+		BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye") + "");
+		BigDecimal chargenum = new BigDecimal(data.get("f_chargenum") + "");
+		// 产生交费记录
+		BigDecimal grossproceeds = new BigDecimal(data.get("f_grossproceeds")
+				+ "");
+		BigDecimal lastinputgasnum = new BigDecimal(data.get("lastinputgasnum")
+				+ "");
+		BigDecimal lastrecord = new BigDecimal(data.get("lastrecord") + "");
+		BigDecimal oughtfee = new BigDecimal(data.get("oughtfee") + "");
+		Map<String, Object> sell = new HashMap<String, Object>();
+		sell.put("f_userid", data.get("f_userid")); // 表ID
+		sell.put("f_userinfoid", userinfo.get("f_userid"));// 用户id
+		sell.put("f_orgstr", data.get("f_orgstr"));// 操作员组织信息
+		sell.put("f_payfeevalid", "有效");// 交费是否有效
+		sell.put("f_payfeetype", "机表交费");// 收费类型
+		// 修改上期指数
+		sell.put("lastinputgasnum", lastinputgasnum.doubleValue()); // 上期底数
+		sell.put("lastrecord", lastrecord.doubleValue()); // 本期底数
+		sell.put("f_totalcost", oughtfee.doubleValue()); // 应交金额
+		sell.put("f_grossproceeds", grossproceeds.doubleValue()); // 收款
+		sell.put("f_deliverydate", new Date()); // 交费日期
+		sell.put("f_deliverytime", new Date()); // 交费时间
+		sell.put("f_zhye", userinfo.get("f_zhye")); // 上期结余
+		BigDecimal f_benqizhye = new BigDecimal(f_zhye.subtract(chargenum).doubleValue());
+		if(f_benqizhye.compareTo(new BigDecimal(0))<0){
+			f_benqizhye = new BigDecimal(0);
+		}
+		sell.put("f_benqizhye", f_benqizhye.doubleValue()); // 本期结余
+		sell.put("f_gasmeterstyle", hand.get("f_gasmeterstyle")); // 气表类型
+		sell.put("f_comtype", "天然气公司"); // 公司类型，分为天然气公司、银行
+		sell.put("f_username", userinfo.get("f_username")); // 用户/单位名称
+		sell.put("f_address", userinfo.get("f_address")); // 地址
+		sell.put("f_districtname", userinfo.get("f_districtname")); // 小区名称
+		sell.put("f_cusDom", userinfo.get("f_cusDom")); // 楼号
+		sell.put("f_gasmeterstyle", meterType);
+		sell.put("f_cusDy", userinfo.get("f_cusDy")); // 单元
+		sell.put("f_idnumber", userinfo.get("f_idnumber")); // 身份证号
+		sell.put("f_gaswatchbrand", hand.get("f_gaswatchbrand")); // 气表品牌
+		sell.put("f_gaspricetype", hand.get("f_gaspricetype")); // 气价类型
+		sell.put("f_usertype", hand.get("f_usertype")); // 用户类型
+		sell.put("f_gasproperties", hand.get("f_gasproperties")); // 用气性质
+		sell.put("f_pregas", gas.doubleValue()); // 气量
+		BigDecimal gasfee = new BigDecimal(data.get("gasfee") + "");
+		sell.put("f_preamount", gasfee.doubleValue()); // 金额
+		sell.put("f_payment", "现金"); // 付款方式
+		sell.put("f_sgnetwork", data.get("f_sgnetwork")); // 网点
+		sell.put("f_sgoperator", data.get("f_sgoperator")); // 操 作 员
+		sell.put("f_filiale", data.get("f_filiale")); // 分公司
+		sell.put("f_useful", data.get("id") + ""); // 抄表id
+		sell.put("f_stair1amount", stair1amount.doubleValue());
+		sell.put("f_stairtype", userinfo.get("f_stairtype")); // 阶梯气价类型
+		sell.put("f_stair2amount", stair2amount.doubleValue());
+		sell.put("f_stair3amount", stair3amount.doubleValue());
+		sell.put("f_stair1fee", stair1fee.doubleValue());
+		sell.put("f_stair2fee", stair2fee.doubleValue());
+		sell.put("f_stair3fee", stair3fee.doubleValue());
+		sell.put("f_stair4fee", stair4fee.doubleValue());
+		sell.put("f_stair1price", stair1price.doubleValue());
+		sell.put("f_stair2price", stair2price.doubleValue());
+		sell.put("f_stair3price", stair3price.doubleValue());
+		sell.put("f_stair4price", stair4price.doubleValue());
+		sell.put("f_stardate", data.get("f_stardate"));
+		sell.put("f_enddate", data.get("f_enddate"));
+		int sellid = (Integer) hibernateTemplate.save("t_sellinggas", sell);
+		// 户累计购气量 （暂）
+		BigDecimal f_metergasnumsu = new BigDecimal(
+				userinfo.get("f_metergasnums") + "");
+		BigDecimal f_cumulativepurchaseu = new BigDecimal(
+				userinfo.get("f_cumulativepurchase") + "");
+		// 更新户
+		this.updateUser(userinfo, f_zhye.subtract(chargenum),
+				f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
+		// 当前表累计购气量 （暂）
+		BigDecimal f_metergasnums = new BigDecimal(hand.get("f_metergasnums")
+				+ "");
+		// f_cumulativepurchase 总累计购气量
+		BigDecimal f_cumulativepurchase = new BigDecimal(
+				hand.get("f_cumulativepurchase") + "");
+		String hql = "update t_userfiles set lastinputgasnum="
+				+ data.get("lastrecord") + ","
+				+
+				// 本次抄表日期
+				"  lastinputdate=? "
+				+
+				// 当前表累计购气量 （暂） 总累计购气量
+				",f_metergasnums=  ?, f_cumulativepurchase= ? ,"
+				// 最后购气量 最后购气日期 最后购气时间
+				+ "f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
+				+ "where f_userid=?";
+		hibernateTemplate.bulkUpdate(hql, new Object[] { new Date(),
+				f_metergasnums.add(gas).doubleValue(),
+				f_cumulativepurchase.add(gas).doubleValue(), gas.doubleValue(),
+				new Date(), new Date(), userid });
+		String sellId = sellid + "";
+		// 更新抄表记录
+		hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate='"
+				+ data.get("handdate")
+				+ "',f_stairtype='"
+				+ stairtype
+				+ "',lastinputdate=?, f_inputtor='"
+				+ userinfo.get("f_inputtor")
+				+ "',lastrecord="
+				+ data.get("lastrecord")
+				+ " ,"
+				+ "oughtamount="
+				+ gas.doubleValue()
+				+ " ,oughtfee="
+				+ chargenum.doubleValue()
+				+ " ,f_address='"
+				+ userinfo.get("f_address")
+				+ "', f_username='"
+				+ userinfo.get("f_username")
+				+ "', f_zhye="
+				+ f_zhye
+				+ ", f_bczhye="
+				+ f_zhye.subtract(chargenum)
+				+ ","
+				+ "f_stair1amount="
+				+ stair1num
+				+ ",f_stair2amount="
+				+ stair2num
+				+ ",f_stair3amount="
+				+ stair3num
+				+ ",f_stair4amount="
+				+ stair4num
+				+ ",f_stair1fee="
+				+ stair1fee
+				+ ",f_stair2fee="
+				+ stair2fee
+				+ ",f_stair3fee="
+				+ stair3fee
+				+ ",f_stair4fee="
+				+ stair4fee
+				+ ",f_stair1price="
+				+ stair1price
+				+ ",f_stair2price="
+				+ stair2price
+				+ ",f_stair3price="
+				+ stair3price
+				+ ",f_stair4price="
+				+ stair4price
+				+ ","
+				+ "f_stardate='"
+				+ data.get("stardate")
+				+ "',f_enddate='"
+				+ data.get("enddate")
+				+ "',f_allamont="
+				+ data.get("sumamont")
+				+ " ,f_sellid="
+				+ sellId
+				+ ", lastinputgasnum=" // 上期指数
+				+ data.get("lastinputgasnum")
+				+ " , f_inputdate=?,f_meterstate=?,f_network='"
+				+ data.get("f_sgnetwork")
+				+ "',f_filiale='"
+				+ data.get("f_filiale")
+				+ "',f_operator='"
+				+ data.get("f_sgoperator")
+				+ "'  "
+				+ "where f_userid='"
+				+ userid + "' and f_state='未抄表' and id=" + data.get("id");
+		hibernateTemplate.bulkUpdate(hql, new Object[] { new Date(),
+				new Date(), data.get("f_meterstate") });
+
 	}
 
 	private String SolitaryCopyMeter() {
@@ -1161,6 +1421,9 @@ public class HandCharge {
 	 */
 	private void updateUser(Map user, BigDecimal nowye,
 			BigDecimal newMeterGasNums, BigDecimal newCumuGas) throws Exception {
+		if (nowye.compareTo(new BigDecimal(0)) < 0) {
+			nowye = new BigDecimal(0);
+		}
 		// 更新用户
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();

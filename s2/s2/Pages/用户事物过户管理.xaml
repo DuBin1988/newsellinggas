@@ -28,11 +28,11 @@
             <o:GeneralObject Name="ghfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  		Path="one/from t_singlevalue where name='过户费' "></o:GeneralObject>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
-            <!--用户对象Path="{m:Exp Str=applys.SelectedItem.id\!\=null:$one/from t_userfiles where f_userid\=\'\{applys.SelectedItem.f_userid\}\'$\,apply.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{apply.DataContext.f_userid\}\'$\,$qqq$}"    -->
-            <o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+            <!--用户对象Path="{m:Exp Str=applys.SelectedItem.id\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\'$\,apply.DataContext.f_userid \!\= null:$one/from t_userinfo where f_userid\=\'\{apply.DataContext.f_userid\}\'$\,$qqq$}"    -->
+            <o:GeneralObject Name="userfiles" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
                  Path="{m:Exp Str=
-			card.CardId\=>ReadCompleted!\=null and card.Factory!\=null:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,
-			applys.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userfiles where f_userid\=\'\{applys.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}">
+			card.CardId\=>ReadCompleted!\=null and card.Factory!\=null:$one/from t_userinfo where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,
+			applys.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}">
                 <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewusername}"/>
                 <o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewidnumber}"/>
                 <o:PropertySetter PropertyName="f_phone" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewphone}"/>
@@ -111,7 +111,7 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-        					Path="{m:Exp Str=$from t_userfiles where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\'}"
+        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\'}"
         					IsOld="{m:Exp Str=print.State\=\=$End$}"
         					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
@@ -344,7 +344,6 @@
                                 <o:PropertySetter PropertyName="f_nidofcard" Value="{m:Exp Str=userfiles.f_idofcard\=&gt;Completed}" />
                             </a:Data.Prop>
                         </TextBox>
-                        <Button Content="读卡" Click="{m:Exp Str=card.ReadCard()}" Grid.Column="2" HorizontalAlignment="Left" Width="55" Foreground="#FF1F46BE" VerticalAlignment="Center" d:LayoutOverrides="HorizontalAlignment"/>
                         <!--TextBox Text="{m:Bind Path=f_nbankname}" Grid.Column="3" Margin="0,8" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch"  d:LayoutOverrides="Height">
 						<a:Data.Prop>
 							<o:PropertySetter PropertyName="f_nbankname" Value="{m:Exp Str=userfiles.f_nbankname\=&gt;Completed}" />
