@@ -154,8 +154,7 @@
                         <Button x:Name="save" Content="保  存" Margin="5" 
 							IsEnabled="{m:Exp Str=!userfilego.HasErrors }" 
 							Click="{m:Exp Str='SaveAction.Invoke()'}" Width="50" />
-                        <Button Content=" 显示error" Height="30"  Click="save12_Click" IsEnabled="{m:Exp Str=userfile.DataContext.HasErrors}" Width="40"/>
-
+                       
                         <Button x:Name="cancel" Content="撤  销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();areafiles.SelectedItem\=null}" Width="50"/>
                     </toolkit:DockPanel>
                     <Grid x:Name="userfile" DataContext="{m:Exp Str=userfilego}" Margin="0,0,0,20" >

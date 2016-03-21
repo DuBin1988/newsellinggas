@@ -19,16 +19,6 @@ namespace Com.Aote.Pages
             // Required to initialize variables
             InitializeComponent();
         }
-        private void save12_Click(object sender, RoutedEventArgs e)
-        {
-            GeneralObject go = userfile.DataContext as GeneralObject;
-            Dictionary<String, String> dict = go._errors;
-            String err = "";
-            foreach (String key in dict.Keys)
-            {
-                err += key + ":" + dict[key] + "\n";
-            }
-            MessageBox.Show(err);
-        }
+       
     }
 }

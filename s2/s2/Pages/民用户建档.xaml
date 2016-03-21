@@ -126,8 +126,8 @@
                 <o:PropertySetter PropertyName="f_yytoper" NoDependValue="{m:Exp Str=userfilego.f_yytoper}"/>
                 <o:PropertySetter PropertyName="f_yytdate" NoDependValue="{m:Exp Str=userfilego.f_yytdate}"/>
                 <o:PropertySetter PropertyName="f_filiale" NoDependValue="{m:Exp Str=userfilego.f_filiale}"/>
-                <o:PropertySetter PropertyName="f_fengongsinum" NoDependValue="{m:Exp Str=userfilego.f_fengongsinum}"/--> 
-
+                <o:PropertySetter PropertyName="f_fengongsinum" NoDependValue="{m:Exp Str=userfilego.f_fengongsinum}"/-->
+                <o:PropertySetter PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
                 <o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1amount}"  />
                 <o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1price}"  />
                 <o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2amount}"  />
@@ -652,6 +652,26 @@
                                                 <o:PropertySetter PropertyName="f_compactpapers" Default="5"/>
                                             </a:Data.Prop>
                                         </TextBox>
+
+                                        <TextBlock Grid.Column="4" Margin="0,4,0,1" Grid.Row="7" TextWrapping="Wrap" Text="抄表员：" TextAlignment="Right" Height="25"/>
+                                        <ComboBox x:Name="CoboxInputtor" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="7" Height="25" IsEnabled="true" FontSize="13.333">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Height="20" Text="{Binding f_inputtor}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" NotNull="True"/>
+                                            </a:Data.Prop>
+                                        </ComboBox>
+
+                                        <TextBlock Grid.Column="4" Margin="0,6,0,5" TextWrapping="Wrap" Text="抄表员电话：" TextAlignment="Right" Grid.Row="9" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="CoboxPin_Copy1" IsReadOnly="True"  Text="{m:Bind Path=f_inputtorphone}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="9" Height="25" Grid.ColumnSpan="1" Grid.RowSpan="1" Padding="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_inputtorphone"  NoDependValue="{m:Exp Str=CoboxInputtor.SelectedItem.f_phone}"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+
                                         <ComboBox x:Name="CoboxGasPro" ItemsSource="{m:Exp Str=usegaslist}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="9" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_gasproperties" NotNull="True" Value="{m:Exp Str=CoboxGasPro.SelectedItem.f_gasproperties}" />
