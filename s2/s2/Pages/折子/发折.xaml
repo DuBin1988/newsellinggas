@@ -97,10 +97,10 @@
 	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this'"/>               
 						  </a:Data.Prop>
 						</TextBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区代码：" Margin="3,0,0,0" TextAlignment="Right"/>
-	                    <TextBox x:Name="xqdm" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqmc" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_communityid}" Width="Auto" Margin="0,1" >
+						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区地址：" Margin="3,0,0,0" TextAlignment="Right"/>
+                        <TextBox x:Name="xqdm" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqmc" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,1" >
 	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_communityid" Operator="f_communityid like 'this'"/>               
+                                <o:PropertySetter PropertyName="f_address" Operator="f_address like 'this'"/>               
 						  </a:Data.Prop>
 						</TextBox>
 	                    <Button Content="查  询" x:Name="searchbutton" Grid.Column="3" Grid.Row="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,0" HorizontalAlignment="Right" Width="50"/>					

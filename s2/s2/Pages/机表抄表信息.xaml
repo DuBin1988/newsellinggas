@@ -245,11 +245,12 @@
                         </ComboBox>
                         <!--Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	Margin="64,2,0,1" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="7" Grid.Row="3"/-->
                         <!--<HyperlinkButton x:Name="annex"  Content="导出Excel" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/excel/\{test1.url\}/\{daninfos.ItemsSource.Count\}/f_handdate|f_zerenbumen|f_userid|f_username|f_address|lastrecord|lastinputgasnum|oughtamount|f_gasprice|oughtfee|f_state|f_xiazhang|shifoujiaofei|f_network|f_inputtor|f_inputdate$}" TargetName="_blank" 	Margin="64,2,0,1" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="7" Grid.Row="3"/>-->
-                        <Button Grid.Column="8" Grid.Row="4" Width="100" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count>0}" HorizontalAlignment="Left" Click="{m:Exp Str=toExcel.ToExcel()}" Margin="5,2">导出Excel</Button>
-                        <c:Excel x:Name="toExcel"
-                                 HQL="{m:Exp Str=$\{daninfos.ItemsSource.HQL\}}"
-                                 Completed="{m:Exp Str=downLoad.Down()}"
-                                 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_handdate:抄表计划日期|f_zerenbumen:责任部门|f_userid:用户ID||f_meterstate:表状态|f_username:用户姓名|f_address:用户地址|lastrecord:本次抄表底数|lastinputgasnum:上次抄表底数|oughtamount:应交气量|f_gasprice:气价|oughtfee:应交金额|f_state:抄表单状态|shifoujiaofei:是否缴费|f_network:网点|f_inputtor:抄表员|f_inputdate:录入日期$}"/>
+                        <Button Grid.Column="8" Grid.Row="4" Width="100" HorizontalAlignment="Left" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0}"  Click="{m:Exp Str=toExcel.ToExcel()}" Margin="5,2">导出Excel</Button>
+                        <c:Excel x:Name="toExcel" 
+                                 HQL="{m:Exp Str=daninfos.ItemsSource.Path}" 
+   							     Completed="{m:Exp Str=downLoad.Down()}"
+   							     Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_handdate:抄表计划日期|f_zerenbumen:责任部门|f_userid:用户ID||f_meterstate:表状态|f_username:用户姓名|f_address:用户地址|lastrecord:本次抄表底数|lastinputgasnum:上次抄表底数|oughtamount:应交气量|f_gasprice:气价|oughtfee:应交金额|f_state:抄表单状态|shifoujiaofei:是否缴费|f_network:网点|f_inputtor:抄表员|f_inputdate:录入日期$}"/>
+                        
                         <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Margin="0,1,2,2"  Grid.Column="9" Width="60" HorizontalAlignment="Right" />
                         <TextBlock TextWrapping="Wrap" Text="小区名称："  Margin="2,0,-2,3" Height="25" TextAlignment="Right" Grid.Row="2" Grid.Column="2" />
                         <TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Grid.Row="2" Grid.Column="3" Text="{m:Bind Path=f_districtname}" Width="150" Margin="0,0,0,0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >

@@ -217,7 +217,7 @@
 								<TextBlock Text="联系电话：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="4" Height="25" FontSize="13.333" Grid.Column="2" />
                                 <TextBox Text="{m:Bind Path=f_phone}" MinWidth="4" IsReadOnly="False" Grid.Column="3" Margin="0" Grid.Row="4" TextWrapping="Wrap"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="25" FontSize="13.333" Grid.ColumnSpan="1" Grid.RowSpan="1" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_phone" NotNull="True"      />
+                                <o:PropertySetter PropertyName="f_phone" Regex="^(([0-9]{3,4}[-, ,/][0-9]{7,8})|(1[0-9]{10}))$" NotNull="True"   ErrorMessage="未正确填写电话"   />
                                     </a:Data.Prop>
                                 </TextBox>
 								<TextBlock Text="网格编码：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" FontSize="13.333" />
