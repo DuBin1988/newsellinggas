@@ -59,6 +59,14 @@ public class SmsService {
 		return result;
 	}
 
+	public HibernateTemplate getHibernateTemplate() {
+		return hibernateTemplate;
+	}
+
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
+	}
+
 	/**
 	 * 根据短信模板名获得内容
 	 * @param name
