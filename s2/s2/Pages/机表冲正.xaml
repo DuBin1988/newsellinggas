@@ -29,7 +29,7 @@
         	<o:GeneralObject Name="sellinggas" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
 			 	Path="{m:Exp Str=kbfee1.DataContext.f_cardid!\=null:$one/from t_sellinggas where id\=
 				 (select max(id) from t_sellinggas where f_cardid\=\'\{userfilego.f_cardid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,kbfee1.DataContext.f_userid!\=null:$one/from t_sellinggas where id\=
-				  (select max(id) from t_sellinggas where f_userid\=\'\{userfilego.f_userid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,$aaa$}"
+				  (select max(id) from t_sellinggas where f_userinfoid\=\'\{userfilego.f_userid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,$aaa$}"
              	IsOld="{m:Exp Str=userfilego.f_userid!\=null}"
 				IsInit="{m:Exp Str=sellinggas.State\=\=$LoadError$ |or| userfilego.f_userid\=\=null}">  
         		<!--门牌号 -->

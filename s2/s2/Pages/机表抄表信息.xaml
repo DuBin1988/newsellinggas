@@ -116,9 +116,9 @@
                         </a:Data.Context>
 
                         <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
-                        <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                        <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userinfoid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                                <o:PropertySetter PropertyName="f_userinfoid"  Operator="f_userinfoid = 'this'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="1" Margin="0,0,0,3" Height="25" TextAlignment="Right"/>
@@ -368,6 +368,7 @@
                             <sdk:DataGridTextColumn Header="序   号" d:IsLocked="True" Binding="{Binding Index}" />
                             <sdk:DataGridTextColumn Header="计划年月" Binding="{Binding f_handdate, StringFormat=yyyy-MM}"/>
                             <sdk:DataGridTextColumn Header="责任部门" Binding="{Binding f_zerenbumen}"/>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}"/>
                             <sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn Header="表状态" Binding="{Binding f_meterstate}"/>
                             <sdk:DataGridTextColumn Header="旧用户编号" Binding="{Binding f_olduserid}"/>

@@ -96,9 +96,9 @@
                         </a:Data.Context>
 
                         <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
-                        <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                        <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userinfoid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid"  Operator="f_userid like '%this%'"/>
+                                <o:PropertySetter PropertyName="f_userinfoid"  Operator="f_userinfoid like '%this%'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="卡　　号：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
@@ -110,27 +110,27 @@
                         <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <TextBox Name="FirstStair" TextWrapping="Wrap" Grid.Row="4" Grid.Column="1" Text="{m:Bind Path=FirstStair}" IsEnabled="False"  Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="FirstStair" NoDependValue="{m:Exp Str= zonggongsi.value}" Operator="1 = 1"/>
+                                <o:PropertySetter PropertyName="FirstStair" NoDependValue="{m:Exp Str= zonggongsi.value}" Default="{m:Exp Str= zonggongsi.value}" Operator="f_OrgStr like 'this%'"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="2" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="4" Grid.Column="3" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="SecondStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="SecondStair" Operator="f_OrgStr like '%this%'"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="4" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="4" Grid.Column="5" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="ThirdStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="ThirdStair" Operator="f_OrgStr like '%this%'"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="6" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                         <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="4" Grid.Column="7" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="FourthStair"  Operator="1=1"/>
+                                <o:PropertySetter PropertyName="FourthStair"  Operator="f_OrgStr like '%this%'"/>
                             </a:Data.Prop>
                         </ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
@@ -139,12 +139,7 @@
                                 <o:PropertySetter PropertyName="f_username"   Operator="f_username like '%this%'"/>
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <ComboBox Name="tj9" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                          <ComboBox Name="tj9" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -154,9 +149,9 @@
                                 <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="6"  Margin="18,0,11,0" FontSize="14" Click="dansearchbutton_Click"  />
+                        <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="6"  Margin="18,0,11,0" FontSize="14" Click="{m:Exp Str=daninfosearch.DataContext.Search()}"  />
                         <StackPanel Grid.Row="3" Grid.Column="6" Orientation="Horizontal"  Margin="69,0,0,0" Grid.ColumnSpan="2">
-                            <Button Content=" 置  空"  Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_cardid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null;tj5.SelectedValue\=null;tj6.SelectedValue\=null;tj9.SelectedValue\=null;tja.SelectedValue\=null;tjb.SelectedValue\=null;tjc.SelectedValue\=null;tjwangdian.SelectedValue\=null;tjczy.SelectedValue\=null;tjczy_Copy.SelectedValue\=null;daninfosearch.DataContext.startinvoicenum\=null;daninfosearch.DataContext.endinvoicenum\=null;daninfosearch.DataContext.f_districtname\=null;tjc_Copy.SelectedValue\=null}" FontSize="14" HorizontalAlignment="Left" Width="54" />
+                            <Button Content=" 置  空"  Click="{m:Exp Str=daninfosearch.DataContext.New()}" FontSize="14" HorizontalAlignment="Left" Width="54" />
                             <Button Content="打印" Click="{m:Exp Str=print.Print()}"/>
                             <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" />
                             <!--Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="7" Grid.Row="3"/-->
@@ -324,7 +319,6 @@ Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_sellinggas 
 									 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames=","/-->
                             <o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
 									LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
-									Names="f_userid,f_username,f_address,f_districtname,f_apartment,f_cardid,f_gasprice,f_pregas,f_zhinajin,f_preamount,f_grossproceeds,f_cardfees,f_payfeevalid,f_sgnetwork,f_sgoperator,f_deliverydate,f_usertype,f_gaswatchbrand,f_gaspricetype,f_beginfee,f_endfee,f_amountmaintenance,f_payment,f_totalcost,f_zhye,f_benqizhye,f_invoicenum,f_payfeetype,f_filiale,f_comtype,f_deliverytime,id,dates,f_stardate,f_enddate,f_stair1amount,f_stair1fee,f_stair1price,f_stair2amount,f_stair2fee,f_stair2price,f_stair3amount,f_stair3fee,f_stair3price,f_stair4amount,f_stair4fee,f_stair4price"
 									SumHQL="{m:Exp Str=$select f_userid\,f_username\,f_address\,f_districtname\,f_apartment\,f_cardid\,f_gasprice\,isnull(f_pregas\,0)f_pregas\,isnull(f_zhinajin\,0)f_zhinajin\,cast(f_preamount as numeric(10\,2)) f_preamount\,cast(f_grossproceeds as numeric(10\,2)) f_grossproceeds\,f_cardfees\,f_payfeevalid\,f_sgnetwork\,f_sgoperator\,CONVERT(varchar(12)\, f_deliverydate\, 111 ) f_deliverydate\,f_usertype\,f_gaswatchbrand\,f_gaspricetype\,CONVERT(varchar(12)\, f_beginfee\, 111 ) f_beginfee\,CONVERT(varchar(12)\, f_endfee\, 111 ) f_endfee\,f_amountmaintenance\,f_payment\,f_totalcost\,f_zhye\,f_benqizhye\,f_invoicenum\,f_payfeetype\,f_filiale\,f_comtype\,CONVERT(varchar(8)\, f_deliverytime\, 108 ) f_deliverytime\,id\,CONVERT(varchar(100)\, dates) dates\,
                                     f_stardate\,f_enddate\,f_stair1amount\,f_stair1fee\,f_stair1price\,f_stair2amount\,f_stair2fee\,f_stair2price\,f_stair3amount\,f_stair3fee\,f_stair3price\,f_stair4amount\,f_stair4fee\,f_stair4price
                                      from t_sellinggas s 
@@ -332,7 +326,7 @@ Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_sellinggas 
                                      where \{daninfosearch.DataContext.Condition\}  
                                     }"
 									HQL="{m:Exp Str=$
-                                    select f_userid\,f_username\,f_address\,f_districtname\,f_apartment\,f_cardid\,f_gasprice\,isnull(f_pregas\,0)f_pregas\,isnull(f_zhinajin\,0)f_zhinajin\,cast(f_preamount as numeric(10\,2)) f_preamount\,cast(f_grossproceeds as numeric(10\,2)) f_grossproceeds\,f_cardfees\,f_payfeevalid\,f_sgnetwork\,f_sgoperator\,CONVERT(varchar(12)\, f_deliverydate\, 111 ) f_deliverydate\,f_usertype\,f_gaswatchbrand\,f_gaspricetype\,CONVERT(varchar(12)\, f_beginfee\, 111 ) f_beginfee\,CONVERT(varchar(12)\, f_endfee\, 111 ) f_endfee\,f_amountmaintenance\,f_payment\,f_totalcost\,f_zhye\,f_benqizhye\,f_invoicenum\,f_payfeetype\,f_filiale\,f_comtype\,CONVERT(varchar(8)\, f_deliverytime\, 108 ) f_deliverytime\,id\,CONVERT(varchar(100)\, dates) dates\, 
+                                    select f_userinfoid\,f_userid\,f_username\,f_address\,f_districtname\,f_apartment\,f_cardid\,f_gasprice\,isnull(f_pregas\,0)f_pregas\,isnull(f_zhinajin\,0)f_zhinajin\,cast(f_preamount as numeric(10\,2)) f_preamount\,cast(f_grossproceeds as numeric(10\,2)) f_grossproceeds\,f_cardfees\,f_payfeevalid\,f_sgnetwork\,f_sgoperator\,CONVERT(varchar(12)\, f_deliverydate\, 111 ) f_deliverydate\,f_usertype\,f_gaswatchbrand\,f_gaspricetype\,CONVERT(varchar(12)\, f_beginfee\, 111 ) f_beginfee\,CONVERT(varchar(12)\, f_endfee\, 111 ) f_endfee\,f_amountmaintenance\,f_payment\,f_totalcost\,f_zhye\,f_benqizhye\,f_invoicenum\,f_payfeetype\,f_filiale\,f_comtype\,CONVERT(varchar(8)\, f_deliverytime\, 108 ) f_deliverytime\,id\,CONVERT(varchar(100)\, dates) dates\, 
                                      f_stardate\,f_enddate\,f_stair1amount\,f_stair1fee\,f_stair1price\,f_stair2amount\,f_stair2fee\,f_stair2price\,f_stair3amount\,f_stair3fee\,f_stair3price\,f_stair4amount\,f_stair4fee\,f_stair4price
                                     from t_sellinggas s 
                                      left join (select DISTINCT  f_sellid\,(select substring(convert(varchar(50)\,lastinputdate\,120)\,1\,7)+\'\,\' from t_handplan a where a.f_sellid\=b.f_sellid for xml path(\'\')) as dates from t_handplan b where f_sellid is not null) h on s.id \= h.f_sellid
@@ -344,8 +338,8 @@ Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_sellinggas 
                         </a:Data.Items>
                         <sdk:DataGrid.Columns>
                             <!--sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/-->
-
-                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}"/>
+                            <sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
                             <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
