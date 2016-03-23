@@ -34,13 +34,27 @@
             <o:ObjectList Name="gasmeterstylelist"  EntityType="paramvalue"  HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型' order by id"/>
             <o:ObjectList Name="usertypelistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' " HasEmptyRow="True"/>
 
-            <!--用户档案列表-->
-            <o:PagedObjectList Name="userfiles" WebClientInfo="{StaticResource dbclient}"
-				MultiPath="{m:Exp Str=$from t_userfiles where f_userstate\=\'正常\' and \{search.Condition\}}" 
-				Path="{m:Exp Str=$from t_userfiles where f_userstate\=\'正常\' and \{search.Condition\} order by f_address}" 
-				PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+            <!--用户档案列表,同时查询年累计气量、一二阶梯剩余可购气量-->
+            <o:PagedList Name="userfiles" WebClientInfo="{StaticResource dbclient}"
+				SumHQL="{m:Exp Str=$select * from t_userfiles b
+				where b.f_userstate\=\'正常\' and \{search.Condition\}}"
+				HQL="{m:Exp Str=$
+				select d.*\,(case when stair1^0 then 0 else stair1 end)sy1\,
+				(case when stair2^0 then 0 else stair2 end)sy2 from (
+				select b.*\,ISNULL(s.f_pregas\,0) gas\,
+				h.f_stair1amount-ISNULL(s.f_pregas\,0) stair1\,
+				(case when isnull(h.f_stair1amount-ISNULL(s.f_pregas\,0)\,0)>0 then h.f_stair2amount-h.f_stair1amount else 
+				h.f_stair2amount-h.f_stair1amount+isnull(h.f_stair1amount-ISNULL(s.f_pregas\,0)\,0) end) stair2 from t_userfiles b
+				inner join t_userinfo h
+				on b.f_userinfoid\=h.f_userid and b.f_userstate\=\'正常\' and \{search.Condition\} 
+				left join (
+				select SUM(f_pregas) f_pregas\,f_userinfoid from t_sellinggas where f_payfeevalid\=\'有效\' and year(f_deliverydate)\=\'2016\'
+				group by f_userinfoid) s
+				on b.f_userinfoid\=s.f_userinfoid ) d order by d.f_userinfoid}" 
+				Path="sql"  SumNames=","
+				PageIndex="{m:Exp Str=pager.PageIndex}"  PageSize="{m:Exp Str=pager.PageSize}" />
             <!--删除抄表单-->
-            <b:HQLAction Name="DeleteHandplan" WebClientInfo="{StaticResource dbclient}" Type="sql"
+            <b:HQLAction Name="DeleteHandplan"  WebClientInfo="{StaticResource dbclient}" Type="sql"
 			HQL="{m:Exp Str=$
 			delete from t_handplan where f_state \=\'未抄表\' and shifoujiaofei \=\'否\' and \{search.Condition\}
 			$}"/>
@@ -102,7 +116,7 @@
                                 <TextBlock TextWrapping="Wrap" Text="小区名称："  Margin="0,5,0,4" TextAlignment="Right" VerticalAlignment="Center" Height="19" />
                                 <TextBox  TextWrapping="Wrap"  Grid.Row="0" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,2,0,1" Height="Auto" Grid.ColumnSpan="1"  HorizontalAlignment="Stretch" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like '%this%'"/>
+                                        <o:PropertySetter PropertyName="f_districtname"  Operator="b.f_districtname like '%this%'"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="0,5,0,4" TextAlignment="Right" Grid.Column="2" VerticalAlignment="Center" Height="19" />
@@ -113,35 +127,35 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'"/>
+                                        <o:PropertySetter PropertyName="f_usertype"  Operator="b.f_usertype = 'this'"/>
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Column="8" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="0" FontSize="14" Width="54" HorizontalAlignment="Left"  />
                                 <Button Content="生成抄表单" x:Name="saveButton" Grid.Column="9" Margin="10,0,0,0" FontSize="14" HorizontalAlignment="Left" Click="{m:Exp Str=CreateHandplan.Invoke()}" Width="76" />
                                 <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Row="2" Grid.Column="8" Width="80" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,0,1" Height="25"/>
 
-                                <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$\{daninfos.ItemsSource.Path\}}" 
+                                <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
 						Completed="{m:Exp Str=downLoad.Down()}"
-						Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户名称|f_meternumber:用户地址|f_address:地址|f_usertype:用户类型|f_meternumber:气表编号|f_weizhi:表安装位置|lastinputgasnum:抄表底数$}" Height="30" VerticalAlignment="Top" Margin="40,0" Grid.RowSpan="2"/>
+						Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户名称|f_meternumber:用户地址|f_address:地址|f_usertype:用户类型|f_meternumber:气表编号|f_weizhi:表安装位置|lastinputgasnum:抄表底数|stair1:一阶剩余|stair2:二阶剩余|gas:本年累计气量$}" Height="30" VerticalAlignment="Top" Margin="40,0" Grid.RowSpan="2"/>
                                 <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Margin="40,0" Grid.RowSpan="2"/>
                                 <TextBlock TextWrapping="Wrap" Text="卡      号："  Margin="0,2,0,1" TextAlignment="Right" Grid.Row="1" />
 
                                 <TextBox x:Name="tjwhf_Copy" TextWrapping="Wrap" Text="{m:Bind Path=f_cardid}" Width="Auto" Margin="0,2,0,1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_cardid"  Operator="f_cardid = 'this'"/>
+                                        <o:PropertySetter PropertyName="f_cardid"  Operator="b.f_cardid = 'this'"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="街　道："  Margin="0,2,0,1" TextAlignment="Right" Grid.Row="2" Grid.Column="4" />
 
                                 <TextBox x:Name="ui_f_road" TextWrapping="Wrap" Text="{m:Bind Path=f_road}" Width="Auto" Margin="0,2,0,1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="1" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_road"  Operator="f_road like '%this%'"/>
+                                        <o:PropertySetter PropertyName="f_road"  Operator="b.f_road like '%this%'"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="用户编号："  Margin="0,2,0,1" TextAlignment="Right" Grid.Row="1" Grid.Column="2" />
                                 <TextBox x:Name="tjwhf_Copy1" TextWrapping="Wrap" Text="{m:Bind Path=f_userinfoid}" Width="Auto" Margin="0,2,0,1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="3" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_userinfoid"  Operator="f_userinfoid = 'this'"/>
+                                        <o:PropertySetter PropertyName="f_userinfoid"  Operator="b.f_userinfoid = 'this'"/>
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="抄 表 员："  Margin="0,2,0,1" Height="Auto" TextAlignment="Right" Width="Auto" d:LayoutOverrides="Height, VerticalMargin" Grid.Row="0" Grid.Column="4" />
@@ -153,7 +167,7 @@
                                     </ComboBox.ItemTemplate>
 
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_inputtor"  Operator="f_inputtor = 'this'"/>
+                                        <o:PropertySetter PropertyName="f_inputtor"  Operator="b.f_inputtor = 'this'"/>
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock TextWrapping="Wrap" Text="气表类型："  Margin="0,2,0,1" TextAlignment="Right" Width="Auto" Grid.Row="1" Grid.Column="4" />
@@ -164,19 +178,19 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gasmeterstyle"  Operator="f_gasmeterstyle = 'this'"/>
+                                        <o:PropertySetter PropertyName="f_gasmeterstyle"  Operator="b.f_gasmeterstyle = 'this'"/>
                                     </a:Data.Prop>
                                 </ComboBox>
                                 <TextBlock TextWrapping="Wrap" Text="册号："  Margin="0,2,0,1" TextAlignment="Right" Grid.Column="6" />
                                 <TextBox x:Name="tjwhf_Copy2" TextWrapping="Wrap" Text="{m:Bind Path=f_books}" Width="Auto" Margin="0,2,0,1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="7" >
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_books"  Operator="f_books = 'this'"/>
+                                		<o:PropertySetter PropertyName="f_books"  Operator="b.f_books = 'this'"/>
                                 	</a:Data.Prop>
                                 </TextBox>
                                 <TextBlock TextWrapping="Wrap" Text="表编号："  Margin="0,2,0,1" TextAlignment="Right" Grid.Row="2" Grid.Column="2" />
                                 <TextBox x:Name="tjwhf_Copy3" TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="3" >
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
+                                		<o:PropertySetter PropertyName="f_userid"  Operator="b.f_userid = 'this'"/>
                                 	</a:Data.Prop>
                                 </TextBox>
                             </Grid>
@@ -203,7 +217,9 @@
                             <sdk:DataGridTextColumn Header="表安装位置" Binding="{Binding f_weizhi}"/>
                             <sdk:DataGridTextColumn  Header="抄表底数" Binding="{Binding lastinputgasnum}"/>
                             <sdk:DataGridTextColumn Header="册号" Binding="{Binding f_books}"/>
-
+							<sdk:DataGridTextColumn Header="一阶剩余" Binding="{Binding sy1}"/>
+							<sdk:DataGridTextColumn Header="二阶剩余" Binding="{Binding sy2}"/>
+							<sdk:DataGridTextColumn Header="本年累计" Binding="{Binding gas}"/>
 
 
 
