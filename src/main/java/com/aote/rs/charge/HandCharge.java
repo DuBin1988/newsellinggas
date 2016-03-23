@@ -19,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.util.HSSFColor.TURQUOISE;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,6 +41,9 @@ import com.aote.listener.ContextListener;
 import com.aote.rs.charge.countdate.ICountDate;
 import com.aote.rs.charge.enddate.IEndDate;
 import com.aote.rs.exception.RSException;
+import com.aote.rs.sms.MianZhuSms;
+import com.aote.rs.sms.SmsService;
+import com.aote.rs.util.BeanUtil;
 import com.aote.rs.util.JSONHelper;
 
 @Path("handcharge")
@@ -48,6 +52,9 @@ import com.aote.rs.util.JSONHelper;
 public class HandCharge {
 
 	static Logger log = Logger.getLogger(HandCharge.class);
+
+	// 是否发送短信。 不需要的话 给 false
+	private boolean sendMsg = true;
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
@@ -383,6 +390,13 @@ public class HandCharge {
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
 			// 自动下账
+			
+			//配置绵竹短信类  存在 再发短信
+			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
+			if(sms !=null){
+				zdSendMsg(user, chargenum, f_zhye.subtract(chargenum).doubleValue());				
+			}
+
 			double grossproceeds = 0;
 			Map<String, Object> sell = new HashMap<String, Object>();
 			sell.put("f_userid", map.get("f_userid")); // 表ID
@@ -527,11 +541,18 @@ public class HandCharge {
 					+ sgoperator
 					+ "'"
 					+ "where f_userid='"
-					+ userid
-					+ "' and f_state='未抄表' and id=" + handid;
+					+ userid + "' and f_state='未抄表' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
 					lastinputDate, inputdate, meterState });
 		} else {
+			// 尊敬的天然气用户[{yhbh}][{yhxm}]：您的[{yhdz}]本月天然气用量为[{ql}]
+			// 方.气费金额[{qf}]元，请于本月底前到我公司缴纳气费
+			// 抄表欠费短信
+			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
+			if(sms !=null){
+				qfSendMsg(user, chargenum, gas);				
+			}
+
 			// 更新用户档案
 			hql = "update t_userfiles " +
 			// 本次抄表底数 本次抄表日期
@@ -1148,8 +1169,9 @@ public class HandCharge {
 		sell.put("f_deliverydate", new Date()); // 交费日期
 		sell.put("f_deliverytime", new Date()); // 交费时间
 		sell.put("f_zhye", userinfo.get("f_zhye")); // 上期结余
-		BigDecimal f_benqizhye = new BigDecimal(f_zhye.subtract(chargenum).doubleValue());
-		if(f_benqizhye.compareTo(new BigDecimal(0))<0){
+		BigDecimal f_benqizhye = new BigDecimal(f_zhye.subtract(chargenum)
+				.doubleValue());
+		if (f_benqizhye.compareTo(new BigDecimal(0)) < 0) {
 			f_benqizhye = new BigDecimal(0);
 		}
 		sell.put("f_benqizhye", f_benqizhye.doubleValue()); // 本期结余
@@ -1436,5 +1458,36 @@ public class HandCharge {
 				+ " where f_userid='" + user.get("f_userid") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
+	}
+	
+	private void zdSendMsg(Map user, BigDecimal chargenum, Double f_benqizhye){
+		JSONObject attr = new JSONObject();
+		JSONObject rt = new JSONObject();
+		SmsService smsService = new SmsService();
+		smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
+		// [{f_userid=11007035, f_username=lyf}] qf syje
+		String param = "{f_userid=" + user.get("f_userid").toString()
+				+ ", f_username=" + user.get("f_username").toString()
+				+ ",qf=" + chargenum.toString() 
+				+ ",syje="+ f_benqizhye.toString() 
+				+ "}";
+
+		rt = smsService.sendTemplate(param, user.get("f_phone")
+				.toString(), "自动下账");
+	}
+	
+	private void qfSendMsg(Map user, BigDecimal chargenum, BigDecimal gas) {
+		JSONObject attr = new JSONObject();
+		JSONObject rt = new JSONObject();
+		SmsService smsService = new SmsService();
+		smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
+		String param = "{f_userid=" + user.get("f_userid").toString()
+				+ ", f_username=" + user.get("f_username").toString()
+				+ ",ql="+ gas.toString() 
+				+ ",qf=" + chargenum.toString()
+				+ "}";
+
+		rt = smsService.sendTemplate(param, user.get("f_phone")
+				.toString(), "抄表扣费发送");
 	}
 }

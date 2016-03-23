@@ -21,31 +21,45 @@ public class MzSmsQuartzs{
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
 	
+	//预存用户余额不足20
+	public void zhyeLt20()
+	{
+		String sql = "select f_userid, f_username, f_phone from t_userinfo where f_zhye <20 and f_zhye >=0";
+		String templatename = "预存用户余额不足";
+		smsQuartz(sql, templatename);
+	}
+	
+	//上月欠费用户
 	public void lastMonthQf(){
 		String sql = "select f_username ,f_phone , SUM(money) as money "
 					+ "from "
-					+"( select u.f_username,u.f_phone,(f.oughtfee-u.f_zhye) as money ,  u.f_userinfoid "
+					+"( select u2.f_username,u.f_phone,(f.oughtfee-u2.f_zhye) as money ,  u.f_userinfoid "
 				  + "from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
-				  + "where f_state  =  '已抄表' and shifoujiaofei  =  '否' " 
+				  + "where f_state  =  '已抄表' and shifoujiaofei  =  '否'  and   convert(char(7),f_inputdate,120)=convert(char(7), dateadd(month,-1,getdate()) ,120)" 
 				  +"group by f_userid ) f  "
 				  + "left join t_userfiles u  "
-				  + "on f.f_userid  = u.f_userid )t"
+				  + "on f.f_userid  = u.f_userid "
+				  +"left join t_userinfo u2 "
+				  +  "on u.f_userinfoid = u2.f_userid) t"
 				  +" group by f_username ,f_phone ";
 		String templatename = "上月欠费用户催费短信";
 		smsQuartz(sql, templatename);
 	}
 	
+	//本月商业欠费
 	public void thisMonthSy(){
 		String sql =  "select f_username ,f_phone , SUM(money) as money "
-				+ "from "
-				+"( select u.f_username,u.f_phone,(f.oughtfee-u.f_zhye) as money ,  u.f_userinfoid ,u.f_gasproperties "
-			  + "from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
-			  + "where f_state  =  '已抄表' and shifoujiaofei  =  '否' and f_gastype = '商业'" 
+				+" from "
+				+"( select u2.f_username,u.f_phone,(f.oughtfee-u.f_zhye) as money ,  u.f_userinfoid ,u.f_stairtype "
+			   +"from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
+			   +"where f_state  =  '已抄表' and shifoujiaofei  =  '否' and f_stairtype like '%商业%' and convert(char(7),f_inputdate ,120)=convert(char(7),getdate(),120) "
 			  +"group by f_userid ) f  "
-			  + "left join t_userfiles u  "
-			  + "on f.f_userid  = u.f_userid )t"
-			  +" where t.f_gasproperties = '商业' group by f_username ,f_phone ";
-		String templatename = "";
+			  +" left join t_userfiles u  "
+			  +" on f.f_userid  = u.f_userid "
+			  + "left join t_userinfo u2 "
+			  + "  on u.f_userinfoid = u2.f_userid)t "
+			  +" where t.f_stairtype like '%商业%' group by f_username ,f_phone ";
+		String templatename = "本月商用未缴用户";
 		smsQuartz(sql, templatename);
 	}
 	

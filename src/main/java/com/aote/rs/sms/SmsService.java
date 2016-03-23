@@ -1,11 +1,15 @@
 package com.aote.rs.sms;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
@@ -13,8 +17,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.stereotype.Component;
 
-import com.aote.rs.tcp.TcpService;
 import com.aote.rs.util.BeanUtil;
 
 /**
@@ -23,20 +27,25 @@ import com.aote.rs.util.BeanUtil;
  * @author Administrator
  *
  */
-@Path("/sms")
+@Path("sms")
 @Scope("prototype")
+@Component
 public class SmsService {
 
 	static Logger log = Logger.getLogger(SmsService.class);
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
+	}
 
-	@Path("/send/{phone}/{templatename}")
-	@POST
-	public JSONObject sendTemplate(String param,
-			@QueryParam("phone") String phone,
-			@QueryParam("templatename") String template) {
+	@GET
+	@Path("/send/{param}/{phone}/{templatename}")
+
+	public JSONObject sendTemplate(@PathParam("param") String param,
+			@PathParam("phone") String phone,
+			@PathParam("templatename") String template) {
 		JSONObject result = new JSONObject();
 		try {
 			// 获得模板内容
@@ -49,38 +58,43 @@ public class SmsService {
 				String key = (String)iter.next();
 				msg=msg.replace("#"+key+"#", p.getString(key));
 			}
-			// 获得配置的短信实现类
-			ISms sms = (ISms) BeanUtil.getBean(ISms.class);
-			JSONObject attr = new JSONObject();
-			result = sms.sendsms(phone, msg, attr);
+			
+			//短信信息保存到 sms 表中。
+			Date date = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+			String time = df.format(date);
+			Date createdate = df.parse(time);
+			Map<String, Object> sms = new HashMap<String, Object>();
+			sms.put("f_username", p.get("f_username").toString()); // 用户姓名
+			sms.put("f_content", msg);//短信内容
+			sms.put("f_phone", phone);//电话
+			sms.put("f_state", "未发");//短信状态
+			sms.put("f_createdate", createdate);//生成日期
+			hibernateTemplate.save("t_sms", sms);
+			
+//			// 获得配置的短信实现类
+//			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
+//			JSONObject attr = new JSONObject();
+//			result = sms.sendsms(phone, msg, attr);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 
-	public HibernateTemplate getHibernateTemplate() {
-		return hibernateTemplate;
-	}
-
-	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
-		this.hibernateTemplate = hibernateTemplate;
-	}
-
+	
 	/**
 	 * 根据短信模板名获得内容
 	 * @param name
 	 * @return
 	 */
-	private String getSmsTemplateByName(String name) {
+	public String getSmsTemplateByName(String name) {
 		String result = "";
-		List list = this.hibernateTemplate
-				.find("from t_smstemplate where name ='" + name + "'");
+		List list = this.hibernateTemplate.find("from t_smstemplate  where f_name ='" + name + "'");
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
 		result = map.get("f_content").toString();
 		return result;
 	}
-
 	@Path("/send/{phone}/{msg}")
 	public JSONObject sendmsg(@QueryParam("phone") String phone,
 			@QueryParam("msg") String msg) {
