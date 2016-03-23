@@ -641,7 +641,43 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
-            string p = "http://127.0.0.1:8000/WriteNewCard" +
+            if (Kmm == null || Kmm == "")
+            {
+                Kmm = "0001";
+            }
+            if (Dqdm == null || Dqdm == "")
+            {
+                Dqdm = "0001";
+            }
+            if (Yhh == null || Yhh == "")
+            {
+                Yhh = "1111111111";
+            }
+            if (Scql == null)
+            {
+                Scql = 0.0;
+            }
+            if (Sscql == null || Sscql == 0)
+            {
+                Sscql = 0.0;
+            }
+            if (Sqrq == null || Sqrq == "")
+            {
+                Sqrq = "20151111";
+            }
+            if (Scsqrq == null || Scsqrq == "")
+            {
+                Scsqrq = "20151111";
+            }
+            if (Klx == null)
+            {
+                Klx = 0;
+            }
+            if (MeterId == null || MeterId == "")
+            {
+                MeterId = "12345678";
+            }
+            string p = "http://127.0.0.1:8000/WriteGasCard" +
                             "/" + Factory +     //厂家
                            "/" + Kmm +     //卡密码，写卡后返回新密码
                            "/" + CardId +          //卡号
@@ -679,6 +715,46 @@ namespace Com.Aote.ObjectTools
             //调用写卡服务
             WebClient client = new WebClient();
             client.UploadStringCompleted += new UploadStringCompletedEventHandler(WriteCard_UploadStringCompleted);
+            if (Kmm == null || Kmm == "")
+            {
+                Kmm = "0001";
+            }
+            if (Tm == null || Tm == "")
+            {
+                Tm = "0001";
+            }
+            if (Dqdm == null || Dqdm == "")
+            {
+                Dqdm = "0001";
+            }
+            if (Yhh == null || Yhh == "")
+            {
+                Yhh = "1111111111";
+            }
+            if (Scql == null)
+            {
+                Scql = 0.0;
+            }
+            if (Sscql == null || Sscql == 0)
+            {
+                Sscql = 0.0;
+            }
+            if (Sqrq == null || Sqrq == "")
+            {
+                Sqrq = "20151111";
+            }
+            if (Scsqrq == null || Scsqrq == "")
+            {
+                Scsqrq = "20151111";
+            }
+            if (Klx == null)
+            {
+                Klx = 0;
+            }
+            if (MeterId == null || MeterId == "")
+            {
+                MeterId = "12345678";
+            }
             string p = "http://127.0.0.1:8000/WriteNewCard" +
                                         "/" + Factory +     //厂家
                                         "/" + Kmm +     //卡密码，写卡后返回新密码
