@@ -141,6 +141,8 @@
                                     <RowDefinition Height="50"/>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="30"/>
+                                      <RowDefinition Height="50"/>
+                                      <RowDefinition Height="50"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="110"/>
@@ -276,8 +278,21 @@
                                         <o:PropertySetter PropertyName="f_baojbeizhu" />
                                     </a:Data.Prop>
                                 </TextBox>
+                                 <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" Text="经理审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="12" VerticalAlignment="Center" Height="20"/>
+                                <TextBox Text="{m:Bind Path=f_managerexaminat}" IsReadOnly="False" Grid.Column="1" Margin="0" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_managerexaminat" />
+                                    </a:Data.Prop>
+                                </TextBox>
+                                 <TextBlock Margin="0,10,0,20" TextWrapping="Wrap" Text="分管领导审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="13" VerticalAlignment="Center" Height="20"/>
+                                <TextBox Text="{m:Bind Path=f_chargeleadership}" IsReadOnly="False" Grid.Column="1" Margin="0,0,0,20" Grid.Row="13" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_chargeleadership" />
+                                    </a:Data.Prop>
+                                </TextBox>
+                                
                                 <TextBlock Margin="0,9,5,3" Grid.Row="7" TextWrapping="Wrap" Text="工程款：" TextAlignment="Right"/>
-                                <TextBox  Text="{m:Bind Path=f_gckfee}" Grid.Column="1" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+                                <TextBox  Text="{m:Bind Path=f_gckfee}" IsReadOnly="True"  Grid.Column="1" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                                 	<a:Data.Prop>
                                 		<o:PropertySetter PropertyName="f_gckfee"  NotNull="True" />
                                 	</a:Data.Prop>
@@ -299,21 +314,21 @@
                 </a:Data.Prop>
             </TextBox>
             <TextBlock Margin="0,5,5,7" Grid.Row="7" TextWrapping="Wrap" Text="小锅炉费用：" TextAlignment="Right" Grid.Column="2"/>
-            <TextBox  Text="{m:Bind Path=f_xglfyfee}" Grid.Column="3" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+            <TextBox  Text="{m:Bind Path=f_xglfyfee}" IsReadOnly="True" Grid.Column="3" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                 <a:Data.Prop>
                     <o:PropertySetter PropertyName="f_xglfyfee"  NotNull="True" />
                 </a:Data.Prop>
             </TextBox>
             <TextBlock Margin="0,6,5,6" Grid.Row="8" TextWrapping="Wrap" Text="预算合计：" TextAlignment="Right"/>
-            <TextBox  Text="{m:Bind Path=f_ysfee}" Grid.Column="1" Margin="0,2,0,6" Grid.Row="8" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+            <TextBox  Text="{m:Bind Path=f_ysfee}" IsReadOnly="True"  Grid.Column="1" Margin="0,2,0,6" Grid.Row="8" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                 <a:Data.Prop>
-                    <o:PropertySetter PropertyName="f_ysfee"  NotNull="True" />
+                    <o:PropertySetter PropertyName="f_ysfee"  Value="{m:Exp Str= this.f_xglfyfee+this.f_gckfee+this.f_gwjsfee+this.f_sjfee+this.f_azgcfee}"/>
                 </a:Data.Prop>
             </TextBox>
     </Grid>
     </ScrollViewer>
     </sdk:TabItem>
-                        <sdk:TabItem Header=" 图 片 ">
+    <sdk:TabItem Header=" 图 片 ">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <ListBox ItemsSource="{m:Exp Str=imagelist_myys}"  Margin="0" MinHeight="200" MinWidth="200">
                 <ListBox.ItemTemplate>
@@ -341,7 +356,7 @@
             </ListBox>
         </ScrollViewer>
     </sdk:TabItem>
-                        <sdk:TabItem Header="附件" >
+    <sdk:TabItem Header="附件" >
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
 
@@ -382,7 +397,13 @@
 
         </ScrollViewer>
     </sdk:TabItem>
- 
+    <sdk:TabItem Header="设计文件">
+
+    </sdk:TabItem>
+    <sdk:TabItem Header="预算文件">
+
+    </sdk:TabItem>
+
     </sdk:TabControl>
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="586">

@@ -36,7 +36,7 @@
                 on act.actorexpression \= p.actorid 
                 join t_apply apply 
                 on apply.f_processid\=act.processid 
-                where \{mytqSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'报装流程\' and act.defname\=\'通气登记\' and p.userid\=\'\{LoginUser.ename\}\'}"
+                where \{mytqSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'涉县报装流程\' and act.defname\=\'通气登记\' and p.userid\=\'\{LoginUser.ename\}\'}"
                 Path="sql" PageIndex="{m:Exp Str=mytqPager.PageIndex}" PageSize="{m:Exp Str=mytqPager.PageSize}" SumNames="," />
 
             <o:GeneralObject Name="mytqObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
