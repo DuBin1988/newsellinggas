@@ -48,7 +48,7 @@
 				inner join t_userinfo h
 				on b.f_userinfoid\=h.f_userid and b.f_userstate\=\'正常\' and \{search.Condition\} 
 				left join (
-				select SUM(f_pregas) f_pregas\,f_userinfoid from t_sellinggas where f_payfeevalid\=\'有效\' and year(f_deliverydate)\=\'2016\'
+				select SUM(f_pregas) f_pregas\,f_userinfoid from t_sellinggas where f_payfeevalid\=\'有效\' and year(f_deliverydate)\=\'\{SysTime.Now.ToString($yyyy$)\}\'
 				group by f_userinfoid) s
 				on b.f_userinfoid\=s.f_userinfoid ) d order by d.f_userinfoid}" 
 				Path="sql"  SumNames=","
