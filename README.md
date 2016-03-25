@@ -1,5 +1,5 @@
 # newsellinggas
-收费系统
+##收费系统
 
 `资源服务后台添加 公司组织架构后 需要执行一次sql  每次添加或者更改都要执行一次
 update o2 set o2.f_parentname =o1.NAME 
