@@ -12,9 +12,10 @@ where o1.ID =o2.PARENTID
 
 `
 JSONArray list = new JSONArray(files);`
-			for (int l = 0; l < list.length(); l++) {`
+			for (int l = 0; l < list.length(); l++)`
+			{
 				JSONObject u = list.getJSONObject(l);`
-				// 产生户档案,返回产生的户编号`
+				// 产生户档案,返回产生的户编号
 				String userinfoid = inserthu(u, userinfoname, loginuserid);`
 				// 产生表档案`
 				insertfile(u, userinfoid, useridname, loginuserid);`
