@@ -27,4 +27,14 @@ JSONArray list = new JSONArray(files);
 ***
 >测试 测试2
 
+```python
+@requires_authorization
+class SomeClass:
+    pass
+
+if __name__ == '__main__':
+    # A comment
+    print 'hello world'
+```
+
  
