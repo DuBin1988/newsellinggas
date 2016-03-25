@@ -191,5 +191,7 @@ namespace Com.Aote.Pages
             childpage.IsOpen = true;
 
         }
+
+   
     }
 }
