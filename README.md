@@ -6,7 +6,7 @@ update o2 set o2.f_parentname=o1.NAME
 from t_organization o1 ,t_organization o2 
 where o1.ID =o2.PARENTID
 关联父节点名字
-账户在总公司下面的话 该账户 t_user 表里 f_parentname 需要手动录入总公司资源服务里的名称
+账户在总公司下面的话 该账户t_user表里f_parentname 需要手动录入总公司资源服务里的名称
 *
 
 
