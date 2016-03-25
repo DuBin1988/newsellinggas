@@ -206,5 +206,7 @@ namespace Com.Aote.Pages
             childpage.ParamObj = sender;
             childpage.IsOpen = true;
         }
+
+      
     }
 }

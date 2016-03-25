@@ -36,6 +36,8 @@
             <o:ObjectList Name="paymentlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'" HasEmptyRow="True"/>
             <!--气表品牌-->
             <o:ObjectList Name="qblist" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber" EntityType="qibiao" HasEmptyRow="True"/>
+            <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
+
             <!--气价类型-->
             <o:ObjectList Name="qjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id" EntityType="paramvalue" HasEmptyRow="True"/>
             <!--用户状态查询用-->
@@ -46,10 +48,18 @@
         <sdk:TabControl Width="Auto" Height="Auto">
             <sdk:TabItem Header="用户档案">
                 <Grid x:Name="LayoutRoot">
-                    <m:ResourceLoad Margin="0,0,-12,0" x:Name="PageResources">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="103*"/>
+                        <ColumnDefinition Width="1485*"/>
+                    </Grid.ColumnDefinitions>
+                    <m:ResourceLoad Margin="0,0,-12,0" x:Name="PageResources" Grid.ColumnSpan="2">
                         <o:ChildWindowObj Name="openchild2" CWName="/Pages/信息列表/个人信息窗口" ParamObj="daninfos.SelectedItem" />
+                        <o:ObjectList Name="SecondStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 2:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,1)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.FirstStair\}\'$}" />
+                        <o:ObjectList Name="ThirdStairStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 3:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,2)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.SecondStair\}\'$}" />
+                        <o:ObjectList Name="FourthStairlist"  WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 4:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,3)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.ThirdStair\}\'$}" />
+                        <o:ObjectList Name="czylistnull2" EntityType="t_user" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=LoginUser.character >\= 5:$from t_user where NAME\=\'\{LoginUser.name\}\'$\,$from t_user where f_parentname\=\'\{daninfosearch.DataContext.FourthStair\}\'$}"/>
                     </m:ResourceLoad>
-                    <Grid>
+                    <Grid Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="95*"/>
                             <ColumnDefinition Width="1493*"/>
@@ -67,7 +77,9 @@
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="90"/>
-                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="0"/>
+                                        <ColumnDefinition Width="0"/>
+                                        <ColumnDefinition Width="139.5"/>
                                         <ColumnDefinition Width="80"/>
                                         <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="80"/>
@@ -82,34 +94,27 @@
                                     <a:Data.Context>
                                         <o:SearchObject />
                                     </a:Data.Context>
-
-                                    <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
-                                    <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.ColumnSpan="2" />
+                                    <TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="表　　号：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
-                                    <TextBox Name="tj2" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber='this'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
 
 
-                                    <TextBlock TextWrapping="Wrap" Text="地　　址：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Column="2" />
-                                    <TextBox Name="tj3" TextWrapping="Wrap" Grid.Column="3" Grid.Row="2" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
+                                    <TextBlock TextWrapping="Wrap" Text="地　　址：" Grid.Row="0" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Column="4" />
+                                    <TextBox Name="tj3" TextWrapping="Wrap" Grid.Column="5" Grid.Row="0" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
-                                    <TextBox Name="tj7" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                    <TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="1" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.ColumnSpan="2"/>
+                                    <TextBox Name="tj7" TextWrapping="Wrap" Grid.Row="1" Grid.Column="2" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="2" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <ComboBox Name="tj9"  SelectedValue="{m:Bind Path=f_yytdepa}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=wangdianlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                    <ComboBox Name="tj9"  SelectedValue="{m:Bind Path=f_yytdepa}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=wangdianlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -120,27 +125,17 @@
                                             <o:PropertySetter PropertyName="f_yytdepa"  Operator="f_yytdepa = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="4" Grid.Column="8" Click="dansearchbutton_Click"  Margin="6,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60" Height="28" VerticalAlignment="Bottom"  />
-                                    <Button Content=" 置  空"  Grid.Row="4" Grid.Column="8" Click="{m:Exp Str=daninfosearch.DataContext.f_dibaohu\=null;daninfosearch.DataContext.f_wallhangboiler\=null;daninfosearch.DataContext.f_bankname\=null;daninfosearch.DataContext.f_idofcard\=null;daninfosearch.DataContext.f_usermc\=null;daninfosearch.DataContext.f_yytdate11\=null;daninfosearch.DataContext.f_yytdate22\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_gasmeterstyle\=null;daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_zhye\=null;daninfosearch.DataContext.f_cardid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_address\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null;tj5.SelectedValue\=null;tj6.SelectedValue\=null;tj9.SelectedValue\=null;tja.SelectedValue\=null;tjwangdian.SelectedValue\=null;tjb.SelectedValue\=null;daninfosearch.DataContext.f_districtname\=null}" Margin="70,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60"  />
-                                    <Button Content="导出Excel"  Grid.Row="4" Grid.Column="9" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" Margin="9,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="Auto"  />
+                                    <Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="4" Grid.Column="10" Click="dansearchbutton_Click"  Margin="6.5,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60"  />
+                                    <Button Content=" 置  空"  Grid.Row="4" Grid.Column="10" Click="{m:Exp Str=daninfosearch.DataContext.f_dibaohu\=null;daninfosearch.DataContext.f_wallhangboiler\=null;daninfosearch.DataContext.f_bankname\=null;daninfosearch.DataContext.f_idofcard\=null;daninfosearch.DataContext.f_usermc\=null;daninfosearch.DataContext.f_yytdate11\=null;daninfosearch.DataContext.f_yytdate22\=null;daninfosearch.DataContext.f_inputtor\=null;daninfosearch.DataContext.f_gasmeterstyle\=null;   daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_zhye\=null;daninfosearch.DataContext.f_cardid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_address\=null;daninfosearch.DataContext.f_yytdate1\=null;daninfosearch.DataContext.f_yytdate2\=null; FourthStair.SelectedValue\=null;  tja2.SelectedValue\=null; SecondStair.SelectedValue\=null; ThirdStair.SelectedValue\=null;  tj6.SelectedValue\=null;tj9.SelectedValue\=null;  tja.SelectedValue\=null;tjwangdian.SelectedValue\=null;tjb.SelectedValue\=null;daninfosearch.DataContext.f_districtname\=null}" Margin="70,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60"  />
+                                    <Button Content="导出Excel"  Grid.Row="4" Grid.Column="11" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" Margin="9,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="Auto"  />
                                     <c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
    							     Completed="{m:Exp Str=downLoad.Down()}"
-   							     Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|old:旧用户编号|f_meternumber:表号|f_username:用户姓名|f_usertype:用户类型|f_cardid:卡号|f_gaswatchbrand:气表品牌|f_metertype:气表型号|lastinputgasnum:抄表表底|f_zhye:账户余额|f_address:地址|f_phone:电话|f_gasproperties:用气性质|f_gaspricetype:气价类型|f_gasprice:气价|f_wallhangboiler:有无壁挂炉|f_userstate:用户状态|f_anzhuanguser:表安装人|f_watchinstalldate:表安装日期|f_payment:交费方式|f_bankname:银行|f_usermc:账户名|f_idofcard:账号|f_filiale:所属公司|f_yytdepa:建档部门|f_yytoper:建档人|f_yytdate:建档日期|f_examinedepa:审核部门|f_examineoper:审核人|f_examinedate:审核日期$}"/>
-                                    <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0"></c:DownLoad>
+   							     Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|old:旧用户编号|f_meternumber:表号|f_username:用户姓名|f_usertype:用户类型|f_cardid:卡号|f_gaswatchbrand:气表品牌|f_metertype:气表型号|lastinputgasnum:抄表表底|f_zhye:账户余额|f_address:地址|f_phone:电话|f_gasproperties:用气性质|f_gaspricetype:气价类型|f_gasprice:气价|f_wallhangboiler:有无壁挂炉|f_userstate:用户状态|f_anzhuanguser:表安装人|f_watchinstalldate:表安装日期|f_payment:交费方式|f_bankname:银行|f_usermc:账户名|f_idofcard:账号|f_filiale:所属公司|f_yytdepa:建档部门|f_yytoper:建档人|f_yytdate:建档日期|f_examinedepa:审核部门|f_examineoper:审核人|f_examinedate:审核日期$}" Grid.ColumnSpan="2"/>
+                                    <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" Margin="45,0,37.06,0" Grid.RowSpan="2"></c:DownLoad>
 
-                                    <TextBlock TextWrapping="Wrap" Text="气表品牌：" Grid.Column="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
-                                    <ComboBox Name="tj5" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="3" ItemsSource="{m:Exp Str=qblist}"  Margin="0,2,0,1"  SelectedValuePath="f_pinpai"  Height="25">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding f_pinpai}" Height="20"></TextBlock>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_gaswatchbrand"  Operator="f_gaswatchbrand = 'this'"/>
-                                        </a:Data.Prop>
-                                    </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="气价类型：" Grid.Column="4" Grid.Row="1"  Margin="0" Height="25" TextAlignment="Right" />
-                                    <ComboBox Name="tj6" Grid.Row="1" SelectedValue="{m:Bind Path=f_gaspricetype}" Grid.Column="5" ItemsSource="{m:Exp Str=qjlist}"  Margin="0"  SelectedValuePath="name"  Height="25">
+
+                                    <TextBlock TextWrapping="Wrap" Text="气价类型：" Grid.Column="6" Grid.Row="1"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                                    <ComboBox Name="tj6" Grid.Row="1" SelectedValue="{m:Bind Path=f_gaspricetype}" Grid.Column="7" ItemsSource="{m:Exp Str=qjlist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -151,24 +146,24 @@
                                             <o:PropertySetter PropertyName="f_gaspricetype"  Operator="f_gaspricetype = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right"><Run Text="建档日期"/><Run Text=" "/><Run Text="从："/></TextBlock>
-                                    <sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="3" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.ColumnSpan="2"><Run Text="建档日期"/><Run Text=" "/><Run Text="从："/></TextBlock>
+                                    <sdk:DatePicker Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
                                         <a:Data.Prop>
                                             <!-- Value="{m:Exp Str=SysTime.Today}"-->
                                             <o:PropertySetter PropertyName="f_yytdate1" 
 											    Operator="f_yytdate >= substring('this',1,10)" />
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                    <sdk:DatePicker Name="tj8" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="2" Grid.Column="5" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_yytdate2"  
 											    Operator="f_yytdate ^= substring('this',1,10) + ' 23:59:59'" />
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="3" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
-                                    <TextBlock TextWrapping="Wrap" Text="网    点：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
-                                    <TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
-                                    <ComboBox x:Name="tja"  SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="4" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+                                    <TextBlock TextWrapping="Wrap" Text="网    点：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                                    <TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="8"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
+                                    <ComboBox x:Name="tja"  SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="1" Grid.Column="9" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -178,8 +173,8 @@
                                             <o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="阶梯气价类型：" Grid.Column="8"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" Width="130" HorizontalAlignment="Left" />
-                                    <ComboBox x:Name="tja2"  SelectedValue="{m:Bind Path=f_stairtype}" Grid.Row="1" Grid.Column="9" ItemsSource="{m:Exp Str=stairlist}"  Margin="0,2,0,1"  SelectedValuePath="f_stairtype"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" d:LayoutOverrides="GridBox, HorizontalMargin">
+                                    <TextBlock TextWrapping="Wrap" Text="阶梯气价类型：" Grid.Column="10"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="0" Width="130" HorizontalAlignment="Left" />
+                                    <ComboBox x:Name="tja2"  SelectedValue="{m:Bind Path=f_stairtype}" Grid.Row="0" Grid.Column="11" ItemsSource="{m:Exp Str=stairlist}"  Margin="0,2,0.333,1"  SelectedValuePath="f_stairtype"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" d:LayoutOverrides="GridBox, HorizontalMargin">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Height="20" Text="{Binding f_stairtype}"/>
@@ -189,8 +184,8 @@
                                             <o:PropertySetter PropertyName="f_stairtype" Operator="f_stairtype = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="用户状态：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="2" />
-                                    <ComboBox x:Name="tjb"  SelectedValue="{m:Bind Path=f_userstate}" Grid.Row="2" Grid.Column="5" ItemsSource="{m:Exp Str=statelist}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                    <TextBlock TextWrapping="Wrap" Text="用户状态：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="2" />
+                                    <ComboBox x:Name="tjb"  SelectedValue="{m:Bind Path=f_userstate}" Grid.Row="2" Grid.Column="7" ItemsSource="{m:Exp Str=statelist}"  Margin="0,2,0,1" SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -200,14 +195,14 @@
                                             <o:PropertySetter PropertyName="f_userstate"  Operator="f_userstate = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="余额&gt;：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="3" />
-                                    <TextBox x:Name="xg" TextWrapping="Wrap" Grid.Column="5" Grid.Row="3" Text="{m:Bind Path=f_zhye}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Text="余额&gt;：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="3" />
+                                    <TextBox x:Name="xg" TextWrapping="Wrap" Grid.Column="7" Grid.Row="3" Text="{m:Bind Path=f_zhye}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_zhye"  Operator="f_zhye &gt; this"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="交费方式：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" />
-                                    <ComboBox x:Name="tjwangdian"  SelectedValue="{m:Bind Path=f_payment}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=paymentlistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                    <TextBlock TextWrapping="Wrap" Text="交费方式：" Grid.Column="8"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                                    <ComboBox x:Name="tjwangdian"  SelectedValue="{m:Bind Path=f_payment}" Grid.Row="0" Grid.Column="9" ItemsSource="{m:Exp Str=paymentlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -217,28 +212,10 @@
                                             <o:PropertySetter PropertyName="f_payment"  Operator="f_payment = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="气表型号：" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
-
-                                    <ComboBox x:Name="tj5_Copy" SelectedValue="{m:Bind Path=f_metertype}" ItemsSource="{m:Exp Str=tj5.SelectedItem.qbnumber}" Grid.Column="3"  Margin="0" SelectedValuePath="f_qbnumber"  Height="25" Grid.Row="1">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding f_qbnumber}" Height="20"></TextBlock>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_metertype"  Operator="f_metertype = 'this'"/>
-                                        </a:Data.Prop>
-                                    </ComboBox>
-                                    <TextBlock TextWrapping="Wrap" Text="小区名称：" Grid.Row="2" Margin="0" Height="25" TextAlignment="Right" Grid.Column="6" />
-                                    <TextBox x:Name="tj3_Copy" TextWrapping="Wrap" Grid.Column="7" Grid.Row="2" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
+                                    <TextBlock TextWrapping="Wrap" Text="小区名称：" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Column="8" />
+                                    <TextBox x:Name="tj3_Copy" TextWrapping="Wrap" Grid.Column="9" Grid.Row="2" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like '%this%'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="气表类型：" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Column="8" />
-                                    <TextBox x:Name="tj3_Copy1" TextWrapping="Wrap" Grid.Column="9" Grid.Row="0" Text="{m:Bind Path=f_gasmeterstyle}" Width="Auto" Margin="0,2,0.333,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" d:LayoutOverrides="GridBox" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_gasmeterstyle"  Operator="f_gasmeterstyle like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <!--CheckBox Content="有无壁挂炉"  IsChecked="{m:Bind Path=f_wallhangboiler}"  a:ControlAttach.DefaultButton="dansearchbutton" Height="22" Width="85" HorizontalAlignment="Left" Margin="15,5,0,1" Grid.Column="8" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Row="1"  >
@@ -247,18 +224,18 @@
 										             
 									    </a:Data.Prop>
 								    </CheckBox-->
-                                    <CheckBox x:Name="dbcheck" IsChecked="{m:Bind Path=f_wallhangboiler}" Content="有无壁挂炉" Margin="9,0,0,0"  Grid.Row="2" Grid.Column="8" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" d:LayoutOverrides="HorizontalAlignment">
+                                    <CheckBox x:Name="dbcheck" IsChecked="{m:Bind Path=f_wallhangboiler}" Content="有无壁挂炉" Margin="0,5,0,0" HorizontalAlignment="Right"  Grid.Row="1" Grid.Column="10" Height="Auto" VerticalAlignment="Stretch"  Grid.RowSpan="1">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_wallhangboiler"  Operator="{m:Exp Str=dbcheck.IsChecked \:$f_wallhangboiler \= 1$ \,$f_wallhangboiler\=0$}" />
                                         </a:Data.Prop>
                                     </CheckBox>
-                                    <CheckBox x:Name="dbhheck" IsChecked="{m:Bind Path=f_dibaohu}" Content="低保户" Margin="0"  Grid.Row="2" Grid.Column="9" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right"  Grid.RowSpan="1" Width="75">
+                                    <CheckBox x:Name="dbhheck" IsChecked="{m:Bind Path=f_dibaohu}" Content="低保户" Margin="0,5,0.333,0"  Grid.Row="1" Grid.Column="11" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right"  Grid.RowSpan="1" Width="75">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_dibaohu"  Operator="{m:Exp Str=dbhheck.IsChecked \:$f_dibaohu \= 1$ \,$f_dibaohu\=0$}" />
                                         </a:Data.Prop>
                                     </CheckBox>
-                                    <TextBlock TextWrapping="Wrap" Text="抄表员：" Grid.Column="6"  Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="3" />
-                                    <ComboBox x:Name="tja_Copy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="3" Grid.Column="7" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                    <TextBlock TextWrapping="Wrap" Text="抄表员：" Grid.Column="8"  Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="3" />
+                                    <ComboBox x:Name="tja_Copy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="3" Grid.Column="9" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -268,35 +245,49 @@
                                             <o:PropertySetter PropertyName="f_inputtor"  Operator="f_inputtor = 'this'"/>
                                         </a:Data.Prop>
                                     </ComboBox>
-                                    <sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_yytdate11}" Grid.Row="4" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                                    <sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_yytdate11}" Grid.Row="3" Grid.Column="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
                                         <a:Data.Prop>
                                             <!-- Value="{m:Exp Str=SysTime.Today}"-->
                                             <o:PropertySetter PropertyName="f_yytdate11" 
 											    Operator="f_examinedate &gt;= substring('this',1,10)" />
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <sdk:DatePicker x:Name="tj8_Copy" SelectedDate="{m:Bind Path=f_yytdate22}" Grid.Row="4" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                    <sdk:DatePicker x:Name="tj8_Copy" SelectedDate="{m:Bind Path=f_yytdate22}" Grid.Row="3" Grid.Column="5" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_yytdate22"  
 											    Operator="f_examinedate ^= substring('this',1,10) + ' 23:59:59'" />
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="4" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="4" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right"><Run Text="审核日期"/><Run Text=" "/><Run Text="从："/></TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Text="账户名：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="4" />
-                                    <TextBox x:Name="xg_Copy" TextWrapping="Wrap" Grid.Column="5" Grid.Row="4" Text="{m:Bind Path=f_usermc}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="4" Grid.Row="3" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.ColumnSpan="2"><Run Text="审核日期"/><Run Text=" "/><Run Text="从："/></TextBlock>
+                                    <!--asssssssssssssssssssssssssssssssssssssssssss-->
+                                    <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1" Grid.ColumnSpan="2"/>
+                                    <TextBox Name="FirstStair" TextWrapping="Wrap" Grid.Row="4" Grid.Column="2" Text="{m:Bind Path=FirstStair}" IsEnabled="False"  Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_usermc"  Operator="f_usermc = 'this'"/>
+                                            <o:PropertySetter PropertyName="FirstStair" NoDependValue="{m:Exp Str= zonggongsi.value}" Operator="f_OrgStr like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="账号：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="4" />
-                                    <TextBox x:Name="xg_Copy1" TextWrapping="Wrap" Grid.Column="7" Grid.Row="4" Text="{m:Bind Path=f_idofcard}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="4" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="4" Grid.Column="5" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name"  SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_idofcard"  Operator="f_idofcard = 'this'"/>
+                                            <o:PropertySetter PropertyName="SecondStair"  Operator="f_OrgStr like '%this%'"/>
                                         </a:Data.Prop>
-                                    </TextBox>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="6" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="ThirdStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="4" Grid.Column="7" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="ThirdStair"   Operator="f_OrgStr like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="8" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="4" Grid.Column="9" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
 
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="FourthStair"  Operator="f_OrgStr like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <!--asssssssssssssssssssssssssssssssssssssssssss-->
                                 </Grid>
 
                                 <Grid  Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
@@ -315,7 +306,7 @@
                                 </Grid>
 
                                 <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3"   IsReadOnly="True" MouseLeftButtonUp="dataGrid_MouseLeftButtonUp" 
-								    AutoGenerateColumns="False" Width="Auto" BorderBrush="{x:Null}" FontSize="11" >
+								    AutoGenerateColumns="False" Width="Auto" BorderBrush="{x:Null}" FontSize="14" >
                                     <sdk:DataGrid.Background>
                                         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                                             <GradientStop Color="#FFF2F8FF" Offset="0"/>
@@ -325,22 +316,20 @@
 
                                     <sdk:DataGrid.Columns>
                                         <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
-                                        <sdk:DataGridTextColumn Header="旧用户编号" Binding="{Binding old}"/>
-                                        <sdk:DataGridTextColumn Header="表号" Binding="{Binding f_meternumber}"/>
                                         <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                                         <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
-                                        <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
-                                        <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-                                        <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-                                        <sdk:DataGridTextColumn Header="抄表时间" Binding="{Binding lastinputdate,StringFormat=hh:mm:ss tt}"/>
-                                        <sdk:DataGridTextColumn Header="抄表表底" Binding="{Binding lastinputgasnum}"/>
                                         <sdk:DataGridTextColumn Header="账户余额" Binding="{Binding f_zhye}"/>
                                         <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
                                         <sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/>
                                         <sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gasproperties}"/>
                                         <sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
                                         <sdk:DataGridTextColumn Header="阶梯气价类型" Binding="{Binding f_stairtype}"/>
-                                        <sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
+                                        <sdk:DataGridTextColumn Header="阶段一气量" Binding="{Binding f_stair1amount}"/>
+                                        <sdk:DataGridTextColumn Header="阶段一气价" Binding="{Binding f_stair1price}"/>
+                                        <sdk:DataGridTextColumn Header="阶段二气量" Binding="{Binding f_stair2amount}"/>
+                                        <sdk:DataGridTextColumn Header="阶段二气价" Binding="{Binding f_stair2price}"/>
+                                        <sdk:DataGridTextColumn Header="阶段三气量" Binding="{Binding f_stair3amount}"/>
+                                        <sdk:DataGridTextColumn Header="阶段三气价" Binding="{Binding f_stair3price}"/>
                                         <sdk:DataGridTextColumn Header="有壁挂炉" Binding="{Binding f_wallhangboiler}"/>
                                         <sdk:DataGridTextColumn Header="有灶具" Binding="{Binding f_kitchen}"/>
                                         <sdk:DataGridTextColumn Header="有热水器" Binding="{Binding f_waterheater}"/>
@@ -383,239 +372,29 @@
                                         <sdk:DataGridTextColumn Header="气表状态信息" Binding="{Binding f_tablesmessage}"/>
 
                                         <!--sdk:DataGridTextColumn Header="时间" Binding="{Binding f_yyttime,StringFormat=hh:mm:ss tt}"/-->
+
+                                        <!--sdk:DataGridTextColumn Header="时间" Binding="{Binding f_yyttime,StringFormat=hh:mm:ss tt}"/-->
                                     </sdk:DataGrid.Columns>
                                 </sdk:DataGrid>
 
                             </toolkit:DockPanel>
                         </c:BusyIndicatorEx>
                     </Grid>
-                    <StackPanel HorizontalAlignment="Right" Height="40" Margin="0,0,-12,-18" VerticalAlignment="Bottom" Width="394"/>
+                    <StackPanel HorizontalAlignment="Right" Height="40" Margin="0,0,-12,-18" VerticalAlignment="Bottom" Width="394" Grid.Column="1"/>
 
                     <!--/sdk:TabItem>
 		    </sdk:TabControl-->
-                </Grid>
-            </sdk:TabItem>
-            <sdk:TabItem Header="小区信息" Height="27" VerticalAlignment="Bottom">
-                <Grid x:Name="LayoutRoot2">
-                    <m:ResourceLoad Margin="0,0,-12,0">
-                        <o:ChildWindowObj Name="openchild1" CWName="/Pages/信息列表/小区具体信息" ParamObj="userfiles.SelectedItem" />
-                    </m:ResourceLoad>
-                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy or toExcel13.IsBusy}">
-                        <toolkit:DockPanel >
-                            <!--提交按钮-->
-                            <toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,10" Height="33"/>
-                            <toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
-                                <a:Data.Context>
-                                    <o:SearchObject/>
-                                </a:Data.Context>
-
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="28"/>
-                                        <RowDefinition Height="28"/>
-                                        <RowDefinition Height="28"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="75"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="70*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock TextWrapping="Wrap" Text="小区名称：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
-                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Grid.Column="2"  Height="25" FontSize="13.333" HorizontalAlignment="Right" />
-
-                                    <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区地址：" Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
-                                    <TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <ComboBox x:Name="Combox15"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </ComboBox>
-
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right"><Run Text="建档日期从"/><Run Text=" "/></TextBlock>
-                                    <sdk:DatePicker Name="xqrq" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,4" Height="25" HorizontalAlignment="Stretch" >
-                                        <a:Data.Prop>
-                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
-                                            <o:PropertySetter PropertyName="f_yytdate1" 
-											Operator="f_date >= substring('this',1,10)"/>
-                                        </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <sdk:DatePicker Name="xqrq1" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_yytdate2"  
-											Operator="f_date ^= substring('this',1,10)"/>
-                                        </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Row="3" Grid.Column="2" Margin="0,0,0,8" Height="25" TextAlignment="Right"/>
-                                    <StackPanel Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="3" Orientation="Horizontal" >
-
-                                        <Button Content="查  询" x:Name="chaxun"  Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="Auto" FontSize="14" />
-                                        <Button Content=" 置  空"   Width="Auto" 
-								 Click="{m:Exp Str=userfilesearch.DataContext.f_districtname\=null;
-								 userfilesearch.DataContext.f_address\=null;
-								 userfilesearch.DataContext.f_filiale\=null;
-								 userfilesearch.DataContext.f_yytdate2\=null;
-								 userfilesearch.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
-                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=userfiles.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel13.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="Auto"/>
-                                        <c:Excel x:Name="toExcel13" HQL="{m:Exp Str=userfiles.ItemsSource.Path}" 
-   							              Completed="{m:Exp Str=downLoad13.Down()}"
-                                          Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{userfiles.ItemsSource.Count\}/f_districtname:小区名称|f_gaswatchbrand:气表品牌|f_metertype:气表型号|f_accountVolume:开户气量|f_userNum:户数|f_startNumber:开户编号|f_endNumber:结束编号|f_usernumber:当前用户编号|f_filiale:公司$}"/>
-                                        <c:DownLoad x:Name="downLoad13" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel13.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" ></c:DownLoad>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:DockPanel>
-                            <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="57">
-                                <sdk:DataPager x:Name="pager16" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="0,0,0,3" PageSize="20" Height="24" toolkit:DockPanel.Dock="Top"/>
-                                <TextBlock TextWrapping="Wrap" Margin="5,0,0,3" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" Height="33" toolkit:DockPanel.Dock="Bottom"/>
-                            </toolkit:DockPanel>
-                            <sdk:DataGrid x:Name="userfiles" Margin="0"  FontSize="13.333" MouseLeftButtonUp="dataGrid_MouseLeftButtonUp2" 
-								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
-                                <a:Data.Items>
-                                    <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}$\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
-                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\} order by f_date DESC   $\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'order by f_date DESC $\,$abc$}"      
-										PageIndex="{m:Exp Str=pager16.PageIndex}" PageSize="{m:Exp Str=pager16.PageSize}" SumNames="id"/>
-                                </a:Data.Items>
-                                <sdk:DataGrid.Columns>
-                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-                                    <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
-                                    <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-                                    <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-                                    <sdk:DataGridTextColumn Header="开户气量" Binding="{Binding f_accountVolume}"/>
-                                    <sdk:DataGridTextColumn Header="户    数" Binding="{Binding f_userNum}"/>
-                                    <sdk:DataGridTextColumn Header="开始编号" Binding="{Binding f_startNumber}"/>
-                                    <sdk:DataGridTextColumn Header="结束编号" Binding="{Binding f_endNumber}"/>
-                                    <sdk:DataGridTextColumn Header="当前用户编号" Binding="{Binding f_usernumber}"/>
-                                    <sdk:DataGridTextColumn Header="公司" Binding="{Binding f_filiale}"/>
-                                    <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
-
-                                </sdk:DataGrid.Columns>
-                            </sdk:DataGrid>
-                        </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
-                </Grid>
-            </sdk:TabItem>
-            <sdk:TabItem Header="单位信息">
-                <Grid x:Name="LayoutRoot3">
-                    <m:ResourceLoad Margin="0,0,-12,0">
-                        <o:ChildWindowObj Name="openchild3" CWName="/Pages/信息列表/单位具体信息" ParamObj="unitinfos.SelectedItem" />
-                    </m:ResourceLoad>
-                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=unitinfos.ItemsSource.IsBusy or toExcel14.IsBusy}">
-                        <toolkit:DockPanel Margin="0" d:LayoutOverrides="Width" >
-                            <toolkit:DockPanel  x:Name="unitcx" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
-                                <a:Data.Context>
-                                    <o:SearchObject />
-                                </a:Data.Context>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="28"/>
-                                        <RowDefinition Height="28"/>
-                                        <RowDefinition Height="28"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="19.373"/>
-                                        <ColumnDefinition Width="55.627"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="70*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock TextWrapping="Wrap" Text="单位名称：" Margin="5,2,5,1"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
-                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_unitname}" Width="Auto" Margin="0,2,0,1" Grid.Column="1" Height="25" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_unitname"  Operator="f_unitname like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
-
-
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="12,2,11,1" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从 :"/>
-                                    <sdk:DatePicker Name="dwxxrq" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
-                                        <a:Data.Prop>
-                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
-                                            <o:PropertySetter PropertyName="f_yytdate1" 
-											Operator="f_date >= substring('this',1,10)"/>
-                                        </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <sdk:DatePicker Name="dwxxrq1" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="2" Grid.Column="4" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_yytdate2"  
-											Operator="f_date ^= substring('this',1,10)"/>
-                                        </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="     到：" Grid.Row="2" Grid.Column="3"   Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-
-                                    <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="9,2,9,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
-                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Grid.Column="1" Grid.Row="1" Height="25" >
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </TextBox>
-                                    <StackPanel Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal" >
-
-                                        <Button Content="查  询" x:Name="dwsearchbutton"  Click="{m:Exp Str=unitcx.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="Auto" FontSize="14" />
-                                        <Button Content=" 置  空"   Width="Auto" 
-								 Click="{m:Exp Str=unitcx.DataContext.f_unitname\=null;unitcx.DataContext.f_address\=null; unitcx.DataContext.f_filiale\=null;unitcx.DataContext.f_yytdate2\=null; unitcx.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
-                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel14.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="Auto"/>
-                                        <c:Excel x:Name="toExcel14" HQL="{m:Exp Str=unitinfos.ItemsSource.Path}" 
-   							 Completed="{m:Exp Str=downLoad14.Down()}"
-   							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{unitinfos.ItemsSource.Count\}/f_unitid:单位编号|f_unitname:单位名称|f_address:地址$}"/>
-                                        <c:DownLoad x:Name="downLoad14" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel14.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" ></c:DownLoad>
-                                    </StackPanel>
-
-
-                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Margin="0" HorizontalAlignment="Right" Grid.Column="2" Grid.ColumnSpan="2" />
-                                    <ComboBox x:Name="Combox1_Copy"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="4" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
-                                        <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
-                                        </a:Data.Prop>
-                                    </ComboBox>
-                                </Grid>
-                            </toolkit:DockPanel>
-                            <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom">
-                                <sdk:DataPager Name="pager33" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=unitinfos}" PageSize="15" Height="24"  toolkit:DockPanel.Dock="Top"/>
-                                <TextBlock TextWrapping="Wrap" Margin="5,0,0,33" Text="{m:Exp Str=$共\{unitinfos.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
-                            </toolkit:DockPanel>
-                            <sdk:DataGrid x:Name="unitinfos" Margin="0" FontSize="14" IsReadOnly="True" MouseLeftButtonUp="dataGrid_MouseLeftButtonUp3"
-								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}">
-                                <a:Data.Items>
-                                    <o:PagedObjectList x:Name="unitinfoslist" WebClientInfo="{StaticResource dbclient}"
-                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-										Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} order by f_unitid DESC $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'order by f_unitid DESC $\,$abc$}"
-										PageIndex="{m:Exp Str=pager33.PageIndex}" PageSize="{m:Exp Str=pager33.PageSize}" SumNames="id"/>
-                                </a:Data.Items>
-                                <sdk:DataGrid.Columns>
-                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-                                    <sdk:DataGridTextColumn Header="单位编号" Binding="{Binding f_unitid}"/>
-                                    <sdk:DataGridTextColumn Header="单位名称" Binding="{Binding f_unitname}"/>
-                                    <sdk:DataGridTextColumn Header="地    址" Binding="{Binding f_address}"/>
-                                    <sdk:DataGridTextColumn Header="操  作  员" Binding="{Binding f_operator}"/>
-                                    <sdk:DataGridTextColumn Header="分  公  司" Binding="{Binding f_filiale}"/>
-                                    <sdk:DataGridTextColumn Header="部    门" Binding="{Binding f_filiale}"/>
-                                    <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_unitid,StringFormat=yyyy-MM-dd}"/>
-
-                                </sdk:DataGrid.Columns>
-                            </sdk:DataGrid>
-                        </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
                 </Grid>
             </sdk:TabItem>
             <sdk:TabItem Header="表档案">
                 <Grid x:Name="LayoutRoot4">
                     <m:ResourceLoad Margin="0,0,-12,0">
                         <o:ChildWindowObj Name="openchild4" CWName="/Pages/信息列表/单表具体信息" ParamObj="unitinfos1.SelectedItem" />
+                        <o:ObjectList Name="SecondStairlist1" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 2:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,1)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch1.DataContext.FirstStair1\}\'$}" />
+                        <o:ObjectList Name="ThirdStairStairlist1" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 3:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,2)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch1.DataContext.SecondStair1\}\'$}" />
+                        <o:ObjectList Name="FourthStairlist1"  WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=LoginUser.character >\= 4:$from t_organization where NAME\=\'\{LoginUser.orgpathstr.Split($.$\,3)\}\'$\,$from t_organization where f_parentname\=\'\{daninfosearch1.DataContext.ThirdStair1\}\'$}" />
+                        <o:ObjectList Name="czylistnull21" EntityType="t_user" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=LoginUser.character >\= 5:$from t_user where NAME\=\'\{LoginUser.name\}\'$\,$from t_user where f_parentname\=\'\{daninfosearch1.DataContext.FourthStair1\}\'$}"/>
+
                     </m:ResourceLoad>
                     <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=unitinfos1.ItemsSource.IsBusy or toExcel141.IsBusy}">
                         <toolkit:DockPanel Margin="0" d:LayoutOverrides="Width" >
@@ -623,21 +402,27 @@
                                 <a:Data.Context>
                                     <o:SearchObject />
                                 </a:Data.Context>
-                                <Grid>
+
+                                <Grid  x:Name="daninfosearch1"  Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="28"/>
                                         <RowDefinition Height="28"/>
                                         <RowDefinition Height="28"/>
                                         <RowDefinition Height="28"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="85"/>
                                         <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="85"/>
                                         <ColumnDefinition Width="125"/>
-                                        <ColumnDefinition Width="70*"/>
+                                        <ColumnDefinition Width="85"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="210"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="0"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
+                                    <TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="18,0,0,1"  TextAlignment="Right" HorizontalAlignment="Center" Height="25" VerticalAlignment="Bottom" Width="82"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0" Grid.Column="1" Height="25" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_username"  Operator="f_username like 'this%'"/>
@@ -645,41 +430,146 @@
                                     </TextBox>
 
 
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从 :"/>
-                                    <sdk:DatePicker Name="dwxxrq12" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" >
+                                    <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <TextBox Name="FirstStair1" TextWrapping="Wrap" Grid.Row="4" Grid.Column="1" Text="{m:Bind Path=FirstStair1}" IsEnabled="False"  Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
                                         <a:Data.Prop>
-                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
-                                            <o:PropertySetter PropertyName="f_yytdate1" 
-											Operator="f_yytdate >= substring('this',1,10)"/>
+                                            <o:PropertySetter PropertyName="FirstStair1" NoDependValue="{m:Exp Str= zonggongsi.value}" Operator="f_OrgStr like '%this%'"/>
                                         </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <sdk:DatePicker Name="dwxxrq11" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox" >
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="二级总公司：" Grid.Column="2" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="SecondStair1"  IsEnabled="{m:Exp Str=LoginUser.character ^ 2}"  SelectedValue="{m:Bind Path=SecondStair1}" Grid.Row="4" Grid.Column="3" ItemsSource="{m:Exp Str=SecondStairlist1}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_yytdate2"  
-											Operator="f_yytdate ^= substring('this',1,10)"/>
+                                            <o:PropertySetter PropertyName="SecondStair1"  Operator="f_OrgStr like '%this%'"/>
                                         </a:Data.Prop>
-                                    </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="       到：" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="三级总公司：" Grid.Column="4" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="ThirdStair1" IsEnabled="{m:Exp Str=LoginUser.character ^ 3}" SelectedValue="{m:Bind Path=ThirdStair1}" Grid.Row="4" Grid.Column="5" ItemsSource="{m:Exp Str=ThirdStairStairlist1}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="ThirdStair1"  Operator="f_OrgStr like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="四级总公司：" Grid.Column="6" Grid.Row="4"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                                    <ComboBox x:Name="FourthStair1" IsEnabled="{m:Exp Str=LoginUser.character ^ 4}" SelectedValue="{m:Bind Path=FourthStair1}" Grid.Row="4" Grid.Column="7" ItemsSource="{m:Exp Str=FourthStairlist1}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="FourthStair1"  Operator="f_OrgStr like '%this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
 
 
-                                    <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="0" Grid.Row="1" Grid.Column="2" TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
+                                    <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="15,2,0,1" Grid.Row="1" Grid.Column="2" TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="70"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Grid.Column="3" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
+
+                                    <!--222222222222222222222222222222222222222-->
+                                    <TextBlock TextWrapping="Wrap" Text="交费方式：" Grid.Column="4" Grid.Row="3"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
+                                    <ComboBox x:Name="tjwangdian2"  SelectedValue="{m:Bind Path=f_payment}" Grid.Row="3" Grid.Column="5" ItemsSource="{m:Exp Str=paymentlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_payment"  Operator="f_payment = 'this'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="表　　号：" Margin="12,2,0,1" Grid.Row="0" Grid.Column="2" TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="68"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0" Grid.Column="3" Grid.Row="0" Height="25" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber = 'this'" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <TextBlock  Grid.Row="2" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right"><Run Text="建档日期"/><Run Text="从："/></TextBlock>
+                                    <sdk:DatePicker Name="tj41" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Top" >
+                                        <a:Data.Prop>
+                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
+                                            <o:PropertySetter PropertyName="f_yytdate1" 
+											    Operator="f_yytdate >= substring('this',1,10)" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <sdk:DatePicker Name="tj81" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="2" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_yytdate2"  
+											    Operator="f_yytdate ^= substring('this',1,10) + ' 23:59:59'" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="2" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+
+
+                                    <TextBlock  Grid.Row="3" Grid.Column="0" Margin="0,2,0,1" Height="25" TextAlignment="Right"><Run Text="抄表日期"/><Run Text="从："/></TextBlock>
+                                    <sdk:DatePicker Name="tj42" SelectedDate="{m:Bind Path=lastinputdate1}" Grid.Row="3" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
+                                            <o:PropertySetter PropertyName="lastinputdate1" 
+											    Operator="lastinputdate >= substring('this',1,10)" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <sdk:DatePicker Name="tj82" SelectedDate="{m:Bind Path=lastinputdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="lastinputdate2"  
+											    Operator="lastinputdate ^= substring('this',1,10) + ' 23:59:59'" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Column="2" Grid.Row="3" Margin="0,2,0,1" Height="25" TextAlignment="Right"/>
+
+
+
+
+                                    <TextBlock TextWrapping="Wrap" Text="用户类型：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="0" />
+                                    <ComboBox x:Name="tja1"  SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_usertype"  Operator="f_usertype = 'this'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+
+                                    <TextBlock TextWrapping="Wrap" Text="气表品牌：" Grid.Column="6"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
+
+                                    <ComboBox x:Name="CoboxPinpai" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" ItemsSource="{m:Exp Str=pinpailist}" SelectedValue="{m:Bind Path=f_gaswatchbrand}"  Grid.Row="1" Grid.Column="7"  Height="25" VerticalAlignment="Stretch"  >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gaswatchbrand" Operator="f_gaswatchbrand = 'this'" />
+                                        </a:Data.Prop>
+                                    </ComboBox>
+
+                                    <TextBlock TextWrapping="Wrap" Text="抄表员：" Grid.Column="4"  Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="2" />
+                                    <ComboBox x:Name="tja_Copy1"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="2" Grid.Column="5" ItemsSource="{m:Exp Str=chaobiaoyuanlistnull}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_inputtor"  Operator="f_inputtor = 'this'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock TextWrapping="Wrap" Text="余额&gt;：" Grid.Column="4"  Margin="0,2,0,1" Height="25" TextAlignment="Right" Grid.Row="1" />
+                                    <TextBox x:Name="xg1" TextWrapping="Wrap" Grid.Column="5" Grid.Row="1" Text="{m:Bind Path=f_zhye}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" VerticalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_zhye"  Operator="f_zhye &gt; this"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+                                    <!--222222222222222222222222222222222222222-->
+
+                                    <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="18,2,0,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="82"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Grid.Column="1" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_userid"  Operator="f_address like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <StackPanel Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3" Orientation="Horizontal" >
-
-                                        <Button Content="查  询" x:Name="dwsearchbutton1"  Click="{m:Exp Str=unitcxbiao.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="Auto" FontSize="14" />
-                                        <Button Content=" 置  空"   Width="Auto" 
-								 Click="{m:Exp Str=unitcxbiao.DataContext.f_username\=null;unitcxbiao.DataContext.f_address\=null; unitcxbiao.DataContext.f_userid\=null;unitcxbiao.DataContext.f_yytdate2\=null; unitcxbiao.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
-                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos1.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel141.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="Auto"/>
+                                    <StackPanel Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="3" Orientation="Horizontal" >
+                                        <Button Content="查  询" x:Name="dwsearchbutton1"  Click="{m:Exp Str=unitcxbiao.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="60" FontSize="14" />
+                                        <Button Content=" 置  空"   Width="60" 
+								 Click="{m:Exp Str=unitcxbiao.DataContext.f_username\=null;unitcxbiao.DataContext.f_address\=null; unitcxbiao.DataContext.f_userid\=null;unitcxbiao.DataContext.f_yytdate2\=null;   FourthStair1.SelectedValue\=null;  SecondStair1.SelectedValue\=null; ThirdStair1.SelectedValue\=null;  unitcxbiao.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
+                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos1.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel141.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="70"/>
                                         <c:Excel x:Name="toExcel141" HQL="{m:Exp Str=unitinfos1.ItemsSource.Path}" 
    							 Completed="{m:Exp Str=downLoad141.Down()}"
    							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{unitinfos1.ItemsSource.Count\}/f_unitid:单位编号|f_unitname:单位名称|f_address:地址$}"/>
@@ -687,8 +577,8 @@
                                     </StackPanel>
 
 
-                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Margin="0" HorizontalAlignment="Right" Grid.Column="2" />
-                                    <ComboBox x:Name="Combox1_Copy1"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
+                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Margin="12,2,0,1" HorizontalAlignment="Right" Grid.Column="4" />
+                                    <ComboBox x:Name="Combox1_Copy1"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="5" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
                                         </a:Data.Prop>
@@ -774,7 +664,227 @@
                     </toolkit:BusyIndicator>
                 </Grid>
             </sdk:TabItem>
-            <sdk:TabItem Header="街道信息">
+
+            <sdk:TabItem Header="小区信息" Height="27" VerticalAlignment="Bottom">
+                <Grid x:Name="LayoutRoot2">
+                    <m:ResourceLoad Margin="0,0,-12,0">
+                        <o:ChildWindowObj Name="openchild1" CWName="/Pages/信息列表/小区具体信息" ParamObj="userfiles.SelectedItem" />
+                    </m:ResourceLoad>
+                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy or toExcel13.IsBusy}">
+                        <toolkit:DockPanel >
+                            <!--提交按钮-->
+                            <toolkit:DockPanel   Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,10" Height="33"/>
+                            <toolkit:DockPanel  x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
+                                <a:Data.Context>
+                                    <o:SearchObject/>
+                                </a:Data.Context>
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="28"/>
+
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="70*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock TextWrapping="Wrap" Text="小区名称： " Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Grid.Column="2"  Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+
+                                    <TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_districtname}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_districtname"  Operator="f_districtname like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区地址： " Margin="5,4,0,4" Height="25" FontSize="13.333" HorizontalAlignment="Right" />
+                                    <TextBox TextWrapping="Wrap" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Height="25" FontSize="13.333" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <ComboBox x:Name="Combox15"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right"><Run Text="建档日期从："/><Run Text=" "/></TextBlock>
+                                    <sdk:DatePicker Name="xqrq" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,0,0,0" Height="25" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
+                                            <o:PropertySetter PropertyName="f_yytdate1" 
+											Operator="f_date >= substring('this',1,10)"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <sdk:DatePicker Name="xqrq1" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="3" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" d:LayoutOverrides="GridBox" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_yytdate2"  
+											Operator="f_date ^= substring('this',1,10)"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock TextWrapping="Wrap" Text="到：" Grid.Row="3" Grid.Column="2" Margin="0,0,0,8" Height="25" TextAlignment="Right"/>
+                                    <StackPanel Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="3" Orientation="Horizontal" >
+
+                                        <Button Content="查  询" x:Name="chaxun"  Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="60" FontSize="14" />
+                                        <Button Content=" 置  空"   Width="60" 
+								 Click="{m:Exp Str=userfilesearch.DataContext.f_districtname\=null;
+								 userfilesearch.DataContext.f_address\=null;
+								 userfilesearch.DataContext.f_filiale\=null;
+								 userfilesearch.DataContext.f_yytdate2\=null;
+								 userfilesearch.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
+                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=userfiles.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel13.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="70"/>
+                                        <c:Excel x:Name="toExcel13" HQL="{m:Exp Str=userfiles.ItemsSource.Path}" 
+   							              Completed="{m:Exp Str=downLoad13.Down()}"
+                                          Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{userfiles.ItemsSource.Count\}/f_districtname:小区名称|f_gaswatchbrand:气表品牌|f_metertype:气表型号|f_accountVolume:开户气量|f_userNum:户数|f_startNumber:开户编号|f_endNumber:结束编号|f_usernumber:当前用户编号|f_filiale:公司$}"/>
+                                        <c:DownLoad x:Name="downLoad13" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel13.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" ></c:DownLoad>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:DockPanel>
+                            <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="57">
+                                <sdk:DataPager x:Name="pager16" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="0,0,0,3" PageSize="20" Height="24" toolkit:DockPanel.Dock="Top"/>
+                                <TextBlock TextWrapping="Wrap" Margin="5,0,0,3" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" Height="33" toolkit:DockPanel.Dock="Bottom"/>
+                            </toolkit:DockPanel>
+                            <sdk:DataGrid x:Name="userfiles" Margin="0"  FontSize="13.333" MouseLeftButtonUp="dataGrid_MouseLeftButtonUp2" 
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+                                <a:Data.Items>
+                                    <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}$\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\} order by f_date DESC   $\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'order by f_date DESC $\,$abc$}"      
+										PageIndex="{m:Exp Str=pager16.PageIndex}" PageSize="{m:Exp Str=pager16.PageSize}" SumNames="id"/>
+                                </a:Data.Items>
+                                <sdk:DataGrid.Columns>
+                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                                    <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
+                                    <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
+                                    <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
+                                    <sdk:DataGridTextColumn Header="开户气量" Binding="{Binding f_accountVolume}"/>
+                                    <sdk:DataGridTextColumn Header="户    数" Binding="{Binding f_userNum}"/>
+                                    <sdk:DataGridTextColumn Header="开始编号" Binding="{Binding f_startNumber}"/>
+                                    <sdk:DataGridTextColumn Header="结束编号" Binding="{Binding f_endNumber}"/>
+                                    <sdk:DataGridTextColumn Header="当前用户编号" Binding="{Binding f_usernumber}"/>
+                                    <sdk:DataGridTextColumn Header="公司" Binding="{Binding f_filiale}"/>
+                                    <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
+
+                                </sdk:DataGrid.Columns>
+                            </sdk:DataGrid>
+                        </toolkit:DockPanel>
+                    </toolkit:BusyIndicator>
+                </Grid>
+            </sdk:TabItem>
+            <sdk:TabItem Header="单位信息">
+                <Grid x:Name="LayoutRoot3">
+                    <m:ResourceLoad Margin="0,0,-12,0">
+                        <o:ChildWindowObj Name="openchild3" CWName="/Pages/信息列表/单位具体信息" ParamObj="unitinfos.SelectedItem" />
+                    </m:ResourceLoad>
+                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=unitinfos.ItemsSource.IsBusy or toExcel14.IsBusy}">
+                        <toolkit:DockPanel Margin="0" d:LayoutOverrides="Width" >
+                            <toolkit:DockPanel  x:Name="unitcx" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF"  >
+                                <a:Data.Context>
+                                    <o:SearchObject />
+                                </a:Data.Context>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="28"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="19.373"/>
+                                        <ColumnDefinition Width="55.627"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="70*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock TextWrapping="Wrap" Text="    单位名称：" Margin="5,2,5,1"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_unitname}" Width="Auto" Margin="0,2,0,1" Grid.Column="1" Height="25" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_unitname"  Operator="f_unitname like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+
+
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0,2,11,1" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从：" Width="89"/>
+                                    <sdk:DatePicker Name="dwxxrq" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <!-- Value="{m:Exp Str=SysTime.Today}"-->
+                                            <o:PropertySetter PropertyName="f_yytdate1" 
+											Operator="f_date >= substring('this',1,10)"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <sdk:DatePicker Name="dwxxrq1" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="2" Grid.Column="4" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_yytdate2"  
+											Operator="f_date ^= substring('this',1,10)"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock TextWrapping="Wrap" Text="     到：" Grid.Row="2" Grid.Column="3"   Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+
+                                    <TextBlock TextWrapping="Wrap" Text="     地　　址：" Margin="9,2,9,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0,2,0,1" Grid.Column="1" Grid.Row="1" Height="25" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <StackPanel Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal" >
+
+                                        <Button Content="查  询" x:Name="dwsearchbutton"  Click="{m:Exp Str=unitcx.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="60" FontSize="14" />
+                                        <Button Content=" 置  空"   Width="60" 
+								 Click="{m:Exp Str=unitcx.DataContext.f_unitname\=null;unitcx.DataContext.f_address\=null; unitcx.DataContext.f_filiale\=null;unitcx.DataContext.f_yytdate2\=null; unitcx.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
+                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel14.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="70"/>
+                                        <c:Excel x:Name="toExcel14" HQL="{m:Exp Str=unitinfos.ItemsSource.Path}" 
+   							 Completed="{m:Exp Str=downLoad14.Down()}"
+   							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{unitinfos.ItemsSource.Count\}/f_unitid:单位编号|f_unitname:单位名称|f_address:地址$}"/>
+                                        <c:DownLoad x:Name="downLoad14" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel14.FileName\}}" Filter="(*.xls)|*.xls" Height="30" VerticalAlignment="Top" Width="0" ></c:DownLoad>
+                                    </StackPanel>
+
+
+                                    <TextBlock TextWrapping="Wrap" Text="所属公司：" Margin="0" HorizontalAlignment="Right" Grid.Column="2" Grid.ColumnSpan="2" />
+                                    <ComboBox x:Name="Combox1_Copy"   Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="0" Grid.Column="4" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                </Grid>
+                            </toolkit:DockPanel>
+                            <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom">
+                                <sdk:DataPager Name="pager33" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=unitinfos}" PageSize="15" Height="24"  toolkit:DockPanel.Dock="Top"/>
+                                <TextBlock TextWrapping="Wrap" Margin="5,0,0,33" Text="{m:Exp Str=$共\{unitinfos.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" toolkit:DockPanel.Dock="Bottom" Height="27"/>
+                            </toolkit:DockPanel>
+                            <sdk:DataGrid x:Name="unitinfos" Margin="0" FontSize="14" IsReadOnly="True" MouseLeftButtonUp="dataGrid_MouseLeftButtonUp3"
+								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}">
+                                <a:Data.Items>
+                                    <o:PagedObjectList x:Name="unitinfoslist" WebClientInfo="{StaticResource dbclient}"
+                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+										Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} order by f_unitid DESC $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_unit where \{unitcx.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'order by f_unitid DESC $\,$abc$}"
+										PageIndex="{m:Exp Str=pager33.PageIndex}" PageSize="{m:Exp Str=pager33.PageSize}" SumNames="id"/>
+                                </a:Data.Items>
+                                <sdk:DataGrid.Columns>
+                                    <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                                    <sdk:DataGridTextColumn Header="单位编号" Binding="{Binding f_unitid}"/>
+                                    <sdk:DataGridTextColumn Header="单位名称" Binding="{Binding f_unitname}"/>
+                                    <sdk:DataGridTextColumn Header="地    址" Binding="{Binding f_address}"/>
+                                    <sdk:DataGridTextColumn Header="操  作  员" Binding="{Binding f_operator}"/>
+                                    <sdk:DataGridTextColumn Header="分  公  司" Binding="{Binding f_filiale}"/>
+                                    <sdk:DataGridTextColumn Header="部    门" Binding="{Binding f_filiale}"/>
+                                    <sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_unitid,StringFormat=yyyy-MM-dd}"/>
+
+                                </sdk:DataGrid.Columns>
+                            </sdk:DataGrid>
+                        </toolkit:DockPanel>
+                    </toolkit:BusyIndicator>
+                </Grid>
+            </sdk:TabItem>
+
+            <sdk:TabItem Header="街道信息" Margin="5,0,-5,0">
                 <Grid x:Name="LayoutRoot5">
                     <m:ResourceLoad Margin="0,0,-12,0">
                         <o:ChildWindowObj Name="openchild5" CWName="/Pages/信息列表/街道具体信息" ParamObj="unitinfos2.SelectedItem" />
@@ -792,14 +902,15 @@
                                         <RowDefinition Height="28"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="125"/>
                                         <ColumnDefinition Width="70"/>
                                         <ColumnDefinition Width="125"/>
                                         <ColumnDefinition Width="125"/>
+                                        <ColumnDefinition Width="70"/>
                                         <ColumnDefinition Width="70"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock TextWrapping="Wrap" Text="街道名称：" Margin="0"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
+                                    <TextBlock TextWrapping="Wrap" Text="   街道名称：" Margin="0"  TextAlignment="Right" HorizontalAlignment="Center" Height="25"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_road}" Width="Auto" Margin="0" Grid.Column="1" Height="25" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_road"  Operator="f_road like 'this%'"/>
@@ -807,7 +918,7 @@
                                     </TextBox>
 
 
-                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从:"/>
+                                    <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" Text="操作日期从："/>
                                     <sdk:DatePicker Name="dwxxrq13" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" >
                                         <a:Data.Prop>
                                             <!-- Value="{m:Exp Str=SysTime.Today}"-->
@@ -821,21 +932,21 @@
 											Operator="f_operatedate ^= substring('this',1,10)"/>
                                         </a:Data.Prop>
                                     </sdk:DatePicker>
-                                    <TextBlock TextWrapping="Wrap" Text="       到:" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock TextWrapping="Wrap" Text="       到：" Grid.Row="2" Grid.Column="2"  Margin="0" Height="25" TextAlignment="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 
-                                    <TextBlock TextWrapping="Wrap" Text="街道范围：" Margin="0,0,5,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="70"/>
+                                    <TextBlock TextWrapping="Wrap" Text="街道范围：" Margin="13,0,11,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="76"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_roadrange}" Width="Auto" Margin="0" Grid.Column="1" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
                                             <o:PropertySetter PropertyName="f_roadrange"  Operator="f_roadrange like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
-                                    <StackPanel Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="3" Orientation="Horizontal" >
+                                    <StackPanel Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4" Orientation="Horizontal" >
 
-                                        <Button Content="查  询" x:Name="dwsearchbutton2"  Click="{m:Exp Str=street.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="Auto" FontSize="14" />
-                                        <Button Content=" 置  空"   Width="Auto" 
+                                        <Button Content="查  询" x:Name="dwsearchbutton2"  Click="{m:Exp Str=street.DataContext.Search()}" Margin="2" HorizontalAlignment="Left" Width="60" FontSize="14" />
+                                        <Button Content=" 置  空"   Width="60" 
 								 Click="{m:Exp Str=street.DataContext.f_unitname\=null;street.DataContext.f_address\=null; street.DataContext.f_filiale\=null;street.DataContext.f_yytdate2\=null; street.DataContext.f_yytdate1\=null}" FontSize="14" Margin="2"  />
-                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos2.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel142.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="Auto"/>
+                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=unitinfos2.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel142.ToExcel()}" Margin="2" HorizontalAlignment="Left" Width="74"/>
                                         <c:Excel x:Name="toExcel142" HQL="{m:Exp Str=unitinfos2.ItemsSource.Path}" 
    							 Completed="{m:Exp Str=downLoad142.Down()}"
    							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{unitinfos2.ItemsSource.Count\}/f_unitid:单位编号|f_unitname:单位名称|f_address:地址$}"/>

@@ -49,9 +49,9 @@ public class UserInfoService {
 	 * @return
 	 */
 	@SuppressWarnings("finally")
-	@Path("touinfo/{userinfoname}/{useridname}/{loginuserid}")
+	@Path("hubiao/{userinfoname}/{useridname}/{loginuserid}")
 	@POST
-	public JSONObject txtoinfo(String files,
+	public JSONObject txhubiao(String files,
 			@PathParam("userinfoname") String userinfoname,
 			@PathParam("useridname") String useridname,
 			@PathParam("loginuserid") String loginuserid) {
@@ -76,27 +76,110 @@ public class UserInfoService {
 	}
 
 	/**
-	 * 导入表信息
+	 * 只产生户信息
+	 * 
+	 * @param files
+	 * @param userinfoname
+	 *            产生户编号的参数名
+	 * @param loginuserid
+	 *            操作员id
+	 * @return
+	 */
+	@SuppressWarnings("finally")
+	@Path("hu/{userinfoname}/{loginuserid}")
+	@POST
+	public JSONObject txhu(String files,
+			@PathParam("userinfoname") String userinfoname,
+			@PathParam("loginuserid") String loginuserid) {
+		JSONObject result = new JSONObject();
+		try {
+			JSONArray list = new JSONArray(files);
+			for (int l = 0; l < list.length(); l++) {
+				JSONObject u = list.getJSONObject(l);
+				// 产生户档案,返回产生的户编号
+				String userinfoid = inserthu(u, userinfoname, loginuserid);
+			}
+			result.put("success", "导入户信息完成！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("error", e.getMessage());
+			throw new WebApplicationException(500);
+		} finally {
+			return result;
+		}
+	}
+
+	/**
+	 * 只产生表信息
+	 * 
+	 * @param files
+	 * @param useridname
+	 *            产生表编号的参数名
+	 * @param loginuserid
+	 *            操作员id
+	 * @return
+	 */
+	@SuppressWarnings("finally")
+	@Path("biao/{useridname}/{loginuserid}")
+	@POST
+	public JSONObject txbiao(String files,
+			@PathParam("useridname") String useridname,
+			@PathParam("loginuserid") String loginuserid) {
+		JSONObject result = new JSONObject();
+		try {
+			JSONArray list = new JSONArray(files);
+			for (int l = 0; l < list.length(); l++) {
+				JSONObject u = list.getJSONObject(l);
+				//户编号
+				String userinfoid = u.getString("f_userinfoid");
+				// 产生户档案,返回产生的户编号
+				String userid = insertfile(u, userinfoid, useridname,
+						loginuserid);
+			}
+			result.put("success", "导入表信息完成！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("error", e.getMessage());
+			throw new WebApplicationException(500);
+		} finally {
+			return result;
+		}
+	}
+
+	/**
+	 * 导入户信息
 	 * 
 	 * @param json
 	 * @param userinfoname
-	 *            户编号
+	 *            产生户编号的单值
 	 * @param loginuserid
 	 *            操作员id
-	 * @return 表编号
+	 * @return 户编号
 	 * @throws ResultException
 	 * @throws JSONException
 	 */
 	private String inserthu(JSONObject json, String userinfoname,
 			String loginuserid) throws ResultException, JSONException {
 		json.remove("id");
+		// 根据地址判断户是否已经存在，如果存在直接返回户编号
+		if (!json.has("f_address")) {
+			throw new ResultException("地址属性f_address没有设置值，不能生成户信息！");
+		}
+		String f_address = json.getString("f_address");
+		List list = this.hibernateTemplate
+				.find("from t_userinfo where f_address='" + f_address + "'");
+		// 存在户，返回户编号
+		if (list.size() > 0) {
+			Map<String, Object> map = (Map<String, Object>) list.get(0);
+			return map.get("f_userid") + "";
+		}
 		String result = "";
 		// 获取阶梯信息
 		String f_stairtype = json.getString("f_stairtype");
 		if (f_stairtype == null || f_stairtype.equals("")) {
 			throw new ResultException("属性f_stairtype没有设置值，不能生成阶梯信息！");
 		}
-		List list = this.hibernateTemplate
+		list = this.hibernateTemplate
 				.find("from t_stairprice where f_stairtype='" + f_stairtype
 						+ "'");
 		if (list.size() == 0) {
