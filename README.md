@@ -36,5 +36,14 @@ if __name__ == '__main__':
     # A comment
     print 'hello world'
 ```
+```
+#include<stdio.h>
 
+int main()
+(
+    printf("hellow world!\n");
+    
+    return 0;
+)
+```
  
