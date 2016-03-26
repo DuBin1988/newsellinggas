@@ -234,6 +234,8 @@
 		<!--购气次数-->
 		<property name="f_times" type="int"/>
 
+		<!--上次抄表底数-->
+		<property name="lastinputgasnum" type="double"/>
 		
          <!-- 卡类型，写卡使用 0 民用，1工业 -->
          <property name="klx" type="int"/>
@@ -250,6 +252,20 @@
             <!-- 卡密码-->
          <property name="kmm" type="string"/>
 		
+		<!-- 抄表系统 对接       -->
+			
+		<!-- 表通道类型 -->
+		<property name="f_channel_type" type="string"/>
+		<!-- 是否支持阀门操作  -->
+		<property name="switch_op" type="string"/>
+		<!--表计电话-->
+		<property name="meter_phone" type="string"/>
+		<!--终端名称-->
+		<property name="terminal_name" type="string"/>
+		<!-- 抄表系统刷新缓存 refreshCache-->
+		<property name="refreshCache" type="string"/>
+		<!-- 表计量类型  -->
+		<property name="f_jllx" type="string"/>
 		
 		<!--换表补气记录 --> 
 	    <set name="f_buqi" cascade="all-delete-orphan">
