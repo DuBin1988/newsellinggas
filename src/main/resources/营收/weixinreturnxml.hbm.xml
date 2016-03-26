@@ -1,0 +1,64 @@
+<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--微信支付返回-->
+    <class   entity-name="t_weixinreturnxml" table="t_weixinreturnxml" >	
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+				<!-- 返回状态码-->
+		<property name="f_return_code" type="string"/>
+		<!-- 返回信息 -->
+	    <property name="f_return_msg" type="string"></property>  
+	    <!-- 公众账号ID-->
+		<property name="f_appid" type="string"/>
+		<!-- 商户号-->
+		<property name="f_mch_id" type="string"/>
+			<!-- 设备号-->
+		<property name="f_device_info" type="string"/>
+			<!-- 随机字符串-->
+		<property name="f_nonce_str" type="string"/>
+			<!-- 签名-->
+		<property name="f_sign" type="string"/>
+			<!-- 业务结果-->
+		<property name="f_result_code" type="string"/>
+		<!-- 错误代码-->
+		<property name="f_err_code" type="string"/>
+		<!-- 错误代码描述-->
+		<property name="f_err_code_des" type="string"/>
+			<!-- 用户标识-->
+		<property name="f_openid" type="string"/>
+		<!-- 是否关注公众账号-->
+		<property name="f_is_subscribe" type="string"/>
+		<!--交易类型-->
+		<property name="f_trade_type" type="string"/>
+		<!-- 付款银行-->
+		<property name="f_bank_type" type="string"/>
+		<!-- 总金额-->
+		<property name="f_total_fee" type="int"/>
+		<!-- 货币种类-->
+		<property name="f_fee_type" type="string"/>
+		<!-- 现金支付金额-->
+		<property name="f_cash_fee" type="int"/>
+		<!-- 现金支付货币类型-->
+		<property name="f_cash_fee_type" type="string"/>
+		<!-- 代金券或立减优惠金额-->
+		<property name="f_coupon_fee" type="int"/>
+		<!-- 代金券或立减优惠使用数量-->
+		<property name="f_coupon_count" type="int"/>
+		<!-- 代金券或立减优惠ID-->
+		<property name="f_coupon_id_$n" type="string"/>
+		<!-- 单个代金券或立减优惠支付金额-->
+		<property name="f_coupon_fee_$n" type="int"/>
+		<!-- 微信支付订单号-->
+		<property name="f_transaction_id" type="string"/>
+		<!-- 商户订单号-->
+		<property name="f_out_trade_no" type="string"/>
+			<!--商家数据包-->
+		<property name="f_attach" type="string"/>
+			<!-- 支付完成时间-->
+		<property name="f_time_end" type="string"/>
+	</class> 
+</hibernate-mapping>

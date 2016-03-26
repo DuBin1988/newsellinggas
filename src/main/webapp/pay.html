@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<title>用户交费</title>
+<link href="style/css.css" rel="stylesheet" type="text/css">
+</head>
+</style>
+<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/jquery.json-2.3.min.js"></script>
+<script src='js/knockout-2.1.0.js'></script>
+<script src="js/knockout.mapping-latest.js"></script>
+<script src="js/knockout.validation.min.js"></script>
+<script src='js/af.js'></script>
+<script type="text/javascript">
+	function getUrlParam(name) {
+		//构造一个含有目标参数的正则表达式对象 
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		//匹配目标参数 
+		var r = window.location.search.substr(1).match(reg);
+		//返回参数值 
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	}
+
+	function payload() {
+		//获取参数
+		var qf = getUrlParam('qf');
+		alert(qf);
+		$("#qianfei").html(qf);
+
+	}
+
+	function chong() {
+		//设置按钮不可点击
+		//验证欠费
+		document.getElementById("btn").disabled=true;
+		var openid = getUrlParam('openid');
+		var date = getUrlParam('date');
+		//alert("++++"+date);
+		var money = document.getElementById("money").value;
+		var qianfei = getUrlParam('qf');
+		alert("====" + qianfei);
+		//	if (qianfei > money) {
+		//		alert("缴费金额应该大于欠费金额，请重新输入!");
+		//还原为可点击
+		//		document.getElementByIdx("btn").disabled=false;
+		//		return;
+		//	}
+			var date = new Date();
+			var mytime=date.toLocaleTimeString()
+		alert("++++"+mytime);
+		var path = "/rs/weixin/getprepayid?openid="+openid+"&money="+money+"&date="+mytime;
+		var detail;
+		$.getJSON(path, function(data) {
+			/*判断返回是否正确*/
+			if (data.error != null && data.error != "undefined") {
+				alert(data.error);
+				return;
+			}
+			
+			//调用支付接口
+			var appId = data.appId;
+			var timeStamp = data.timeStamp;
+			var nonceStr = data.nonceStr;
+			var pg = data.pg;
+			var signType = data.signType;
+			var paySign = data.sign;
+			WeixinJSBridge.invoke('getBrandWCPayRequest', {
+				"appId" : appId,//"wx2421b1c4370ec43b", //公众号名称，由商户传入   
+				"timeStamp" : timeStamp,//"1395712654", //时间戳，自1970年以来的秒数   
+				"nonceStr" : nonceStr,//"e61463f8efa94090b1f366cccfbbb444", //随机串   
+				"package" : "prepay_id=" + pg,//"prepay_id=u802345jgfjsdfgsdg888",
+				"signType" : signType,//"MD5", //微信签名方式:   
+				"paySign" : paySign,//"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+			}, function(res) { // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回  ok，但并不保证它绝对可靠。  
+				//alert(res.err_msg);
+				document.getElementById("btn").disabled=false;
+				if (res.err_msg == "get_brand_wcpay_request:ok") {
+					//支付成功
+
+				}
+				if (res.err_msg == "get_brand_wcpay_request:cancel") {
+
+				}
+				if (res.err_msg == "get_brand_wcpay_request:fail") {
+
+				}
+			});
+		});
+
+	}
+
+	function onBridgeReady() {
+		var appId = getUrlParam('appId');
+		var timeStamp = getUrlParam('timeStamp');
+		var nonceStr = getUrlParam('nonceStr');
+		var pg = getUrlParam('pg');
+		var signType = getUrlParam('signType');
+		var paySign = getUrlParam('sign');
+		WeixinJSBridge.invoke('getBrandWCPayRequest', {
+			"appId" : appId,//"wx2421b1c4370ec43b", //公众号名称，由商户传入   
+			"timeStamp" : timeStamp,//"1395712654", //时间戳，自1970年以来的秒数   
+			"nonceStr" : nonceStr,//"e61463f8efa94090b1f366cccfbbb444", //随机串   
+			"package" : "prepay_id=" + pg,//"prepay_id=u802345jgfjsdfgsdg888",
+			"signType" : signType,//"MD5", //微信签名方式:   
+			"paySign" : paySign,//"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+		}, function(res) { // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回  ok，但并不保证它绝对可靠。  
+			//alert(res.err_msg);
+			if (res.err_msg == "get_brand_wcpay_request:ok") {
+
+			}
+			if (res.err_msg == "get_brand_wcpay_request:cancel") {
+
+			}
+			if (res.err_msg == "get_brand_wcpay_request:fail") {
+
+			}
+		});
+	}
+	function pay() {
+
+		if (typeof WeixinJSBridge == "undefined") {
+			if (document.addEventListener) {
+				document.addEventListener('WeixinJSBridgeReady', onBridgeReady,
+						false);
+			} else if (document.attachEvent) {
+				document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+				document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+			}
+		} else {
+			onBridgeReady();
+		}
+	}
+</script>
+
+<body onload="payload()">
+	<header class="findstyle">
+		<h1>
+			您当前的欠费金额：<span id="qianfei"></span>
+		</h1>
+	</header>
+	<div class="btn">
+		<h1>请输入交费金额：</h1>
+		<input type="text" value="" class="jeinput" id="money">
+	</div>
+	<div class="btn">
+		<input type="submit" value="充值" class="bdbtn" id="btn" onClick="chong()">
+	</div>
+</body>
+</html>
