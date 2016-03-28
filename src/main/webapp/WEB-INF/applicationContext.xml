@@ -148,18 +148,19 @@
 		</property>
 	</bean>
 
-	<!-- 
+	
 	<bean id="MianZhuSms" class="com.aote.rs.sms.MianZhuSms">
 	</bean>
 	<bean id="SmsService" class="com.aote.rs.sms.SmsService">
 	</bean>
 	<bean id="MzSmsQuartzs" class="com.aote.rs.sms.MzSmsQuartzs">
 	</bean>
+	<bean id = "LsSaSms" class = "com.aote.rs.sms.LaSaSms"></bean>
 	
 	<bean id="MianZhuTask5"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
-			<ref bean="MianZhuSms" />
+			<ref bean="LsSaSms" />
 		</property>
 		<property name="targetMethod">
 			<value>send</value>
@@ -171,7 +172,7 @@
 			<ref bean="MianZhuTask5" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0/5 * * * ?"</value>
+			<value>0 0/1 * * * ?"</value>
 		</property>
 	</bean>
 
@@ -181,7 +182,7 @@
 			<ref bean="remindCronTriggerista5" />
 		</property>
 	</bean>
-
+<!-- 
 	<bean id="MianZhuTask"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">

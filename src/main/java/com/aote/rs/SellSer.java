@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import com.aote.rs.exception.RSException;
 import com.aote.rs.exception.ResultException;
+import com.aote.rs.sms.SmsService;
 
 @Path("sell")
 @Scope("prototype")
@@ -271,6 +272,8 @@ public class SellSer {
 			BigDecimal newCumuGas = cumuGas.add(debtGas);
 			// 更新用户
 			this.updateUser(user, nowye, debtGas, newMeterGasNums, newCumuGas);
+			// 拉萨判断是否发送短信， 是否关闭发送短信功能 如果是，存入sms表
+			jfSendMsg(user, dMoney, nowye);
 			// 更新抄表欠费为已缴费
 			if (handIds != null && !handIds.equals("")) {
 				updateHands(handIds);
@@ -606,22 +609,27 @@ public class SellSer {
 		// 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
 		JSONObject ret = new JSONObject();
 		try {
-//			final String sql_1 = "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
-//					+ "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
-//					+ "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
-//					+ "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
-//					+ "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
-//					+ userid + "' and id='" + id + "'" + "";
-//			List list = (List) hibernateTemplate
-//					.execute(new HibernateCallback() {
-//						public Object doInHibernate(Session session)
-//								throws HibernateException {
-//							SQLQuery query = session.createSQLQuery(sql_1);
-//							return query.list();
-//						}
-//					});
-			
-			String sql = "from t_sellinggas where id="+id;
+			// final String sql_1 =
+			// "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
+			// +
+			// "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
+			// +
+			// "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
+			// +
+			// "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
+			// +
+			// "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
+			// + userid + "' and id='" + id + "'" + "";
+			// List list = (List) hibernateTemplate
+			// .execute(new HibernateCallback() {
+			// public Object doInHibernate(Session session)
+			// throws HibernateException {
+			// SQLQuery query = session.createSQLQuery(sql_1);
+			// return query.list();
+			// }
+			// });
+
+			String sql = "from t_sellinggas where id=" + id;
 			List list = this.hibernateTemplate.find(sql);
 			// 找到安检记录，判断日期和基表读数
 			if (list.size() == 1) {
@@ -646,9 +654,12 @@ public class SellSer {
 				// ret=fmt.format(now);
 				sell.put("f_deliverydate_tb", fmt.format(now)); // 同步 交费时间
 				sell.put("f_status_tb", "1"); // 同步 状态
-				sell.put("f_grossproceeds", -Double.parseDouble(sell.get("f_grossproceeds")+""));
-				sell.put("f_pregas", -Double.parseDouble(sell.get("f_pregas")+"")); // 气量
-				sell.put("f_preamount",  -Double.parseDouble(sell.get("f_preamount")+"")); // 气费
+				sell.put("f_grossproceeds",
+						-Double.parseDouble(sell.get("f_grossproceeds") + ""));
+				sell.put("f_pregas",
+						-Double.parseDouble(sell.get("f_pregas") + "")); // 气量
+				sell.put("f_preamount",
+						-Double.parseDouble(sell.get("f_preamount") + "")); // 气费
 				sell.put("f_payment", "冲正"); // 付款方式
 				sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
 				sell.put("f_sgnetwork", loginUser.get("f_parentname")
@@ -670,13 +681,13 @@ public class SellSer {
 			} else {
 				ret.put("error", "noid");
 			}
-			ret.put("success",  "机表冲正成功");
+			ret.put("success", "机表冲正成功");
 		} catch (RSException e) {
 			log.debug("售气交费 失败!");
-			ret.put("error",  e.getMessage());
+			ret.put("error", e.getMessage());
 		} catch (Exception ex) {
 			log.debug("售气交费 失败!" + ex.getMessage());
-			ret.put("error",  ex.getMessage());
+			ret.put("error", ex.getMessage());
 		} finally {
 			return ret;
 		}
@@ -886,19 +897,20 @@ public class SellSer {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * execute sql in hibernate
+	 * 
 	 * @param sql
 	 */
 	private void execSQL(final String sql) {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session)
-                    throws HibernateException {
-                session.createSQLQuery(sql).executeUpdate();
-                return null;
-            }
-        });		
+		hibernateTemplate.execute(new HibernateCallback() {
+			public Object doInHibernate(Session session)
+					throws HibernateException {
+				session.createSQLQuery(sql).executeUpdate();
+				return null;
+			}
+		});
 	}
 
 	// 转换器，在转换期间会检查对象是否已经转换过，避免重新转换，产生死循环
@@ -971,4 +983,17 @@ public class SellSer {
 		}
 	}
 
+	public void jfSendMsg(Map user, BigDecimal dMoney, BigDecimal nowye) {
+
+		JSONObject attr = new JSONObject();
+		JSONObject rt = new JSONObject();
+		SmsService smsService = new SmsService();
+		smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
+		String param = "{ f_username=" + user.get("f_username").toString()
+				+ ",dmoney=" + dMoney.toString() + ",nowye=" + nowye.toString()
+				+ "}";
+
+		rt = smsService.sendTemplate(param, user.get("f_phone").toString(),
+				"缴费到账通知");
+	}
 }

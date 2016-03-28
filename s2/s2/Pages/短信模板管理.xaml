@@ -142,6 +142,18 @@
                             <ColumnDefinition Width="140"/>
                             <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
+                        <TextBlock Text="模板状态：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="0" Visibility="Collapsed"/>
+                        <TextBox Text="{m:Bind Path=f_state}" Visibility="Collapsed" Grid.Column="1" Margin="0,9" Grid.Row="0" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_state" NotNull="True" Default="开启" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        
+                        <TextBox Text="{m:Bind Path=f_name}"  Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_name" NotNull="True"  />
+                            </a:Data.Prop>
+                        </TextBox>
                         <TextBlock Text="短信内容：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="2" />
                         <TextBox Text="{m:Bind Path=f_name}"  Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
 							<a:Data.Prop>
