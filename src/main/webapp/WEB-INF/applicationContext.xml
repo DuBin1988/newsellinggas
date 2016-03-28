@@ -151,8 +151,7 @@
 	
 	<bean id="MianZhuSms" class="com.aote.rs.sms.MianZhuSms">
 	</bean>
-	<bean id="SmsService" class="com.aote.rs.sms.SmsService">
-	</bean>
+	
 	<bean id="MzSmsQuartzs" class="com.aote.rs.sms.MzSmsQuartzs">
 	</bean>
 	<bean id = "LsSaSms" class = "com.aote.rs.sms.LaSaSms"></bean>
@@ -172,7 +171,7 @@
 			<ref bean="MianZhuTask5" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0/1 * * * ?"</value>
+			<value>0 0/50 * * * ?"</value>
 		</property>
 	</bean>
 

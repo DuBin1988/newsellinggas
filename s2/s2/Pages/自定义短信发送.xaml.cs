@@ -2,6 +2,7 @@
 using Com.Aote.ObjectTools;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -25,6 +26,7 @@ namespace Com.Aote.Pages
         {
             BaseObjectList list = daninfos.ItemsSource as BaseObjectList;
             String content = f_content.Text.ToString();
+            String templateName = templatename.SelectedValue.ToString();
 
             //对于每一条记录
             foreach (GeneralObject go in list)
@@ -32,13 +34,14 @@ namespace Com.Aote.Pages
                 if (go == daninfos.SelectedItem)
                 {
                     // id
-                    String username = go.GetPropertyValue("f_useranme").ToString();
+                    String username = go.GetPropertyValue("f_username").ToString();
                     String f_phone = go.GetPropertyValue("f_phone").ToString();
 
-                    sql = "update t_sms set f_state='未发' where id=" + smsId + "";
-                    action.HQL = sql;
-                    action.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
-                    action.Invoke();
+                    WebClientInfo wci = (WebClientInfo)Application.Current.Resources["smsserver"];
+                    string str = wci.BaseAddress + "/send/" + username + "/"+f_phone +"/"+ content +"/" + templateName;
+                    Uri uri = new Uri(str);
+                    WebClient client = new WebClient();
+                    client.DownloadStringAsync(uri);            
                 }
             }
         }
@@ -46,25 +49,21 @@ namespace Com.Aote.Pages
         private void allSend_Click(object sender, RoutedEventArgs e)
         {
             BaseObjectList list = daninfos.ItemsSource as BaseObjectList;
-            HQLAction action = new HQLAction();
-            action.Name = "abc";
-            action.HQL = sql;
-            action.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
-            action.Invoke();
+            String content = f_content.Text.ToString();
+            String templateName = templatename.SelectedValue.ToString();
 
             //对于每一条记录
             foreach (GeneralObject go in list)
             {
                 // id
-                String username = go.GetPropertyValue("f_useranme").ToString();
+                String username = go.GetPropertyValue("f_username").ToString();
                 String f_phone = go.GetPropertyValue("f_phone").ToString();
 
-                sql = "update t_sms set f_state='未发' where id=" + smsId + "";
-                HQLAction action = new HQLAction();
-                action.Name = "abc";
-                action.HQL = sql;
-                action.WebClientInfo = Application.Current.Resources["dbclient"] as WebClientInfo;
-                action.Invoke();
+                WebClientInfo wci = (WebClientInfo)Application.Current.Resources["smsserver"];
+                string str = wci.BaseAddress + "/send/" + username + "/" + f_phone + "/" + content + "/" + templateName;
+                Uri uri = new Uri(str);
+                WebClient client = new WebClient();
+                client.DownloadStringAsync(uri);
             }
         }
     }

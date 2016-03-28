@@ -87,7 +87,33 @@ public class SmsService {
 		}
 		return result;
 	}
-
+	@GET
+	@Path("/send/{f_username}/{f_phone}/{f_content}/{f_templatename}")
+	public JSONObject sendUser(@PathParam("f_username") String f_username,
+			@PathParam("f_phone") String f_phone,
+			@PathParam("f_content") String f_content,
+			@PathParam("f_templatename") String f_templatename
+			) {
+		JSONObject result = new JSONObject();
+		try {
+			
+			Date date = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+			String time = df.format(date);
+			Date createdate = df.parse(time);
+			Map<String, Object> sms = new HashMap<String, Object>();
+			sms.put("f_username", f_username); // 用户姓名
+			sms.put("f_content", f_content);// 短信内容
+			sms.put("f_phone", f_phone);// 电话	
+			sms.put("f_templatename", f_templatename);	//模板名	
+			sms.put("f_state", "未发");//短信状态			
+			sms.put("f_createdate", createdate);// 生成日期
+			hibernateTemplate.save("t_sms", sms);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	/**
 	 * 根据短信模板名获得内容
 	 * 

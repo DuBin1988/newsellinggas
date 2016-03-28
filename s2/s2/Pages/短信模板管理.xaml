@@ -77,7 +77,7 @@
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
                      MultiPath="{m:Exp Str=$from t_smstemplate where \{applysearch.DataContext.Condition\} }"
-					 Path="{m:Exp Str=$from t_smstemplate where \{applysearch.DataContext.Condition\} }"
+					 Path="{m:Exp Str=$from t_smstemplate where \{applysearch.DataContext.Condition\} and f_name !\= \'短信功能开关\'}"
 					 IsOld="{m:Exp Str=apply.DataContext.State\=\=$End$ or deleteAction.State\=\=$End$}"
 					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 				        </a:Data.Items>
