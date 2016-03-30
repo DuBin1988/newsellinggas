@@ -20,7 +20,7 @@
 		<m:ResourceLoad >
             <o:ChildWindowObj Name="openchild" CWName="/Pages/获取街道" />
 			<b:HQLAction Name="delete"   WebClientInfo="{StaticResource dbclient}" 
-			HQL="{m:Exp Str=$delete from t_road where id \= \{apply.DataContext.id\}}"/> 
+			HQL="{m:Exp Str=$delete from t_area where id \= \{apply.DataContext.id\}}"/> 
 
 			<!--判断街道名称是否存在-->
 			<o:GeneralObject Name="areaexist" EntityType="t_area2" WebClientInfo="{StaticResource dbclient}" 
