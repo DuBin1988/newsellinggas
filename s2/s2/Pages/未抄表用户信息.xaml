@@ -63,7 +63,7 @@
 							<Grid.RowDefinitions>
 							<RowDefinition Height="28"/>
 							<RowDefinition Height="28"/>
-							<RowDefinition Height="1"/>
+							<RowDefinition Height="28"/>
 							<RowDefinition Height="28"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
@@ -84,7 +84,7 @@
 									<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="0,2,0,1" Height="25" TextAlignment="Right" />
 									<TextBox Name="tj1" TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" >
 										<a:Data.Prop>
-											<o:PropertySetter PropertyName="f_userid"  Operator="f_userid = 'this'"/>          
+											<o:PropertySetter PropertyName="f_userid"  Operator="u.f_userid = 'this'"/>          
 										</a:Data.Prop>
 									</TextBox>
 									<TextBlock TextWrapping="Wrap" Text="用户姓名：" Grid.Row="1" Margin="0,0,0,3" Height="25" TextAlignment="Right"/>
@@ -103,7 +103,7 @@
                     		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale like 'this%'"/>          
                     	</a:Data.Prop>
 						</ComboBox>
-						<Button Content=" 查  询" x:Name="dansearchbutton" Grid.Row="3" Grid.Column="0" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="2,2,0,-2" FontSize="14" HorizontalAlignment="Right" Width="60"  />
+						<Button Content="   查询   " x:Name="dansearchbutton" IsEnabled="{m:Exp Str=!daninfosearch.DataContext.HasErrors}" Grid.Row="3" Grid.Column="5" Click="{m:Exp Str=daninfosearch.DataContext.Search()}" Margin="2,0,0,0" FontSize="14" HorizontalAlignment="Left" Width="60"  />
 						<TextBlock TextWrapping="Wrap" Visibility="Collapsed" Text="气表品牌：" Grid.Column="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" />
 						<ComboBox Name="tj5" Visibility="Collapsed" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="3" ItemsSource="{m:Exp Str=qblist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25">
 						     <ComboBox.ItemTemplate>
@@ -169,13 +169,39 @@
 										<o:PropertySetter PropertyName="f_yhxz"  Operator="f_yhxz = 'this'"/>          
 									</a:Data.Prop>
 								</ComboBox>
-                        <Button Content=" 置  空"  Grid.Row="3" Grid.Column="1" Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yhxz\=null;daninfosearch.DataContext.f_gaspricetype\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_address\=null}"  FontSize="14" HorizontalAlignment="Center" Width="60"  />
+                        <Button Content=" 置  空"  Grid.Row="3" Grid.Column="5"  Click="{m:Exp Str=daninfosearch.DataContext.f_userid\=null;daninfosearch.DataContext.f_username\=null;daninfosearch.DataContext.f_yhxz\=null;daninfosearch.DataContext.f_gaspricetype\=null;daninfosearch.DataContext.f_usertype\=null;daninfosearch.DataContext.f_address\=null}"  FontSize="14" HorizontalAlignment="Right" Width="60"  />
 
-                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Column="2" Margin="0,0,2,0" HorizontalAlignment="Right" Grid.Row="3"/>
+                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" Grid.Column="6" Margin="0,0,2,0" HorizontalAlignment="Right" Grid.Row="3"/>
 								<c:Excel x:Name="toExcel" HQL="{m:Exp Str=$sql:\{daninfos.ItemsSource.HQL\}}" 
    							 Completed="{m:Exp Str=downLoad.Down()}"
    							 Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_districtname:小区名称|f_address:地址|f_phone:电话|f_usertype:用户类型|f_gasproperties:用气性质|lastinputdate:最后抄表日期$}"/>
 					    <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}"></c:DownLoad>
+					    <TextBlock TextWrapping="Wrap" Text="未抄表日期：" Grid.Row="2" Margin="0,0,0,3" Height="25" TextAlignment="Right"/>
+					    <TextBlock TextWrapping="Wrap" Text="到" Grid.Column="2" Grid.Row="2"  Margin="0,2,0,1" Height="25" TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" />
+					    <sdk:DatePicker x:Name="tj4" SelectedDate="{m:Bind Path=f_inputdate1}" Grid.Row="2" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
+					    	<a:Data.Prop>
+					    		<o:PropertySetter PropertyName="f_inputdate1"  
+					    			Operator="1=1" NotNull="True"/>
+					    	</a:Data.Prop>
+					    </sdk:DatePicker>
+					    <sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_inputdate2}" Grid.Row="2" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1.5" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
+					    	<a:Data.Prop>
+					    		<o:PropertySetter PropertyName="f_inputdate2"   
+					    			Operator="1=1" NotNull="True"/>
+					    	</a:Data.Prop>
+					    </sdk:DatePicker>
+					    <TextBlock TextWrapping="Wrap" Text="册    号："  Margin="0,0,0,3" Height="25" TextAlignment="Right" Grid.Row="2" Grid.Column="4" />
+					    <TextBox x:Name="tjwhf_Copy1" TextWrapping="Wrap" Grid.Row="2" Grid.Column="5" Text="{m:Bind Path=f_books}" Width="150" Margin="0,0,0,3" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
+					    	<a:Data.Prop>
+					    		<o:PropertySetter PropertyName="f_books"  Operator="f_books like '%this%'"/>           
+					    	</a:Data.Prop>
+					    </TextBox>
+					    <TextBlock TextWrapping="Wrap" Text="当前抄表底数：" Grid.Row="3" Margin="0,0,0,3" Height="25" TextAlignment="Right"/>
+					    <TextBox x:Name="tj7_Copy" TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=lastinputgasnum}" Width="Auto" Margin="0,0,0,3" Height="25" Grid.ColumnSpan="1" >
+					    	<a:Data.Prop>
+					    		<o:PropertySetter PropertyName="lastinputgasnum"  Operator="lastinputgasnum = 'this'"/>          
+					    	</a:Data.Prop>
+					    </TextBox>
 							</Grid>
 					
 							<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="60">
@@ -189,14 +215,25 @@
 							 <a:Data.Items>
 							 	<o:PagedList x:Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
 									LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
-									Names="f_userid,f_username,f_districtname,f_address,f_phone,f_usertype,f_gasproperties,lastinputdate"
 									SumHQL="{m:Exp Str=$
-									 select f_userid\,f_username\,f_districtname\,f_address\,f_phone\,f_usertype\,f_gasproperties\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate
-									 from t_userfiles where \{daninfosearch.DataContext.Condition\} and  f_gasmeterstyle\=\'机表\'$}"
+									select u.f_userid\,lastinputgasnum\,f_username\,f_districtname\,f_address\,f_phone\,f_usertype\,f_gasproperties\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate from (
+									select * from (
+									select f_userid\,sum(isnull(oughtamount\,0)) oughtamount from t_handplan
+									where f_state\=\'已抄表\' and f_inputdate>\=\'\{daninfosearch.DataContext.f_inputdate1\}\'
+									and f_inputdate^\=\'\{daninfosearch.DataContext.f_inputdate2\}\' group by f_userid)
+									a where a.oughtamount\=0
+									) b inner join t_userfiles u
+									on b.f_userid\=u.f_userid where \{daninfosearch.DataContext.Condition\} and  u.f_gasmeterstyle\=\'机表\'$}"
 									HQL="{m:Exp Str=$
-									 select f_userid\,f_username\,f_districtname\,f_address\,f_phone\,f_usertype\,f_gasproperties\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate
-									 from t_userfiles where \{daninfosearch.DataContext.Condition\} and 
-									 f_gasmeterstyle\=\'机表\' order by f_userid$}"
+									select u.f_userid\,lastinputgasnum\,f_username\,f_districtname\,f_address\,f_phone\,f_usertype\,f_gasproperties\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate from (
+									select * from (
+									select f_userid\,sum(isnull(oughtamount\,0)) oughtamount from t_handplan
+									where f_state\=\'已抄表\' and f_inputdate>\=\'\{daninfosearch.DataContext.f_inputdate1\}\'
+									and f_inputdate^\=\'\{daninfosearch.DataContext.f_inputdate2\}\' group by f_userid)
+									a where a.oughtamount\=0
+									) b inner join t_userfiles u
+									on b.f_userid\=u.f_userid where \{daninfosearch.DataContext.Condition\} and  u.f_gasmeterstyle\=\'机表\' order by u.f_userid$}"
+									
 								Path="sql" PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="," />	
 							 </a:Data.Items>
 								<sdk:DataGrid.Columns>
@@ -204,12 +241,11 @@
  							<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
 							<sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}"/>
 							<sdk:DataGridTextColumn Header="小区" Binding="{Binding f_districtname}"/>
-								<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+							<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
 							<sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
 							<sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
 					    	<sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gasproperties}"/>
-					
-								
+					    	<sdk:DataGridTextColumn Header="当前抄表底数" Binding="{Binding lastinputgasnum}"/>
 							<sdk:DataGridTextColumn Header="最后抄表日期" Binding="{Binding lastinputdate,StringFormat=yyyy-MM-dd}"/>
 							
 							</sdk:DataGrid.Columns>

@@ -1,5 +1,7 @@
 package com.aote.rs.files;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.aote.rs.exception.ResultException;
 import com.aote.rs.util.JSONHelper;
+import com.aote.rs.util.JsonTransfer;
 import com.aote.rs.util.SynchronizedTools;
 import com.aote.rs.util.UserTools;
 
@@ -34,6 +37,60 @@ public class UserInfoService {
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+
+	/**
+	 * 导入前台传入的档案信息，创建一户多表档案
+	 * 
+	 * @param files
+	 *            需要保存的档案列表
+	 * @param userinfoname
+	 *            产生户编号的参数名
+	 * @param useridname
+	 *            产生表编号的参数名
+	 * @param loginuserid
+	 *            操作员id
+	 * @return
+	 */
+	@SuppressWarnings("finally")
+	@Path("save/{userinfoname}/{useridname}/{loginuserid}")
+	@POST
+	public JSONObject txsave(String files,
+			@PathParam("userinfoname") String userinfoname,
+			@PathParam("useridname") String useridname,
+			@PathParam("loginuserid") String loginuserid) {
+		JSONObject result = new JSONObject();
+		try {
+			JSONArray array = new JSONArray(files);
+			// 户信息
+			JSONObject operator = array.getJSONObject(0);
+			JSONObject hu = operator.getJSONObject("data");
+			Map humap = JSONHelper.toHashMap(hu);
+			// 多个表信息
+			String child = hu.getString("child");
+			JSONArray list = new JSONArray(child);
+			// 产生户档案,返回产生的户编号
+			String userinfoid = inserthu(hu, userinfoname, loginuserid);
+			JsonTransfer Transfer = new JsonTransfer();
+			Map savem;
+			for (int l = 0; l < list.length(); l++) {
+				JSONObject u = list.getJSONObject(l);
+				Map umap = JSONHelper.toHashMap(u);
+				savem = new HashMap<String, Object>();
+				savem.putAll(humap);
+				savem.putAll(umap);
+				// 产生表档案
+				insertfile((JSONObject) Transfer.MapToJson(savem), userinfoid,
+						useridname, loginuserid);
+			}
+			result.put("success", userinfoid+"用户建档完成！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("error", e.getMessage());
+			throw new WebApplicationException(500);
+		} finally {
+			return result;
+		}
+	}
 
 	/**
 	 * 导入前台传入的档案信息，创建一户多表档案
@@ -130,7 +187,7 @@ public class UserInfoService {
 			JSONArray list = new JSONArray(files);
 			for (int l = 0; l < list.length(); l++) {
 				JSONObject u = list.getJSONObject(l);
-				//户编号
+				// 户编号
 				String userinfoid = u.getString("f_userinfoid");
 				// 产生户档案,返回产生的户编号
 				String userid = insertfile(u, userinfoid, useridname,
@@ -223,6 +280,18 @@ public class UserInfoService {
 		json.put("f_userid", userinfoid);
 		Map userinfo = JSONHelper.toHashMap(json, hibernateTemplate,
 				"t_userinfo");
+		userinfo.put("f_yytdate", new Date());
+		userinfo.put("f_yyttime", new Date());
+		userinfo.put("f_zhye", 0);
+		userinfo.put("f_accountzhye", 0);
+		userinfo.put("f_state", "正常");
+		userinfo.put("f_substate", "完成");
+		userinfo.put("f_whethergivecard", "未发");
+		userinfo.put("f_whethergivepassbook", "未发");
+		userinfo.put("f_zherownum", 13);
+		userinfo.put("refreshCache", 1);
+		userinfo.put("lastinputgasnum", 0);
+		userinfo.put("lastinputdate", new Date());
 		this.hibernateTemplate.save("t_userinfo", userinfo);
 		return result;
 	}
@@ -294,8 +363,20 @@ public class UserInfoService {
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);
-		this.hibernateTemplate.save("t_userfiles",
-				JSONHelper.toHashMap(json, hibernateTemplate, "t_userfiles"));
+		Map userfile = JSONHelper.toHashMap(json, hibernateTemplate, "t_userfiles");
+		userfile.put("f_yytdate", new Date());
+		userfile.put("f_yyttime", new Date());
+		userfile.put("f_zhye", 0);
+		userfile.put("f_accountzhye", 0);
+		userfile.put("f_state", "正常");
+		userfile.put("f_substate", "完成");
+		userfile.put("f_whethergivecard", "未发");
+		userfile.put("f_whethergivepassbook", "未发");
+		userfile.put("f_zherownum", 13);
+		userfile.put("refreshCache", 1);
+		userfile.put("lastinputgasnum", 0);
+		userfile.put("lastinputdate", new Date());
+		this.hibernateTemplate.save("t_userfiles", userfile);
 		return result;
 	}
 

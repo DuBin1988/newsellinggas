@@ -35,7 +35,7 @@
 	  
 			<!--用户对象 -->
        <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-              Source="{m:Exp Str=userfiles.SelectedItem}"
+		Path="{m:Exp Str=$one/from t_userfiles where id\=\{userfiles.SelectedItem.id\}}"
 			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
         		</o:GeneralObject>	
 			
@@ -179,7 +179,7 @@
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_ccreason}" Grid.Column="1" Margin="0,2,5,2" Grid.Row="5" TextWrapping="Wrap" Grid.ColumnSpan="5" Height="Auto" VerticalAlignment="Stretch">
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_ccreason" NotNull="True"/>
+    								<o:PropertySetter PropertyName="f_ccreason" />
     							</a:Data.Prop>
     						</TextBox>
     						<TextBlock Margin="0,4,0,8" Grid.Row="9" TextWrapping="Wrap" Text="公 司 名：" TextAlignment="Right"/>
@@ -374,7 +374,7 @@
     		<o:GeneralObject  x:Name="fzprint" WebClientInfo="{StaticResource dbclient}" EntityType="t_fazhe"  />
     	</a:Data.Context>
     	<Grid.RowDefinitions >
-    		<RowDefinition Height="32"/>
+    		<RowDefinition Height="62"/>
     		<RowDefinition Height="32"/>
     		<RowDefinition Height="32"/>
     		<RowDefinition Height="24"/>
@@ -386,35 +386,35 @@
     		<RowDefinition Height="32"/>	
     	</Grid.RowDefinitions>
     	<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="80"/>
-    		<ColumnDefinition Width="200"/>
-    		<ColumnDefinition Width="80"/>
+    		<ColumnDefinition Width="144"/>
+    		<ColumnDefinition Width="136"/>
+    		<ColumnDefinition Width="155"/>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
-    	<sdk:Label Margin="0,4,163,3" Content="用户姓名：" Visibility="Collapsed" FontSize="13.333" Grid.Row="1" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="3" Width="0"/>
+    	<sdk:Label Margin="0,4,4,3" Content="用户姓名：" Visibility="Collapsed" FontSize="13.333" Grid.Row="1" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="2" Width="0"/>
     	<sdk:Label Content="气表底数：" Visibility="Collapsed" FontSize="13.333" Grid.Row="5" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,4,1,3" Width="0"/>
-    	<sdk:Label Content="单    位：" Visibility="Collapsed" FontSize="13.333" Grid.Row="2" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,4,200,3" Grid.Column="1" Width="0"/>
-    	<sdk:Label Content="发证日期：" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,3,200,4" Grid.Column="1" Width="0"/>
-    	<sdk:Label Content="气表厂家：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,200,4" Grid.Column="1" Width="0"/>
-    	<sdk:Label Content="气表型号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="3" Margin="0,4,163,0" Width="0"/>
-    	<sdk:Label Margin="0,4,200,0" Content="住　　址：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="1" Width="0"/>
-    	<sdk:Label Margin="0,4,200,3" Content="用户ID号：" Visibility="Collapsed" FontSize="13.333" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Row="1" Grid.Column="1" Width="0"/>
-    	<TextBlock Text="{m:Exp Str=users.f_userid}" Grid.Column="1" Padding="0,2,0,0" Margin="4,31,76,8" FontSize="16" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-    	<TextBlock Text="{m:Exp Str=users.f_usertype\=\=$民用$:users.f_username\,users.f_linkname}" Grid.Column="2" Grid.Row="1" Padding="0,2,0,0" Margin="54,0,87,7" FontSize="16" Grid.ColumnSpan="2"/>
-    	<TextBlock Text="{m:Exp Str=users.f_address}" Grid.Column="1" Grid.Row="2" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
-    	<TextBlock Text="{m:Exp Str=users.f_stair1price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="47" Padding="0,2,0,0" Margin="0,4,0,3" FontSize="12"/>
-    	<TextBlock Text="{m:Exp Str=users.f_stair2price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="47" Padding="0,2,0,0" Margin="0,4,0,0" FontSize="12"/>
-    	<TextBlock Text="{m:Exp Str=users.f_stair3price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="47" Padding="0,2,0,0" Margin="0,6,0,4" FontSize="12"/>
-    	<sdk:Label Content="气表表号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,163,4" Grid.Column="3" Width="0"/>
+    	<sdk:Label Content="单    位：" Visibility="Collapsed" FontSize="13.333" Grid.Row="2" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,4,12,3" Width="0"/>
+    	<sdk:Label Content="发证日期：" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,3,12,4" Width="0"/>
+    	<sdk:Label Content="气表厂家：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,12,4" Width="0"/>
+    	<sdk:Label Content="气表型号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="2" Margin="0,4,4,0" Width="0"/>
+    	<sdk:Label Margin="0,4,12,0" Content="住　　址：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Width="0"/>
+    	<sdk:Label Margin="0,4,12,3" Content="用户ID号：" Visibility="Collapsed" FontSize="13.333" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Row="1" Width="0"/>
+    	<TextBlock Text="{m:Exp Str=users.f_userid\=&gt;Completed}" Grid.Column="1" Padding="0,2,0,0" Margin="4,0,0,0" FontSize="16" Grid.Row="1"/>
+    	<TextBlock Text="{m:Exp Str=users.f_usertype\=\=$民用$:users.f_username\,users.f_linkname}" Grid.Column="3" Grid.Row="1" Padding="0,2,0,0" Margin="0,0,0,7" FontSize="16"/>
+    	<TextBlock Text="{m:Exp Str=users.f_address\=&gt;Completed}" Grid.Column="1" Grid.Row="2" Padding="0,2,0,0" Margin="4,2,88,5" FontSize="12" Grid.ColumnSpan="2"/>
+    	<TextBlock Text="{m:Exp Str=users.f_stair1price\=&gt;Completed}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="32" Padding="0,2,0,0" Margin="0,4,0,3" FontSize="12"/>
+    	<TextBlock Text="{m:Exp Str=users.f_stair2price\=&gt;Completed}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="32" Padding="0,2,0,0" Margin="0,4,0,0" FontSize="12"/>
+    	<TextBlock Text="{m:Exp Str=users.f_stair3price\=&gt;Completed}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="32" Padding="0,2,0,0" Margin="0,0,0,10" FontSize="12"/>
+    	<sdk:Label Content="气表表号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,4,4" Grid.Column="2" Width="0"/>
     	<sdk:Label Content="年" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Left" VerticalContentAlignment="Top" Margin="72,3,0,4" Grid.Column="1" Width="0"/>
     	<sdk:Label Content="月" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" VerticalContentAlignment="Top" Margin="0,3,74,4" Grid.Column="1" HorizontalAlignment="Right" Width="0"/>	
     	<sdk:Label Content="日" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,3,34,4" Grid.Column="1" Width="0"/>
-    	<TextBlock Text="一阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="0,4,0,3" FontSize="12"/>
-    	<TextBlock Text="二阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="0,4,0,0" FontSize="12"/>
-    	<TextBlock Text="三阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="0,6,0,4" FontSize="12"/>
-    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="50,4,0,3" FontSize="12"/>
-    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="50,4,0,0" FontSize="12"/>
-    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="50,6,0,4" FontSize="12"/>
+    	<TextBlock Text="一阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="0,4,4,3" FontSize="12"/>
+    	<TextBlock Text="二阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="0,0,4,0" FontSize="12"/>
+    	<TextBlock Text="三阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="0,0,4,4" FontSize="12"/>
+    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="37,4,0,3" FontSize="12"/>
+    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="37,4,0,0" FontSize="12"/>
+    	<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="37,5,0,5" FontSize="12"/>
     </Grid>
 	</Grid>
 </UserControl>
