@@ -292,6 +292,8 @@ public class UserInfoService {
 		userinfo.put("refreshCache", 1);
 		userinfo.put("lastinputgasnum", 0);
 		userinfo.put("lastinputdate", new Date());
+		userinfo.put("f_metergasnums", 0);
+		userinfo.put("f_cumulativepurchase", 0);
 		this.hibernateTemplate.save("t_userinfo", userinfo);
 		return result;
 	}
@@ -376,6 +378,8 @@ public class UserInfoService {
 		userfile.put("refreshCache", 1);
 		userfile.put("lastinputgasnum", 0);
 		userfile.put("lastinputdate", new Date());
+		userfile.put("f_metergasnums", 0);
+		userfile.put("f_cumulativepurchase", 0);
 		this.hibernateTemplate.save("t_userfiles", userfile);
 		return result;
 	}
