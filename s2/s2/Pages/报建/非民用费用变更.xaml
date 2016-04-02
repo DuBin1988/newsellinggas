@@ -72,7 +72,7 @@
                 <o:PropertySetter PropertyName="f_emptyingfee" Value="{m:Exp Str=userfileschangeset.f_emptyingfeechange}"/>
                 <o:PropertySetter PropertyName="f_materialfee" Value="{m:Exp Str=userfileschangeset.f_materialfeechange}"/>
                 <o:PropertySetter PropertyName="f_totalfee" Value="{m:Exp Str=userfileschangeset.f_totalfeechange}"/>
-
+                <o:PropertySetter PropertyName="f_htnum" Value="{m:Exp Str=userfileschangeset.f_htnumchange}"/>
                 <!--  <o:PropertySetter PropertyName="f_selfclosfee" Value="{m:Exp Str=userfileschangeset.f_selfclosfeechange}"/>
                 <o:PropertySetter PropertyName="f_alarmfee" Value="{m:Exp Str=userfileschangeset.f_alarmfeechange}"/>
                 <o:PropertySetter PropertyName="f_bgglf" Value="{m:Exp Str=userfileschangeset.f_bgglfchange}"/>
@@ -89,7 +89,7 @@
                 <o:PropertySetter PropertyName="f_emptyingfee" Value="{m:Exp Str=applys.SelectedItem.f_emptyingfee}"/>
                 <o:PropertySetter PropertyName="f_materialfee" Value="{m:Exp Str=applys.SelectedItem.f_materialfee}"/>
                 <o:PropertySetter PropertyName="f_totalfee" Value="{m:Exp Str=applys.SelectedItem.f_totalfee}"/>
-
+                <o:PropertySetter PropertyName="f_htnum" Value="{m:Exp Str=applys.SelectedItem.f_htnum}"/>
                 <!-- <o:PropertySetter PropertyName="f_selfclosfee" Value="{m:Exp Str=applys.SelectedItem.f_selfclosfee}"/>
                 <o:PropertySetter PropertyName="f_alarmfee" Value="{m:Exp Str=applys.SelectedItem.f_alarmfee}"/>
                 <o:PropertySetter PropertyName="f_bgglf" Value="{m:Exp Str=applys.SelectedItem.f_bgglf}"/>
@@ -266,7 +266,7 @@
                                         </TextBox>
                                         <TextBox Text="{m:Bind Path=f_totalfeechange}" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto" >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_totalfeechange"   Default="{m:Exp Str=applys.SelectedItem.f_totalfee}" 
+                                                <o:PropertySetter PropertyName="f_totalfeechange"   Default="{m:Exp Str=applys.SelectedItem.f_totalfeechange}" 
                                                                   NoDependValue="{m:Exp Str=this.f_materialfeechange  + this.f_emptyingfeechange}"/>
                                             </a:Data.Prop>
                                         </TextBox>
@@ -288,10 +288,10 @@
                                                 <o:PropertySetter PropertyName="f_chargeopertdate"  Value="{m:Exp Str=applys.SelectedItem.f_chargeopertdate}"/>
                                             </a:Data.Prop>
                                         </sdk:DatePicker>
-                                        <TextBlock Grid.Column="0" Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="变更原因：" TextAlignment="Right"/>
-                                        <TextBox Text="{m:Bind Path=f_feebgyy}" Grid.Column="1" Margin="0,2,0.333,2" Grid.Row="8" IsReadOnly="False" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch">
+                                        <TextBlock Grid.Column="0" Margin="0,6,0,0" Grid.Row="8" TextWrapping="Wrap" Text="预算明细：" TextAlignment="Right"/>
+                                        <TextBox Text="{m:Bind Path=f_budget}" Grid.Column="1" Margin="0,2,0.333,2" Grid.Row="8" IsReadOnly="True" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch">
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_feebgyy"  />
+                                                <o:PropertySetter PropertyName="f_budget"  Value="{m:Exp Str=applys.SelectedItem.f_budget}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Margin="4.678,3,0.322,3" Grid.Row="2" TextWrapping="Wrap" Text="用气性质：" TextAlignment="Right" Grid.Column="4"/>
@@ -331,6 +331,12 @@
                                         <TextBox Text="{m:Bind Path=f_gcbkcopinion}" IsReadOnly="True" Grid.Column="1" Margin="0,0,-0.001,-52" Grid.Row="10" TextWrapping="Wrap" Height="46" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" >
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_gcbkcopinion"   Value="{m:Exp Str=applys.SelectedItem.f_gcbkcopinion}"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                        <TextBlock Margin="0,7,0,28" Grid.Row="4" TextWrapping="Wrap" Text="合同编号：" TextAlignment="Right" Grid.RowSpan="2"/>
+                                        <TextBox Text="{m:Bind Path=f_htnumchange}" Grid.Column="1" Margin="0,3,148.643,1" Grid.Row="4" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto" Grid.ColumnSpan="2">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_htnumchange"  Value="{m:Exp Str=applys.SelectedItem.f_htnum}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                     </Grid>
