@@ -114,7 +114,6 @@
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户ID号" Binding="{Binding f_userid}"/>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
-							<sdk:DataGridTextColumn d:IsLocked="True" Header="当前行号" Binding="{Binding f_zherownum}"/>
 							<sdk:DataGridTextColumn Header="交费日期" Binding="{Binding f_deliverydate,StringFormat=yyyy-MM-dd}"/>
 						 	<sdk:DataGridTextColumn Header="交费时间" Binding="{Binding f_deliverytime,StringFormat=HH:mm:ss}"/>
 					 	</sdk:DataGrid.Columns>
@@ -866,7 +865,7 @@
 			<c:PrintObj Name="printjtgs" Message="是否打印阶梯发票" Area="{m:Res Key=guoshuiprint_Copy}" UseDefaultPrinter="False"/>
 
 	<!--	<c:PrintObj Name="printzz" Message="是否打印购气证" Area="{m:Res Key=zheziprint}"  UseDefaultPrinter="False"/>-->
-	   <c:PrintObj Name="printzz" Message="{m:Exp Str=$是否打印购气证-当前行号\{sellinggas.f_zherownum\}$}"	 Area="{m:Res Key=zheziprint}" />
+	   <c:PrintObj Name="printzz" Message="是否打印购气证"	 Area="{m:Res Key=zheziprint}" />
 		<Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-310,0,0,-703">
 			<a:Data.Context>
 				<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 

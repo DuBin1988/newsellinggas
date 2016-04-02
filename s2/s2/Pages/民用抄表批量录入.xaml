@@ -23,8 +23,9 @@
             <RowDefinition Height="0*"/>
         </Grid.RowDefinitions>
         <m:ResourceLoad Margin="0,0,-12,0">
+
             <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <!--抄表单信息列表-->
             <o:ObjectList Name="jichalist">
 
@@ -164,7 +165,11 @@
                             		<o:PropertySetter PropertyName="f_userinfoid" Operator="u.f_userinfoid like 'this%'"/>
                             	</a:Data.Prop>
                             </TextBox>
-
+                            <TextBox x:Name="tjwhf_Copy8" Visibility="Collapsed" TextWrapping="Wrap" Grid.Row="5" Grid.Column="3" Text="{m:Bind Path=f_filiale}" Width="118" Margin="0,1.5" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_filiale" Operator="u.f_filiale like 'this%'" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+                                </a:Data.Prop>
+                            </TextBox>
                         </Grid>
                     </StackPanel>
 
