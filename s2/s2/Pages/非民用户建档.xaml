@@ -20,13 +20,12 @@
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-101,0">
 		<!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
 
-            
             <!--阶梯气价信息列表-->
             
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and f_branch\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}"/>
 
             <o:ObjectList Name="chaobiaoyuanlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'"/>
             <!--单位对象 -->
