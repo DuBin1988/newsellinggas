@@ -21,7 +21,7 @@
         <m:ResourceLoad Margin="0,0,-101,0">
 
             <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
 
             <!--o:ObjectList Name="stairlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_stairprice}"/-->
 
@@ -78,7 +78,7 @@
 
 
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and f_branch\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}"/>
 
             <!--判断用户是否存在-->
             <o:GeneralObject Name="userexist" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}" 
@@ -364,7 +364,7 @@
                                             <ColumnDefinition Width="110"/>
                                             <ColumnDefinition Width="0.3*"/>
                                             <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="0.3*"/>
+                                            <ColumnDefinition Width="294"/>
                                             <ColumnDefinition Width="110"/>
                                             <ColumnDefinition Width="0.3*"/>
                                         </Grid.ColumnDefinitions>

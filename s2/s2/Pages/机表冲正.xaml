@@ -189,8 +189,8 @@
 			<!--用户列表部分-->
 			<o:SearchObject Name="search"/>
 			<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-		       	MultiPath="{m:Exp Str='$from t_userinfo where {search.Condition}'}"
-		       	Path="{m:Exp Str='$from t_userinfo where {search.Condition} order by f_finabuygasdate desc'}"
+		       	MultiPath="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
+		       	Path="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\' order by f_finabuygasdate desc}"
 		       	PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 		</m:ResourceLoad>
 		<Grid >
