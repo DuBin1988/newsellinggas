@@ -15,7 +15,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
     xmlns:ec="http://schemas.microsoft.com/expression/2010/controls"
     mc:Ignorable="d">
-    
+
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad>
 
@@ -50,7 +50,7 @@
 
 
             <!--非民用设计审核-->
-          <o:ObjectList Name="devicelist_fmysjsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjshInfo.DataContext.State==$End$ or fmysjshBack=>Click!=null'}"
+            <o:ObjectList Name="devicelist_fmysjsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjshInfo.DataContext.State==$End$ or fmysjshBack=>Click!=null'}"
             Path="{m:Exp Str='fmysjshInfo.DataContext.id!=null:$from t_device where applyid={fmysjshInfo.DataContext.id} and f_noanzhuang is null$,null'}" EntityType="t_device" HasEmptyRow="False" />
             <o:ObjectList Name="imagelist_fmysjsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='fmysjshInfo.DataContext.State==$End$ or fmysjshBack=>Click!=null'}"
             Path="{m:Exp Str='fmysjshInfo.DataContext.id!=null:$from t_applyimage where applyid={fmysjshInfo.DataContext.id}$,null'}" EntityType="t_applyimage" />
@@ -122,7 +122,7 @@
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
                     <Button Content="提交预算" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmysjshList.SelectedItem!=null and fmysjshList.SelectedItem.f_substate!=null'}" Width="100" />
                     <c:MessageTipObj Name="submittip" Tip="您确认要提交预算吗？" OK="{m:Exp Str=startprocess.id\=fmysjshList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
-					<sdk:DataPager Name="fmysjshPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmysjshList,Converter={StaticResource DataPagerConverter}}"
+                    <sdk:DataPager Name="fmysjshPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmysjshList,Converter={StaticResource DataPagerConverter}}"
 		                        HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
                     <TextBlock Text="{m:Exp Str='fmysjsh.Count'}"  Margin="-250,5,210,0" />
@@ -130,276 +130,288 @@
             </StackPanel>
         </c:BusyIndicatorEx>
         <!--非民用设计审核-->
-		<Popup x:Name="fmysjshPopup">
-		    <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmysjshObj.IsBusy or devicelist_fmysjsh.IsBusy or imagelist_fmysjsh.IsBusy}">
+        <Popup x:Name="fmysjshPopup">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmysjshObj.IsBusy or devicelist_fmysjsh.IsBusy or imagelist_fmysjsh.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmysjshInfo" DataContext="{m:Exp Str=fmysjshObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
-                       		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-							<Grid Margin="0" HorizontalAlignment="Stretch" >
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="210" />
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="210" />
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="210"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="50" />
-                                </Grid.RowDefinitions>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" />
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建日期：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" />
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="电话：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="1"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"  Grid.Row="1" Grid.Column="2"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" Grid.Row="1"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="片区：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="2"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请用气点数：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" Grid.Row="2"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" Grid.Row="2"/>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="安装用气点数：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="3"/>
-                                <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="3" Grid.Column="2"/>
-                                <TextBlock Margin="0" TextWrapping="Wrap" Text="设计意见：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="4" VerticalAlignment="Center"/>
-                                <TextBox Text="{m:Bind Path=f_code}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_code" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" SelectedDateFormat="Short" Grid.Column="3" Margin="0,3" Height="Auto" Width="Auto" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_date" />
-                                    </a:Data.Prop>
-                                </sdk:DatePicker>
-                                <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_username" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_phone}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_phone" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_minyongdept" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_address}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_address" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_area}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_area" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_applycount}" Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_applycount" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_usertype" Default="非民用"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_installnum}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="3" IsReadOnly="True" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_installnum" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_sjexambz}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Width="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_sjexambz" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock TextWrapping="Wrap" Text="部门：" Width="Auto" Margin="0,6,0,0" Grid.Row="5" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_sjexamdepartment}" Margin="0,2" TextWrapping="Wrap" Width="Auto" Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="5" IsReadOnly="True" TextAlignment="Left">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_sjexamdepartment"	Default="{m:Exp Str=LoginUser.f_parentname}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock TextWrapping="Wrap" Text="操作人：" Width="Auto" Margin="0,6,0,0" Grid.Column="2" Grid.Row="5" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_sjexamopertor}" Margin="0,2" TextWrapping="Wrap" Width="Auto" Height="Auto" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="5" IsReadOnly="True">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_sjexamopertor" Default="{m:Exp Str=LoginUser.name}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock TextWrapping="Wrap" Text="日期：" Width="Auto" Margin="0,6,0,0" Grid.Column="4" Grid.Row="5" TextAlignment="Right"/>
-                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_sjexamdate}" Margin="0,3" IsEnabled="False" SelectedDateFormat="Short" Width="Auto" Height="Auto" Grid.Column="5" HorizontalAlignment="Stretch" Grid.Row="5" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_sjexamdate" Default="{m:Exp Str=SysTime.Today}"/>
-                                    </a:Data.Prop>
-                                </sdk:DatePicker>
-                                <CheckBox Content="可以进行设计" IsChecked="{m:Bind Path=f_designe}" Margin="0,6,0,-2" Height="25"  Width="Auto" Grid.Column="3"  Grid.Row="3">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_designe" Default="{m:Exp Str=False}"/>
-                                    </a:Data.Prop>
-                                </CheckBox>
-                                <TextBlock Margin="0" TextWrapping="Wrap" Text="报建备注：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="6" VerticalAlignment="Center"/>
-                                <TextBox Text="{m:Bind Path=f_baojbeizhu}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Width, GridBox" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_baojbeizhu" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                            </Grid>
-							</ScrollViewer>
-						</sdk:TabItem>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <Grid Margin="0" HorizontalAlignment="Stretch" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="210" />
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="210" />
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="210"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="50" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" />
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建日期：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" />
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请人：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="电话：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="1"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请单位：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625"  Grid.Row="1" Grid.Column="2"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" Grid.Row="1"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="片区：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="2"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="申请用气点数：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="2" Grid.Row="2"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Column="4" Grid.Row="2"/>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="安装用气点数：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="3"/>
+                                    <TextBlock Margin="0" TextWrapping="Wrap" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="3" Grid.Column="2"/>
+                                    <TextBlock Margin="0" TextWrapping="Wrap" Text="设计意见：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="4" VerticalAlignment="Center"/>
+                                    <TextBox Text="{m:Bind Path=f_code}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_code" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" SelectedDateFormat="Short" Grid.Column="3" Margin="0,3" Height="Auto" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_date" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_username" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_phone}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_phone" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_minyongdept" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_address}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Grid.Row="1" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_area}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_area" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_applycount}" Grid.Column="3" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_applycount" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Grid.Row="2" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_usertype" Default="非民用"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_installnum}" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="3" IsReadOnly="True" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_installnum" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_designsuggestions}" IsReadOnly="True" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Width="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designsuggestions" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="部门：" Width="Auto" Margin="0,6,0,0" Grid.Row="5" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_sjexamdepartment}" Margin="0,2" TextWrapping="Wrap" Width="Auto" Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="5" IsReadOnly="True" TextAlignment="Left">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_sjexamdepartment"	Default="{m:Exp Str=LoginUser.f_parentname}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="操作人：" Width="Auto" Margin="0,6,0,0" Grid.Column="2" Grid.Row="5" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_sjexamopertor}" Margin="0,2" TextWrapping="Wrap" Width="Auto" Height="Auto" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="5" IsReadOnly="True">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_sjexamopertor" Default="{m:Exp Str=LoginUser.name}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="日期：" Width="Auto" Margin="0,6,0,0" Grid.Column="4" Grid.Row="5" TextAlignment="Right"/>
+                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_sjexamdate}" Margin="0,3" IsEnabled="False" SelectedDateFormat="Short" Width="Auto" Height="Auto" Grid.Column="5" HorizontalAlignment="Stretch" Grid.Row="5" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_sjexamdate" Default="{m:Exp Str=SysTime.Today}"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <CheckBox Content="可以进行设计" IsChecked="{m:Bind Path=f_designe}" Margin="0,6,0,-2" Height="25"  Width="Auto" Grid.Column="3"  Grid.Row="3">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designe" Default="{m:Exp Str=False}"/>
+                                        </a:Data.Prop>
+                                    </CheckBox>
+                                    <TextBlock Margin="0" TextWrapping="Wrap" Text="报建备注：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="6" VerticalAlignment="Center"/>
+                                    <TextBox Text="{m:Bind Path=f_baojbeizhu}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Width, GridBox" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_baojbeizhu" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,72,0,-38" TextWrapping="Wrap" Text="勘察意见：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="6" VerticalAlignment="Center"/>
+                                    <TextBox Text="{m:Bind Path=f_gcbkcopinion}" IsReadOnly="True" Grid.Column="1" Margin="0,55,0,-51" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gcbkcopinion" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,120,0,-101" TextWrapping="Wrap" Text="勘察审核意见：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="6" VerticalAlignment="Center" Height="31"/>
+                                    <TextBox Text="{m:Bind Path=f_surveyexamineopinion}" IsReadOnly="False" Grid.Column="1" Margin="0,101,0,-101" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_surveyexamineopinion" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </Grid>
+                            </ScrollViewer>
+                        </sdk:TabItem>
                         <sdk:TabItem Header="用气设备">
-                        	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                        	<toolkit:DockPanel LastChildFill="True">
-                                <Button Content="移除" VerticalAlignment="Top" Visibility="Collapsed"></Button>
-                                <sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmysjsh}">
-                                    <sdk:DataGrid.Columns>
-                                        <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Exp Str='data==data.List.EmptyRow:$*$,data.Index'}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="第几处">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_dijichu}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="设备名称">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_name}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="功率/台">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_usegasnum}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="用气设备单位">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_unit}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="数量">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_count}" IsReadOnly="True">
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="用气设备品牌">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_brand}" IsReadOnly="True"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="用气设备型号">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_shebeitype}" IsReadOnly="True"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="勘查意见">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_noanzhuang}" IsReadOnly="True"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="设计意见">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_descript1}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="设计人">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_descriptopt}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                                        <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_descriptopt" NotNull="True" Default="{m:Exp Str=LoginUser.name}"/>
-                                                        </a:Data.Prop>
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="设计人填写意见日期">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_descriptdate}"  Margin="0,0,0,0"    IsEnabled="False">
-                                                        <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_descriptdate" NotNull="True" Default="{m:Exp Str=SysTime.Today}"/>
-                                                        </a:Data.Prop>
-                                                    </sdk:DatePicker>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-										<sdk:DataGridTemplateColumn Header="部门">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_department}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                                        <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_department" />
-                                                        </a:Data.Prop>
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="操作人">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_opertor}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
-                                                        <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_opertor" />
-                                                        </a:Data.Prop>
-                                                    </TextBox>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="日期" >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Margin="0,0,0,0"   Height="22" >
-                                                        <a:Data.Prop>
-                                                            <o:PropertySetter PropertyName="f_date" />
-                                                        </a:Data.Prop>
-                                                    </sdk:DatePicker>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                    </sdk:DataGrid.Columns>
-                                </sdk:DataGrid>
-                            </toolkit:DockPanel>
-							</ScrollViewer>
-					    </sdk:TabItem>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <toolkit:DockPanel LastChildFill="True">
+                                    <Button Content="移除" VerticalAlignment="Top" Visibility="Collapsed"></Button>
+                                    <sdk:DataGrid AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=devicelist_fmysjsh}">
+                                        <sdk:DataGrid.Columns>
+                                            <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Exp Str='data==data.List.EmptyRow:$*$,data.Index'}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="第几处">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_dijichu}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="设备名称">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_name}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="功率/台">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_usegasnum}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="用气设备单位">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_unit}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="数量">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_count}" IsReadOnly="True">
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="用气设备品牌">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_brand}" IsReadOnly="True"/>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="用气设备型号">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_shebeitype}" IsReadOnly="True"/>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="勘查意见">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_noanzhuang}" IsReadOnly="True"/>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="设计意见">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_descript1}"/>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="设计人">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_descriptopt}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="f_descriptopt" NotNull="True" Default="{m:Exp Str=LoginUser.name}"/>
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="设计人填写意见日期">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_descriptdate}"  Margin="0,0,0,0"    IsEnabled="False">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="f_descriptdate" NotNull="True" Default="{m:Exp Str=SysTime.Today}"/>
+                                                            </a:Data.Prop>
+                                                        </sdk:DatePicker>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="部门">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_department}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="f_department" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="操作人">
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{m:Bind Path=f_opertor}"  Margin="0,0,0,0"  TextWrapping="Wrap" Height="22" IsReadOnly="True">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="f_opertor" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                            <sdk:DataGridTemplateColumn Header="日期" >
+                                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <sdk:DatePicker SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Margin="0,0,0,0"   Height="22" >
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="f_date" />
+                                                            </a:Data.Prop>
+                                                        </sdk:DatePicker>
+                                                    </DataTemplate>
+                                                </sdk:DataGridTemplateColumn.CellTemplate>
+                                            </sdk:DataGridTemplateColumn>
+                                        </sdk:DataGrid.Columns>
+                                    </sdk:DataGrid>
+                                </toolkit:DockPanel>
+                            </ScrollViewer>
+                        </sdk:TabItem>
                         <sdk:TabItem Header=" 图 片 ">
-                        	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    		<ListBox ItemsSource="{m:Exp Str=imagelist_fmysjsh}"  Margin="0" MinHeight="200" MinWidth="200">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmysjsh}"  Margin="0" MinHeight="200" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
                                             <StackPanel>
                                                 <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
                                                 <StackPanel Orientation="Horizontal">
@@ -414,15 +426,15 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <toolkit:WrapPanel/>
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                            </ListBox>
-							</ScrollViewer>
-					    </sdk:TabItem>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </ScrollViewer>
+                        </sdk:TabItem>
                         <sdk:TabItem Header="附件" >
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
@@ -472,11 +484,11 @@
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmysjshList.SelectedItem.f_processid;fmysjshInfo.DataContext.f_sjshzt\=$已完成$;fmysjshInfo.DataContext.f_substate\=null;fmysjshInfo.DataContext.Save();fmysjshPopup.BringToDown();fmysjshPopup.IsOpen\=False;startprocess.Save()}" />
-						<Button Name="fmysjshBack" Content="  返  回  " Click="{m:Exp Str=fmysjshPopup.BringToDown();fmysjshPopup.IsOpen\=False}" Margin="5" Width="60" />
+                        <Button Name="fmysjshBack" Content="  返  回  " Click="{m:Exp Str=fmysjshPopup.BringToDown();fmysjshPopup.IsOpen\=False}" Margin="5" Width="60" />
                     </StackPanel>
                     <c:ImageView x:Name="Picture" Visibility="Collapsed"></c:ImageView>
                 </Grid>
             </c:BusyIndicatorEx>
-		</Popup>
+        </Popup>
     </Grid>
 </UserControl>

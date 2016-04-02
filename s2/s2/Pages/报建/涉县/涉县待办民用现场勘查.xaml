@@ -15,7 +15,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
     xmlns:ec="http://schemas.microsoft.com/expression/2010/controls"
     mc:Ignorable="d">
-    
+
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad>
 
@@ -64,7 +64,7 @@
 
             <b:HQLAction Name="sjSubmitAction"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_apply set f_xckczt\=\'已完成\' \,f_substate\=null where id in (\{myxckcList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
-         </m:ResourceLoad>
+        </m:ResourceLoad>
         <!--民用现场勘查-->
         <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=myxckc.IsBusy}">
             <StackPanel Margin="2,0,2,8">
@@ -73,7 +73,7 @@
                         <a:Data.Context>
                             <o:SearchObject CanSearch="{m:Exp Str='LayoutRoot=>Loaded!=null'}" />
                         </a:Data.Context>
-                        <TextBlock TextWrapping="Wrap" Text="民用现场勘查" Margin="5,0,20,0"/>
+                        <TextBlock TextWrapping="Wrap" Text="民用现场勘查及设计" Margin="5,0,20,0"/>
                         <TextBlock TextWrapping="Wrap" Text="申请人：" Margin="5,0,0,0"/>
                         <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_username}" MinWidth="30" Margin="5,0,0,0" Height="22">
                             <a:Data.Prop>
@@ -97,7 +97,7 @@
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                             </a:Data.Prop>
-                        </TextBox>
+                        </TextBox>                        
                         <Button Content="查 询" Click="{m:Exp Str=myxckcSearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Left" Width="60" />
                     </toolkit:WrapPanel>
                     <Button Content="打印选中列表" Click="{m:Exp Str=print_myxckc.Print()}" Height="25" Width="80" Margin="4,0,4,0"/>
@@ -115,22 +115,21 @@
                                 </DataTemplate>
                             </sdk:DataGridTemplateColumn.CellTemplate>
                         </sdk:DataGridTemplateColumn>
-                        <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="申请安装户数" Binding="{Binding f_applycount}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
                         <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>
-                        <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="设计时间" Binding="{Binding f_sjfyjsqdate}"/>
                         <sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
                     <Button Content="提交设计审核" Click="{m:Exp Str=sjsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItem!=null and myxckcList.SelectedItem.f_substate!\=null'}" Width="80" />
                     <c:MessageTipObj Name="sjsubmittip" Tip="您确认要提交设计审核吗？" OK="{m:Exp Str=startprocess.id\=myxckcList.SelectedItem.f_processid;sjSubmitAction.Invoke();startprocess.Save()}" />
-                  <!--  <Button Content="提交工程部审核" Margin="5,0" Click="{m:Exp Str=gcbsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItems!=null'}" Width="90" />
+                    <!--  <Button Content="提交工程部审核" Margin="5,0" Click="{m:Exp Str=gcbsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItems!=null'}" Width="90" />
 					<c:MessageTipObj Name="gcbsubmittip" Tip="您确认要提交工程部审核吗？" OK="{m:Exp Str=gcbSubmitAction.Invoke()}" />-->
-					<sdk:DataPager Name="myxckcPager" Source="{Binding Path=ItemsSource.Count,ElementName=myxckcList,Converter={StaticResource DataPagerConverter}}"
+                    <sdk:DataPager Name="myxckcPager" Source="{Binding Path=ItemsSource.Count,ElementName=myxckcList,Converter={StaticResource DataPagerConverter}}"
     		                    HorizontalAlignment="Left" PageSize="20" Width="407" Height="24" VerticalAlignment="Bottom"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
                     <TextBlock Text="{m:Exp Str='myxckc.Count'}"  Margin="-250,5,210,0" />
@@ -155,531 +154,173 @@
         </c:BusyIndicatorEx>
         <!--民用现场勘查-->
         <Popup x:Name="myxckcPopup">
-		    <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=myxckcObj.IsBusy or annexlist_myxckc.IsBusy or imagelist_myxckc.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=myxckcObj.IsBusy or annexlist_myxckc.IsBusy or imagelist_myxckc.IsBusy}">
                 <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="myxckcInfo" DataContext="{m:Exp Str=myxckcObj}" Width="1000" Height="640">
                     <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
                         <sdk:TabItem Header="报建基本信息">
-                        	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <Grid Margin="0" HorizontalAlignment="Stretch"  >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="29"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="29"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="1*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_code"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="用户单位：" Grid.Row="1"/>
-                                <TextBox Text="{m:Bind Path=f_minyongdept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_minyongdept"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="2" Margin="0,6,0,0" TextWrapping="Wrap" Text="报建日期：" TextAlignment="Right"/>
-                                <sdk:DatePicker Text="{m:Bind Path=f_date}" IsEnabled="False" Grid.Column="3" Margin="0,3"  Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_date"/>
-                                    </a:Data.Prop>
-                                </sdk:DatePicker>
-                                <TextBlock Grid.Column="4" Margin="0,6,0,0" TextWrapping="Wrap" Text="申 请 人：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_username"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" />
-                                <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_phone"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right" />
-                                <TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_address"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="片 区：" TextAlignment="Right"/>
-                                <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=piqulist}" SelectedValue="{m:Bind Path=f_area}"  Grid.Column="5" Margin="0,2" Grid.Row="4"   Height="25">
-									<a:Data.Prop>
-										<o:PropertySetter PropertyName="f_area" NotNull="True" ></o:PropertySetter>
-									</a:Data.Prop>
-	            				</ComboBox>
-								<TextBlock Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_usertype}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_usertype"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="房屋类型：" TextAlignment="Right" />
-                                <TextBox  Text="{m:Bind Path=f_usertypepro}" Grid.Column="3" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch"/>
-                                <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="申请户数：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_applycount}"  Grid.Column="5" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_applycount"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock  Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="安装户数：" TextAlignment="Right" />
-                                <TextBlock Grid.Column="0" Margin="0" Grid.Row="6" TextWrapping="Wrap" Text="勘查意见：" TextAlignment="Right" VerticalAlignment="Center" />
-                                <TextBox Text="{m:Bind Path=f_installnum}" Grid.Column="1" Margin="0,2" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_installnum" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBox Text="{m:Bind Path=f_gcbkcopinion}" Grid.Column="1" Margin="0,2" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gcbkcopinion" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="部 门：" TextAlignment="Right"/>
-                                <TextBox Text="{m:Bind Path=f_gcbkcdepartment}" Grid.Column="1" Margin="0,2" Grid.Row="9" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gcbkcdepartment" NotNull="True" 
-        									Default="{m:Exp Str=LoginUser.f_parentname}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="9" TextAlignment="Right" TextWrapping="Wrap" Text="操 作 人："/>
-                                <TextBox Text="{m:Bind Path=f_gcbkcopertor}" Grid.Column="3" Margin="0,2" Grid.Row="9" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gcbkcopertor" NotNull="True"  
-        									Default="{m:Exp Str=LoginUser.name}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="日 期：" TextAlignment="Right"/>
-                                <sdk:DatePicker SelectedDate="{m:Bind Path=f_gcbkcoperdate}" Grid.Column="5" Margin="0,3" Grid.Row="9"  Height="Auto" IsEnabled="False" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gcbkcoperdate" NotNull="True" 
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <Grid Margin="0" HorizontalAlignment="Stretch"  >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="29"/>
+                                        <RowDefinition Height="50"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Grid.Column="1" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_code"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="用户单位：" Grid.Row="1"/>
+                                    <TextBox Text="{m:Bind Path=f_minyongdept}" IsReadOnly="True" Grid.Column="1" Margin="0,2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.ColumnSpan="3"  Height="Auto">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_minyongdept"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" TextWrapping="Wrap" Text="报建日期：" TextAlignment="Right"/>
+                                    <sdk:DatePicker Text="{m:Bind Path=f_date}" IsEnabled="False" Grid.Column="3" Margin="0,3"  Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_date"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" TextWrapping="Wrap" Text="申 请 人：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="5" Margin="0,2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_username"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="电 话：" TextAlignment="Right" />
+                                    <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_phone"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="用气地址：" TextAlignment="Right" />
+                                    <TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Grid.Column="3" Margin="0,2" Grid.Row="2" TextWrapping="Wrap" Height="Auto" Grid.ColumnSpan="3" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_address"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="片 区：" TextAlignment="Right"/>
+                                    <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=piqulist}" SelectedValue="{m:Bind Path=f_area}"  Grid.Column="5" Margin="0,2" Grid.Row="4"   Height="25">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_area" NotNull="True" ></o:PropertySetter>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="用户类型：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_usertype}" IsReadOnly="True" Grid.Column="1" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_usertype"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="房屋类型：" TextAlignment="Right" />
+                                    <TextBox  Text="{m:Bind Path=f_usertypepro}" Grid.Column="3" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch"/>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="3" TextWrapping="Wrap" Text="申请户数：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_applycount}"  Grid.Column="5" Margin="0,2" Grid.Row="3" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_applycount"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock  Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="可安装户数：" TextAlignment="Right" />
+                                    <TextBlock Grid.Column="0" Margin="0" Grid.Row="6" TextWrapping="Wrap" Text="勘查意见：" TextAlignment="Right" VerticalAlignment="Center" />
+                                    <TextBox Text="{m:Bind Path=f_installnum}" Grid.Column="1" Margin="0,2" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_installnum" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBox Text="{m:Bind Path=f_gcbkcopinion}" Grid.Column="1" Margin="0,2,0,0" Grid.Row="6" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gcbkcopinion" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Margin="0,27,0,0" Grid.Row="6" TextWrapping="Wrap" Text="设计完成时间：" TextAlignment="Right"/>
+                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_designcompletedate}" Grid.Column="5" Margin="0,27,0,0" Grid.Row="6"  Height="Auto" IsEnabled="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designcompletedate" NotNull="True" 
         									Default="{m:Exp Str=SysTime.Today}"/>
-                                    </a:Data.Prop>
-                                </sdk:DatePicker>
-                                   <TextBlock  Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" ><Run Text="设计人"/><Run Text="："/></TextBlock>
-                                <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=shjrlist}" SelectedValue="{m:Bind Path=f_designers}" Grid.Column="1" Margin="0,3" Grid.Row="7"  Height="23"  HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" VerticalAlignment="Top" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_designers" NotNull="True"/>
-                                    </a:Data.Prop>
-                                </ComboBox>
-                               <!-- <TextBlock Grid.Column="2" Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="设计人说明：" TextAlignment="Right" VerticalAlignment="Center" />
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="部 门：" TextAlignment="Right"/>
+                                    <TextBox Text="{m:Bind Path=f_gcbkcdepartment}" Grid.Column="1" Margin="0,2" Grid.Row="9" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gcbkcdepartment" NotNull="True" 
+        									Default="{m:Exp Str=LoginUser.f_parentname}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Margin="0,6,0,0" Grid.Row="9" TextAlignment="Right" TextWrapping="Wrap" Text="操 作 人："/>
+                                    <TextBox Text="{m:Bind Path=f_gcbkcopertor}" Grid.Column="3" Margin="0,2" Grid.Row="9" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gcbkcopertor" NotNull="True"  
+        									Default="{m:Exp Str=LoginUser.name}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="4" Margin="0,6,0,0" Grid.Row="9" TextWrapping="Wrap" Text="日 期：" TextAlignment="Right"/>
+                                    <sdk:DatePicker SelectedDate="{m:Bind Path=f_gcbkcoperdate}" Grid.Column="5" Margin="0,3" Grid.Row="9"  Height="Auto" IsEnabled="False" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gcbkcoperdate" NotNull="True" 
+        									Default="{m:Exp Str=SysTime.Today}"/>
+                                        </a:Data.Prop>
+                                    </sdk:DatePicker>
+                                    <TextBlock Margin="0,10" TextWrapping="Wrap" Text="设计意见：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="10" VerticalAlignment="Center" Height="30"/>
+                                    <TextBox IsReadOnly="False" Text="{m:Bind Path=f_designsuggestions}" Grid.Column="1" Margin="0,0,0,4" Grid.Row="10" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designsuggestions" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock  Margin="0,6,0,0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" ><Run Text="现场勘查人："/><Run Text="："/></TextBlock>
+                                    <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=shjrlist}" SelectedValue="{m:Bind Path=f_designers}" Grid.Column="1" Margin="0,3" Grid.Row="7"  Height="23"  HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" VerticalAlignment="Top" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_designers" NotNull="True"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <!-- <TextBlock Grid.Column="2" Margin="0" Grid.Row="7" TextWrapping="Wrap" Text="设计人说明：" TextAlignment="Right" VerticalAlignment="Center" />
                                 <TextBox Text="{m:Bind Path=f_designerdescript}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_designerdescript" />
                                     </a:Data.Prop>
                                 </TextBox>-->
-                                <TextBlock Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="用气类型：" TextAlignment="Right" Grid.Column="2"/>
-                                <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=usegastypelist}" SelectedValue="{m:Bind Path=f_gastype}" Grid.Column="3" Margin="0,3" Grid.Row="4"   Height="Auto" RenderTransformOrigin="-4.833,0.84" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_gastype" NotNull="True"/>
-                                    </a:Data.Prop>
-                                </ComboBox>
-                             <!--  <CheckBox IsChecked="{m:Bind Path=f_isminzhsha}" Content="民用转商用"  Grid.Column="3" Margin="0,5,0,-1" Grid.Row="5"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                    <TextBlock Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="用气类型：" TextAlignment="Right" Grid.Column="2"/>
+                                    <ComboBox DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=usegastypelist}" SelectedValue="{m:Bind Path=f_gastype}" Grid.Column="3" Margin="0,3" Grid.Row="4"   Height="Auto" RenderTransformOrigin="-4.833,0.84" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_gastype" NotNull="True"/>
+                                        </a:Data.Prop>
+                                    </ComboBox>
+                                    <!--  <CheckBox IsChecked="{m:Bind Path=f_isminzhsha}" Content="民用转商用"  Grid.Column="3" Margin="0,5,0,-1" Grid.Row="5"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_isminzhsha" Default="{m:Exp Str=False}"/>
                                     </a:Data.Prop>
                                 </CheckBox>-->
                                     <TextBlock  Margin="0,6,0,0" Grid.Row="5" TextWrapping="Wrap" Text="交费户数：" TextAlignment="Right" />
-                                <TextBox Text="{m:Bind Path=f_payfeenum}" Grid.Column="1" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_payfeenum" NotNull="True" Value="{m:Exp Str=this.f_installnum}" Default="{m:Exp Str=this.f_installnum}"/>
-                                    </a:Data.Prop>
-                                </TextBox>
-                                <TextBlock Margin="0" TextWrapping="Wrap" Text="报建备注：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="8" VerticalAlignment="Center"/>
-                                <TextBox IsReadOnly="True" Text="{m:Bind Path=f_baojbeizhu}" Grid.Column="1" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
-                                    <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_baojbeizhu" />
-                                    </a:Data.Prop>
-                                </TextBox>
-                            </Grid>
-							</ScrollViewer>
-						</sdk:TabItem>
-                        <!--  <sdk:TabItem Header="用户花名册" HorizontalAlignment="Stretch" Height="Auto" Margin="0" VerticalAlignment="Stretch" Width="Auto">
-                        	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-							<Grid Height="519">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100*"/>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="100*"/>
-                                </Grid.ColumnDefinitions>
-								 <TextBlock  TextWrapping="Wrap" Height="22" VerticalAlignment="Top" d:LayoutOverrides="Height" Margin="0,1,0,0"><Run Text="能"/><Run Text="安装"/><Run Text="用户"/></TextBlock>
-                                
-                                <sdk:DataGrid x:Name="yespeople_myxckc" AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userlist_myxckc[(data.f_isok \=\= null or data.f_isok)]}" VerticalAlignment="Stretch" Margin="0,28,0,0" Grid.Column="0" >
-                                    <sdk:DataGrid.Columns>
-                                    	<sdk:DataGridTemplateColumn>
-            							<sdk:DataGridTemplateColumn.CellTemplate>
-            								<DataTemplate>
-            									<Button Content="X" 
-            										Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-            										Click="{m:Exp Str=userlist_myxckc.Remove(data)}"/>	
-            								</DataTemplate>
-            							</sdk:DataGridTemplateColumn.CellTemplate>
-            						</sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox  Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="姓名">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="小区">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="证件号码">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="门牌号">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="地址">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="电话">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="是否壁挂锅炉用户">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <CheckBox IsChecked="{m:Bind Path=f_isbgglyh}">
-                                                            <a:Data.Prop>
-                                                                <o:PropertySetter PropertyName="f_isbgglyh" Default="{m:Exp Str=False}" />
-                                                            </a:Data.Prop>
-                                                        </CheckBox>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="是否热水器用户">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <CheckBox IsChecked="{m:Bind Path=f_isrsqyh}" >
-                                                            <a:Data.Prop>
-                                                                <o:PropertySetter PropertyName="f_isrsqyh" Default="{m:Exp Str=False}" />
-                                                            </a:Data.Prop>
-                                                        </CheckBox>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="是否审批" Visibility="Collapsed">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox IsChecked="{m:Bind Path=f_isok}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="勘查信息添加人">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_gcbkcopertor}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                    </sdk:DataGrid.Columns>
-                                </sdk:DataGrid>
-                                <Grid Margin="0,0,20,0" Grid.Column="2">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                       <RowDefinition Height="120"/>
-                                    </Grid.RowDefinitions>
-									    <TextBlock  TextWrapping="Wrap" Height="22" Margin="20,4,0,0" Grid.Column="1" VerticalAlignment="Top" d:LayoutOverrides="Height" Text="不能安装用户"/>
-                           
-                                    <sdk:DataGrid x:Name="nopeople_myxckc" AutoGenerateColumns="False"  ItemsSource="{m:Exp Str=userlist_myxckc[data !\= data.List.EmptyRow and (data.f_isok !\= null and !data.f_isok)]}"   VerticalAlignment="Stretch" Grid.Row="0" Margin="0,31,0,0" >
-                                        <sdk:DataGrid.Columns>
-                                            <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" Style="{StaticResource TextBoxDatagridStyle}" IsReadOnly="True"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="姓名">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="小区">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_district}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="证件号码">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_code}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="门牌号">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_doorplate}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="地址">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="电话">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_phone}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="是否审批" Visibility="Collapsed">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <CheckBox IsChecked="{m:Bind Path=f_isok}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                            <sdk:DataGridTemplateColumn Header="不能安装原因">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{m:Bind Path=f_descript}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>
-                                        <!-   <sdk:DataGridTemplateColumn Header="图片数量">
-                                                <sdk:DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                            <TextBlock Text="{m:Exp Str='data.f_customerimage!=null:data.f_customerimage.Count,$0$'}"  />
-                                                    </DataTemplate>
-                                                </sdk:DataGridTemplateColumn.CellTemplate>
-                                            </sdk:DataGridTemplateColumn>->
-                                            </sdk:DataGrid.Columns>
-                                    </sdk:DataGrid>
-                                    <StackPanel MinHeight="80"  DataContext="{Binding SelectedItem, ElementName=nopeople_myxckc}" Grid.Row="1" Margin="0,0,0,0">
-                                          <ListBox ItemsSource="{m:Exp Str=userimagelist_myxckc}" Margin="0" Height="Auto" >
-                                                <ListBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel>
-                                                            <Image x:Name="Image" Source="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" Width="50" Height="50"/>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <c:FileLoad x:Name="FileLoad" EntityName="t_blob" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
-                                                               <!-Value="{m:Exp Str=nopeople_myxckc.SelectedItem.id}"->
-															    <TextBox Text="{m:Bind Path=customerid}" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" Visibility="Collapsed">
-																<a:Data.Prop>
-																	<o:PropertySetter PropertyName="customerid" NotNull="True" 
-															Default="{m:Exp Str=nopeople_myxckc.SelectedItem.id}"  Value="{m:Exp Str=nopeople_myxckc.SelectedItem.id}"/>
-																</a:Data.Prop>
-															</TextBox>
-																<Button Content="X" 
-        														Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-        														Click="{m:Exp Str=data.Remove()}"/>
-                                                                <Button Content="上传平面图" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
-                                                                <Button Content="全屏"
-        														Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-        														Click="{m:Exp Str=Picture.Source\=Image.Source;Picture.Show()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
-                                                            </StackPanel>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ListBox.ItemTemplate>
-                                                <ListBox.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <toolkit:WrapPanel />
-                                                    </ItemsPanelTemplate>
-                                                </ListBox.ItemsPanel>
-                                            </ListBox>
-                                              <Button Width="50" Click="{m:Exp Str=userimagelist_myxckc.Save()}" Content="确 认"/>
-                                        </StackPanel>
-                                        
-                                    </Grid>
-                                <StackPanel  Margin="5,0,0,0" Grid.Column="1">
-                                    <Button Content="  &gt;&gt;  " Click="{m:Exp Str=yespeople_myxckc.SelectedItems.Each(f_isok\=False)}" FontWeight="Bold"  Height="22" />
-                                    <Button Content="  &lt;&lt;  " Click="{m:Exp Str=nopeople_myxckc.SelectedItems.Each(f_isok\=True)}" FontWeight="Bold" Margin="0,30,0,0" VerticalAlignment="Bottom" />
-                                    <StackPanel  Margin="0,150,0,0" Grid.Column="1" HorizontalAlignment="Left">
-                                            <!-   <Button Content="打印花名册" Margin="0" Click="{m:Exp Str=hmcprint_myxckc.Print()}" Height="25" HorizontalAlignment="Left"/>->
-                                            <sdk:DataGrid x:Name="yespeople_print_myxckc" AutoGenerateColumns="False" Margin="26,0,54,-2525" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Bottom" Background="{x:Null}" RowBackground="{x:Null}"
-										 Style="{StaticResource PrintDataGrid}" ColumnHeaderStyle="{StaticResource PrintDataGridColumnHeader}" CellStyle="{StaticResource PrintDataGridCell}" RowHeaderStyle="{StaticResource PrintDataGridRowHeader}" RowStyle="{StaticResource PrintDataGridRow}">
-		                                    <sdk:DataGrid.Columns>
-		                                        <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox  Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="姓名">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_username}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="小区">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_district}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="证件号码">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_code}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="门牌号">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_doorplate}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="地址">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_address}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="电话">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_phone}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="是否审批" Visibility="Collapsed">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <CheckBox IsChecked="{m:Bind Path=f_isok}"/>
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                        <sdk:DataGridTemplateColumn Header="勘查信息添加人">
-		                                            <sdk:DataGridTemplateColumn.CellTemplate>
-		                                                <DataTemplate>
-		                                                    <TextBox Text="{m:Bind Path=f_gcbkcopertor}" Style="{StaticResource PrintTextBox}" />
-		                                                </DataTemplate>
-		                                            </sdk:DataGridTemplateColumn.CellTemplate>
-		                                        </sdk:DataGridTemplateColumn>
-		                                    </sdk:DataGrid.Columns>
-		                                </sdk:DataGrid>
-                                    </StackPanel>
-                                </StackPanel>
-                                <c:PrintPageObj x:Name="hmcprint_myxckc" Area="{m:Res Key=yespeople_print_myxckc}"  List="{m:Exp Str=yespeople_myxckc.ItemsSource !\= null:yespeople_myxckc.ItemsSource.ToObjectList() \,null}"  PageRow="26"  />
-                                <sdk:DataGrid x:Name="yespeople_Copy_myxckc"  AutoGenerateColumns="False" Margin="26,0,54,-2525" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Bottom" >
-                                    <sdk:DataGrid.Columns>
-                                        <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox  Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" IsReadOnly="True" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="姓名">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_username}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="小区">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_district}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="证件号码">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_code}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="门牌号">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_doorplate}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="地址">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_address}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="电话">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_phone}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="是否审批" Visibility="Collapsed">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox IsChecked="{m:Bind Path=f_isok}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="勘查信息添加人">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{m:Bind Path=f_gcbkcopertor}" IsEnabled="{m:Exp Str=(!data.f_isnullmin)}" Style="{StaticResource TextBoxDatagridStyle}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                    </sdk:DataGrid.Columns>
-                                </sdk:DataGrid>
-                            </Grid>
-							</ScrollViewer>
-						</sdk:TabItem>
-                      -->
+                                    <TextBox Text="{m:Bind Path=f_payfeenum}" Grid.Column="1" Margin="0,2" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" Height="Auto" Width="Auto" HorizontalAlignment="Stretch">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_payfeenum" NotNull="True" Value="{m:Exp Str=this.f_installnum}" Default="{m:Exp Str=this.f_installnum}"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock Margin="0,10" TextWrapping="Wrap" Text="报建备注：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="8" VerticalAlignment="Center" Height="30"/>
+                                    <TextBox IsReadOnly="True" Text="{m:Bind Path=f_baojbeizhu}" Grid.Column="1" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_baojbeizhu" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </Grid>
+                            </ScrollViewer>
+                        </sdk:TabItem>
                         <sdk:TabItem Header=" 图 片 " Grid.Column="2">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                                 <ListBox ItemsSource="{m:Exp Str=imagelist_myxckc}"  Margin="0" MinHeight="200" MinWidth="200">
@@ -708,11 +349,40 @@
                                 </ListBox>
                             </ScrollViewer>
                         </sdk:TabItem>
-                        <sdk:TabItem Header="附件" >
+                        <sdk:TabItem Header="申请文件" >
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-
-
-                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_myxckc}" AutoGenerateColumns="False" Margin="0" >
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_myxckc[data.state\=\=$申请登记$]}" AutoGenerateColumns="False" Margin="0" >
+                                    <sdk:DataGrid.Columns >
+                                        <sdk:DataGridTemplateColumn Header="文件"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="工程部审核" NoDependValue="工程部审核" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
+                                    </sdk:DataGrid.Columns>
+                                </sdk:DataGrid>
+                            </ScrollViewer>
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="设计文件">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_myxckc[data.state!\=$申请登记$]}" AutoGenerateColumns="False" Margin="0" >
                                     <sdk:DataGrid.Columns >
                                         <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
                                             <sdk:DataGridTemplateColumn.CellTemplate>
@@ -742,12 +412,27 @@
                                                 </DataTemplate>
                                             </sdk:DataGridTemplateColumn.CellTemplate>
                                         </sdk:DataGridTemplateColumn>
-
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="现场勘查设计" NoDependValue="现场勘查设计" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
                                     </sdk:DataGrid.Columns>
                                 </sdk:DataGrid>
-
-
                             </ScrollViewer>
+                        
+                        </sdk:TabItem>
+                        <sdk:TabItem Header="材料核查">
+							
                         </sdk:TabItem>
                     </sdk:TabControl>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
@@ -757,24 +442,24 @@
                                         Click="{m:Exp Str=sjsavesubmittip.Show()}" />
                         <c:MessageTipObj Name="sjsavesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=myxckcInfo.DataContext.f_processid;myxckcInfo.DataContext.f_xckczt\=$已完成$;myxckcInfo.DataContext.f_substate\=null;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False;startprocess.Save()}" />
-					<!--	<Button Content="  保存并提交工程部审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                        <!--	<Button Content="  保存并提交工程部审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=gcbsavesubmittip.Show()}" />
                         <c:MessageTipObj Name="gcbsavesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=myxckcInfo.DataContext.f_state\=$工程部审核$;myxckcInfo.DataContext.f_substate\=null;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False}" />
 						-->
-						<Button Content="  导入Excel数据  "  Click="{m:Exp Str=userlist_myxckc.ExcelString\=Clipboard.Text}"    Margin="5" Width="95"/>
-						
-						
-						<Button Content="  终止报建  " Margin="5"
+                        <Button Content="  导入Excel数据  "  Click="{m:Exp Str=userlist_myxckc.ExcelString\=Clipboard.Text}"    Margin="5" Width="95"/>
+
+
+                        <Button Content="  终止报建  " Margin="5"
                                         Click="{m:Exp Str=stopsubmittip.Show()}" />
                         <c:MessageTipObj Name="stopsubmittip" Tip="您确认要终止该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=myxckcInfo.DataContext.f_processid;myxckcInfo.DataContext.f_xckczt\=$终止报建$;myxckcInfo.DataContext.f_substate\=null;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False;startprocess.Save()}" />
-						<Button Name="myxckcBack" Content="  返  回  " Click="{m:Exp Str=myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False}" Margin="5" Width="60" />
+                        <Button Name="myxckcBack" Content="  返  回  " Click="{m:Exp Str=myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False}" Margin="5" Width="60" />
                     </StackPanel>
 
                     <c:ImageView x:Name="Picture" Visibility="Collapsed"></c:ImageView>
                 </Grid>
             </c:BusyIndicatorEx>
-		</Popup>
+        </Popup>
     </Grid>
 </UserControl>

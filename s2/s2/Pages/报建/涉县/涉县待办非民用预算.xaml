@@ -40,7 +40,7 @@
                 Path="sql" PageIndex="{m:Exp Str=fmyysPager.PageIndex}" PageSize="{m:Exp Str=fmyysPager.PageSize}" SumNames="," />
 
 
-           
+
             <o:ObjectList Name="costreductionlist_fmyys" EntityType="t_costreduction" HasEmptyRow="True" />
 
             <o:GeneralObject Name="fmyysObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
@@ -281,7 +281,7 @@
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Margin="0,9,5,3" Grid.Row="7" TextWrapping="Wrap" Text="工程款：" TextAlignment="Right"/>
-                                <TextBox  Text="{m:Bind Path=f_gckfee}" Grid.Column="1" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+                                <TextBox  Text="{m:Bind Path=f_gckfee}" IsReadOnly="True" Grid.Column="1" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                                 	<a:Data.Prop>
                                 		<o:PropertySetter PropertyName="f_gckfee"  NotNull="True" />
                                 	</a:Data.Prop>
@@ -303,89 +303,101 @@
                 </a:Data.Prop>
             </TextBox>
             <TextBlock Margin="0,5,5,7" Grid.Row="7" TextWrapping="Wrap" Text="小锅炉费用：" TextAlignment="Right" Grid.Column="2"/>
-            <TextBox  Text="{m:Bind Path=f_xglfyfee}" Grid.Column="3" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+            <TextBox  Text="{m:Bind Path=f_xglfyfee}" IsReadOnly="True" Grid.Column="3" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                 <a:Data.Prop>
                     <o:PropertySetter PropertyName="f_xglfyfee"  NotNull="True" />
                 </a:Data.Prop>
             </TextBox>
             <TextBlock Margin="0,6,5,6" Grid.Row="8" TextWrapping="Wrap" Text="预算合计：" TextAlignment="Right"/>
-            <TextBox  Text="{m:Bind Path=f_ysfee}" Grid.Column="1" Margin="0,2,0,6" Grid.Row="8" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+            <TextBox  Text="{m:Bind Path=f_ysfee}" IsReadOnly="True" Grid.Column="1" Margin="0,2,0,6" Grid.Row="8" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                 <a:Data.Prop>
-                    <o:PropertySetter PropertyName="f_ysfee"  NotNull="True" />
+                    <o:PropertySetter PropertyName="f_ysfee"  Value="{m:Exp Str= this.f_xglfyfee+this.f_gckfee+this.f_gwjsfee+this.f_sjfee+this.f_azgcfee}"/>
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="0,0,4,-18" TextWrapping="Wrap" Text="经理审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="12" VerticalAlignment="Bottom" Height="30"/>
+            <TextBox Text="{m:Bind Path=f_managerexaminat}" IsReadOnly="False" Grid.Column="1" Margin="0,2,218.167,-18" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="4" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_managerexaminat" />
+                </a:Data.Prop>
+            </TextBox>
+            <TextBlock Margin="-2,62,4,-61" TextWrapping="Wrap" Text="分管领导审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="12" VerticalAlignment="Center" Height="29"/>
+            <TextBox Text="{m:Bind Path=f_chargeleadership}" IsReadOnly="False" Grid.Column="1" Margin="0,48,216.167,-61" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="4" Height="Auto" HorizontalAlignment="Right" Width="507" Grid.RowSpan="1" >
+                <a:Data.Prop>
+                    <o:PropertySetter PropertyName="f_chargeleadership" />
                 </a:Data.Prop>
             </TextBox>
     </Grid>
     </ScrollViewer>
     </sdk:TabItem>
-                        <sdk:TabItem Header=" 图 片 ">
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                <ListBox ItemsSource="{m:Exp Str=imagelist_fmyys}"  Margin="0" MinHeight="200" MinWidth="200">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel>
-                                                <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="预算" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
-                                                    <Button Content="X" 
+    <sdk:TabItem Header=" 图 片 ">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ListBox ItemsSource="{m:Exp Str=imagelist_fmyys}"  Margin="0" MinHeight="200" MinWidth="200">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Image x:Name="Image" Source="{m:Exp Str='${dbclient.BaseAddress}/file/{data.id}$'}" Width="50" Height="50"/>
+                            <StackPanel Orientation="Horizontal">
+                                <c:FileLoad Name="FileLoad" EntityName="t_blob" BlobId="{Binding Path=id,Mode=TwoWay}" BusinessType="预算" SaveMode="file" Path="{m:Exp Str='${dbclient.BaseAddress}/savefile$'}" Height="18"/>
+                                <Button Content="X" 
 				    						                    Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
 				    						                    Click="{m:Exp Str=data.Remove()}"/>
-                                                    <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
-                                                    <Button Content="全屏"
+                                <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                <Button Content="全屏"
             									                    Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
 												                    Click="{m:Exp Str='PictureWindow.Source=Image.Source;PictureWindow.Show()'}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <toolkit:WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                </ListBox>
-                            </ScrollViewer>
-                        </sdk:TabItem>
-                        <sdk:TabItem Header="附件" >
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <toolkit:WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </ScrollViewer>
+    </sdk:TabItem>
+    <sdk:TabItem Header="附件" >
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
 
-                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyys}" AutoGenerateColumns="False" Margin="0" >
-                                    <sdk:DataGrid.Columns >
-                                        <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Button Content="X" 
+            <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyys}" AutoGenerateColumns="False" Margin="0" >
+                <sdk:DataGrid.Columns >
+                    <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="X" 
             										                    Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
             										                    Click="{m:Exp Str=data.Remove()}"/>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="文件"  >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate >
-                                                    <StackPanel>
-                                                        <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
-                                        <sdk:DataGridTemplateColumn Header="上传"   >
-                                            <sdk:DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate >
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
-                                                        <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </sdk:DataGridTemplateColumn.CellTemplate>
-                                        </sdk:DataGridTemplateColumn>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
+                    <sdk:DataGridTemplateColumn Header="文件"  >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <StackPanel>
+                                    <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                </StackPanel>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
+                    <sdk:DataGridTemplateColumn Header="上传"   >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <StackPanel Orientation="Horizontal">
+                                    <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                    <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
 
-                                    </sdk:DataGrid.Columns>
-                                </sdk:DataGrid>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
 
 
-                            </ScrollViewer>
-                        </sdk:TabItem>
+        </ScrollViewer>
+    </sdk:TabItem>
     </sdk:TabControl>
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="586">

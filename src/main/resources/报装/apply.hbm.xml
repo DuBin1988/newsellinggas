@@ -85,7 +85,7 @@
 		<property name="f_opertor" type="string"/>
 		<!-- 报建编号 -->
 		<property name="f_code" type="string"/>
-		<!--报建备注-->
+		<!--备注-->
 		<property name="f_baojbeizhu" type="string" length="1000"/>
 		<!--用气性质-->
 		<property name="f_gasproperties" type="string"/>
@@ -161,6 +161,10 @@
 		<property name="f_sjxckcry" type="string"/>
 		<!--现场勘查意见-->
 		<property name="f_gcbkcopinion" type="string" length="1000"/>
+		<!--设计意见-->
+		<property name="f_designsuggestions" type="string" length="1000"/>
+		<!--勘察审核意见-->
+		<property name="f_surveyexamineopinion" type="string" length="1000"/>
 		<!--现场勘查操作部门-->
 		<property name="f_gcbkcdepartment" type="string"/>
 		<!--现场勘查操作日期-->
@@ -213,7 +217,7 @@
 		<property name="f_sjfyjsqdepartment" type="string"/>
 		<!--设计费押金收取操作人-->
 		<property name="f_sjfyjsqopertor" type="string"/>
-		<!--设计费押金收取日期-->
+		<!--设计费押金收取日期/设计时间-->
 		<property name="f_sjfyjsqdate" type="date"/>
 
 <!--预算字段-->
@@ -234,7 +238,10 @@
 		<property name="f_ysopertor" type="string"/>
 		<!--预算日期-->
 		<property name="f_ysdate" type="date"/>
-		
+		<!--经理审核-->
+		<property name="f_managerexaminat" type="string" length="1000"/>
+		<!--分管领导审核-->
+		<property name="f_chargeleadership" type="string" length="1000"/>
 <!--预算审核字段-->
 	<!-- 常用基本字段 -->
 		<!--预算审核状态-->
@@ -289,6 +296,12 @@
 		<property name="f_alarmfee" type="double"/>
 		<!--合计-->
 		<property name="f_totalfee" type="double"/>
+		<!--欠款-->
+		<property name="f_debt" type="double"/>
+		<!--定金-->
+		<property name="f_earnest" type="double"/>
+		<!--设备费-->
+		<property name="f_facilityfee" type="double"/>
 		<!--减免合计-->
 		<property name="f_jmhj" type="double"/>
 		<!--收费标准操作部门-->
@@ -314,7 +327,7 @@
 	<!-- 常用基本字段 -->
 		<!--银行返单状态-->
 		<property name="f_yhfdzt" type="string"/>
-        <!--实交金额-->
+        <!--定金实收-->
 		<property name="f_actualfee" type="double"/>
 		<!--收费标准操作部门-->
 		<property name="f_bankdepartment" type="string"/>
@@ -352,7 +365,8 @@
 		<property name="f_cbhtopertor" type="string"/> 
 		<!--承包合同操作日期-->
 		<property name="f_cbhtdate" type="date"/>			
-		
+		<!--工程名称-->
+		<property name="f_projectname" type="string"/> 
 <!--技术交底字段-->
 	<!-- 常用基本字段 -->
 		<!--技术交底状态-->
@@ -496,8 +510,10 @@
 		<property name="f_jgysdjhjgdate" type="date"/>
 		<!--工作量-->
 		<property name="f_pgdgzl" type="string" length="1000"/>
-		<!--工程内容-->
+		<!--报验工程范围-->
 		<property name="f_projectcontent" type="string" length="1000"/>
+		<!--施工队自检说明-->
+		<property name="f_constructionteamstate" type="string" length="1000"/>
 		<!--现场代表-->
 		<property name="f_xcdb" type="string"/>
 		<!--本工程的相关要求-->
@@ -597,9 +613,9 @@
 		<property name="f_jgysdjsdwqzr" type="string"/>
 		<!--建设单位现场代表签字日期-->
 		<property name="f_jgysdjsdwqzdate" type="date"/>
-		<!--监理单位现场代表签字-->
+		<!--验收单位签字人-->
 		<property name="f_jgysdjldwqzr" type="string"/>
-		<!--监理单位现场代表签字日期-->
+		<!--签字日期-->
 		<property name="f_jgysdjldwqzdate" type="date"/>
 		<!--验收进度备注-->
 		<property name="f_jgysdbz" type="string" length="1000"/>
