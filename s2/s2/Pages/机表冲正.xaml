@@ -27,7 +27,8 @@
 				</o:GeneralObject>
 		   	<!--售气收费对象-->
         	<o:GeneralObject Name="sellinggas" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
-			 	Path="{m:Exp Str=kbfee1.DataContext.f_userid!\=null:$one/from t_sellinggas where id\=
+			 	Path="{m:Exp Str=kbfee1.DataContext.f_cardid!\=null:$one/from t_sellinggas where id\=
+				 (select max(id) from t_sellinggas where f_cardid\=\'\{userfilego.f_cardid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,kbfee1.DataContext.f_userid!\=null:$one/from t_sellinggas where id\=
 				  (select max(id) from t_sellinggas where f_userinfoid\=\'\{userfilego.f_userid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,$aaa$}"
              	IsOld="{m:Exp Str=userfilego.f_userid!\=null}"
 				IsInit="{m:Exp Str=sellinggas.State\=\=$LoadError$ |or| userfilego.f_userid\=\=null}">  
@@ -188,8 +189,8 @@
 			<!--用户列表部分-->
 			<o:SearchObject Name="search"/>
 			<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-		       	MultiPath="{m:Exp Str='$from t_userinfo where {search.Condition}'}"
-		       	Path="{m:Exp Str='$from t_userinfo where {search.Condition} order by f_finabuygasdate desc'}"
+		       	MultiPath="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
+		       	Path="{m:Exp Str=$from t_userinfo where \{search.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\' order by f_finabuygasdate desc}"
 		       	PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 		</m:ResourceLoad>
 		<Grid >

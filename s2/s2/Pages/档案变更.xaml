@@ -27,8 +27,8 @@
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
             <!--档案列表-->
             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
-                Path="{m:Exp Str=$from t_userfiles t where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'\正\常\'$}"
-                MultiPath="{m:Exp Str=$from t_userfiles t where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'\正\常\'$}"
+                Path="{m:Exp Str=$from t_userfiles t where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'\正\常\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$}"
+                MultiPath="{m:Exp Str=$from t_userfiles t where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'\正\常\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$}"
 				IsOld="{m:Exp Str=SaveAction.State\=\=$Free$ or SaveAction.State\=\=$End$}" SumNames="," PageSize="{m:Exp Str=pager.PageSize}" PageIndex="{m:Exp Str=pager.PageIndex}"/>
             <!--档案对象-->
             <o:GeneralObject Name="userfile" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"

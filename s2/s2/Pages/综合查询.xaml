@@ -17,6 +17,9 @@
 	x:Class="Com.Aote.Pages.综合查询">
 	<Grid>
 		<m:ResourceLoad Margin="0,0,-12,0">
+            <!--网点列表-->
+            <o:ObjectList Name="wangdianlist" EntityType="t_organization" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_organization where f_parentname \= \'\{LoginUser.f_fengongsi\}\'}"/>
+
 			<o:GeneralObject Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
 					EntityType="t_userfiles" Source="{m:Exp Str=userfiles.SelectedItem}">
 			</o:GeneralObject>
@@ -26,7 +29,7 @@
 		<o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
         </o:GeneralObject>
-			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司'"/>
+            <o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='后台用分公司名称'"/>
 		</m:ResourceLoad>
 		
 		<toolkit:BusyIndicator   BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy or lsgaslist.ItemsSource.IsBusy}">
@@ -268,17 +271,17 @@
 									<o:PropertySetter PropertyName="f_username"  Operator="f_username like '%this%'"/>          
 								</a:Data.Prop>
 							</TextBox>
-								<TextBlock TextWrapping="Wrap" Text="分 公 司：" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" Grid.Row="1" Grid.Column="2" Margin="0" Height="25" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+								<TextBlock TextWrapping="Wrap" Text="分 公 司：" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" Grid.Row="3" Grid.Column="2" Margin="0" Height="25" HorizontalAlignment="Stretch" TextAlignment="Right"/>
 
-							<ComboBox Name="Comboxfx"   Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="1" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
+							<ComboBox Name="Comboxfx"   Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$'}" SelectedValue="{m:Bind Path=f_filiale}" Grid.Row="3" Grid.Column="3" ItemsSource="{m:Exp Str=fgslist}"  Margin="0,2,106,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25">
 						<a:Data.Prop>
                     		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>          
                     	</a:Data.Prop>
 						</ComboBox>
 							
 							<Button Content="查  询" x:Name="searchbutton" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=userfilesearch.DataContext.Search();Comboxfx.SelectedValue\=null}" HorizontalAlignment="Right" Width="50" Height="32" VerticalAlignment="Bottom" Margin="0,0,56,-3"/>
-							<TextBlock TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Text="表    号：" Margin="0" Height="25" TextAlignment="Right"/>
-                            <TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
+							<TextBlock TextWrapping="Wrap" Grid.Row="1" Grid.Column="2" Text="表    号：" Margin="0" Height="25" TextAlignment="Right"/>
+                            <TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="3" Text="{m:Bind Path=f_meternumber}" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_meternumber"  Operator="f_meternumber like 'this%'"/>
                                 </a:Data.Prop>
@@ -290,8 +293,8 @@
 								</a:Data.Prop>
 							</TextBox>
 
-							<TextBlock TextWrapping="Wrap" Text="用户类型：" Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" Grid.Row="3" Grid.Column="2" Margin="0" Height="25" HorizontalAlignment="Stretch" TextAlignment="Right" VerticalAlignment="Stretch"/>
-							<ComboBox x:Name="usertype"    SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="3" Grid.Column="3" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="142">
+							<TextBlock TextWrapping="Wrap" Text="用户类型："  Grid.Row="3" Grid.Column="0" Margin="0" Height="25" HorizontalAlignment="Stretch" TextAlignment="Right" VerticalAlignment="Stretch"/>
+							<ComboBox x:Name="usertype"    SelectedValue="{m:Bind Path=f_usertype}" Grid.Row="3" Grid.Column="1" ItemsSource="{m:Exp Str=usertypelist}"  Margin="0,2,0,1"  SelectedValuePath="name"  Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="142">
 								
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
@@ -306,8 +309,8 @@
 							</ComboBox>
 							<Button Content="置  空" x:Name="zhikong" Grid.Row="3" Grid.Column="3" Click="{m:Exp Str=userfilesearch.DataContext.f_network\=null;userfilesearch.DataContext.f_userid\=null;userfilesearch.DataContext.f_cardid\=null;userfilesearch.DataContext.f_username\=null;userfilesearch.DataContext.f_address\=null;userfilesearch.DataContext.f_districtname\=null;userfilesearch.DataContext.f_apartment\=null;usertype.SelectedValue\=null;Comboxfx.SelectedValue\=null}" HorizontalAlignment="Right" Width="50" Height="32" VerticalAlignment="Bottom" Margin="0,0,0,-3"/>
 
-							<TextBlock TextWrapping="Wrap" Text="网   点：" Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" Grid.Row="3" Grid.Column="3" Margin="154,3,0,0" Height="25" HorizontalAlignment="Left" TextAlignment="Right" VerticalAlignment="Stretch" Width="80"/>
-							<ComboBox x:Name="usertype_Copy"    SelectedValue="{m:Bind Path=f_network}" Grid.Row="3" Grid.Column="3" ItemsSource="{m:Exp Str=wangdianlistnull}"  Margin="234,2,177,1"  SelectedValuePath="name"  Height="25" VerticalAlignment="Stretch">
+                            <TextBlock TextWrapping="Wrap" Text="网   点：" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Collapsed$\,$Visible$'}" Grid.Row="3" Grid.Column="1" Margin="154,3,0,0" Height="25" HorizontalAlignment="Left" TextAlignment="Right" VerticalAlignment="Stretch" Width="80"/>
+                            <ComboBox x:Name="usertype_Copy"   Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Collapsed$\,$Visible$'}" SelectedValue="{m:Bind Path=f_yytdepa}" Grid.Row="3" Grid.Column="1" ItemsSource="{m:Exp Str=wangdianlist}"  Margin="234,2,0,1"  SelectedValuePath="name"  Height="25" VerticalAlignment="Stretch">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding name}" Height="20"></TextBlock>
@@ -317,7 +320,7 @@
 								
 
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_network"  Operator="f_network = 'this'"/>          
+                                    <o:PropertySetter PropertyName="f_yytdepa"  Operator="f_yytdepa = 'this'"/>          
 								</a:Data.Prop>
 							</ComboBox>
 						

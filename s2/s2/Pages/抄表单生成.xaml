@@ -26,8 +26,9 @@
 
             <!--查询条件对象-->
             <o:SearchObject Name="search"/>
+
             <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
 
 
             <!--气表类型列表-->
@@ -37,7 +38,7 @@
             <!--用户档案列表,同时查询年累计气量、一二阶梯剩余可购气量-->
             <o:PagedList Name="userfiles" WebClientInfo="{StaticResource dbclient}"
 				SumHQL="{m:Exp Str=$select * from t_userfiles b
-				where b.f_userstate\=\'正常\' and \{search.Condition\}}"
+				where b.f_userstate\=\'正常\' and \{search.Condition\} and b.f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
 				HQL="{m:Exp Str=$
 				select d.*\,(case when stair1^0 then 0 else stair1 end)sy1\,
 				(case when stair2^0 then 0 else stair2 end)sy2 from (
@@ -46,9 +47,9 @@
 				(case when isnull(h.f_stair1amount-ISNULL(s.f_pregas\,0)\,0)>0 then h.f_stair2amount-h.f_stair1amount else 
 				h.f_stair2amount-h.f_stair1amount+isnull(h.f_stair1amount-ISNULL(s.f_pregas\,0)\,0) end) stair2 from t_userfiles b
 				inner join t_userinfo h
-				on b.f_userinfoid\=h.f_userid and b.f_userstate\=\'正常\' and \{search.Condition\} 
+				on b.f_userinfoid\=h.f_userid and b.f_userstate\=\'正常\' and \{search.Condition\} and b.f_filiale\=\'\{LoginUser.f_fengongsi\}\' 
 				left join (
-				select SUM(f_pregas) f_pregas\,f_userinfoid from t_sellinggas where f_payfeevalid\=\'有效\' and year(f_deliverydate)\=\'\{SysTime.Now.ToString($yyyy$)\}\'
+				select SUM(f_pregas) f_pregas\,f_userinfoid from t_sellinggas where f_payfeevalid\=\'有效\' and year(f_deliverydate)\=\'2016\'
 				group by f_userinfoid) s
 				on b.f_userinfoid\=s.f_userinfoid ) d order by d.f_userinfoid}" 
 				Path="sql"  SumNames=","
@@ -56,8 +57,13 @@
             <!--删除抄表单-->
             <b:HQLAction Name="DeleteHandplan"  WebClientInfo="{StaticResource dbclient}" Type="sql"
 			HQL="{m:Exp Str=$
-			delete from t_handplan where f_state \=\'未抄表\' and shifoujiaofei \=\'否\' and \{search.Condition\}
-			$}"/>
+			delete from t_handplan where id in \(select a.id from 
+\(select id\,f_userid from t_handplan where  f_state \= \'未抄表\' and shifoujiaofei \= \'否\'\)a
+left  join 
+\(select * from t_userfiles \) b 
+on a.f_userid\=b.f_userid
+where \{search.Condition\}
+			\)$}"/>
             <!--根据用户档案的计划月份产生抄表单-->
             <b:HQLAction Name="InsertHandplan" WebClientInfo="{StaticResource dbclient}" Type="sql" 
 			HQL="{m:Exp Str=$
@@ -69,8 +75,8 @@
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				f_phone\, lastinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
 				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'\,f_books
-			from t_userfiles u where f_userstate\=\'正常\' and \{search.Condition\} and not exists
-			(select id from t_handplan h where h.f_userid\=u.f_userid and f_state\=\'未抄表\')}"/>
+			from t_userfiles b where f_userstate\=\'正常\' and \{search.Condition\} and not exists
+			(select id from t_handplan h where h.f_userid\=b.f_userid and f_state\=\'未抄表\')}"/>
             <!--生成抄表单-->
             <b:BatchExcuteAction Name="CreateHandplan" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=DeleteHandplan}" MethodName="InvokeToJson"/>

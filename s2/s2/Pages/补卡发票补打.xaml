@@ -101,7 +101,7 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-								Path="{m:Exp Str=$from t_bucardfapiao where \{userfilesearch.DataContext.Condition\}}"
+								Path="{m:Exp Str=$from t_bucardfapiao where \{userfilesearch.DataContext.Condition\} and f_filiale1\=\'\{LoginUser.f_fengongsi\}\'}"
     						    IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$ }"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
                         </a:Data.Items>

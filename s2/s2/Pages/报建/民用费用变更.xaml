@@ -41,7 +41,7 @@
             <!--保存-->
             <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=SaveButton\=>Click!\=null}" WebClientInfo="{StaticResource dbclient}">
                 <!--报装对象保存-->
-                
+
                 <b:BatchInfo Source="{m:Exp Str=userfileschangeset}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=userfile}" MethodName="SaveToJson"/>
             </b:BatchExcuteAction>
@@ -61,7 +61,7 @@
                 <o:PropertySetter PropertyName="f_cailiaofei" Value="{m:Exp Str=userfileschangeset.f_cailiaofeichange}"/>
                 <o:PropertySetter PropertyName="f_rengongfei" Value="{m:Exp Str=userfileschangeset.f_rengongfeichange}"/>
                 <o:PropertySetter PropertyName="f_jiebofei" Value="{m:Exp Str=userfileschangeset.f_jiebofeichange}"/>
-
+                <o:PropertySetter PropertyName="f_htnum" Value="{m:Exp Str=userfileschangeset.f_htnumchange}"/>
 
             </o:GeneralObject>
 
@@ -77,7 +77,7 @@
                 <o:PropertySetter PropertyName="f_cailiaofei" Value="{m:Exp Str=applys.SelectedItem.f_cailiaofei}"/>
                 <o:PropertySetter PropertyName="f_rengongfei" Value="{m:Exp Str=applys.SelectedItem.f_rengongfei}"/>
                 <o:PropertySetter PropertyName="f_jiebofei" Value="{m:Exp Str=applys.SelectedItem.f_jiebofei}"/>
-
+                <o:PropertySetter PropertyName="f_htnum" Value="{m:Exp Str=applys.SelectedItem.f_htnum}"/>
 
             </o:GeneralObject>
 
@@ -245,8 +245,7 @@
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_totalfeechange"	
                                                                   Default="{m:Exp Str=applys.SelectedItem.f_totalfeechange}"
-											  NoDependValue="{m:Exp Str=this.f_materialfeechange+this.f_cailiaofeichange+this.f_rengongfeichange+this.f_jiebofeichange+this.f_bgglfchange+this.f_rsqfchange+this.f_selfclosfeechange+this.f_alarmfeechange+this.f_emptyingfeechange}"
-											 />
+											  NoDependValue="{m:Exp Str=this.f_materialfeechange+this.f_cailiaofeichange+this.f_rengongfeichange+this.f_jiebofeichange+this.f_bgglfchange+this.f_rsqfchange+this.f_selfclosfeechange+this.f_alarmfeechange+this.f_emptyingfeechange}" />
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"  Text="用户单位：" Grid.Row="1"/>
@@ -275,10 +274,10 @@
                                                 <o:PropertySetter PropertyName="f_gasprice"  Value="{m:Exp Str=applys.SelectedItem.f_gasprice}"  />
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" Text="变更原因：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="9"/>
-                                        <TextBox Text="{m:Bind Path=f_feebgyy}" IsReadOnly="False" Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
+                                        <TextBlock Margin="0" TextWrapping="Wrap" Text="报建备注：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="9"/>
+                                        <TextBox Text="{m:Bind Path=f_baojbeizhu}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_feebgyy"  />
+                                                <o:PropertySetter PropertyName="f_baojbeizhu" Value="{m:Exp Str=applys.SelectedItem.f_baojbeizhu}" />
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Margin="0,11,0,6" Grid.Row="10" TextWrapping="Wrap" Text="勘查意见：" TextAlignment="Right" VerticalAlignment="Center" Height="23"/>
@@ -324,7 +323,7 @@
                                         <TextBlock Margin="0,6,0,0" Grid.Row="7" Grid.Column="4" TextWrapping="Wrap" Text="接驳费：" TextAlignment="Right"/>
                                         <TextBox Text="{m:Bind Path=f_jiebofeichange}" Grid.Column="5" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto" HorizontalAlignment="Stretch">
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_jiebofeichange" Default="{m:Exp Str=applys.SelectedItem.f_jiebofei}" Value="{m:Exp Str=applys.SelectedItem.f_jiebofei}"/>
+                                                <o:PropertySetter PropertyName="f_jiebofeichange" Default="{m:Exp Str=applys.SelectedItem.f_jiebofeichange}" Value="{m:Exp Str=applys.SelectedItem.f_jiebofei}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Margin="0,10,0,2" Grid.Row="12"  TextWrapping="Wrap" Text="部 门：" TextAlignment="Right"/>
@@ -345,6 +344,12 @@
                                                 <o:PropertySetter PropertyName="f_feedate"  Value="{m:Exp Str=applys.SelectedItem.f_chargeopertdate}"/>
                                             </a:Data.Prop>
                                         </sdk:DatePicker>
+                                        <TextBlock Margin="0,6,0,0" Grid.Row="4" TextWrapping="Wrap" Text="合同编号：" TextAlignment="Right"/>
+                                        <TextBox Text="{m:Bind Path=f_htnumchange}" Grid.Column="1" Margin="0,2,0.25,2" Grid.Row="4" TextWrapping="Wrap" Height="Auto" IsReadOnly="False" Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_htnumchange" Default="{m:Exp Str=applys.SelectedItem.f_htnum}"   Value="{m:Exp Str=applys.SelectedItem.f_htnum}"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
                                     </Grid>
 
                                 </StackPanel>
