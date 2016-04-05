@@ -9,9 +9,9 @@ where o1.ID =o2.PARENTID
 账户在总公司下面的话 该账户t_user表里f_parentname 需要手动录入总公司资源服务里的名称
 *
 
-## t_area t_road t_stairprict t_inputtor 中 f_branch字段是 取 loingUser 的f_fengongsi
-## 超级管理员的 分公司 应该是 总公司名称
-## 收费记录 抄表记录 保存 f_orgStr 组织架构信息 和 f_filiale 分公司 字段。
+## * t_area t_road t_stairprict t_inputtor 中 f_branch字段是 取 loingUser 的f_fengongsi
+## * 超级管理员的 分公司 应该是 总公司名称
+## * 收费记录 抄表记录 保存 f_orgStr 组织架构信息 和 f_filiale 分公司 字段。
 
 ```c
 #include<stdio.h>
