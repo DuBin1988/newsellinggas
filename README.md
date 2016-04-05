@@ -8,25 +8,10 @@ where o1.ID =o2.PARENTID
 关联父节点名字
 账户在总公司下面的话 该账户t_user表里f_parentname 需要手动录入总公司资源服务里的名称
 *
-```
-JSONArray list = 
-new JSONArray(files);
-```
 
-`
-JSONArray list = new JSONArray(files);  
-			for (int l = 0; l < list.length(); l++)  
-			{  
-				JSONObject u = list.getJSONObject(l);  
-				// 产生户档案,返回产生的户编号  
-				String userinfoid = inserthu(u, userinfoname, loginuserid);  
-				// 产生表档案  
-				insertfile(u, userinfoid, useridname, loginuserid);  
-			}`
-`
-***
->测试 测试2
-
+## t_area t_road t_stairprict t_inputtor 中 f_branch字段是 取 loingUser 的f_fengongsi
+## 超级管理员的 分公司 应该是 总公司名称
+## 收费记录 抄表记录 保存 f_orgStr 组织架构信息 和 f_filiale 分公司 字段。
 
 ```c
 #include<stdio.h>
