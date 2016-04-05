@@ -18,7 +18,14 @@
 	x:Class="Com.Aote.Pages.机表欠费报表" d:DesignWidth="1024" d:DesignHeight="768">
 
     <Grid x:Name="LayoutRoot">
-        <Grid Margin="0">
+        <m:ResourceLoad Margin="0,0,-12,0">
+            <!--网点列表-->
+            <o:ObjectList Name="wangdianlist" EntityType="t_organization" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_organization where f_parentname \= \'\{LoginUser.f_fengongsi\}\'}"/>
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   />
+        </m:ResourceLoad>
+                <Grid Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*"/>
                 <ColumnDefinition Width="0*"/>
@@ -58,10 +65,15 @@
                                 <o:PropertySetter PropertyName="f_username" Operator="tuser.f_username='this'"/>
                             </a:Data.Prop>
                         </TextBox>
+                        <TextBox x:Name="tjwhf_Copy8" Visibility="Collapsed" TextWrapping="Wrap" Grid.Row="5" Grid.Column="3" Text="{m:Bind Path=f_filiale}" Width="118" Margin="0,1.5" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_filiale" Operator="tuser.f_filiale = 'this'" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+                            </a:Data.Prop>
+                        </TextBox>
                         <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="用户类型：" Grid.Column="4"/>
                         <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="抄表员：" Grid.Row="1"/>
                         <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="交费类型：" Grid.Column="2" Grid.Row="1"/>
-                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="网点：" Grid.Column="6"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,5" Height="25" TextAlignment="Right" Text="网点：" Grid.Column="6" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Collapsed$\,$Visible$'}"/>
                         <ComboBox SelectedValue="{m:Bind Path=f_usertype}"  ItemsSource="{m:Exp Str=usertypelistnull}" x:Name="CoboxPinp_Copy1" SelectedValuePath="name" Grid.Column="5" Margin="0,1,0,4" Height="25" IsEnabled="true" FontSize="13.333">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_usertype" Operator="tuser.f_usertype = 'this'"/>
@@ -72,7 +84,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <ComboBox SelectedValue="{m:Bind Path=f_yytdepa}"  ItemsSource="{m:Exp Str=wangdianlistnull}" x:Name="CoboxPinp_Cop" SelectedValuePath="name" Grid.Column="7" Margin="0,1,0,4" Height="25" IsEnabled="true" FontSize="13.333">
+                        <ComboBox SelectedValue="{m:Bind Path=f_yytdepa}" Visibility="{m:Exp Str='LoginUser.f_fengongsi \=\= zonggongsi.value:$Collapsed$\,$Visible$'}" ItemsSource="{m:Exp Str=wangdianlist}" x:Name="CoboxPinp_Cop" SelectedValuePath="name" Grid.Column="7" Margin="0,1,0,4" Height="25" IsEnabled="true" FontSize="13.333">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_yytdepa" Operator="tuser.f_yytdepa = 'this'"/>
                             </a:Data.Prop>

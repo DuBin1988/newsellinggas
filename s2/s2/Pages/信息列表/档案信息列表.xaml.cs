@@ -31,8 +31,139 @@ namespace Com.Aote.Pages
             daninfosearch.DataContext = userSearch;
 
             daninfos.ItemsSource = userList;
+
+            this.Loaded += 用户档案_Loaded;
+            kbfee = (ObjectList)(from r in PageResources.Res where r.Name.Equals("SecondStairlist") select r).First();
+            ThirdStairStairlist4 = (ObjectList)(from r in PageResources.Res where r.Name.Equals("ThirdStairStairlist") select r).First();
+            FourthStairlist4 = (ObjectList)(from r in PageResources.Res where r.Name.Equals("FourthStairlist") select r).First();
+            kbfee5 = (ObjectList)(from r in loader.Res where r.Name.Equals("SecondStairlist1") select r).First();
+            ThirdStairStairlist5 = (ObjectList)(from r in loader.Res where r.Name.Equals("ThirdStairStairlist1") select r).First();
+            FourthStairlist5 = (ObjectList)(from r in loader.Res where r.Name.Equals("FourthStairlist1") select r).First();
+ 
         }
+        ObjectList kbfee;
+        ObjectList ThirdStairStairlist4;
+        ObjectList FourthStairlist4;
+
+        ObjectList kbfee5;
+        ObjectList ThirdStairStairlist5;
+        ObjectList FourthStairlist5;
+
+        GeneralObject loginUser;
         int pageIndex = 0;
+        void 用户档案_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            loginUser = (GeneralObject)FrameworkElementExtension.FindResource(this, "LoginUser");
+
+            kbfee.DataLoaded += kbfee_DataLoaded;
+            ThirdStairStairlist4.DataLoaded += ThirdStairStairlist4_DataLoaded;
+            FourthStairlist4.DataLoaded += FourthStairlist4_DataLoaded;
+
+            kbfee5.DataLoaded += kbfee5_DataLoaded;
+            ThirdStairStairlist5.DataLoaded += ThirdStairStairlist5_DataLoaded;
+            FourthStairlist5.DataLoaded += FourthStairlist5_DataLoaded;
+        }
+
+        void ThirdStairStairlist4_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (ThirdStairStairlist4.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 3)
+                {
+                    ThirdStair.SelectedValue = str[2];
+                }
+
+            }
+        }
+
+
+        void FourthStairlist4_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (FourthStairlist4.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 4)
+                {
+                    FourthStair.SelectedValue = str[3];
+                }
+
+            }
+        }
+
+
+
+        void kbfee_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (kbfee.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 2)
+                {
+                    SecondStair.SelectedValue = str[1];
+                }
+
+            }
+        }
+
+
+        void ThirdStairStairlist5_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (ThirdStairStairlist5.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 3)
+                {
+                    ThirdStair2.SelectedValue = str[2];
+                }
+
+            }
+        }
+        void FourthStairlist5_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (FourthStairlist5.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 4)
+                {
+                    FourthStair2.SelectedValue = str[3];
+                }
+
+            }
+        }
+
+        void kbfee5_DataLoaded(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (kbfee5.Count > 0)
+            {
+                string cc = loginUser.GetPropertyValue("orgpathstr").ToString();
+
+                char[] c = { '.' };
+                string[] str = cc.Split(c);
+                if (str.Length >= 2)
+                {
+                    SecondStair2.SelectedValue = str[1];
+                }
+
+            }
+        }
+
         private void dansearchbutton_Click(object sender, RoutedEventArgs e)
         {
             ui_busys.IsBusy = true;

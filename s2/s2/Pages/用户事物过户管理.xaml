@@ -111,7 +111,7 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\'}"
+        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_userstate \=\'正常\'}"
         					IsOld="{m:Exp Str=print.State\=\=$End$}"
         					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>

@@ -23,7 +23,8 @@
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
 
             <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype}"/>
-            <o:ObjectList Name="chaobiaoyuanlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'"/>
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
             <!--档案列表-->
             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}" 
@@ -855,7 +856,7 @@
                                             </a:Data.Prop>
                                         </sdk:DatePicker>
                                         <TextBlock Grid.Column="5" Margin="0,5,0,6" TextWrapping="Wrap" Text="抄表员：" TextAlignment="Right" Grid.Row="4" HorizontalAlignment="Right" Width="52"/>
-                                        <ComboBox x:Name="ui_inputtorchange" ItemsSource="{m:Exp Str=chaobiaoyuanlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtorchange}" Grid.Column="6" Margin="0,2,1,0" Grid.Row="4" Height="25" FontSize="13.333" VerticalAlignment="Top">
+                                        <ComboBox x:Name="ui_inputtorchange" ItemsSource="{m:Exp Str=inputtorlist}" DisplayMemberPath="f_inputtor" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtorchange}" Grid.Column="6" Margin="0,2,1,0" Grid.Row="4" Height="25" FontSize="13.333" VerticalAlignment="Top">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_inputtorchange" Value="{m:Exp Str=userfiles.SelectedItem.f_inputtor}" NotNull="True"  />
                                             </a:Data.Prop>

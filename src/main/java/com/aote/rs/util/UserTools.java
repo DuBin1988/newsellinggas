@@ -68,7 +68,7 @@ public class UserTools {
 			map = (Map<String, Object>) list.get(0);
 			String name = (String) map.get("name");
 			PARENTID = (String) map.get("parentid");
-			result = name + ".";
+			result = name + "." + result;
 		}
 		if (result != "") {
 			result = result.substring(0, result.length() - 1);
