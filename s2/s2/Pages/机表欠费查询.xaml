@@ -19,8 +19,8 @@
 
 	<Grid x:Name="LayoutRoot">
 		<m:ResourceLoad Margin="0,0,-12,0">
-            <o:ObjectList Name="czylistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员' " HasEmptyRow="True"/>
-			<o:ExcelObj Name="excel" Bind="f_userid,f_username,districtname,address,f_phone,lastinputdate,lastinputgasnum,lastrecord,oughtamount,oughtfee,fee,c,yue" Source="{m:Exp Str=daninfos}"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
+            <o:ExcelObj Name="excel" Bind="f_userid,f_username,districtname,address,f_phone,lastinputdate,lastinputgasnum,lastrecord,oughtamount,oughtfee,fee,c,yue" Source="{m:Exp Str=daninfos}"/>
 		</m:ResourceLoad>
 				<Grid>
             <Grid.RowDefinitions>
@@ -79,13 +79,13 @@
 									</ComboBox.ItemTemplate>
 								</ComboBox>
                         <TextBlock TextWrapping="Wrap" Text="抄表员："  Margin="2,0,-2,3" Height="25" TextAlignment="Right" Grid.Row="1" Grid.Column="6" />
-                        <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=czylistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                        <ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=inputtorlist}"  Margin="0"  SelectedValuePath="f_inputtor"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_inputtor" Operator="f_inputtor = 'this'"/>
                             </a:Data.Prop>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Height="20" Text="{Binding name}"/>
+                                    <TextBlock Height="20" Text="{Binding f_inputtor}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -166,7 +166,7 @@ substring(convert(varchar(50)\,min(f_handdate)\,112)\,1\,6)+\'-\'+
 substring(convert(varchar(50)\,MAX(f_handdate)\,112)\,1\,6) yue
 from t_handplan
 where shifoujiaofei\=\'否\' and f_state\=\'已抄表\' and 
-\{daninfosearch.DataContext.Condition\}
+\{daninfosearch.DataContext.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\'
 group by f_userid
 )h left join t_userfiles u on u.f_userid\=h.f_userid)a left join 
 (select id\,f_userid\,lastinputgasnum\,lastrecord\,oughtamount\,f_gasprice\,oughtfee\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate from 
@@ -186,7 +186,7 @@ substring(convert(varchar(50)\,min(f_handdate)\,112)\,1\,6)+\'-\'+
 substring(convert(varchar(50)\,MAX(f_handdate)\,112)\,1\,6) yue
 from t_handplan
 where shifoujiaofei\=\'否\' and f_state\=\'已抄表\' and 
-\{daninfosearch.DataContext.Condition\}
+\{daninfosearch.DataContext.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\'
 group by f_userid
 )h left join t_userfiles u on u.f_userid\=h.f_userid)a left join 
 (select id\,f_userid\,lastinputgasnum\,lastrecord\,oughtamount\,f_gasprice\,oughtfee\,CONVERT(varchar(12) \, lastinputdate\, 111 ) lastinputdate from 
