@@ -10,6 +10,7 @@
 ## * t_area t_road t_stairprict t_inputtor 中 f_branch字段是 取 loingUser 的f_fengongsi
 ## * 超级管理员的 分公司 应该是 总公司名称
 ## * 收费记录 抄表记录 保存 f_orgStr 组织架构信息 和 f_filiale 分公司 字段。
+## * 单值设置 用户编号 和 表编号  两个单值 。 建档页面用   /Pages/用户建档/用户建档
 
 ```c
 #include<stdio.h>
