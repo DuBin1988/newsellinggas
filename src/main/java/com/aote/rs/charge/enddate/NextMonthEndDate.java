@@ -13,12 +13,13 @@ public class NextMonthEndDate implements IEndDate {
 		Calendar cal = Calendar.getInstance();
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		//每月1到20号抄表。从下月一号产生滞纳金
-		if(day>=1 && day <=20){
-			cal.add(Calendar.MONTH, 1);
-		}else{
-			//21号以后的，从下下月一号产生滞纳金
-			cal.add(Calendar.MONTH, 2);
-		}
+//		if(day>=1 && day <=20){
+//			cal.add(Calendar.MONTH, 1);
+//		}else{
+//			//21号以后的，从下下月一号产生滞纳金
+//			cal.add(Calendar.MONTH, 2);
+//		}
+		cal.add(Calendar.DATE, 30);  //三十天之后产生滞纳金
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		System.out.println(cal.getTime());
 		return cal;
