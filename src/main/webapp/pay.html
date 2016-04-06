@@ -44,12 +44,12 @@
 		var money = document.getElementById("money").value;
 		var qianfei = getUrlParam('qf');
 		alert("====" + qianfei);
-		//	if (qianfei > money) {
-		//		alert("缴费金额应该大于欠费金额，请重新输入!");
+			if (qianfei > money) {
+				alert("缴费金额应该大于欠费金额，请重新输入!");
 		//还原为可点击
-		//		document.getElementByIdx("btn").disabled=false;
-		//		return;
-		//	}
+				document.getElementByIdx("btn").disabled=false;
+				return;
+			}
 			var date = new Date();
 			var mytime=date.toLocaleTimeString()
 		alert("++++"+mytime);

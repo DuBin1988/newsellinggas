@@ -31,9 +31,9 @@
 		class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-     	<property name="url" value="jdbc:sqlserver://127.0.0.1:1433;database=sellinggas;" />
+     	<property name="url" value="jdbc:sqlserver://127.0.0.1:1433;database=gongyigastest;" />
  		<property name="username" value="sa" />
- 			<property name="password" value="000000" />
+ 			<property name="password" value="123456" />
 	</bean>
 
  
@@ -103,7 +103,12 @@
 	
 	<!-- 计算阶梯开始日期和结束日期 	-->
 	<bean id="EndDate" class="com.aote.rs.charge.enddate.NextMonthEndDate"/>
-	
+	<!--  查询欠费 	-->
+	<bean id="TcpObj" class="com.aote.rs.tcp.TcpObj">
+		<property name="ip" value="127.0.0.1" />
+		<property name="port" value="7777" />
+		<property name="timeout" value="5000" />
+	</bean>
 	<!-- 定时提取
 	<bean id="updateTask" class="com.aote.quartz.UpdateTask" >
 		<property name="hibernateTemplate" ref="hibernateTemplate"></property>

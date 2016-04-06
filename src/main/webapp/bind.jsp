@@ -32,7 +32,10 @@
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
-				alert(xhttp.responseText);
+				if(xhttp.responseText==null){
+					alert("请检查您输入的用户编号是否正确");
+				  return;
+				}
 				var object = xhttp.responseText;
 				var obj = JSON.parse(object);
 				var f_name = obj.f_username;
@@ -49,39 +52,46 @@
 	}
 	function f_bind() {
 		var openid = getUrlParam('openid');
-		alert(openid);
 		var f_userid = document.getElementById("username").value;
+		var message=alert(document.getElementById("sel").style.display);
+		if(document.getElementById("sel").style.display=='block'){
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
-
 				var object = xhttp.responseText;
 				var obj = JSON.parse(object);
-				alert("-----" + obj);
+				var message=obj.message;
+				if(message=="此号已经被别的用户绑定"){
+					alert(message);
+					return;
+				}
+				alert( message);
 				var zhye = obj.zhye;
-				alert("-----" + zhye);
 				var money = obj.money;
-				alert("-----" + money);
+				var zhinajin=obj.zhinajin;
 				var arr1 = obj.arr;
 				var arr = JSON.stringify(arr1);
-
-				alert("-----" + arr);
 				document.location.href = "qf1.jsp?openid=" + openid
 						+ "&showwxpaytitle=1" + "&f_zhye=" + zhye + "&money="
-						+ money + "&arr=" + arr;
+						+ money+ "&zhinajin="
+						+ zhinajin + "&arr=" + arr;
 			}
 		};
 		xhttp.open("GET", "rs/weixin/one/" + f_userid + "/" + openid, true);
 		xhttp.send();
+		}else{
+		alert("请先点击查询按钮确认您的信息");
+		return;
+		}
 
 	}
 </script>
 <body>
 	<header class="findstyle">
 	<ul class="list">
-		<li class="userid">用户编号：</li>
-		<li class="textinput"><input type="text" value="" id=username></li>
-		<li class="findbtn"><input type="button" value="查询"
+		<li style="font-size:16px" class="userid">用户编号：</li>
+		<li style="font-size:16px" class="textinput"><input type="text" value="" id=username></li>
+		<li style="font-size:16px" class="findbtn"><input type="button" value="查询"
 			onclick="f_select();"></li>
 		<br>
 	</ul>
@@ -90,13 +100,13 @@
 	<section class="userinfo" style="display: none;" id="sel">
 	<body onload="f_select()">
 		<ul class="list">
-			<li><strong>用户姓名：</strong><span id="name"></span></li>
-			<li><strong>用户地址：</strong><span id="address"></span></li>
-			<li>请您仔细核对自己的信息，然后再绑定</li>
+			<li style="font-size:16px"><strong>用户姓名：</strong><span  id="name" ></li>
+			<li style="font-size:16px"><strong>用户地址：</strong><span id="address"></span></li>
+			<li style="font-size:16px">请您仔细核对自己的信息，然后再绑定</li>
 		</ul>
 	</section>
 	<div class="btn">
-		<input type="submit" value="绑定" class="bdbtn" onclick="f_bind();">
+		<input type="submit" font-size="16px" value="绑定" class="bdbtn" onclick="f_bind();">
 	</div>
 </body>
 </html>
