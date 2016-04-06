@@ -41,6 +41,7 @@ import com.aote.listener.ContextListener;
 import com.aote.rs.charge.countdate.ICountDate;
 import com.aote.rs.charge.enddate.IEndDate;
 import com.aote.rs.exception.RSException;
+import com.aote.rs.sms.ISms;
 import com.aote.rs.sms.MianZhuSms;
 import com.aote.rs.sms.SmsService;
 import com.aote.rs.util.BeanUtil;
@@ -390,11 +391,12 @@ public class HandCharge {
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
 			// 自动下账
-			
-			//配置绵竹短信类  存在 再发短信
-			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
-			if(sms !=null){
-				zdSendMsg(user, chargenum, f_zhye.subtract(chargenum).doubleValue());				
+
+			// 配置绵竹短信类 存在 再发短信
+			ISms sms = (ISms) BeanUtil.getBean(ISms.class);
+			if (sms != null) {
+				zdSendMsg(user, chargenum, f_zhye.subtract(chargenum)
+						.doubleValue());
 			}
 
 			double grossproceeds = 0;
@@ -548,9 +550,9 @@ public class HandCharge {
 			// 尊敬的天然气用户[{yhbh}][{yhxm}]：您的[{yhdz}]本月天然气用量为[{ql}]
 			// 方.气费金额[{qf}]元，请于本月底前到我公司缴纳气费
 			// 抄表欠费短信
-			MianZhuSms sms = (MianZhuSms) BeanUtil.getBean(MianZhuSms.class);
-			if(sms !=null){
-				qfSendMsg(user, chargenum, gas);				
+			ISms sms = (ISms) BeanUtil.getBean(ISms.class);
+			if (sms != null) {
+				qfSendMsg(user, chargenum, gas);
 			}
 
 			// 更新用户档案
@@ -626,7 +628,7 @@ public class HandCharge {
 		CountDate(userid, hibernateTemplate);
 		if (!stairtype.equals("未设")) {
 			final String gassql = " select isnull(sum(h.oughtamount),0)oughtamount "
-					+ "from t_handplan h left join t_userfiles u on u.f_userid=h.f_userid "
+					+ "from t_handplan h left join t_userfiles u on h.f_state='已抄表' and u.f_userid=h.f_userid "
 					+ "where u.f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
 					+ userid
 					+ "')"
@@ -1078,6 +1080,32 @@ public class HandCharge {
 		}
 	}
 
+	/**
+	 * 抄表撤销
+	 * @param handid 抄表id
+	 * @return
+	 */
+	@Path("handrevoke/{handid}")
+	@GET
+	public JSONObject afhandinputrevoke(@PathParam("handid") String handid) {
+		JSONObject result = new JSONObject();
+		// 查询抄表记录
+		String hql = "from t_handplan where id=" + handid;
+		List list = this.hibernateTemplate.find(hql);
+		if (list.size() > 1) {
+			//查询出多条
+		}
+		// 抄表对象
+		Map<String, Object> hand = (Map<String, Object>) list.get(0);
+		String f_state = hand.get("f_state") + "";
+		if (!f_state.equals("已抄表")) {
+			//没有抄表，不能撤销
+		}
+		//撤销抄表记录
+		hand.put("f_state", "未抄表");
+		return result;
+	}
+
 	// 批量抄表走收录入
 	@Path("record/payfeeforhand")
 	@POST
@@ -1459,35 +1487,32 @@ public class HandCharge {
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
 	}
-	
-	private void zdSendMsg(Map user, BigDecimal chargenum, Double f_benqizhye){
+
+	private void zdSendMsg(Map user, BigDecimal chargenum, Double f_benqizhye) {
 		JSONObject attr = new JSONObject();
 		JSONObject rt = new JSONObject();
 		SmsService smsService = new SmsService();
 		smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
 		// [{f_userid=11007035, f_username=lyf}] qf syje
 		String param = "{f_userid=" + user.get("f_userid").toString()
-				+ ", f_username=" + user.get("f_username").toString()
-				+ ",qf=" + chargenum.toString() 
-				+ ",syje="+ f_benqizhye.toString() 
+				+ ", f_username=" + user.get("f_username").toString() + ",qf="
+				+ chargenum.toString() + ",syje=" + f_benqizhye.toString()
 				+ "}";
 
-		rt = smsService.sendTemplate(param, user.get("f_phone")
-				.toString(), "自动下账");
+		rt = smsService.sendTemplate(param, user.get("f_phone").toString(),
+				"自动下账");
 	}
-	
+
 	private void qfSendMsg(Map user, BigDecimal chargenum, BigDecimal gas) {
 		JSONObject attr = new JSONObject();
 		JSONObject rt = new JSONObject();
 		SmsService smsService = new SmsService();
 		smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
 		String param = "{f_userid=" + user.get("f_userid").toString()
-				+ ", f_username=" + user.get("f_username").toString()
-				+ ",ql="+ gas.toString() 
-				+ ",qf=" + chargenum.toString()
-				+ "}";
+				+ ", f_username=" + user.get("f_username").toString() + ",ql="
+				+ gas.toString() + ",qf=" + chargenum.toString() + "}";
 
-		rt = smsService.sendTemplate(param, user.get("f_phone")
-				.toString(), "抄表扣费发送");
+		rt = smsService.sendTemplate(param, user.get("f_phone").toString(),
+				"抄表扣费发送");
 	}
 }
