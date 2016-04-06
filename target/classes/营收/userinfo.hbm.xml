@@ -302,12 +302,6 @@
           <one-to-many entity-name="t_fileschange" not-found="exception" /> 
         </set>
         
-      	<!--抄表记录--> 
-	   	<set name="f_handplan" cascade="all-delete-orphan">
-          <key column="users" on-delete="noaction" /> 
-          <one-to-many entity-name="t_handplan" not-found="exception" /> 
-        </set>
-
          <!-- 卡类型，写卡使用 0 民用，1工业 -->
          <property name="klx" type="int"/>
          <!-- 地区代码 -->

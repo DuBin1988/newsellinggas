@@ -20,7 +20,7 @@ public class NextMonthEndDate implements IEndDate {
 //			cal.add(Calendar.MONTH, 2);
 //		}
 		cal.add(Calendar.DATE, 30);  //三十天之后产生滞纳金
-		cal.set(Calendar.DAY_OF_MONTH, 1);
+//		cal.set(Calendar.DAY_OF_MONTH, 1);
 		System.out.println(cal.getTime());
 		return cal;
 	}
