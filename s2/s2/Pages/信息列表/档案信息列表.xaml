@@ -743,8 +743,8 @@
 								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                                 <a:Data.Items>
                                     <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}$\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
-                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\} order by f_date DESC   $\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'order by f_date DESC $\,$abc$}"      
+                                        MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}$\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_branch \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
+                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\} order by f_date DESC   $\, LoginUser.f_fengongsi !\= zonggongsi.value:$from t_area where \{userfilesearch.DataContext.Condition\}  and f_branch \=\'\{LoginUser.f_fengongsi\}\'order by f_date DESC $\,$abc$}"      
 										PageIndex="{m:Exp Str=pager16.PageIndex}" PageSize="{m:Exp Str=pager16.PageSize}" SumNames="id"/>
                                 </a:Data.Items>
                                 <sdk:DataGrid.Columns>

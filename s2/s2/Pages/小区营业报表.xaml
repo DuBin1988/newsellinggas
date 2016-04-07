@@ -67,7 +67,7 @@
             <o:ObjectList Name="youxiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
             <o:PagedList Name="areafileslist" WebClientInfo="{StaticResource dbclient}" Path="sql" 
                          Names="{m:Exp Str=$f_username\,f_districtname\,f_apartment\,f_cardid\,f_givecarddate\,f_linkname\,f_phone\,f_usertype\,f_gasprice\,f_userid\,num\,pregas\,totalcost$}"
-                         HQL="{m:Exp Str=$select f_username\,f_districtname\,f_apartment\,f_cardid\,f_givecarddate\,f_linkname\,f_phone\,f_usertype\,f_gasprice\,f_userid\,count\(num\) num\,sum\(pregas\) pregas\,sum\(totalcost\) totalcost from \(select t2.f_username\,t2.f_districtname\,t2.f_apartment\,t2.f_cardid\,t2.f_givecarddate\,t2.f_linkname\,t2.f_phone\,t2.f_usertype\,t2.f_gasprice\,t2.f_userid\,t1.num\,t1.pregas\,t1.totalcost\,t1.f_deliverydate from t_userfiles t2 LEFT JOIN \(SELECT id num\,f_userid\,ISNULL\(f_pregas\,0\) pregas\,ISNULL\(f_totalcost\,0\) totalcost\,f_deliverydate FROM t_sellinggas where f_payfeevalid\=\'有效\'\) t1 ON t1.f_userid\=t2.f_userid\) t where \{daninfosearch.DataContext.Condition\} and f_districtname like \'%\{daninfos.SelectedItem.f_districtname\}%\' group by f_username\,f_districtname\,f_apartment\,f_cardid\,f_givecarddate\,f_linkname\,f_phone\,f_usertype\,f_gasprice\,f_userid$}"
+                         HQL="{m:Exp Str=$select f_username\,f_districtname\,f_apartment\,f_cardid\,f_givecarddate\,f_linkname\,f_phone\,f_usertype\,f_gasprice\,f_userid\,count\(num\) num\,sum\(pregas\) pregas\,sum\(totalcost\) totalcost from \(select t2.f_username\,t2.f_districtname\,t2.f_apartment\,t2.f_cardid\,t2.f_givecarddate\,t2.f_linkname\,t2.f_phone\,t2.f_usertype\,t2.f_gasprice\,t2.f_userid\,t1.num\,t1.pregas\,t1.totalcost\,t1.f_deliverydate from t_userinfo t2 LEFT JOIN \(SELECT id num\,f_userid\,ISNULL\(f_pregas\,0\) pregas\,ISNULL\(f_totalcost\,0\) totalcost\,f_deliverydate FROM t_sellinggas where f_payfeevalid\=\'有效\'\) t1 ON t1.f_userid\=t2.f_userid\) t where \{daninfosearch.DataContext.Condition\} and f_districtname like \'%\{daninfos.SelectedItem.f_districtname\}%\' group by f_username\,f_districtname\,f_apartment\,f_cardid\,f_givecarddate\,f_linkname\,f_phone\,f_usertype\,f_gasprice\,f_userid$}"
                          PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="," />
 
         </m:ResourceLoad>
@@ -139,6 +139,14 @@
                                 <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname = 'this'" />
                             </a:Data.Prop>
                         </sdk:AutoCompleteBox>
+
+                        <TextBox TextWrapping="Wrap" Visibility="Collapsed" Grid.Row="1" Grid.Column="7" Text="{m:Bind Path=f_filiale}" Width="150" Margin="0,3,0,0" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_filiale" Value="{m:Exp Str=LoginUser.f_fengongsi}"  Operator="f_filiale ='this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+
+                        
 
                         <!--ComboBox x:Name="zy_Copy"  SelectedValue="{m:Bind Path=f_bankname}" Grid.Column="1" ItemsSource="{m:Exp Str=yinhanglist}"  Margin="1,0,-1,2" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Bottom" d:LayoutOverrides="Height">
 									<a:Data.Prop>
