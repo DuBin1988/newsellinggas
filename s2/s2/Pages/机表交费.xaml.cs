@@ -392,7 +392,7 @@ namespace Com.Aote.Pages
             ui_address.Text = (String)item["f_address"];
             //ui_gaspricetype.Text = (String)item["f_gaspricetype"];
             ui_userid.Text = item["infoid"].ToString();
-
+            zhe.Text=item["f_zherownum"].ToString();
             //ui_dibaohu.IsChecked = item["f_dibaohu"].ToString().Equals("1");
             ui_userstate.Text = (String)item["f_userstate"];
             ui_paytype.Text = (String)item["f_payment"];

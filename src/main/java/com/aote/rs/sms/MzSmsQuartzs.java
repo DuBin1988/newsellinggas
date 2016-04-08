@@ -16,58 +16,88 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import com.aote.rs.util.JsonTransfer;
 import com.aote.rs.sms.SmsService;
 
-public class MzSmsQuartzs{
-	
+public class MzSmsQuartzs {
+
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+
+	public void syqf(){
+		String sql = "select y.f_username, y.f_phone from t_handplan h "+
+			" left join t_userfiles b"+
+			" on h.f_userid = b.f_userid"+
+			" left join t_userinfo y"+
+			" on y.f_userid = b.f_userinfoid"+
+			" where convert(varchar(6),h.f_inputdate,112)=convert(varchar(6),dateadd(month,-1,getdate()),112) and h.shifoujiaofei = '否' and h.f_state = '已抄表' ";
+		String templatename = "欠费一个月";
+		smsQuartz(sql, templatename);
+	}
 	
-	//预存用户余额不足20
-	public void zhyeLt20()
-	{
+	public void ssyqf(){
+		String sql = "select y.f_username, y.f_phone from t_handplan h "+
+			" left join t_userfiles b"+
+			" on h.f_userid = b.f_userid"+
+			" left join t_userinfo y"+
+			" on y.f_userid = b.f_userinfoid"+
+			" where convert(varchar(6),h.f_inputdate,112)=convert(varchar(6),dateadd(month,-2,getdate()),112) and h.shifoujiaofei = '否' and h.f_state = '已抄表' ";
+		String templatename = "欠费两个月";
+		smsQuartz(sql, templatename);
+	}
+	
+	public void sssyqf(){
+		String sql = "select y.f_username, y.f_phone from t_handplan h "+
+			" left join t_userfiles b"+
+			" on h.f_userid = b.f_userid"+
+			" left join t_userinfo y"+
+			" on y.f_userid = b.f_userinfoid"+
+			" where convert(varchar(6),h.f_inputdate,112)=convert(varchar(6),dateadd(month,-3,getdate()),112) and h.shifoujiaofei = '否' and h.f_state = '已抄表' ";
+		String templatename = "欠费三个月";
+		smsQuartz(sql, templatename);
+	}
+
+	// 预存用户余额不足20
+	public void zhyeLt20() {
 		String sql = "select f_userid, f_username, f_phone from t_userinfo where f_zhye <20 and f_zhye >=0";
 		String templatename = "预存用户余额不足";
 		smsQuartz(sql, templatename);
 	}
-	
-	//上月欠费用户
-	public void lastMonthQf(){
+
+	// 上月欠费用户
+	public void lastMonthQf() {
 		String sql = "select f_username ,f_phone , SUM(money) as money "
-					+ "from "
-					+"( select u2.f_username,u.f_phone,(f.oughtfee-u2.f_zhye) as money ,  u.f_userinfoid "
-				  + "from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
-				  + "where f_state  =  '已抄表' and shifoujiaofei  =  '否'  and   convert(char(7),f_inputdate,120)=convert(char(7), dateadd(month,-1,getdate()) ,120)" 
-				  +"group by f_userid ) f  "
-				  + "left join t_userfiles u  "
-				  + "on f.f_userid  = u.f_userid "
-				  +"left join t_userinfo u2 "
-				  +  "on u.f_userinfoid = u2.f_userid) t"
-				  +" group by f_username ,f_phone ";
+				+ "from "
+				+ "( select u2.f_username,u.f_phone,(f.oughtfee-u2.f_zhye) as money ,  u.f_userinfoid "
+				+ "from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
+				+ "where f_state  =  '已抄表' and shifoujiaofei  =  '否'  and   convert(char(7),f_inputdate,120)=convert(char(7), dateadd(month,-1,getdate()) ,120)"
+				+ "group by f_userid ) f  " + "left join t_userfiles u  "
+				+ "on f.f_userid  = u.f_userid " + "left join t_userinfo u2 "
+				+ "on u.f_userinfoid = u2.f_userid) t"
+				+ " group by f_username ,f_phone ";
 		String templatename = "上月欠费用户催费短信";
 		smsQuartz(sql, templatename);
 	}
-	
-	//本月商业欠费
-	public void thisMonthSy(){
-		String sql =  "select f_username ,f_phone , SUM(money) as money "
-				+" from "
-				+"( select u2.f_username,u.f_phone,(f.oughtfee-u.f_zhye) as money ,  u.f_userinfoid ,u.f_stairtype "
-			   +"from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
-			   +"where f_state  =  '已抄表' and shifoujiaofei  =  '否' and f_stairtype like '%商业%' and convert(char(7),f_inputdate ,120)=convert(char(7),getdate(),120) "
-			  +"group by f_userid ) f  "
-			  +" left join t_userfiles u  "
-			  +" on f.f_userid  = u.f_userid "
-			  + "left join t_userinfo u2 "
-			  + "  on u.f_userinfoid = u2.f_userid)t "
-			  +" where t.f_stairtype like '%商业%' group by f_username ,f_phone ";
+
+	// 本月商业欠费
+	public void thisMonthSy() {
+		String sql = "select f_username ,f_phone , SUM(money) as money "
+				+ " from "
+				+ "( select u2.f_username,u.f_phone,(f.oughtfee-u.f_zhye) as money ,  u.f_userinfoid ,u.f_stairtype "
+				+ "from (select f_userid,sum(oughtfee) as oughtfee from t_handplan "
+				+ "where f_state  =  '已抄表' and shifoujiaofei  =  '否' and f_stairtype like '%商业%' and convert(char(7),f_inputdate ,120)=convert(char(7),getdate(),120) "
+				+ "group by f_userid ) f  "
+				+ " left join t_userfiles u  "
+				+ " on f.f_userid  = u.f_userid "
+				+ "left join t_userinfo u2 "
+				+ "  on u.f_userinfoid = u2.f_userid)t "
+				+ " where t.f_stairtype like '%商业%' group by f_username ,f_phone ";
 		String templatename = "本月商用未缴用户";
 		smsQuartz(sql, templatename);
 	}
-	
-	public void  smsQuartz(String thissql, String templatename){
+
+	public void smsQuartz(String thissql, String templatename) {
 		JSONObject result = new JSONObject();
 		SmsService smsService = new SmsService();
 		try {
-			smsService.setHibernateTemplate(hibernateTemplate);   //new时候应该设置模板
+			smsService.setHibernateTemplate(hibernateTemplate); // new时候应该设置模板
 			JSONObject res = new JSONObject();
 			String param;
 			final String sql = thissql;
@@ -82,18 +112,18 @@ public class MzSmsQuartzs{
 						}
 					});
 			Iterator it = list.iterator();
-			while(it.hasNext()){
+			while (it.hasNext()) {
 				Map<String, Object> map = (Map<String, Object>) it.next();
 				res = (JSONObject) new JsonTransfer().MapToJson(map);
 				param = res.toString();
 				JSONObject attr = new JSONObject();
-				result = smsService.sendTemplate(param, map.get("f_phone").toString(), templatename);
-			} 
-			
-			
+				result = smsService.sendTemplate(param, map.get("f_phone")
+						.toString(), templatename);
+			}
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 	}
 }
