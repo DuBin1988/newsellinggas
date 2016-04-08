@@ -894,7 +894,9 @@ public class HandCharge {
 				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'计划空') f_handdate from (select * from t_handplan where f_state='未抄表' and f_userid='"
 				+ userid
 				+ "') h "
-				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='已抄表' and shifoujiaofei='否' "
+				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='已抄表' and f_userid='"
+				+ userid
+				+ "' and shifoujiaofei='否' "
 				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid";
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
@@ -1082,7 +1084,9 @@ public class HandCharge {
 
 	/**
 	 * 抄表撤销
-	 * @param handid 抄表id
+	 * 
+	 * @param handid
+	 *            抄表id
 	 * @return
 	 */
 	@Path("handrevoke/{handid}")
@@ -1093,15 +1097,15 @@ public class HandCharge {
 		String hql = "from t_handplan where id=" + handid;
 		List list = this.hibernateTemplate.find(hql);
 		if (list.size() > 1) {
-			//查询出多条
+			// 查询出多条
 		}
 		// 抄表对象
 		Map<String, Object> hand = (Map<String, Object>) list.get(0);
 		String f_state = hand.get("f_state") + "";
 		if (!f_state.equals("已抄表")) {
-			//没有抄表，不能撤销
+			// 没有抄表，不能撤销
 		}
-		//撤销抄表记录
+		// 撤销抄表记录
 		hand.put("f_state", "未抄表");
 		return result;
 	}
