@@ -31,7 +31,7 @@
              />-->
             <o:PagedObjectList Name="daninfoslist" WebClientInfo="{StaticResource dbclient}"
 									MultiPath="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-									Path="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+									Path="{m:Exp Str=$from t_handplan where \{daninfosearch.DataContext.Condition\} order by id desc$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_handplan where \{daninfosearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' order by id desc$\,$abc$}"
                                     PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=",">
             </o:PagedObjectList>
 
