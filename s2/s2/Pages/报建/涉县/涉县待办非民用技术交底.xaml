@@ -111,7 +111,7 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交施工" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmyjsjdList.SelectedItem!=null and fmyjsjdList.SelectedItem.f_substate!\=null'}" Width="100" />
+                    <Button Content="提交分包合同" Margin="5,0" Click="{m:Exp Str=submittip.Show()}" IsEnabled="{m:Exp Str='fmyjsjdList.SelectedItem!=null and fmyjsjdList.SelectedItem.f_substate!\=null'}" Width="100" />
                     <c:MessageTipObj Name="submittip" Tip="您确认要提交到施工吗？" OK="{m:Exp Str=startprocess.id\=fmyjsjdList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
                     <sdk:DataPager Name="fmyjsjdPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmyjsjdList,Converter={StaticResource DataPagerConverter}}"
 		                        HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom" d:LayoutOverrides="GridBox"/>
@@ -293,11 +293,11 @@
                                 </ListBox>
                             </ScrollViewer>
                         </sdk:TabItem>
-                        <sdk:TabItem Header="附件" >
+                        <sdk:TabItem Header="交底文件" >
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
 
-                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyjsjd}" AutoGenerateColumns="False" Margin="0" >
+                                <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyjsjd[data.state!\=$申请登记$ and data.state!\=$勘查设计$ and data.state!\=$预算$ and data.state!\=$合同签订$ and data.state!\=$承包合同$]}" AutoGenerateColumns="False" Margin="0" >
                                     <sdk:DataGrid.Columns >
                                         <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
                                             <sdk:DataGridTemplateColumn.CellTemplate>
@@ -321,13 +321,26 @@
                                             <sdk:DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate >
                                                     <StackPanel Orientation="Horizontal">
-                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="技术交底" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
                                                         <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </sdk:DataGridTemplateColumn.CellTemplate>
                                         </sdk:DataGridTemplateColumn>
-
+                                        <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                                            <sdk:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate >
+                                                    <StackPanel>
+                                                        <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                                            <a:Data.Prop>
+                                                                <o:PropertySetter PropertyName="state"  Default="技术交底" NoDependValue="技术交底" />
+                                                            </a:Data.Prop>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </sdk:DataGridTemplateColumn.CellTemplate>
+                                        </sdk:DataGridTemplateColumn>
                                     </sdk:DataGrid.Columns>
                                 </sdk:DataGrid>
 
@@ -339,7 +352,7 @@
                     <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="586">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=fmyjsjdInfo.DataContext.f_jsjdzt\=$未完成$;fmyjsjdInfo.DataContext.f_substate\=$完成$;fmyjsjdInfo.DataContext.Save();fmyjsjdPopup.BringToDown();fmyjsjdPopup.IsOpen\=False}" />
-                        <Button Content="  保存并提交施工  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                        <Button Content="  保存并提交分包合同 " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmyjsjdList.SelectedItem.f_processid;fmyjsjdInfo.DataContext.f_jsjdzt\=$已完成$;fmyjsjdInfo.DataContext.f_substate\=null;fmyjsjdInfo.DataContext.Save();fmyjsjdPopup.BringToDown();fmyjsjdPopup.IsOpen\=False;startprocess.Save()}" />

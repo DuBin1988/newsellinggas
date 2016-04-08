@@ -748,6 +748,11 @@
           <key column="applyid" on-delete="noaction" /> 
           <one-to-many entity-name="t_paydetail" not-found="exception"/> 
         </set>
-
+        
+        <!--材料核查表-->
+	    <set name="f_materialexam"  cascade="delete-orphan" order-by="id">
+          <key column="applyid" /> 
+          <one-to-many entity-name="t_materialexam"/> 
+        </set> 
 	</class>
 </hibernate-mapping>

@@ -45,22 +45,20 @@
                 <!--<o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist_myxckc}"/>-->
                 <o:PropertySetter PropertyName="f_applyimage" Default="{m:Exp Str=imagelist_myxckc}"/>
                 <o:PropertySetter PropertyName="f_applyannex" Default="{m:Exp Str=annexlist_myxckc}"/>
-
+                <o:PropertySetter PropertyName="f_materialexam" Default="{m:Exp Str=materialexam_myxckc}"/>
             </o:GeneralObject>
 
 
             <o:ObjectList Name="piqulist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue  where param.name='片区'"/>
-            <!--<o:ObjectList Name="userlist_myxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myxckcInfo.DataContext.State==$End$ |or| sjSubmitAction.State==$End$ |or| myxckcPager.DataContext.State==$End$ |or| myxckcBack=>Click!=null'}"
-			Path="{m:Exp Str='myxckcInfo.DataContext.id!=null:$from t_applycustomer where applyid={myxckcInfo.DataContext.id}$,null'}" EntityType="t_applycustomer"  HasEmptyRow="True" />
-            <o:ObjectList Name="userimagelist_myxckc"   EntityType="t_customerimage" WebClientInfo="{StaticResource dbclient}"
-			Path="{m:Exp Str='nopeople_myxckc.SelectedItem.id!=null:$from t_customerimage where customerid={nopeople_myxckc.SelectedItem.id}$,null'}" HasEmptyRow="True" />
--->
+          
             <o:ObjectList Name="imagelist_myxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myxckcInfo.DataContext.State==$End$ or sjSubmitAction.State==$End$ or myxckcPager.DataContext.State==$End$ or  myxckcBack=>Click!=null'}"
             Path="{m:Exp Str='myxckcInfo.DataContext.id!=null:$from t_applyimage where applyid={myxckcInfo.DataContext.id}$,null'}" EntityType="t_applyimage"  HasEmptyRow="True"/>
             <o:ObjectList Name="annexlist_myxckc" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myxckcInfo.DataContext.State==$End$ or sjSubmitAction.State==$End$ or myxckcPager.DataContext.State==$End$ or  myxckcBack=>Click!=null'}"
             Path="{m:Exp Str='myxckcInfo.DataContext.id!=null:$from t_applyannex where applyid={myxckcInfo.DataContext.id}$,null'}" EntityType="t_applyannex"   HasEmptyRow="True"/>
 
-
+            <!--材料核查-->
+            <o:ObjectList Name="materialexam_myxckc"  WebClientInfo="{StaticResource dbclient}"  IsOld="{m:Exp Str='myxckcInfo.DataContext.State==$End$ or sjSubmitAction.State==$End$ or myxckcPager.DataContext.State==$End$ or myxckcBack=>Click!=null'}"
+            Path="{m:Exp Str='myxckcInfo.DataContext.id!=null:$from t_materialexam where applyid={myxckcInfo.DataContext.id}$,null'}" EntityType="t_materialexam"  HasEmptyRow="true" />
 
             <b:HQLAction Name="sjSubmitAction"  WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_apply set f_xckczt\=\'已完成\' \,f_substate\=null where id in (\{myxckcList.SelectedItems.ToString(id)\=>SelectionChanged\}) and f_substate \=\'完成\'}"/>
@@ -115,22 +113,24 @@
                                 </DataTemplate>
                             </sdk:DataGridTemplateColumn.CellTemplate>
                         </sdk:DataGridTemplateColumn>
+                        <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="申请安装户数" Binding="{Binding f_applycount}"/>
                         <sdk:DataGridTextColumn Header="电话" Binding="{Binding f_phone}"/>
                         <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>
+                        <sdk:DataGridTextColumn Header="片区" Binding="{Binding f_area}"/>
                         <sdk:DataGridTextColumn d:IsLocked="True" Header="设计时间" Binding="{Binding f_sjfyjsqdate}"/>
                         <sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date,StringFormat=yyyy-MM-dd}"/>
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交设计审核" Click="{m:Exp Str=sjsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItem!=null and myxckcList.SelectedItem.f_substate!\=null'}" Width="80" />
+                    <Button Content="提交现场勘查审核" Click="{m:Exp Str=sjsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItem!=null and myxckcList.SelectedItem.f_substate!\=null'}" Width="109" />
                     <c:MessageTipObj Name="sjsubmittip" Tip="您确认要提交设计审核吗？" OK="{m:Exp Str=startprocess.id\=myxckcList.SelectedItem.f_processid;sjSubmitAction.Invoke();startprocess.Save()}" />
                     <!--  <Button Content="提交工程部审核" Margin="5,0" Click="{m:Exp Str=gcbsubmittip.Show()}" IsEnabled="{m:Exp Str='myxckcList.SelectedItems!=null'}" Width="90" />
 					<c:MessageTipObj Name="gcbsubmittip" Tip="您确认要提交工程部审核吗？" OK="{m:Exp Str=gcbSubmitAction.Invoke()}" />-->
                     <sdk:DataPager Name="myxckcPager" Source="{Binding Path=ItemsSource.Count,ElementName=myxckcList,Converter={StaticResource DataPagerConverter}}"
-    		                    HorizontalAlignment="Left" PageSize="20" Width="407" Height="24" VerticalAlignment="Bottom"/>
+    		                    HorizontalAlignment="Left" PageSize="20" Width="378" Height="24" VerticalAlignment="Bottom"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
                     <TextBlock Text="{m:Exp Str='myxckc.Count'}"  Margin="-250,5,210,0" />
                     <c:PrintObj x:Name="print_myxckc" UseDefaultPrinter="False" Area="{m:Res Key=personsprint_myxckc}"/>
@@ -139,6 +139,7 @@
                      Style="{StaticResource PrintDataGrid}" ColumnHeaderStyle="{StaticResource PrintDataGridColumnHeader}" CellStyle="{StaticResource PrintDataGridCell}" RowHeaderStyle="{StaticResource PrintDataGridRowHeader}" RowStyle="{StaticResource PrintDataGridRow}">
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="序号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="状态" Binding="{Binding f_substate}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="报建编号" Binding="{Binding f_code}"/>
                             <sdk:DataGridTextColumn Header="类型" Binding="{Binding f_usertype}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="申请人" Binding="{Binding f_username}"/>
@@ -369,7 +370,7 @@
                                                         <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
 														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
                                                             <a:Data.Prop>
-                                                                <o:PropertySetter PropertyName="state"  Default="工程部审核" NoDependValue="工程部审核" />
+                                                                <o:PropertySetter PropertyName="state"  />
                                                             </a:Data.Prop>
                                                         </TextBox>
                                                     </StackPanel>
@@ -380,7 +381,7 @@
                                 </sdk:DataGrid>
                             </ScrollViewer>
                         </sdk:TabItem>
-                        <sdk:TabItem Header="设计文件">
+                        <sdk:TabItem Header="设计文件" >
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                                 <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_myxckc[data.state!\=$申请登记$]}" AutoGenerateColumns="False" Margin="0" >
                                     <sdk:DataGrid.Columns >
@@ -406,7 +407,7 @@
                                             <sdk:DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate >
                                                     <StackPanel Orientation="Horizontal">
-                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="现场勘查" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                                        <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="勘查设计" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
                                                         <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
                                                     </StackPanel>
                                                 </DataTemplate>
@@ -419,7 +420,7 @@
                                                         <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
 														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
                                                             <a:Data.Prop>
-                                                                <o:PropertySetter PropertyName="state"  Default="现场勘查设计" NoDependValue="现场勘查设计" />
+                                                                <o:PropertySetter PropertyName="state"  Default="勘查设计" NoDependValue="勘查设计" />
                                                             </a:Data.Prop>
                                                         </TextBox>
                                                     </StackPanel>
@@ -428,17 +429,114 @@
                                         </sdk:DataGridTemplateColumn>
                                     </sdk:DataGrid.Columns>
                                 </sdk:DataGrid>
+
+
                             </ScrollViewer>
-                        
                         </sdk:TabItem>
-                        <sdk:TabItem Header="材料核查">
-							
-                        </sdk:TabItem>
+                        <sdk:TabItem Header="材料核查" HorizontalAlignment="Stretch" Width="Auto" >
+                            <sdk:DataGrid AutoGenerateColumns="False" ItemsSource="{m:Exp Str=materialexam_myxckc}" IsReadOnly="True" Margin="0" Height="560">
+                              <sdk:DataGrid.Columns>
+                                    <sdk:DataGridTemplateColumn>
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="X" Click="{m:Exp Str=data.Remove()}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="序号" d:IsLocked="True" >
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox  IsReadOnly="True"  Text="{m:Exp Str=data\=\=data.List.EmptyRow:$*$\,data.Index}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="材料名称">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_materialname}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="规格型号">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_specificationmodel}"  Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+
+                                    <sdk:DataGridTemplateColumn Header="单位">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_unit}"  Style="{StaticResource TextBoxDatagridStyle}" />
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="计划数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_number}" Style="{StaticResource TextBoxDatagridStyle}" />
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更1数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifyone}"  Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更2数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifytwo}"  Style="{StaticResource TextBoxDatagridStyle}" />
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更3数量" >
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifythree}" Style="{StaticResource TextBoxDatagridStyle}"  />
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更4数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifyfour}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更5数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifyfive}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="变更6数量">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_modifysix}"  Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                    <sdk:DataGridTemplateColumn Header="备注">
+                                        <sdk:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{m:Bind Path=f_remarks}" Style="{StaticResource TextBoxDatagridStyle}"/>
+                                            </DataTemplate>
+                                        </sdk:DataGridTemplateColumn.CellTemplate>
+                                    </sdk:DataGridTemplateColumn>
+                                </sdk:DataGrid.Columns>
+                            </sdk:DataGrid>
+                         </sdk:TabItem>
                     </sdk:TabControl>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
-                        <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="480">
+                        <!-- IsEnabled="{m:Exp Str=!data.HasErrors}"-->
+                        <Button Content="  保  存  " Margin="5" Width="60" 
                                         Click="{m:Exp Str=myxckcInfo.DataContext.f_xckczt\=$未完成$;myxckcInfo.DataContext.f_substate\=$完成$;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False}" />
-                        <Button Content="  保存并提交设计审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                        <Button Content="  保存并提交现场勘查审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=sjsavesubmittip.Show()}" />
                         <c:MessageTipObj Name="sjsavesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=myxckcInfo.DataContext.f_processid;myxckcInfo.DataContext.f_xckczt\=$已完成$;myxckcInfo.DataContext.f_substate\=null;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False;startprocess.Save()}" />
@@ -447,7 +545,7 @@
                         <c:MessageTipObj Name="gcbsavesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=myxckcInfo.DataContext.f_state\=$工程部审核$;myxckcInfo.DataContext.f_substate\=null;myxckcInfo.DataContext.Save();myxckcPopup.BringToDown();myxckcPopup.IsOpen\=False}" />
 						-->
-                        <Button Content="  导入Excel数据  "  Click="{m:Exp Str=userlist_myxckc.ExcelString\=Clipboard.Text}"    Margin="5" Width="95"/>
+                        <Button Content="  导入Excel数据  "  Click="{m:Exp Str=materialexam_myxckc.ExcelString\=Clipboard.Text}"    Margin="5" Width="95"/>
 
 
                         <Button Content="  终止报建  " Margin="5"

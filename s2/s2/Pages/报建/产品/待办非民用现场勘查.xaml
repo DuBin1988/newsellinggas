@@ -133,12 +133,12 @@
                     </sdk:DataGrid.Columns>
                 </sdk:DataGrid>
                 <StackPanel Orientation="Horizontal" Width="488" Height="25">
-                    <Button Content="提交设计审核" Click="{m:Exp Str=sjsubmittip.Show()}" IsEnabled="{m:Exp Str='fmyxckcList.SelectedItem!=null and fmyxckcList.SelectedItem.f_substate!=null'}" Width="80" />
+                    <Button Content="提交现场勘查审核" Click="{m:Exp Str=sjsubmittip.Show()}" IsEnabled="{m:Exp Str='fmyxckcList.SelectedItem!=null and fmyxckcList.SelectedItem.f_substate!=null'}" Width="106" />
                     <c:MessageTipObj Name="sjsubmittip" Tip="您确认要提交设计审核吗？" OK="{m:Exp Str=startprocess.id\=fmyxckcList.SelectedItem.f_processid;SubmitAction.Invoke();startprocess.Save()}" />
                     <!--   <Button Content="提交工程部审核" Margin="5,0" Click="{m:Exp Str=gcbsubmittip.Show()}" IsEnabled="{m:Exp Str='fmyxckcList.SelectedItems!=null'}" Width="90" />
                     <c:MessageTipObj Name="gcbsubmittip" Tip="您确认要提交工程部审核吗？" OK="{m:Exp Str=gcbSubmitAction.Invoke()}" />-->
                     <sdk:DataPager Name="fmyxckcPager" Source="{Binding Path=ItemsSource.Count,ElementName=fmyxckcList,Converter={StaticResource DataPagerConverter}}"
-		                        HorizontalAlignment="Left" PageSize="20" Width="409" Height="24" VerticalAlignment="Bottom"/>
+		                        HorizontalAlignment="Left" PageSize="20" Width="380" Height="24" VerticalAlignment="Bottom"/>
                     <TextBlock Text="总待办数:" Margin="-300,5,260,0" />
                     <TextBlock Text="{m:Exp Str='fmyxckc.Count'}"  Margin="-250,5,210,0" />
                     <c:PrintObj x:Name="print_fmyxckc" UseDefaultPrinter="False" Area="{m:Res Key=personsprint_fmyxckc}" />
@@ -622,10 +622,10 @@
                             </ScrollViewer>
                         </sdk:TabItem>
                     </sdk:TabControl>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="384">
                         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=fmyxckcInfo.DataContext.f_xckczt\=$未完成$;fmyxckcInfo.DataContext.f_substate\=$完成$;fmyxckcInfo.DataContext.Save();fmyxckcPopup.BringToDown();fmyxckcPopup.IsOpen\=False}" />
-                        <Button Content="  保存并提交设计审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+                        <Button Content="  保存并提交现场勘查审核  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
                         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmyxckcList.SelectedItem.f_processid;fmyxckcInfo.DataContext.f_xckczt\=$已完成$;fmyxckcInfo.DataContext.f_substate\=null;fmyxckcInfo.DataContext.Save();fmyxckcPopup.BringToDown();fmyxckcPopup.IsOpen\=False;startprocess.Save()}" />

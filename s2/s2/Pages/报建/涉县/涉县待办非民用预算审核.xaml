@@ -61,7 +61,7 @@
         </m:ResourceLoad>
         <!--民用收费标准-->
         <!-- -->
-        <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmyyssh.IsBusy}">
+        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fmyyssh.IsBusy}">
             <StackPanel Margin="2,0,2,8">
                 <toolkit:WrapPanel x:Name="fmyysshSearch" Width="488">
                     <a:Data.Context>
@@ -120,10 +120,10 @@
                 </StackPanel>
             </StackPanel>
             <!--   -->
-        </toolkit:BusyIndicator>
+        </c:BusyIndicatorEx>
         <!--民用收费标准-->
         <Popup x:Name="fmyysshPopup">
-            <!---->	<toolkit:BusyIndicator BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyysshObj.IsBusy }">
+            <!---->	<c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=fmyysshObj.IsBusy }">
             	<Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="fmyysshInfo" DataContext="{m:Exp Str=fmyysshObj}" Width="1000" Height="640">
                  	
 				    <sdk:TabControl  Margin="0,0,0,55" VerticalAlignment="Stretch" d:LayoutOverrides="Height" >
@@ -282,7 +282,7 @@
                                 <TextBlock Margin="0,9,5,3" Grid.Row="7" TextWrapping="Wrap" Text="工程款：" TextAlignment="Right"/>
                                 <TextBox IsReadOnly="True" Text="{m:Bind Path=f_gckfee}" Grid.Column="1" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                                 	<a:Data.Prop>
-                                		<o:PropertySetter PropertyName="f_gckfee"  NotNull="True" />
+                                		<o:PropertySetter PropertyName="f_gckfee"  />
                                 	</a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Grid.Column="2" Margin="10,10,5,2" Grid.Row="6" TextWrapping="Wrap" Text="押金是否已结清：" TextAlignment="Right"/>
@@ -304,7 +304,7 @@
             <TextBlock Margin="0,5,5,7" Grid.Row="7" TextWrapping="Wrap" Text="小锅炉费用：" TextAlignment="Right" Grid.Column="2"/>
             <TextBox IsReadOnly="True"  Text="{m:Bind Path=f_xglfyfee}" Grid.Column="3" Margin="0,5,0,3" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                 <a:Data.Prop>
-                    <o:PropertySetter PropertyName="f_xglfyfee"  NotNull="True" />
+                    <o:PropertySetter PropertyName="f_xglfyfee"  />
                 </a:Data.Prop>
             </TextBox>
             <TextBlock Margin="0,9,5,3" Grid.Row="7" TextWrapping="Wrap" Text="预算合计：" TextAlignment="Right" Grid.Column="4"/>
@@ -321,14 +321,14 @@
                     <o:PropertySetter PropertyName="f_yssh" />
                 </a:Data.Prop>
             </ComboBox>
-            <TextBlock Margin="0,10,0,-2" TextWrapping="Wrap" Text="经理审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="12" VerticalAlignment="Center" Height="22"/>
-            <TextBox Text="{m:Bind Path=f_managerexaminat}" IsReadOnly="True" Grid.Column="1" Margin="0,2,0,-2" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
+            <TextBlock Margin="5,5,0,1" TextWrapping="Wrap" Text="经理审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="8" VerticalAlignment="Center" Height="24" Grid.Column="2"/>
+            <TextBox Text="{m:Bind Path=f_managerexaminat}" IsReadOnly="True" Grid.Column="3" Margin="0,1" Grid.Row="8" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
                 <a:Data.Prop>
                     <o:PropertySetter PropertyName="f_managerexaminat" />
                 </a:Data.Prop>
             </TextBox>
-            <TextBlock Margin="0,40,5,-31" TextWrapping="Wrap" Text="分管领导审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="12" VerticalAlignment="Center" Height="21"/>
-            <TextBox Text="{m:Bind Path=f_chargeleadership}" IsReadOnly="True" Grid.Column="1" Margin="0,32,0,-32" Grid.Row="12" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
+            <TextBlock Margin="5,5,0,4" TextWrapping="Wrap" Text="分管领导审核：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="8" VerticalAlignment="Center" Height="21" Grid.Column="4"/>
+            <TextBox Text="{m:Bind Path=f_chargeleadership}" IsReadOnly="True" Grid.Column="5" Margin="0,5,0,1" Grid.Row="8" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1" >
                 <a:Data.Prop>
                     <o:PropertySetter PropertyName="f_chargeleadership" />
                 </a:Data.Prop>
@@ -364,18 +364,49 @@
             </ListBox>
         </ScrollViewer>
     </sdk:TabItem>
-    <sdk:TabItem Header="附件" >
+    <sdk:TabItem Header="设计文件">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyyssh[data.state\=\=$勘查设计$]}" AutoGenerateColumns="False" Margin="0" >
+                <sdk:DataGrid.Columns >
+                    <sdk:DataGridTemplateColumn Header="文件"  >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <StackPanel>
+                                    <HyperlinkButton x:Name="annex"  Content="{Binding filename}" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/file/\{data.id\}$}" TargetName="_self"  />
+                                </StackPanel>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
+                    <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <StackPanel>
+                                    <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="state"  Default="勘查设计" NoDependValue="勘查设计" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
+                </sdk:DataGrid.Columns>
+            </sdk:DataGrid>
+        </ScrollViewer>
+    </sdk:TabItem>
+    <sdk:TabItem Header="预算文件" >
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
 
-            <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyyssh}" AutoGenerateColumns="False" Margin="0" >
+            <sdk:DataGrid   ItemsSource="{m:Exp Str=annexlist_fmyyssh[data.state!\=$申请登记$ and data.state!\=$勘查设计$]}" AutoGenerateColumns="False" Margin="0" >
                 <sdk:DataGrid.Columns >
                     <sdk:DataGridTemplateColumn Header="删除" CanUserSort="False">
                         <sdk:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="X" 
-            										                                        Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
-            										                                        Click="{m:Exp Str=data.Remove()}"/>
+            										                    Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}" 
+            										                    Click="{m:Exp Str=data.Remove()}"/>
                             </DataTemplate>
                         </sdk:DataGridTemplateColumn.CellTemplate>
                     </sdk:DataGridTemplateColumn>
@@ -392,25 +423,39 @@
                         <sdk:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate >
                                 <StackPanel Orientation="Horizontal">
-                                    <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="申请登记" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
+                                    <c:FileLoad x:Name="FileLoad" EntityName="t_blob" FileName="{Binding filename, Mode=TwoWay}" BusinessType="预算" SaveMode="file" BlobId="{Binding id, Mode=TwoWay}" Path="{m:Exp Str=$\{dbclient.BaseAddress\}/savefile$}" Height="18"/>
                                     <Button Content="上传文件" Visibility="{m:Exp Str=data.id !\= null:$Collapsed$\,$Visible$}" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="87"/>
                                 </StackPanel>
                             </DataTemplate>
                         </sdk:DataGridTemplateColumn.CellTemplate>
                     </sdk:DataGridTemplateColumn>
-
+                    <sdk:DataGridTemplateColumn Header="上传步骤状态"  >
+                        <sdk:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <StackPanel>
+                                    <TextBox  IsReadOnly="True" Text="{m:Bind Path=state}" Grid.Column="3" Margin="0,2" Grid.Row="7" TextWrapping="Wrap" Height="Auto"  Width="Auto" HorizontalAlignment="Stretch"
+														                Visibility="{m:Exp Str=data\=\=data.List.EmptyRow:$Collapsed$\,$Visible$}">
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="state"  Default="预算" NoDependValue="预算" />
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </sdk:DataGridTemplateColumn.CellTemplate>
+                    </sdk:DataGridTemplateColumn>
                 </sdk:DataGrid.Columns>
             </sdk:DataGrid>
 
 
         </ScrollViewer>
     </sdk:TabItem>
+   
     </sdk:TabControl>
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="586">
         <Button Content="  保  存  " Margin="5" Width="60" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=fmyysshInfo.DataContext.f_sjfsqzt\=$未完成$;fmyysshInfo.DataContext.f_substate\=$完成$;fmyysshInfo.DataContext.Save();fmyysshPopup.BringToDown();fmyysshPopup.IsOpen\=False}" />
-        <Button Content="  保存并提交提交合同签订  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
+        <Button Content="  同意预算并提交合同签订  " Margin="5" IsEnabled="{m:Exp Str=!data.HasErrors}" 
                                         Click="{m:Exp Str=savesubmittip.Show()}" />
         <c:MessageTipObj Name="savesubmittip" Tip="您确认要提交该报建信息吗？" 
 						OK="{m:Exp Str=startprocess.id\=fmyysshList.SelectedItem.f_processid;fmyysshInfo.DataContext.f_sjfsqzt\=$已完成$;fmyysshInfo.DataContext.f_substate\=null;fmyysshInfo.DataContext.Save();fmyysshPopup.BringToDown();fmyysshPopup.IsOpen\=False;startprocess.Save()}" />
@@ -432,7 +477,7 @@
     </Grid>
 
 
-    <!---->    </toolkit:BusyIndicator>
+    <!---->    </c:BusyIndicatorEx>
 			
 		</Popup>
     </Grid>

@@ -23,15 +23,14 @@
             <o:ObjectList Name="mygastype" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproperties as gasproperties left join fetch gasproperties.qijiatype}" EntityType="t_gasproperties" />
             <o:ObjectList Name="mypricetype" Source="{m:Exp Str=CoboxPinps.SelectedItem.qijiatype}" EntityType="t_qijiatype" />
             <!--报装选中对象-->
-            <o:GeneralObject Name="mypgshObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
+            <o:GeneralObject Name="mysfbzObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
                 Source="{m:Exp Str='applys.SelectedItem'}"  IsInit="{m:Exp Str='SaveAction.State==$End$'}">
 
                <!--实交金额-->
 
-                <o:PropertySetter PropertyName="f_actualfee" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:fee.f_fee + mypgshObj.f_actualfee\,null}"/>
+                <o:PropertySetter PropertyName="f_actualfee" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:fee.f_fee + mysfbzObj.f_actualfee\,null}"/>
 
-                <o:PropertySetter PropertyName="f_applycustomer" Default="{m:Exp Str=userlist_mysfbz}"/>
-                <!--实交金额-->
+            
 
             </o:GeneralObject>
             <o:ObjectList Name="paydetails" EntityType="t_paydetail" WebClientInfo="{StaticResource dbclient}" 
@@ -41,18 +40,18 @@
             <o:GeneralObject Name="fee" WebClientInfo="{StaticResource dbclient}" EntityType="t_paydetail"
                 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
                 <!--对应报装id-->
-                <o:PropertySetter PropertyName="applyid" Default="{m:Exp Str=mypgshObj.id}" NoDependValue="{m:Exp Str=mypgshObj.id}"/>
+                <o:PropertySetter PropertyName="applyid" Default="{m:Exp Str=mysfbzObj.id}" NoDependValue="{m:Exp Str=mysfbzObj.id}"/>
                 <o:PropertySetter PropertyName="f_state" Default="有效"/>
             </o:GeneralObject>
 
-         
-            <o:ObjectList Name="costreductionlist_mypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mypgshInfo.DataContext.State==$End$'}"
-             Path="{m:Exp Str='mypgshInfo.DataContext.id!=null:$from t_costreduction where applyid={mypgshInfo.DataContext.id}$,null'}"      EntityType="t_costreduction" HasEmptyRow="False" />
+
+            <o:ObjectList Name="costreductionlist_mypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mysfbzInfo.DataContext.State==$End$'}"
+             Path="{m:Exp Str='mysfbzInfo.DataContext.id!=null:$from t_costreduction where applyid={mysfbzInfo.DataContext.id}$,null'}"      EntityType="t_costreduction" HasEmptyRow="False" />
 
             <!--保存-->
             <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=SaveButton\=>Click!\=null}" WebClientInfo="{StaticResource dbclient}">
                 <!--报装对象保存-->
-                <b:BatchInfo Source="{m:Exp Str=mypgshObj}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=mysfbzObj}" MethodName="SaveToJson"/>
                 <!--收费对象保存-->
                 <b:BatchInfo Source="{m:Exp Str=fee}" MethodName="SaveToJson"/>
             </b:BatchExcuteAction>
@@ -112,11 +111,11 @@
                 </c:BusyIndicatorEx>
             </toolkit:DockPanel>
 
-            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=mypgshObj.IsBusy}" Grid.Column="1">
-                <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="mypgshInfo" DataContext="{m:Exp Str=mypgshObj}">
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=mysfbzObj.IsBusy}" Grid.Column="1">
+                <Grid Background="{StaticResource LoginBgColorBrush1}" x:Name="mysfbzInfo" DataContext="{m:Exp Str=mysfbzObj}">
 
 
-                    <sdk:TabControl  Margin="0" VerticalAlignment="Top" Height="600">
+                    <sdk:TabControl  Margin="0,0,0,0" VerticalAlignment="Top" Height="600">
                         <sdk:TabItem Header="报建基本信息">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0.196,0,-0.196,37" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
                                 <ScrollViewer.RenderTransform>
@@ -140,12 +139,12 @@
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
 
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="130"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="130"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
 
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="报建编号：" TextAlignment="Right" Grid.Column="2"/>
@@ -323,12 +322,12 @@
                                             <RowDefinition Height="30"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="180"/>
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Margin="0" Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Text="付款方式 :" TextAlignment="Right"/>
@@ -789,7 +788,7 @@
                     <!--收费票据模版-->
                     <Grid  x:Name="print1_sj" HorizontalAlignment="Left" Margin="-1012,108,0,127" Width="817">
                         <sdk:Label x:Name="year1" Content="{m:Exp Str=SysTime.Today.ToString($yyyy$)}" HorizontalAlignment="Left" Height="25" Margin="222,70,0,0"  VerticalAlignment="Top" Width="56" d:LayoutOverrides="HorizontalAlignment"/>
-                        <sdk:Label x:Name="name" Content="{m:Exp Str=mypgshObj.f_username}" Height="25" Margin="265,90,315,-103"  VerticalAlignment="Top"/>
+                        <sdk:Label x:Name="name" Content="{m:Exp Str=mysfbzObj.f_username}" Height="25" Margin="265,90,315,-103"  VerticalAlignment="Top"/>
                         <sdk:Label x:Name="weihuf" Content="工程材料费"   FontSize="15" HorizontalAlignment="Left" Margin="122,120,0,191" Width="113"/>
                         <sdk:Label x:Name="money"  Content="{m:Exp Str=fee.f_fee}"  HorizontalAlignment="Left" Margin="501,120,3,188" Width="113"/>
                         <sdk:Label x:Name="year1_Copy" Content="{m:Exp Str=SysTime.Today.ToString($MM$)}" Height="25" Margin="300,70,370,0"  VerticalAlignment="Top" RenderTransformOrigin="1.018,0.76"/>
