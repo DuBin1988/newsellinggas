@@ -15,9 +15,9 @@
 <script src="js/knockout.validation.min.js"></script>
 <script src='js/af.js'></script>
 <body>
-	<HEAD>
+<HEAD>
 <script language="javascript" type="text/javascript "
-	src="jquery.min.js" ></script>
+	src="jquery.min.js"></script>
 <script type="text/javascript">
 	function getUrlParam(name) {
 		//构造一个含有目标参数的正则表达式对象 
@@ -34,8 +34,8 @@
 		var qf = getUrlParam('money');
 		var zhye1 = getUrlParam('f_zhye');
 		var zhinajin1 = getUrlParam('zhinajin');
-		alert(qf);
-		alert(zhye1);
+		//alert(qf);
+		//alert(zhye1);
 		$("#qianfei").html(qf);
 		$("#zhye").html(zhye1);
 		$("#znj").html(zhinajin1);
@@ -50,14 +50,16 @@
 
 		//下面使用each进行遍历  
 		$.each(list, function(n, value) {
-			alert(n + ' ' + value);
+			//alert(n + ' ' + value);
 			var trs = "<section class=\"re01\">";
-			trs += "<ol><li>用户编号:"+ value.f_userid + "</li><li>抄表日期: "+ value.lastinputdate + "</li><li>上期指数:"
-					+ value.astinputgasnum + "</li><li>本期指数:" + value.lastrecord
-					+ "</li><li>气量:" + value.oughtmount + "</li><li>气费:"
-					+ value.totaloughtfee + "</li><li>已交金额:" + value.oughtfeed
-					+ "</li><li>应交金额:"+ value.oughtfee + "</li></ol>";
-			tbody += trs+"</section>"; 
+			trs += "<ol><li>用户编号:" + value.f_userid + "</li><li>抄表日期: "
+					+ value.lastinputdate + "</li><li>上期指数:"
+					+ value.astinputgasnum + "</li><li>本期指数:"
+					+ value.lastrecord + "</li><li>气量:" + value.oughtmount
+					+ "</li><li>气费:" + value.totaloughtfee + "</li><li>已交金额:"
+					+ value.oughtfeed + "</li><li>应交金额:" + value.oughtfee
+					+ "</li></ol>";
+			tbody += trs + "</section>";
 		});
 		$("#test").append(tbody);
 	});
@@ -69,18 +71,19 @@
 </script>
 </HEAD>
 
-	<body onload="payload()">
-	<div id="test"></div>
+<body onload="payload()">
+	<div id="test"><span></span></div>
 	<aside class="dq">
 		<ol>
-		<li >您的欠费所产生的滞纳金为：<span id="znj"></span></li>
-		<li >您的往月结余金额为：<span id="zhye" ></span></li>
-		<li >您的本期结算账户余额为：<span id="qianfei"></span></li>	
-	</ol>
-	</aside>
-	<div class="btn" > 
-		<input type="submit" font-size="16px"  value="去交费" class="bdbtn" onclick="f_jiaofe();">
-	</div>
+			<li>您的欠费所产生的滞纳金为：<span id="znj"></span></li>
+			<li>您的上期结余金额为：<span id="zhye"></span></li>
+			<li>您的本期结算账户余额为：<span id="qianfei"></span></li>
+		</ol>
+       </aside>
+		<div class="btn">
+			<input type="submit" value="去交费" class="bdbtn" onclick="f_jiaofe();">
+		</div>
+	
 </body>
 
 </html>

@@ -29,7 +29,6 @@
 	function payload() {
 		//获取参数
 		var qf = getUrlParam('qf');
-		alert(qf);
 		$("#qianfei").html(qf);
 
 	}
@@ -37,23 +36,25 @@
 	function chong() {
 		//设置按钮不可点击
 		//验证欠费
-		document.getElementById("btn").disabled=true;
+		document.getElementById("btn").disabled = true;
 		var openid = getUrlParam('openid');
 		var date = getUrlParam('date');
-		//alert("++++"+date);
 		var money = document.getElementById("money").value;
-		var qianfei = getUrlParam('qf');
-		alert("====" + qianfei);
-			if (qianfei > money) {
-				alert("缴费金额应该大于欠费金额，请重新输入!");
-		//还原为可点击
-				document.getElementByIdx("btn").disabled=false;
-				return;
-			}
-			var date = new Date();
-			var mytime=date.toLocaleTimeString()
-		alert("++++"+mytime);
-		var path = "/rs/weixin/getprepayid?openid="+openid+"&money="+money+"&date="+mytime;
+		var qianfei = -getUrlParam('qf');
+		//var newStr =Math.abs(qianfei);
+		//alert("111111111"+newStr);
+		//alert("ssss"+qianfei);
+		if (qianfei> money) {
+			alert("缴费金额应该大于欠费金额，请重新输入!");
+			//还原为可点击
+			document.getElementById("btn").disabled = false;
+			return;
+		}
+		
+		var date = new Date();
+		var mytime = date.toLocaleTimeString()
+		var path = "/rs/weixin/getprepayid?openid=" + openid + "&money="
+				+ money + "&date=" + mytime;
 		var detail;
 		$.getJSON(path, function(data) {
 			/*判断返回是否正确*/
@@ -61,7 +62,7 @@
 				alert(data.error);
 				return;
 			}
-			
+
 			//调用支付接口
 			var appId = data.appId;
 			var timeStamp = data.timeStamp;
@@ -78,7 +79,7 @@
 				"paySign" : paySign,//"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
 			}, function(res) { // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回  ok，但并不保证它绝对可靠。  
 				//alert(res.err_msg);
-				document.getElementById("btn").disabled=false;
+				document.getElementById("btn").disabled = false;
 				if (res.err_msg == "get_brand_wcpay_request:ok") {
 					//支付成功
 
@@ -140,15 +141,20 @@
 <body onload="payload()">
 	<header class="findstyle">
 		<h1>
-			您当前的欠费金额：<span id="qianfei"></span>
+			您的本期结算账户余额为：<span id="qianfei"></span>
 		</h1>
+
+		<div class="btn">
+			<h1>
+				<span>请输入交费金额：</span>
+			</h1>
+			<input type="text" value="" class="jeinput" id="money">
+		</div>
+		
+		<div class="btn">
+			<input type="submit" value="充值" class="bdbtn" id="btn"
+				onClick="chong()">
+		</div>
 	</header>
-	<div class="btn">
-		<h1>请输入交费金额：</h1>
-		<input type="text" value="" class="jeinput" id="money">
-	</div>
-	<div class="btn">
-		<input type="submit" value="充值" class="bdbtn" id="btn" onClick="chong()">
-	</div>
 </body>
 </html>
