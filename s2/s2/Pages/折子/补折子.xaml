@@ -37,7 +37,9 @@
        <o:GeneralObject Name="users" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
 		Path="{m:Exp Str=$one/from t_userinfo where id\=\{userfiles.SelectedItem.id\}}"
 			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
-        		</o:GeneralObject>	
+				<!--换折重置行号 -->
+				<o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=userfile.DataContext.f_type\=\=$换折$:13\,users.f_zherownum}"/>
+        </o:GeneralObject>	
 			
 			<!--补折对象 -->
 		<o:GeneralObject  Name="userfilego1" WebClientInfo="{StaticResource dbclient}" 

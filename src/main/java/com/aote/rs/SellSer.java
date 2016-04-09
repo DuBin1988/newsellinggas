@@ -823,7 +823,7 @@ public class SellSer {
 				+ "u.f_idnumber f_idnumber, u.f_gaspricetype f_gaspricetype, u.f_gasprice f_gasprice, u.f_usertype f_usertype,"
 				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid,u.f_zherownum f_zherownum, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord, h.shifoujiaofei shifoujiaofei, h.oughtfee oughtfee,h.f_debtmoney  f_debtmoney ,h.lastinputdate from t_userfiles u "
-				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否') h on u.f_userid = h.f_userid where u.f_userid = '"
+				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否' and f_userid='"+userid+"') h on u.f_userid = h.f_userid where u.f_userid = '"
 				+ userid
 				+ "' "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
