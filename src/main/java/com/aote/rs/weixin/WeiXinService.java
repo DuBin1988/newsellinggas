@@ -87,7 +87,7 @@ public class WeiXinService {
 			// http://weixin.uxinxin.com
 			// http://4504a3ef.nat123.net/rs/weixin/notify
 			String appid = Configure.getAppid();
-			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
+			String redirect_uri = "http://4504a3ef.nat123.net/rs/weixin/getopenid";
 			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
@@ -190,7 +190,6 @@ public class WeiXinService {
 		double zhye = Double.parseDouble(new String(b, 98, 10)) / 100;
 		String money = new String(b, 108, 10);
 		double zhinajin = Double.parseDouble(new String(b, 118, 10)) / 100;
-
 		double zhyemoney;
 		int index1 = money.indexOf("-");
 		if (index1 != -1) {
@@ -611,16 +610,22 @@ public class WeiXinService {
 				return ob;
 			}
 		} else {
-			JSONObject object = new JSONObject();
-			if(f_openid==openid){
-				object.put("message", "您已绑定");
+		
+			if(f_openid.equals(openid)){
+				JSONObject obj1 = selectqf(f_userid);
+				obj1.put("message", "您已绑定");
+				System.out.println(obj1);
+				return obj1;
+				
 			}else{
-			object.put("message", "此号已经被别的用户绑定");
-			System.out.println(object);
-			return object;
+				JSONObject object = new JSONObject();
+				object.put("message", "此号已经被别的用户绑定");
+				 System.out.println(object);
+				 return object;
+			
 		}
 		}
-		return null;
+	
 
 	}
 	// 解绑
