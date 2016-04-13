@@ -87,7 +87,7 @@ public class WeiXinService {
 			// http://weixin.uxinxin.com
 			// http://4504a3ef.nat123.net/rs/weixin/notify
 			String appid = Configure.getAppid();
-			String redirect_uri = "http://4504a3ef.nat123.net/rs/weixin/getopenid";
+			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
 			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
