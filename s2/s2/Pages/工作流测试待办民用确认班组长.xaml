@@ -27,8 +27,8 @@
             </o:GeneralObject>
 
             <o:PagedList Name="myqrzb" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='myqrzbPager.DataContext.State==$End$'}"
-                Names="id,f_substate,f_code,f_username,f_phone,f_applydept,f_address,f_applycount,f_date,actid" 
-                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_applydept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid
+                Names="id,f_substate,f_code,f_username,f_phone,f_minyongdept,f_address,f_applycount,f_date,actid" 
+                HQL="{m:Exp Str=$select apply.id\,apply.f_substate\,apply.f_code\,apply.f_username\,apply.f_phone\,apply.f_minyongdept\,apply.f_address\,apply.f_applycount\,CONVERT(varchar\, apply.f_date\,23)f_date\,act.id actid
                 from activityins act 
                 join t_actorperson p 
                 on act.actorexpression \= p.actorid 
@@ -91,7 +91,7 @@
                        <sdk:DataGridTextColumn Header="报建编号" Visibility="Collapsed" Binding="{Binding f_code}"/>
 					    <sdk:DataGridTextColumn d:IsLocked="True" Header="联系人" Binding="{Binding f_username}"/>
                         <sdk:DataGridTextColumn Header="联系电话" Binding="{Binding f_phone}"/>
-						 <sdk:DataGridTextColumn Header="用户单位" Binding="{Binding f_applydept}"/>
+						 <sdk:DataGridTextColumn Header="用户单位" Binding="{Binding f_minyongdept}"/>
                         <sdk:DataGridTextColumn Header="用气地址" Binding="{Binding f_address}"/>
 						<sdk:DataGridTextColumn Header="申请总户数" Binding="{Binding f_applycount}"/>
 						<sdk:DataGridTextColumn Header="报建日期" Binding="{Binding f_date}"/>

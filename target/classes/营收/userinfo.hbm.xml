@@ -12,6 +12,8 @@
 		
 		<!--发票号， -->
 		<property name="f_invoicenum" type="string"/>
+		<!--折子号， -->
+		<property name="f_foldnum" type="string"/>
 		<!--旧用户编号-->
 		<property name="oldid" type="int"/> 
 		<!--旧系统用户编号-->
@@ -31,6 +33,8 @@
 		<property name="f_watchinstalldate" type="date"/>
 		<!--折子行数-->
 		<property name="f_zherownum" type="int"/>
+		<!--发折日期-->
+		<property name="f_recoverypassbookdate" type="string"/>
 		<!--稽查结果-->
 		<property name="f_result" type="string"/>
 		<!--非民用维护费年费-->
@@ -302,12 +306,6 @@
           <one-to-many entity-name="t_fileschange" not-found="exception" /> 
         </set>
         
-      	<!--抄表记录--> 
-	   	<set name="f_handplan" cascade="all-delete-orphan">
-          <key column="users" on-delete="noaction" /> 
-          <one-to-many entity-name="t_handplan" not-found="exception" /> 
-        </set>
-
          <!-- 卡类型，写卡使用 0 民用，1工业 -->
          <property name="klx" type="int"/>
          <!-- 地区代码 -->

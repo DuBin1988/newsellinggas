@@ -1,0 +1,202 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+    x:Class="Com.Aote.Pages.短信模板管理" FontSize="13"
+    mc:Ignorable="d" >
+    <Grid x:Name="LayoutRoot">
+		<m:ResourceLoad >
+            <o:ChildWindowObj Name="openchild" CWName="/Pages/获取街道" />
+			<b:HQLAction Name="delete"   WebClientInfo="{StaticResource dbclient}" 
+			HQL="{m:Exp Str=$delete from t_road where id \= \{apply.DataContext.id\}}"/> 
+
+			<!--判断街道名称是否存在-->
+			<o:GeneralObject Name="areaexist" EntityType="t_area2" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=apply.DataContext.f_road \!\=null:$one/select new Map(count(*) as count) from t_road where f_road\=\'\{apply.DataContext.f_road\}\'$\,$aaa$}" 
+				IsInit="{m:Exp Str=apply.DataContext.State\=\=$End$ }">
+			</o:GeneralObject>
+
+			<b:BatchExcuteAction Name="deleteAction" WebClientInfo="{StaticResource dbclient}">
+			
+                        <b:BatchInfo Source="{m:Exp Str=delete}" MethodName="InvokeToJson"/>
+            </b:BatchExcuteAction>
+		
+		</m:ResourceLoad>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applys.ItemsSource.IsBusy}">
+                <toolkit:DockPanel LastChildFill="True"  >
+                    <Grid Background="#FFDBE4F3" toolkit:DockPanel.Dock="Top"  Name="applysearch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+
+                        <a:Data.Context>
+                            <o:SearchObject  ></o:SearchObject>
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Text="名称：" Margin="5,4,0,4" FontSize="13.333" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
+                        <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_name}" Width="Auto" Margin="0" Height="25"  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_name"  Operator="f_name like '%this%'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+
+                        <Button Content="查 询" Click="{m:Exp Str=applysearch.DataContext.Search()}"  Height="30" Width="70"   Grid.Row="1" Grid.Column="3"/>
+                    </Grid>
+                    <Grid toolkit:DockPanel.Dock="Bottom" Margin="0" Background="#94a8cd" Height="25">
+                        <!--信息列表翻页-->
+                        <sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=applys}"  Margin="0,1,0,0" PageSize="20" Height="24" Foreground="#FF140000"/>
+							<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{applys.ItemsSource.Count\}项}" Width="122" HorizontalAlignment="Left" Margin="0" Foreground="#FF140000"/>
+                        </Grid>
+                    <sdk:DataGrid x:Name="applys" Margin="0"  
+				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
+                        <a:Data.Items>
+                            <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
+                     MultiPath="{m:Exp Str=$from t_smstemplate where \{applysearch.DataContext.Condition\} }"
+					 Path="{m:Exp Str=$from t_smstemplate where \{applysearch.DataContext.Condition\} and f_name !\= \'短信功能开关\'}"
+					 IsOld="{m:Exp Str=apply.DataContext.State\=\=$End$ or deleteAction.State\=\=$End$}"
+					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
+				        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序 号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn Header="短信模板名称" Binding="{Binding f_name}"/>
+                            <sdk:DataGridTextColumn Header="短信内容" Binding="{Binding f_content}"/>
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                </toolkit:DockPanel >
+            </c:BusyIndicatorEx>
+            <c:BusyIndicatorEx 
+		BusyContent="{m:Exp Str=$正在工作，请稍等...$}" 
+		IsBusy="{m:Exp Str=apply.DataContext.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+                <toolkit:DockPanel Background="{x:Null}" x:Name="apply" >
+                    <a:Data.Context>
+                        <oo:GasADObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
+						EntityType="t_smstemplate" IsInit="{m:Exp Str=apply.DataContext.State\=\=$End$ or deleteAction.State\=\=$End$}"
+						Source="{m:Exp Str=applys.SelectedItem}"
+						>
+                        </oo:GasADObject>
+                    </a:Data.Context>
+				<c:MessageTipObj  Name="submittip" Tip="您确认删除该项吗？" OK="{m:Exp Str=deleteAction.Invoke()}" />
+	
+                    <Grid toolkit:DockPanel.Dock="Bottom">
+						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom"/>
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom">
+						
+
+                        <Button x:Name="save" Content="保存" Margin="5" 
+                			IsEnabled="{m:Exp Str=apply.DataContext.IsModified and !apply.DataContext.HasErrors}"
+                			Click="{m:Exp Str=apply.DataContext.Save()}" Height="30" Width="85"  />
+                        <Button Content="清空" Margin="5" Click="{m:Exp Str=apply.DataContext.New()}" Height="30" Width="58"  />
+
+                    </StackPanel>
+					</Grid>
+
+
+
+
+                    <!--主操作区-->
+                    <Grid Background="#FFDBE4F3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="45"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="154"/>
+                            <ColumnDefinition Width="81"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="65"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="0*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="模板状态：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="0" Visibility="Collapsed"/>
+                        <TextBox Text="{m:Bind Path=f_state}" Visibility="Collapsed" Grid.Column="1" Margin="0,9" Grid.Row="0" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_state" NotNull="True" Default="开启" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        
+                        <TextBox Text="{m:Bind Path=f_name}"  Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_name" NotNull="True"  />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Text="短信内容：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="0" Grid.Row="2" />
+                        <TextBox Text="{m:Bind Path=f_name}"  Grid.Column="1" Margin="0,9" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsReadOnly="False" >
+							<a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_name" NotNull="True"  />
+                            </a:Data.Prop>
+						</TextBox>
+                                
+                        <TextBlock Text="操作员：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" />
+                        <TextBox Text="{m:Bind Path=f_operator}"  Grid.Column="1"  Margin="0,10" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_operator"  Default="{m:Exp Str=LoginUser.name}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+
+                        <TextBlock Margin="0,10" TextWrapping="Wrap" Text="短信模板名称：" TextAlignment="Right" Grid.Row="1"/>
+                        <TextBox Text="{m:Bind Path=f_content}" Grid.Column="1" Margin="0,10,0,0" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="4" Grid.RowSpan="4"  >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_content" NotNull="True"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Text="操作日期：" Grid.Column="2" Margin="0,10" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Center" Height="25" HorizontalAlignment="Right" Width="65"  />
+                        <TextBlock Text="网点：" Margin="0,10" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" />
+                        <TextBox Text="{m:Bind Path=f_network}"  Grid.Column="1" Margin="0,10" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_network" Default="{m:Exp Str=LoginUser.f_parentname}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Text="分公司：" Grid.Column="2" Margin="0,10" Grid.Row="7" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Right" Height="25" Width="52"  />
+                        <TextBox Text="{m:Bind Path=f_branch}"   Grid.Column="3" Margin="0,10" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto"  >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_branch" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <sdk:DatePicker Grid.Column="3" Margin="0,10" Grid.Row="6"  SelectedDate="{m:Bind Path=f_date}" IsEnabled="False" Height="Auto" HorizontalAlignment="Stretch" FontSize="13.333" VerticalAlignment="Stretch" Grid.RowSpan="1">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_date"
+                					Default="{m:Exp Str=SysTime.Today}"/>
+                            </a:Data.Prop>
+                        </sdk:DatePicker>
+                        <TextBlock Grid.Column="5" Margin="17,10,123,10" Grid.Row="10" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" RenderTransformOrigin="17.615,4.12" Width="0"  />
+                    </Grid>
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+        </Grid>
+    </Grid>
+</UserControl>

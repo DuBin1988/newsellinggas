@@ -55,7 +55,7 @@ public class SellSer {
 
 		// 获取用户档案及抄表记录情况
 		String sql = "select "
-				+ "isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(u.f_usertype,'民用') f_usertype,"
+				+ "isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(u.f_usertype,'民用') f_usertype,"
 				+ "isnull(u.f_districtname,'空小区') f_districtname,isnull(u.f_address,'空地址') f_address,"
 				+ "isnull(u.f_gasproperties,'普通民用') f_gasproperties,isnull(u.f_gaspricetype,'民用气价') f_gaspricetype,"
 				+ "ui.f_userid infoid,isnull(u.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
@@ -83,6 +83,8 @@ public class SellSer {
 		Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
 		result += "infoid:" + userinfo.get("infoid") + "";
 		result += ",f_username:'" + (String) userinfo.get("f_username") + "'";
+		BigDecimal zz = new BigDecimal(userinfo.get("f_zherownum").toString());
+		result += ",f_zherownum:" + zz;
 		result += ",f_address:'" + (String) userinfo.get("f_address") + "'";
 		// 用户结余
 		BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye").toString());
@@ -821,7 +823,7 @@ public class SellSer {
 				+ "u.f_idnumber f_idnumber, u.f_gaspricetype f_gaspricetype, u.f_gasprice f_gasprice, u.f_usertype f_usertype,"
 				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid,u.f_zherownum f_zherownum, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord, h.shifoujiaofei shifoujiaofei, h.oughtfee oughtfee,h.f_debtmoney  f_debtmoney ,h.lastinputdate from t_userfiles u "
-				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否') h on u.f_userid = h.f_userid where u.f_userid = '"
+				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否' and f_userid='"+userid+"') h on u.f_userid = h.f_userid where u.f_userid = '"
 				+ userid
 				+ "' "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";

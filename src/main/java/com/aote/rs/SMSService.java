@@ -1,6 +1,5 @@
 package com.aote.rs;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 //¿¨·þÎñ
-@Path("sms")
+@Path("smstest")
 @Scope("prototype")
 @Component
 public class SMSService {

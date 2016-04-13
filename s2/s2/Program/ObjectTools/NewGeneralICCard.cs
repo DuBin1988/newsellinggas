@@ -719,6 +719,10 @@ namespace Com.Aote.ObjectTools
             {
                 Kmm = "0001";
             }
+            if (Tm == null || Tm == "")
+            {
+                Tm = "0001";
+            }
             if (Dqdm == null || Dqdm == "")
             {
                 Dqdm = "0001";

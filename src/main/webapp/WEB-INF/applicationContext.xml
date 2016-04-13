@@ -1,48 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd 
        	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.aote.rs" />   
-	
+	<context:component-scan base-package="com.aote.rs" />
+
 	<tx:advice id="txAdvice" transaction-manager="txManager">
 		<tx:attributes>
 			<tx:method name="service" rollback-for="RuntimeException" />
 		</tx:attributes>
 	</tx:advice>
-<!-- 
-	<bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource"
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" 
+		/> <property name="url" value="jdbc:sqlserver://125.76.225.223:5223;database=sellinggas;" 
+		/> <property name="username" value="sa" /> <property name="password" value="af@QFG123" 
+		/> </bean> -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-     	<property name="url" value="jdbc:sqlserver://125.76.225.223:5223;database=sellinggas;" />
- 		<property name="username" value="sa" />
- 			<property name="password" value="af@QFG123" />
-	</bean>
- -->
- <bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-     	<property name="url" value="jdbc:sqlserver://127.0.0.1:1433;database=sellinggas;" />
- 		<property name="username" value="sa" />
- 			<property name="password" value="000000" />
+		<property name="url"
+			value="jdbc:sqlserver://127.0.0.1:1433;database=newsellinggas;" />
+		<property name="username" value="sa" />
+		<property name="password" value="123456" />
 	</bean>
 
- 
+
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="/WEB-INF/classes/hibernate.cfg.xml" />
 	</bean>
-	
+
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
@@ -51,122 +44,219 @@
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
-	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-   		<property name="sessionFactory">
-       		<ref bean="sessionFactory"/>
-   		</property>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
 	</bean>
 
-	 <!--配置事务传播特性-->
+	<!--配置事务传播特性 -->
 	<tx:advice id="TestAdvice" transaction-manager="transactionManager">
-    	<tx:attributes>
-    	  	<tx:method name="tx*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
-    	  	<tx:method name="query*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
-    	  	<tx:method name="get*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
-    	  	<tx:method name="noquery*" propagation="SUPPORTS" rollback-for="java.lang.Exception"/>
-    	</tx:attributes>
+		<tx:attributes>
+			<tx:method name="tx*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="query*" propagation="REQUIRED"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="get*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="noquery*" propagation="SUPPORTS"
+				rollback-for="java.lang.Exception" />
+		</tx:attributes>
 	</tx:advice>
 
-	 <!-- 配置参与事务的类-->
+	<!-- 配置参与事务的类 -->
 	<aop:config>
-		<aop:pointcut id="allTestServiceMethod" expression="execution(* com.aote.rs.*.*(..))"/>
-		<aop:advisor pointcut-ref="allTestServiceMethod" advice-ref="TestAdvice" />
+		<aop:pointcut id="allTestServiceMethod" expression="execution(* com.aote.rs.*.*(..))" />
+		<aop:advisor pointcut-ref="allTestServiceMethod"
+			advice-ref="TestAdvice" />
 	</aop:config>
-	
+
 	<bean id="SerialNumber"
 		class="com.aote.expression.paramprocessor.SerialNumberProcessor">
 	</bean>
 
-	<bean id="Single"
-		class="com.aote.expression.paramprocessor.SingleProcessor">
+	<bean id="Single" class="com.aote.expression.paramprocessor.SingleProcessor">
 	</bean>
- 
-	
-	
-		<!--银行Excel设置信息-->
-		<bean id="BankExcelSet" class="com.aote.rs.bank.bankreturn.BankExcelSet">
-			<property name="fields"  value="f_xunhao|f_userid|f_payfeetype|f_xieyihao|f_bizhong|f_shoufeizhanghao|f_shoufeidanwei|f_idofcard|f_usermc|oughtfee|dealfee|f_yongtu|paymenstate|f_cusxunhao|f_payfeetel|f_issend|f_note" />
-			<property name="startRow" value="6" />
+
+
+
+	<!--银行Excel设置信息 -->
+	<bean id="BankExcelSet" class="com.aote.rs.bank.bankreturn.BankExcelSet">
+		<property name="fields"
+			value="f_xunhao|f_userid|f_payfeetype|f_xieyihao|f_bizhong|f_shoufeizhanghao|f_shoufeidanwei|f_idofcard|f_usermc|oughtfee|dealfee|f_yongtu|paymenstate|f_cusxunhao|f_payfeetel|f_issend|f_note" />
+		<property name="startRow" value="6" />
 	</bean>
-	
-	 <!--银行返盘业务处理程序-->
-	 <bean id="BankReturnDispose"   	class="com.aote.rs.bank.bankreturn.RongChengBankReturn"/>
-	 
-	 <bean id="ProcessDef" init-method="load"
+
+	<!--银行返盘业务处理程序 -->
+	<bean id="BankReturnDispose" class="com.aote.rs.bank.bankreturn.RongChengBankReturn" />
+
+	<bean id="ProcessDef" init-method="load"
 		class="com.browsesoft.workflow.perform.ProcessDefManager">
 	</bean>
-	
-	<!-- 计算阶梯开始日期和结束日期 
-	<bean id="CountDate" class="com.aote.rs.charge.countdate.DateOpenCount"/>
-	-->
-	
-	<!-- 计算阶梯开始日期和结束日期 	-->
-	<bean id="EndDate" class="com.aote.rs.charge.enddate.NextMonthEndDate"/>
-	
-	<!-- 定时提取
-	<bean id="updateTask" class="com.aote.quartz.UpdateTask" >
-		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
-	</bean>  -->
-	
-	<bean id="chaoBiaoTask" class="com.aote.quartz.ChaoBiaoTask" >
+
+	<!-- 计算阶梯开始日期和结束日期 <bean id="CountDate" class="com.aote.rs.charge.countdate.DateOpenCount"/> -->
+
+	<!-- 计算阶梯开始日期和结束日期 -->
+	<bean id="EndDate" class="com.aote.rs.charge.enddate.NextMonthEndDate" />
+
+	<!-- 定时提取 <bean id="updateTask" class="com.aote.quartz.UpdateTask" > <property 
+		name="hibernateTemplate" ref="hibernateTemplate"></property> </bean> -->
+
+	<bean id="chaoBiaoTask" class="com.aote.quartz.ChaoBiaoTask">
 		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
 	</bean>
-	
-	<!-- Spring Quartz
-	<bean name="updateJob" class="org.springframework.scheduling.quartz.JobDetailBean">
- 
-		<property name="jobClass" value="com.aote.quartz.UpdateJob" />
- 
-		<property name="jobDataAsMap">
-		  <map>
-			<entry key="updateTask" value-ref="updateTask" />
-		  </map>
-		</property>
-	</bean> -->
-	
+
+	<!-- Spring Quartz <bean name="updateJob" class="org.springframework.scheduling.quartz.JobDetailBean"> 
+		<property name="jobClass" value="com.aote.quartz.UpdateJob" /> <property 
+		name="jobDataAsMap"> <map> <entry key="updateTask" value-ref="updateTask" 
+		/> </map> </property> </bean> -->
+
 	<bean name="chaoBiaoJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 
 		<property name="jobClass" value="com.aote.quartz.ChaoBiaoJob" />
-		
+
 		<property name="jobDataAsMap">
-		  <map>
-			<entry key="chaoBiaoTask" value-ref="chaoBiaoTask" />
-		  </map>
-		</property>		
+			<map>
+				<entry key="chaoBiaoTask" value-ref="chaoBiaoTask" />
+			</map>
+		</property>
 	</bean>
 
-	<!-- fire every minute 
-	<bean id="cronTrigger"
-	    class="org.springframework.scheduling.quartz.CronTriggerBean">
-	
-	    <property name="jobDetail" ref="updateJob" />
-	    <property name="cronExpression" value="0 0/45 23 29 * ?" />
-	
-	</bean>	-->
-	<bean id="cronTrigger1"
-	    class="org.springframework.scheduling.quartz.CronTriggerBean">
-	
-	    <property name="jobDetail" ref="chaoBiaoJob" />
-	    <property name="cronExpression" value="0 59 20 * * ?" />
-	
-	</bean>	
-	
+	<!-- fire every minute <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+		<property name="jobDetail" ref="updateJob" /> <property name="cronExpression" 
+		value="0 0/45 23 29 * ?" /> </bean> -->
+	<bean id="cronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerBean">
+
+		<property name="jobDetail" ref="chaoBiaoJob" />
+		<property name="cronExpression" value="0 59 20 * * ?" />
+
+	</bean>
+
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
-				<!-- <ref bean="updateJob" />  -->
+				<!-- <ref bean="updateJob" /> -->
 				<ref bean="chaoBiaoJob" />
 			</list>
 		</property>
-		 
+
 		<property name="triggers">
 			<list>
-				<!-- <ref bean="cronTrigger" />  -->
+				<!-- <ref bean="cronTrigger" /> -->
 				<ref bean="cronTrigger1" />
 			</list>
 		</property>
 	</bean>
+<!--
+	<bean id="HaiLeSms" class="com.aote.rs.sms.HaiLeSms">
+	</bean>
+	
+	<bean id="MzSmsQuartzs" class="com.aote.rs.sms.MzSmsQuartzs">
+	</bean>
+	
+	<bean id="MianZhuTask5"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="HaiLeSms" />
+		</property>
+		<property name="targetMethod">
+			<value>send</value>
+		</property>
+	</bean>
+
+	<bean id="remindCronTriggerista5" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="MianZhuTask5" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/2 * * * ?"</value>
+		</property>
+	</bean>
+
+	<bean id="schedulerista5"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<ref bean="remindCronTriggerista5" />
+		</property>
+	</bean>
 	
  
+	<bean id="MianZhuTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="MzSmsQuartzs" />
+		</property>
+		<property name="targetMethod">
+			<value>syqf</value>
+		</property>
+	</bean>
+
+	<bean id="remindCronTriggerista" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="MianZhuTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/2 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="schedulerista"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<ref bean="remindCronTriggerista" />
+		</property>
+	</bean>
+	
+	<bean id="MianZhuTask1"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="MzSmsQuartzs" />
+		</property>
+		<property name="targetMethod">
+			<value>ssyqf</value>
+		</property>
+	</bean>
+
+	<bean id="remindCronTriggerista1" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="MianZhuTask1" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/2 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="schedulerista1"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<ref bean="remindCronTriggerista1" />
+		</property>
+	</bean>
+	
+	<bean id="MianZhuTask2"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="MzSmsQuartzs" />
+		</property>
+		<property name="targetMethod">
+			<value>sssyqf</value>
+		</property>
+	</bean>
+
+	<bean id="remindCronTriggerista2" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="MianZhuTask2" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/2 * * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="schedulerista2"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<ref bean="remindCronTriggerista2" />
+		</property>
+	</bean>
+	 -->
 </beans>

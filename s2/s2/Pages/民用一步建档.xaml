@@ -19,9 +19,9 @@
 
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad x:Name="loader" Margin="0,0,-101,0">
-           <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="from t_inputtor"  HasEmptyRow="False"/>
-			 <!--气表品牌列表-->
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
+            <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
             <!--用气性质列表-->
             <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\=\'民用\'}"/>
@@ -730,7 +730,7 @@
                                         <TextBlock Text="电        话：" Margin="1,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Height="25" />
                                         <TextBox Text="{m:Bind Path=f_phone}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="5" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" IsReadOnly="False" Grid.ColumnSpan="3" >
                                             <a:Data.Prop>
-                                                <o:PropertySetter PropertyName="f_phone" NotNull="True" Value="{m:Exp Str=userfilego.f_phone}"/>
+                                                <o:PropertySetter PropertyName="f_phone"  Value="{m:Exp Str=userfilego.f_phone}"/>
                                             </a:Data.Prop>
                                         </TextBox>
                                         <TextBlock Text="楼栋：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Row="3" Grid.Column="2" Width="50"/>
@@ -804,6 +804,11 @@
                                             </a:Data.Prop>
                                         </CheckBox>
                                         <TextBlock Grid.Column="8" Margin="0,6,0,5" TextWrapping="Wrap" Text="抄表员：" TextAlignment="Right" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBox  Text="{m:Bind Path=f_inputtor}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="6" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3" IsReadOnly="True" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_inputtor" NotNull="True" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_inputtor}"  />
+                                            </a:Data.Prop>
+                                        </TextBox>
                                         <Border  Grid.Row="15" Margin="5,0,0,0" BorderThickness="0,0,0,3"  Grid.ColumnSpan="10" >
                                             <Border.Background>
                                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -911,22 +916,13 @@
                                         		<o:PropertySetter PropertyName="f_books" Default="{m:Exp Str=userfilego.f_books}" />
                                         	</a:Data.Prop>
                                         </TextBox>
-                                        <ComboBox x:Name="CoboxInputtor" ItemsSource="{m:Exp Str=inputtorlist}" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="6" Height="25" IsEnabled="true" FontSize="13.333">
-                                        	<ComboBox.ItemTemplate>
-                                        		<DataTemplate>
-                                        			<TextBlock Height="20" Text="{Binding f_inputtor}"/>
-                                        		</DataTemplate>
-                                        	</ComboBox.ItemTemplate>
-                                        	<a:Data.Prop>
-                                        		<o:PropertySetter PropertyName="f_inputtor" NoDependValue="{m:Exp Str=inputtorlist.SelectedItem.f_inputtor}" NotNull="True"/>
-                                        	</a:Data.Prop>
-                                        </ComboBox>
-                                        <TextBox x:Name="CoboxPin_Copy1" IsReadOnly="True"  Text="{m:Bind Path=f_inputtorphone}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="7" Height="25" Grid.ColumnSpan="1" Grid.RowSpan="1" Padding="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                        	<a:Data.Prop>
-                                        		<o:PropertySetter PropertyName="f_inputtorphone"  NoDependValue="{m:Exp Str=CoboxInputtor.SelectedItem.f_phone}"/>
-                                        	</a:Data.Prop>
-                                        </TextBox>
+                                       
                                         <TextBlock Grid.Column="8" Margin="0,6,0,5" TextWrapping="Wrap" Text="抄表员电话：" TextAlignment="Right" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBox  Text="{m:Bind Path=f_inputtorphone}" Grid.Column="9" Margin="0,3,0,2" Grid.Row="7" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3" IsReadOnly="True" >
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_inputtorphone" NotNull="True" NoDependValue="{m:Exp Str=areafiles.SelectedItem.f_inputtorphone}"  />
+                                            </a:Data.Prop>
+                                        </TextBox>
                                         <TextBox Text="{m:Bind Path=f_userinfoid}"  Grid.Column="5" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="3" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" IsReadOnly="True"  >
                                         	<a:Data.Prop>
                                         		<o:PropertySetter PropertyName="f_userinfoid" Value="{m:Exp Str=temp.f_userid}" NotNull="True"/>

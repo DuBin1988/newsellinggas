@@ -52,7 +52,7 @@
             <!--用户列表-->
             <o:PagedObjectList Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
             Path="{m:Exp Str=$from t_userfiles where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_userstate !\=\'销户\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
-			PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+			PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
             <!--用户对象-->
             <o:GeneralObject Name="userfiles" NotEmpty="true" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
 			IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}"
@@ -99,6 +99,7 @@
 
                 <!--换机表时，抄表指数为新表底数-->
                 <o:PropertySetter PropertyName="lastinputgasnum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:pipelinego.f_newgasmeteraccomodations\,null}"/>
+                <o:PropertySetter PropertyName="lastrecord" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:pipelinego.f_newgasmeteraccomodations\,null}"/>
                 <!--别名-->
                 <o:PropertySetter PropertyName="f_aliasname" Value="{m:Exp Str=pipeline.DataContext.f_aliasname}"/>
                 <!--额定流量-->

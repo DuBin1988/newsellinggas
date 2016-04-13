@@ -22,5 +22,10 @@ namespace s2
         {
             bcsk.Text = "0";
         }
+
+        private void ui_lostfocus(object sender, RoutedEventArgs e)
+        {
+      
+        }
 	}
 }

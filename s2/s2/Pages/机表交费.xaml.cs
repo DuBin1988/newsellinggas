@@ -392,7 +392,7 @@ namespace Com.Aote.Pages
             ui_address.Text = (String)item["f_address"];
             //ui_gaspricetype.Text = (String)item["f_gaspricetype"];
             ui_userid.Text = item["infoid"].ToString();
-
+            zhe.Text=item["f_zherownum"].ToString();
             //ui_dibaohu.IsChecked = item["f_dibaohu"].ToString().Equals("1");
             ui_userstate.Text = (String)item["f_userstate"];
             ui_paytype.Text = (String)item["f_payment"];
@@ -519,9 +519,16 @@ namespace Com.Aote.Pages
 
             //print.Completed -= print_Completed;
             //打印折子
-            PrintObj zzprint = FrameworkElementExtension.FindResource(this.save2, "zzprint") as PrintObj;
-            zzprint.Completed += zzprint_Completed;
-            zzprint.TipPrint();
+            GeneralObject dz = (from p in loader.Res where p.Name.Equals("dazhe") select p).First() as GeneralObject;
+
+            
+
+            if (dz.GetPropertyValue("value").ToString() == "是")
+            {
+                PrintObj zzprint = FrameworkElementExtension.FindResource(this.save2, "zzprint") as PrintObj;
+                zzprint.Completed += zzprint_Completed;
+                zzprint.TipPrint();
+            }
         }
 
         void zzprint_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)

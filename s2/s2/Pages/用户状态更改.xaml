@@ -19,15 +19,18 @@
 
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-101,0">
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
+
 
             <!--阶梯气价信息列表-->
             <o:ObjectList Name="stairlist" EntityType="t_stairprice" 
                           WebClientInfo="{StaticResource dbclient}" 
-                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\' group by a.f_gasproperties}" 
+                          Path="{m:Exp Str=$sql/select a.f_gasproperties f_gasproperties\,a.f_gasproperties f_gasp from t_stairprice a where a.f_branch\=\'\{LoginUser.f_fengongsi\}\' group by a.f_gasproperties}" 
                              LoadOnPathChanged="True" 
                           />
             <o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
-             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'  and  (f_OrgStr  like  \'\{$%$\}\{LoginUser.f_parentname\}\{$%$\}\')$\,$null$}"/>
+             	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\'  and  (f_branch\=\'\{LoginUser.f_fengongsi\}\')$\,$null$}"/>
 
 
             <o:GeneralObject Name="test1" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"  >
@@ -120,7 +123,7 @@
                                 </TextBox>
                                 <TextBox Visibility="Collapsed" x:Name="org" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=org}" Width="Auto" Margin="0,2,0,1" Height="25" Grid.ColumnSpan="1" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_parentname}"  Operator="f_OrgStr like '%this%'" />
+                                        <o:PropertySetter PropertyName="org" Default="{m:Exp Str=LoginUser.f_fengongsi}"  Operator="f_filiale like '%this%'" />
                                     </a:Data.Prop>
                                 </TextBox>
 
@@ -154,8 +157,7 @@
                         <Button x:Name="save" Content="保  存" Margin="5" 
 							IsEnabled="{m:Exp Str=!userfilego.HasErrors }" 
 							Click="{m:Exp Str='SaveAction.Invoke()'}" Width="50" />
-                        <Button Content=" 显示error" Height="30"  Click="save12_Click" IsEnabled="{m:Exp Str=userfile.DataContext.HasErrors}" Width="40"/>
-
+                       
                         <Button x:Name="cancel" Content="撤  销" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();areafiles.SelectedItem\=null}" Width="50"/>
                     </toolkit:DockPanel>
                     <Grid x:Name="userfile" DataContext="{m:Exp Str=userfilego}" Margin="0,0,0,20" >
@@ -495,7 +497,7 @@
 													Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
                                             </a:Data.Prop>
                                         </toolkit:TimePicker>
-                                        <ComboBox x:Name="CoboxPinp_Copy1" ItemsSource="{m:Exp Str=chaobiaoyuanlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="3" Height="25" IsEnabled="true" FontSize="13.333">
+                                        <ComboBox x:Name="CoboxPinp_Copy1" ItemsSource="{m:Exp Str=inputtorlist}" DisplayMemberPath="f_inputtor" SelectedValuePath="f_inputtor" SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="3" Height="25" IsEnabled="true" FontSize="13.333">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_inputtor"  NotNull="True"/>
                                             </a:Data.Prop>

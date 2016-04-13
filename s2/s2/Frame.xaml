@@ -52,8 +52,10 @@
             
             <!--服务器时间-->
 			<o:SystemTime Name="SysTime" WebClientInfo="{StaticResource ldapaddress}" Path="user/systime"/>
-			
-			<!--编号产生器-->
+            <!--编号产生器-->
+            <o:SeriaNumber Name="userSeria" Length="8"  Key="用户编号"/>
+
+            <!--编号产生器-->
 			<o:SeriaNumber Name="Seria" Length="5"  Key="{m:Exp Str='${LoginUser.parent.name}{SysTime.Now.ToString($yyyymmdd$)}'}"/>
 			
 			<!--用户编号-->
@@ -285,7 +287,7 @@
         </m:ResourceLoad>
 
         <sdk:Frame Name="MainFrame" Source=
-		"{m:Exp Str='CustomTypes.State==$LoadError$:$/ErrorPage.xaml$,CustomTypes.State==$Loaded$ and LoginUser.State==$Loaded$ :$/MainPage.xaml$,$/Login.xaml$'}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		"{m:Exp Str='CustomTypes.State==$LoadError$:$/ErrorPage.xaml$,CustomTypes.State==$Loaded$ and LoginUser.State==$Loaded$ :$/GasMainPage.xaml$,$/Login.xaml$'}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         </sdk:Frame>
 
     </Grid>

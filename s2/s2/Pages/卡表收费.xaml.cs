@@ -23,7 +23,7 @@ namespace Com.Aote.Pages
 
         PagedList listwh = new PagedList();
         private void save12_Click(object sender, RoutedEventArgs e)
-         {
+        {
             GeneralObject go = kbfee1.DataContext as GeneralObject;
             Dictionary<String, String> dict = go._errors;
             String err = "";

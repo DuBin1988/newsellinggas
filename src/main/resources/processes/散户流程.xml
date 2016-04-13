@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<WorkflowDiagram id="5405590" name="报装流程">
+	<!-- <Var id="1" name="a" description="测试"/>
+	<Var id="2" name="b" description="测试"/> -->
+	<Actor id="2849129" name="执行者">
+		<Activity id="1" name="申请登记" personexpression="R(业务员)" />	
+		<Activity id="2" name="收费标准制定"  personexpression="R(业务员)" />	
+		<Activity id="3" name="派工" personexpression="R(业务员)" />	
+		<Activity id="4" name="施工" personexpression="R(业务员)" />	
+		<Activity id="5" name="通气" personexpression="R(业务员)" />
+		<Activity id="6" name="完工" personexpression="R(业务员)" />
+		
+		
+	</Actor>
+	<!-- <Diversion id="1" head="1" tail="2" expression="a>1"/> -->
+	<Diversion id="1" head="1" tail="2"/>
+	<Diversion id="2" head="2" tail="3"/>
+	<Diversion id="3" head="3" tail="4"/>
+	<Diversion id="4" head="4" tail="5"/>
+	<Diversion id="5" head="5" tail="6"/>
+	
+	
+</WorkflowDiagram>

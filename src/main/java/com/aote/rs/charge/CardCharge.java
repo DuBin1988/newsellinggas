@@ -104,15 +104,15 @@ public class CardCharge {
 				if (sumamont < stair1amount) {
 					if (allamont < stair1amount) {
 						stair1surplus = stair1amount - allamont;
-						stair2surplus = stair2amount-stair1amount;
-						stair3surplus = stair3amount-stair2amount;
+						stair2surplus = stair2amount - stair1amount;
+						stair3surplus = stair3amount - stair2amount;
 						stair1num = pregas;
 						stair1fee = pregas * stair1price;
 						chargenum = pregas * stair1price;
 					} else if (allamont >= stair1amount
 							&& allamont < stair2amount) {
 						stair2surplus = stair2amount - allamont;
-						stair3surplus = stair3amount-stair2amount;
+						stair3surplus = stair3amount - stair2amount;
 						stair1num = stair1amount - sumamont;
 						stair1fee = (stair1amount - sumamont) * stair1price;
 						stair2num = allamont - stair1amount;
@@ -144,7 +144,7 @@ public class CardCharge {
 				} else if (sumamont >= stair1amount && sumamont < stair2amount) {
 					if (allamont < stair2amount) {
 						stair2surplus = stair2amount - allamont;
-						stair3surplus = stair3amount-stair2amount;
+						stair3surplus = stair3amount - stair2amount;
 						stair2num = pregas;
 						stair2fee = pregas * stair2price;
 						chargenum = stair2fee;
@@ -158,7 +158,7 @@ public class CardCharge {
 						chargenum = stair2fee + stair3fee;
 					} else {
 						stair2num = stair2amount - sumamont;
-						stair3surplus = stair3amount-stair2amount;
+						stair3surplus = stair3amount - stair2amount;
 						stair2fee = (stair2amount - sumamont) * stair2price;
 						stair3num = stair3amount - stair2amount;
 						stair3fee = (stair3amount - stair2amount) * stair3price;
@@ -211,7 +211,11 @@ public class CardCharge {
 			sell.put("f_chargenum", chargenum);
 			sell.put("f_stardate", stardate);
 			sell.put("f_enddate", enddate);
-			sell.put("f_totalcost", chargenum - zhye);
+			if (chargenum < zhye) {
+				sell.put("f_totalcost", 0);
+			} else {
+				sell.put("f_totalcost", chargenum - zhye);
+			}
 			obj = MapToJson(sell);
 			return obj;
 		} catch (Exception e) {
@@ -475,7 +479,8 @@ public class CardCharge {
 					+ "where f_userid in (select f_userid from t_userfiles   where f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
 					+ userid
 					+ "')) and f_deliverydate>='"
-					+ stardate + "' and f_deliverydate<='" + enddate + "'";
+					+ stardate
+					+ "' and f_deliverydate<='" + enddate + "'";
 			List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)

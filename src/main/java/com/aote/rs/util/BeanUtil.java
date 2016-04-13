@@ -26,7 +26,7 @@ public class BeanUtil {
 				.getWebApplicationContext(ContextListener.getContext());
 		Map beans =  applicationContext.getBeansOfType(type);
 		if(beans.values().size()==0){
-			throw new Exception("在applicationContext.xml中没有找到类型为"+type+"的配置");
+			return null;
 		}
 		return beans.values().iterator().next();
 	}

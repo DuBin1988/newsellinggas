@@ -220,6 +220,36 @@ public class DBService {
 		log.debug(array.toString());
 		return array;
 	}
+	
+	@GET
+	@Path("/one/sql/{sql}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public JSONObject queryOnesql(@PathParam("sql") String query,
+			@PathParam("name") String name) {
+		// %在路径中不能出现，把%改成了^
+		// query = query.replaceAll("\\^", "%");
+		log.debug(query);
+		JSONObject result = new JSONObject();
+		try {
+
+			HibernateSQLCall sqlCall = new HibernateSQLCall(query, 0,
+					10);
+			sqlCall.transformer = Transformers.ALIAS_TO_ENTITY_MAP;
+			List<Map<String, Object>> list = executeFind(
+					sessionFactory.getCurrentSession(), sqlCall);
+			if (list.size() != 1) {
+				// 查询到多条数据，跑出异常
+				throw new WebApplicationException(500);
+			}
+			Map<String, Object> map = list.get(0);
+			result = (JSONObject) new JsonTransfer().MapToJson(map);
+			log.debug(result.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 	@GET
 	@Path("/one/{hql}")

@@ -174,7 +174,7 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-								Path="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\}  and f_comtype \!\=\'银行\'}"
+								Path="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\}  and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_comtype \!\=\'银行\'}"
 								IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or DeleteAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
