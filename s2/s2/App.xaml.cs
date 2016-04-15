@@ -102,5 +102,9 @@ namespace s2
 
             }
         }
+        /// <summary>
+        /// 金税盘全局变量
+        /// </summary>
+        public dynamic GoldTax { get; set; }
     }
 }
