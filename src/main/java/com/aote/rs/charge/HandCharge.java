@@ -390,15 +390,24 @@ public class HandCharge {
 		// 气费大于0,结余够，前面无欠费，自动下账
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
+			// 折子号
+			String zherownum = user.get("f_zherownum") + "";
+			int f_zherownum = 0;
+			if (zherownum.equals("") || zherownum.equals("null")) {
+				f_zherownum = 13;
+			} else {
+				f_zherownum = Integer.parseInt(zherownum);
+			}
+			if (f_zherownum == 0) {
+				f_zherownum = 13;
+			}
 			// 自动下账
-
 			// 配置绵竹短信类 存在 再发短信
 			ISms sms = (ISms) BeanUtil.getBean(ISms.class);
 			if (sms != null) {
 				zdSendMsg(user, chargenum, f_zhye.subtract(chargenum)
 						.doubleValue());
 			}
-
 			double grossproceeds = 0;
 			Map<String, Object> sell = new HashMap<String, Object>();
 			sell.put("f_userid", map.get("f_userid")); // 表ID
@@ -406,6 +415,7 @@ public class HandCharge {
 			sell.put("f_orgstr", orgpathstr);// 操作员组织信息
 			sell.put("f_payfeevalid", "有效");// 交费是否有效
 			sell.put("f_payfeetype", "自动下账");// 收费类型
+			sell.put("f_zherownum", f_zherownum);
 			// 修改上期指数
 			sell.put("lastinputgasnum", lrg.doubleValue()); // 上期底数
 			sell.put("lastrecord", reading); // 本期底数
@@ -453,8 +463,13 @@ public class HandCharge {
 			sell.put("f_enddate", enddate);
 			sell.put("f_allamont", sumamont.doubleValue());
 			int sellid = (Integer) hibernateTemplate.save("t_sellinggas", sell);
+			// 折子行号为24，换行
+			if (f_zherownum >= 24) {
+				f_zherownum = 0;
+			}
 			this.updateUser(user, f_zhye.subtract(chargenum),
-					f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
+					f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas),
+					f_zherownum);
 
 			hql = "update t_userfiles set lastinputgasnum=?,"
 					+
@@ -1077,6 +1092,7 @@ public class HandCharge {
 		} catch (Exception e) {
 			log.debug("批量抄表记录上传 失败：" + e.getMessage());
 			ret = e.getMessage();
+			log.debug("批量抄表记录上传 失败异常信息" + e);
 		} finally {
 			return ret;
 		}
@@ -1187,12 +1203,24 @@ public class HandCharge {
 				+ "");
 		BigDecimal lastrecord = new BigDecimal(data.get("lastrecord") + "");
 		BigDecimal oughtfee = new BigDecimal(data.get("oughtfee") + "");
+		// 折子号
+		String zherownum = userinfo.get("f_zherownum") + "";
+		int f_zherownum = 0;
+		if (zherownum.equals("") || zherownum.equals("null")) {
+			f_zherownum = 13;
+		} else {
+			f_zherownum = Integer.parseInt(zherownum);
+		}
+		if (f_zherownum == 0) {
+			f_zherownum = 13;
+		}
 		Map<String, Object> sell = new HashMap<String, Object>();
 		sell.put("f_userid", data.get("f_userid")); // 表ID
 		sell.put("f_userinfoid", userinfo.get("f_userid"));// 用户id
 		sell.put("f_orgstr", data.get("f_orgstr"));// 操作员组织信息
 		sell.put("f_payfeevalid", "有效");// 交费是否有效
 		sell.put("f_payfeetype", "机表交费");// 收费类型
+		sell.put("f_zherownum", f_zherownum);
 		// 修改上期指数
 		sell.put("lastinputgasnum", lastinputgasnum.doubleValue()); // 上期底数
 		sell.put("lastrecord", lastrecord.doubleValue()); // 本期底数
@@ -1248,9 +1276,14 @@ public class HandCharge {
 				userinfo.get("f_metergasnums") + "");
 		BigDecimal f_cumulativepurchaseu = new BigDecimal(
 				userinfo.get("f_cumulativepurchase") + "");
+		// 折子行号为24，换行
+		if (f_zherownum >= 24) {
+			f_zherownum = 0;
+		}
 		// 更新户
 		this.updateUser(userinfo, f_zhye.subtract(chargenum),
-				f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas));
+				f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas),
+				f_zherownum);
 		// 当前表累计购气量 （暂）
 		BigDecimal f_metergasnums = new BigDecimal(hand.get("f_metergasnums")
 				+ "");
@@ -1474,7 +1507,8 @@ public class HandCharge {
 	 * 更新用户信息
 	 */
 	private void updateUser(Map user, BigDecimal nowye,
-			BigDecimal newMeterGasNums, BigDecimal newCumuGas) throws Exception {
+			BigDecimal newMeterGasNums, BigDecimal newCumuGas, int zherownum)
+			throws Exception {
 		if (nowye.compareTo(new BigDecimal(0)) < 0) {
 			nowye = new BigDecimal(0);
 		}
@@ -1487,7 +1521,8 @@ public class HandCharge {
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
 				+ "'," + " f_metergasnums=" + newMeterGasNums.doubleValue()
 				+ ", f_cumulativepurchase=" + newCumuGas.doubleValue()
-				+ " where f_userid='" + user.get("f_userid") + "'";
+				+ ",f_zherownum=" + zherownum + 1 + " where f_userid='"
+				+ user.get("f_userid") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
 	}
