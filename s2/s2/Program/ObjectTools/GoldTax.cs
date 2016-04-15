@@ -180,6 +180,7 @@ namespace Com.Aote.ObjectTools
                 Log.Debug("开具发票成功-开始打印");
                 //打印
                 obj.PrintInv();
+                State = State.End;
                 OnCompleted(null);
             }
         }
