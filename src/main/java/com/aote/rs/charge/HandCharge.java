@@ -59,6 +59,9 @@ public class HandCharge {
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
+	}
 
 	// private int stairmonths;
 
