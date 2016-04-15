@@ -62,8 +62,8 @@ public class SellSer {
 				+ "isnull(u.f_payment,'现金') f_payment,isnull(u.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
 																																		// t_userinfo
 				+ "" // u t_userfiles
-				+ "h.days days,h.f_userid f_userid,h.oughtamount oughtamount,"
-				+ "h.oughtfee oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
+				+ "h.days days,h.f_userid f_userid,isnull(h.oughtamount,0) oughtamount,"
+				+ "isnull(h.oughtfee,0) oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord,h.f_endjfdate f_endjfdate,h.f_operator f_operator,"
 				+ "h.f_inputdate f_inputdate,h.f_network f_network,h.f_handdate f_handdate,"
 				+ "h.id handId ,isnull(h.f_stair1amount,0) f_stair1amount ,isnull(h.f_stair1price,0) f_stair1price, isnull(h.f_stair1fee,0) f_stair1fee, isnull(h.f_stair2amount,0) f_stair2amount, isnull(h.f_stair2price,0) f_stair2price, isnull(h.f_stair2fee,0) f_stair2fee"
@@ -72,7 +72,7 @@ public class SellSer {
 				"  from (select * from t_userinfo where f_userid='"
 				+ userid
 				+ "') ui join t_userfiles u on ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
-				+ "left join (select datediff(day,f_endjfdate,GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
+				+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
 				+ "on u.f_userid=h.f_userid "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
 		log.debug("查询欠费sql:" + sql);

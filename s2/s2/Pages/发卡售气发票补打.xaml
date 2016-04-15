@@ -105,8 +105,8 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
 						<a:Data.Items>
 							<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-								MultiPath="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'}"
-								Path="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\} and f_payfeevalid\=\'有效\' order by f_deliverydate desc\,f_deliverytime desc}"
+								MultiPath="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\} and f_payfeevalid\=\'有效\'and f_filiale\=\'\{\LoginUser.f_fengongsi\}\'}"
+								Path="{m:Exp Str=$from t_sellinggas where \{userfilesearch.DataContext.Condition\} and f_payfeevalid\=\'有效\' and f_filiale\=\'\{\LoginUser.f_fengongsi\}\' order by f_deliverydate desc\,f_deliverytime desc}"
 								IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or DeleteAction.State\=\=$End$ or userfile.DataContext.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 						</a:Data.Items>
@@ -210,13 +210,19 @@
 							<TextBlock Text="维管费截止月份：" Margin="0,4,0,1" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
 							<TextBlock Text="预购气量：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Grid.Column="4" Height="25"/>
 							<TextBlock Text="预购金额：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25"/>
-							<TextBlock Text="付款方式：" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25"/>
-							<TextBox  Text="{m:Bind Path=f_payment}"  Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap"  Grid.Row="7"  IsReadOnly="True" Height="25">
+                            <TextBlock Text="付款方式：" Grid.Column="2" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Height="25"/>
+                            <TextBlock Text="本期余额：" Grid.Column="4" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="11" Height="25"/>
+                            <TextBox  Text="{m:Bind Path=f_payment}"  Grid.Column="3" Margin="0,3,0,2" TextWrapping="Wrap"  Grid.Row="7"  IsReadOnly="True" Height="25">
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_payment"/>
 								</a:Data.Prop>
 							</TextBox>
-							<TextBlock Text="本次总累计购气量：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="4" Height="25"/>
+                                <TextBox  Text="{m:Bind Path=f_benqizhye}"  Grid.Column="5" Margin="0,3,0,2" TextWrapping="Wrap"  Grid.Row="11"  IsReadOnly="True" Height="25">
+                                    <a:Data.Prop>
+                                        <o:PropertySetter PropertyName="f_benqizhye"/>
+                                    </a:Data.Prop>
+                                </TextBox>
+                                <TextBlock Text="本次总累计购气量：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="4" Height="25"/>
 							<TextBlock Text="表本次累计购气量：" Margin="0,3,0,2" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBlock Text="收      款：" Grid.Column="2" Margin="0,3,0,2" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBlock Text="应交金额：" Margin="0,3,0,2" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
@@ -871,54 +877,55 @@
 				<o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
 					EntityType="t_myfaka"  />
 			</a:Data.Context>
-			<Grid.RowDefinitions >
-				<RowDefinition Height="50"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="80"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-				<RowDefinition Height="17"/>
-			</Grid.RowDefinitions>
-			<Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="16*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-					<ColumnDefinition Width="14*"/>
-				</Grid.ColumnDefinitions>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="17"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="{m:Exp Str=sellinggas.f_zherownum.ToString().ToInt()}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
 
-				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-				<TextBlock Text="{m:Exp Str=sellinggas.lastrecord\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="1" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-				<TextBlock Text="{m:Exp Str=sellinggas.f_pregas\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-				<TextBlock Text="{m:Exp Str=sellinggas.f_totalcost\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-				<TextBlock Text="{m:Exp Str=sellinggas.f_grossproceeds\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-				<TextBlock Text="{m:Exp Str=sellinggas.f_benqizhye\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-				<TextBlock Text="{m:Exp Str=sellinggas.f_zhinajin\=&gt;Completed}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-				<TextBlock Text="{m:Exp Str=sellinggas.f_deliverydate.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" d:LayoutOverrides="Height" />
-			</Grid>
+                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yy-MM$)}" FontSize="12" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="26,0,24,0"  />
+                <TextBlock Text="{m:Exp Str=sellinggas.lastrecord}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
+                <TextBlock Text="{m:Exp Str=sellinggas.f_pregas}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" />
+                <TextBlock Text="{m:Exp Str=sellinggas.f_totalcost}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
+                <TextBlock Text="{m:Exp Str=sellinggas.f_benqizhye}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
+                <TextBlock Text="{m:Exp Str=sellinggas.f_grossproceeds}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
+                <TextBlock Text="{m:Exp Str=sellinggas.f_sgoperator}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="24,0,26,0"  />
+                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="8" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="17,0,-27,0"  />
+            </Grid>
 	    </Grid>
 	    <Grid x:Name="aofengprint" Background="b" Margin="-1630,0,0,-320"  Width="1125" Height="346" VerticalAlignment="Bottom" HorizontalAlignment="Left">
 	    	<Grid.ColumnDefinitions>

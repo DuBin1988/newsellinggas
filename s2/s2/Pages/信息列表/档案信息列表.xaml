@@ -454,7 +454,7 @@
                                     <TextBlock TextWrapping="Wrap" Text="地　　址：" Margin="15,2,0,1" Grid.Row="1" Grid.Column="2" TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="70"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_address}" Width="Auto" Margin="0" Grid.Column="3" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like 'this%'"/>
+                                            <o:PropertySetter PropertyName="f_address"  Operator="f_address like '%this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
 
@@ -556,7 +556,7 @@
                                     <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="18,2,0,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="82"/>
                                     <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Grid.Column="1" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_userid"  Operator="f_address like 'this%'"/>
+                                            <o:PropertySetter PropertyName="f_userid"  Operator="f_userinfoid like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <StackPanel Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="3" Orientation="Horizontal" >
@@ -951,8 +951,8 @@
 								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}">
                                 <a:Data.Items>
                                     <o:PagedObjectList x:Name="unitinfoslist2" WebClientInfo="{StaticResource dbclient}"
-										MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} order by f_operatedate DESC $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' order by f_operatedate DESC $\,$abc$}"
+										MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} and f_branch \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+                                        Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} order by f_operatedate DESC $\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_road where \{street.DataContext.Condition\} and f_branch \=\'\{LoginUser.f_fengongsi\}\' order by f_operatedate DESC $\,$abc$}"
 										PageIndex="{m:Exp Str=pager332.PageIndex}" PageSize="{m:Exp Str=pager332.PageSize}" SumNames=","  />
                                 </a:Data.Items>
                                 <sdk:DataGrid.Columns>

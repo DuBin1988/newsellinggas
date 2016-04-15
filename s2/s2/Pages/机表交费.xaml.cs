@@ -46,6 +46,12 @@ namespace Com.Aote.Pages
                 MessageBox.Show("无法获取当前登陆用户信息,请重新登陆后操作!");
                 return;
             }
+            //查询金税盘发票信息
+            GoldTax tax = (GoldTax)(from r in loader.Res where r.Name.Equals("tax") select r).First();
+            if (!tax.GetInfo())
+            {
+                return;
+            }
             string loginid = (string)loginUser.GetPropertyValue("id");
             string orgpathstr = (string)loginUser.GetPropertyValue("orgpathstr");
             //显示正在工作
@@ -66,16 +72,12 @@ namespace Com.Aote.Pages
 
         void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-
             busy.IsBusy = false;
-
             // 没有出错
             if (e.Error == null)
             {
-
                 //把数据转换成JSON
                 JsonObject item = JsonValue.Parse(e.Result) as JsonObject;
-
                 // 把交易编号、交易日期写入打印界面
                 SeriaNumber Seriabx = (SeriaNumber)FrameworkElementExtension.FindResource(this, "Seriabx");
                 if (Seriabx == null)
@@ -83,8 +85,10 @@ namespace Com.Aote.Pages
                     MessageBox.Show("无法获取编号产生器信息,请重新登陆后操作!");
                     return;
                 }
-
                 ui_sellid.Text = Seriabx.Key.ToString() + item["id"].ToString();
+				//把收费id放到收费对象
+                GeneralObject retsell = (GeneralObject)(from r in loader.Res where r.Name.Equals("retsell") select r).First();
+                retsell.FromJson(item);
                 string date = (string)item["f_deliverydate"];
                 ui_day.Text = date;
                 ui_onegas1.Text = item["f_stair1amount"].ToString();
@@ -168,7 +172,15 @@ namespace Com.Aote.Pages
                 }
                  * */
                 // 调用打印
-                print.TipPrint();
+                GoldTax tax = (GoldTax)(from r in loader.Res where r.Name.Equals("tax") select r).First();
+                if (tax.IsInit)
+                {
+                    tax.Invoice();
+                }
+                else 
+                {
+                    print.TipPrint();
+                }
             }
             else
             {
@@ -267,7 +279,6 @@ namespace Com.Aote.Pages
                     canSub = true;
                     currentId = f_userid;
                 }
-
                 // 当前表没有终止，够交，扣除，交费记录变为已交
                 if (total >= oughtfee && canSub)
                 {
@@ -520,9 +531,6 @@ namespace Com.Aote.Pages
             //print.Completed -= print_Completed;
             //打印折子
             GeneralObject dz = (from p in loader.Res where p.Name.Equals("dazhe") select p).First() as GeneralObject;
-
-            
-
             if (dz.GetPropertyValue("value").ToString() == "是")
             {
                 PrintObj zzprint = FrameworkElementExtension.FindResource(this.save2, "zzprint") as PrintObj;
@@ -541,5 +549,7 @@ namespace Com.Aote.Pages
             MessageBox.Show("交费完成！"); 
             Clear();
         }
+
+        
     }
 }

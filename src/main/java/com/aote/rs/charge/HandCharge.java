@@ -1515,6 +1515,9 @@ public class HandCharge {
 		if (nowye.compareTo(new BigDecimal(0)) < 0) {
 			nowye = new BigDecimal(0);
 		}
+		
+		int f_zherownum = zherownum + 1;
+		
 		// 更新用户
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
@@ -1524,7 +1527,7 @@ public class HandCharge {
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
 				+ "'," + " f_metergasnums=" + newMeterGasNums.doubleValue()
 				+ ", f_cumulativepurchase=" + newCumuGas.doubleValue()
-				+ ",f_zherownum=" + zherownum + 1 + " where f_userid='"
+				+ ",f_zherownum=" + f_zherownum + " where f_userid='"
 				+ user.get("f_userid") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
