@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
     xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
     xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
 	xmlns:bb="clr-namespace:Com.Aote.Behaviors"
 	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
@@ -49,7 +50,7 @@
             <o:SearchObject Name="search"/>
             <!--机表用户对象-->
             <o:GeneralObject Name="kbusers" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$one/from t_userinfo where f_userid\=\'\{kbfee.f_userid\}\' and f_gasmeterstyle\=\'机表\'$}"  
+				Path="{m:Exp Str=$one/from t_userinfo where f_userid\=\'\{kbfee.f_userid\}\'$}"  
 				IsOld="{m:Exp Str=kbfee.f_userid!\=null}"
 			 	IsInit="{m:Exp Str=kbusers.State\=\=$LoadError$ |or| kbfee.f_userid\=\=null}">
                 <o:PropertySetter PropertyName="f_finabuygastime" NoDependValue="{m:Exp Str=kbfee.f_deliverytime}"/>
@@ -67,6 +68,30 @@
 		       PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 
             <b:HQLAction Name="UpdateZhinajin"  WebClientInfo="{StaticResource dbclient}"  Type="sql" HQL="{m:Exp Str=$update t_zhinajin set f_state\=\'有效\' where id\=(select top 1 id from t_zhinajin where f_state\=\'无效\' and f_userid\=\'\{kbfee.f_userid\}\' and f_zhinajin\=\'\{kbfee.f_zhinajin\}\'  and f_date\=\'\{kbfee.f_date.ToString($yyyy-MM-dd$)\}\')$}" />
+
+			<!--交费完成临时保存对象-->
+			<o:GeneralObject Name="retsell" CanSave="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" 
+			IsInit="{m:Exp Str=kbfee.f_userid\=\=null}"/>
+
+			<!--更新交费记录的金税盘发票代码-->
+			<b:HQLAction Name="updatetaxnum" CanSave="{m:Exp Str=tax.State\=\=$End$}"  WebClientInfo="{StaticResource dbclient}"  Type="sql" 
+			HQL="{m:Exp Str=$update t_sellinggas set f_infotypecode\=\'\{tax.InfoTypeCode\}\'\,f_infonumber\=\{tax.InfoNumber\} where id\=\{retsell.id\}}" />
+			<!--金税盘-->
+			 <oo:GoldTax Name="tax"
+             Completed="print_Completed"
+			 ListGoodsName="气费"
+             InfoClientName="{m:Exp Str=kbusers.f_username\=&gt;Completed}"
+			 IsInit="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}"
+			 InfoClientAddressPhone="{m:Exp Str=kbusers.f_address\=&gt;Completed}"
+			 InfoTaxRate="{m:Exp Str=single[data.name\=\=$\{LoginUser.f_fengongsi\}税率$].ToObjectList().First().value.ToInt()}"
+			 InfoCashier="{m:Exp Str=LoginUser.name}"
+			 InfoChecker="{m:Exp Str=LoginUser.name}"
+			 ListUnit="方"
+			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}}"
+			 ListNumber="{m:Exp Str=kbfee.f_pregas}"
+			 ListAmount="{m:Exp Str=kbfee.f_grossproceeds}"
+			 ListPrice="{m:Exp Str=kbusers.f_stair1price\=&gt;Completed}"
+             />
         </m:ResourceLoad>
 
 
