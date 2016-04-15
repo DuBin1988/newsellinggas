@@ -1,0 +1,82 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
+    xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
+    xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
+    xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:data="clr-namespace:System.Windows.Data;assembly=System.Windows"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	mc:Ignorable="d" FontSize="13"
+	x:Class="Com.Aote.Pages.DBF抄表上传下载" d:DesignWidth="1024" d:DesignHeight="768">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <m:ResourceLoad Margin="0,0,-12,0">
+
+            <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
+            <!--抄表单信息列表-->
+            <o:ObjectList Name="jichalist">
+
+            </o:ObjectList>
+
+        </m:ResourceLoad>
+        <Grid>
+            <c:BusyIndicatorEx x:Name="ui_handBusy" BusyContent="正在工作，请稍等" Grid.ColumnSpan="1">
+                <toolkit:DockPanel>
+                    <StackPanel toolkit:DockPanel.Dock="Top" Margin="0,15,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" Orientation="Horizontal" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28"/>
+                                <RowDefinition Height="10"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>                            
+                            <TextBlock TextWrapping="Wrap" Text="抄  表  员："  Margin="5,0,0,0" Height="25" TextAlignment="Right" Grid.Column="0" />
+                            <ComboBox x:Name="f_inputtor"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" ItemsSource="{m:Exp Str=inputtorlist}"  Margin="0" SelectedValuePath="f_inputtor"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_inputtor" />
+                                </a:Data.Prop>
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Height="20" Text="{Binding f_inputtor}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>                            
+                            <Button Content=" 下载文件 " x:Name="dansearchbutton" Grid.Column="6" Click="dansearchbutton_Click" FontSize="14" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="0"/>
+                            <Button Content=" 上传结账 " x:Name="saveButton" Click="saveButton_Click" Grid.Row="0" Grid.Column="8"  Margin="0" FontSize="14"   HorizontalAlignment="Left"/>
+                            <StackPanel Background="#FFC3E4FD" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom" Grid.Row="0" Grid.Column="9" Margin="100,0,0,0">
+                                <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="操作员：" Margin="0,0,0,-2" />
+                                <TextBox x:Name="ui_sgoperator" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.name}" IsReadOnly="True" Margin="0,0,0,-2" RenderTransformOrigin="6.242,0.893" />
+                                <sdk:Label Height="28" VerticalAlignment="Top" Width="51" Content="网  点：" Margin="0,0,0,-2" VerticalContentAlignment="Stretch" />
+                                <TextBox x:Name="ui_sgnetwork" Height="28" VerticalAlignment="Top" Width="120" Text="{m:Exp Str=LoginUser.f_parentname}" IsReadOnly="True" Margin="0,0,0,-2"/>
+                            </StackPanel>
+
+                        </Grid>
+                    </StackPanel>
+                    
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+        </Grid>
+    </Grid>
+</UserControl> 
