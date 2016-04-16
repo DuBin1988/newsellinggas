@@ -32,23 +32,27 @@ namespace Com.Aote.ObjectTools
                 App pub = Application.Current as App;
                 if (pub.GoldTax == null)
                 {
-                    pub.GoldTax = AutomationFactory.CreateObject("TaxCardX.GoldTax");
-                }
-                obj = pub.GoldTax;
-                //开启
-                obj.CertPassWord = "0";
-                obj.OpenCard();
-                obj.CertPassWord = ip;
-                obj.OpenCard();
-                if (obj.RetCode != 1011)
-                {
-                    Log.Debug("初始化金税盘失败-" + obj.RetCode + obj.RetMsg);
-                    MessageBox.Show(obj.RetMsg);
+                    obj = AutomationFactory.CreateObject("TaxCardX.GoldTax");
+                    //开启
+                    obj.CertPassWord = "0";
+                    obj.OpenCard();
+                    obj.CertPassWord = ip;
+                    obj.OpenCard();
+                    if (obj.RetCode != 1011)
+                    {
+                        Log.Debug("初始化金税盘失败-" + obj.RetCode + obj.RetMsg);
+                        MessageBox.Show(obj.RetMsg);
+                    }
+                    else
+                    {
+                        Log.Debug("初始化金税盘成功-" + obj.RetCode);
+                        MessageBox.Show("初始化金税盘成功");
+                    }
+                    pub.GoldTax = obj;
                 }
                 else 
-                { 
-                    Log.Debug("初始化金税盘成功-"+obj.RetCode);
-                    MessageBox.Show("初始化金税盘成功");
+                {
+                    obj = pub.GoldTax;
                 }
             }
             catch (Exception ee)
@@ -154,7 +158,7 @@ namespace Com.Aote.ObjectTools
                 //服务名称
                 obj.ListGoodsName = names[i];
                 double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
-                obj.ListAmount = Math.Round(amount, 2);
+                obj.ListAmount = Math.Round(amount, 4);
                 obj.ListPrice = double.Parse(prices[i]);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
