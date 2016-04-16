@@ -70,7 +70,7 @@
             <b:HQLAction Name="UpdateZhinajin"  WebClientInfo="{StaticResource dbclient}"  Type="sql" HQL="{m:Exp Str=$update t_zhinajin set f_state\=\'有效\' where id\=(select top 1 id from t_zhinajin where f_state\=\'无效\' and f_userid\=\'\{kbfee.f_userid\}\' and f_zhinajin\=\'\{kbfee.f_zhinajin\}\'  and f_date\=\'\{kbfee.f_date.ToString($yyyy-MM-dd$)\}\')$}" />
 
 			<!--交费完成临时保存对象-->
-			<o:GeneralObject Name="retsell" CanSave="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" 
+			<o:GeneralObject Name="retsell" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" 
 			IsInit="{m:Exp Str=kbfee.f_userid\=\=null}"/>
 
 			<!--更新交费记录的金税盘发票代码-->
@@ -88,7 +88,7 @@
 			 InfoChecker="{m:Exp Str=LoginUser.name}"
 			 ListUnit="方"
 			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}}"
-			 ListNumber="{m:Exp Str=kbfee.f_pregas}"
+			 ListNumber="0"
 			 ListAmount="{m:Exp Str=kbfee.f_grossproceeds}"
 			 ListPrice="{m:Exp Str=kbusers.f_stair1price\=&gt;Completed}"
              />
