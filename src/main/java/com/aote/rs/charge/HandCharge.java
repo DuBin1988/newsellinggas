@@ -96,7 +96,7 @@ public class HandCharge {
 	public JSONArray ReadRecordInput(@PathParam("operator") String operator) {
 		JSONArray array = new JSONArray();
 		List<Object> list = this.hibernateTemplate.find(
-				"from t_handplan where f_inputtor=? and f_state='未抄表'",
+				"from t_handplan where f_userid is not null and f_userid!='' and f_inputtor=? and f_state='未抄表'",
 				operator);
 		for (Object obj : list) {
 			// 把单个map转换成JSON对象

@@ -14,15 +14,21 @@ import java.util.Date;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
@@ -46,6 +52,7 @@ public class DBFService {
 	// 保存抄表计划DBF
 	@Path("savefile/{f_inputtor}/{type}")
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	public String savefile(
 			@Context HttpServletResponse response,
 			@PathParam("f_inputtor") String f_inputtor,
@@ -116,10 +123,11 @@ public class DBFService {
 	// 保存抄表计划DBF
 	@Path("readfile/{f_inputtor}/{type}")
 	@POST
+	@Produces(MediaType.APPLICATION_JSON)
 	public String readfile(byte[] file,
 			@PathParam("f_inputtor") String f_inputtor,
 			@PathParam("type") String type) {
-		String result = null;
+		JSONArray result = new JSONArray();
 		try{
 			InputStream fis = null;  
 	        try {
@@ -131,20 +139,31 @@ public class DBFService {
 	            JSONArray rows=new JSONArray();
 	            while ((rowValues = reader.nextRecord()) != null) {
 	            	JSONObject obj=new JSONObject();
-	                for (int i = 0; i < rowValues.length; i++) {	                
-	                	//不同A188抄表适配
-	                	if(type.equals("CQA188")){
-	            		   if(i==9)
-	            			   obj.put("userid", rowValues[9].toString().trim());
-	            		   if(i==11)
-	            			   obj.put("reading", rowValues[11]);
-	            		   if(i==12)
-	            			   obj.put("lastreading", rowValues[12]);
-	                	}
-	                	//不同A188抄表适配
-	            	   
-	                }
-	                rows.put(obj);
+	            	try {
+	            		for (int i = 0; i < rowValues.length; i++) {	                
+		                	//不同A188抄表适配
+		                	if(type.equals("CQA188")){
+		                	   if(i==2)
+			            		   obj.put("f_gasdate", rowValues[2].toString().trim());
+		            		   if(i==9)
+		            			   obj.put("userid", rowValues[9].toString().trim());
+		            		   if(i==11)
+		            			   obj.put("reading", rowValues[11]);
+		            		   if(i==12)
+		            			   obj.put("lastreading", rowValues[12]);
+		                	}
+		                	//不同A188抄表适配
+		            	   
+		                }
+		                if(obj.getDouble("reading")>=obj.getDouble("lastreading"))
+		                	rows.put(obj);
+		                else
+		                	result.put(obj);
+		                //保存抄表指数一份档案
+		    			execSQL("insert into t_cbnum (f_userid,f_gasdate,f_gasnum,jval,f_inertdate,f_meternumber,f_gaswatchbrand,f_aliasname) "
+								+ "(select '"+obj.getString("userid")+"','"+obj.getString("f_gasdate")+"',"+obj.getDouble("reading")+","+0+",'"+DateHelper.getdatetime()+"',f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+obj.getString("userid")+"')");
+					} catch (Exception e) {
+					}	                
 	            }
 	            //自动下账
 	            HandCharge hCharge= new HandCharge();
@@ -158,13 +177,11 @@ public class DBFService {
 	            e.printStackTrace();  
 	        } finally {
 	        	fis.close();
-	        }  
-			result="ok";
+	        }
         }catch (Exception e) {
             e.printStackTrace();
-            result="err";
         }			
-		return result;
+		return result.toString();
 	}
 	
 	public void transformStream(InputStream is, OutputStream os) {
@@ -179,6 +196,23 @@ public class DBFService {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * execute sql in hibernate
+	 * @param sql
+	 */
+	private void execSQL(final String sql) {
+		try {
+			hibernateTemplate.execute(new HibernateCallback() {
+	            public Object doInHibernate(Session session)
+	                    throws HibernateException {
+	                session.createSQLQuery(sql).executeUpdate();
+	                return null;
+	            }
+	        });
+		} catch (Exception e) {
+		}        		
 	}
 	
 }
