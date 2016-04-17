@@ -173,7 +173,9 @@ namespace Com.Aote.Pages
                  * */
                 // 调用打印
                 GoldTax tax = (GoldTax)(from r in loader.Res where r.Name.Equals("tax") select r).First();
-                if (tax.IsInit)
+                //气费大于0，打印税票
+                if (tax.IsInit && tax.ListAmount != null 
+                    && Int32.Parse(tax.ListAmount.Split(new char[] { '|' })[0]) > 0)
                 {
                     tax.Invoice();
                 }
