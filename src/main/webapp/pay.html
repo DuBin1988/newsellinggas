@@ -41,9 +41,6 @@
 		var date = getUrlParam('date');
 		var money = document.getElementById("money").value;
 		var qianfei = -getUrlParam('qf');
-		//var newStr =Math.abs(qianfei);
-		//alert("111111111"+newStr);
-		//alert("ssss"+qianfei);
 		if (qianfei> money) {
 			alert("缴费金额应该大于欠费金额，请重新输入!");
 			//还原为可点击
@@ -82,6 +79,7 @@
 				document.getElementById("btn").disabled = false;
 				if (res.err_msg == "get_brand_wcpay_request:ok") {
 					//支付成功
+					document.location.href = "successpay.jsp";
 
 				}
 				if (res.err_msg == "get_brand_wcpay_request:cancel") {

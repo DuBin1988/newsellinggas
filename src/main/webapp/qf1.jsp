@@ -8,7 +8,7 @@
 <title>账户余额细信</title>
 <link href="style/css.css" rel="stylesheet" type="text/css">
 </head>
-<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/jquery-1.7.2.min.js" charset="utf-8"></script>
 <script src="js/jquery.json-2.3.min.js"></script>
 <script src='js/knockout-2.1.0.js'></script>
 <script src="js/knockout.mapping-latest.js"></script>
@@ -44,6 +44,7 @@
 	$(function() {
 		var tbody = "";
 		var array = getUrlParam('arr');
+		
 		var list = JSON.parse(array);
 		//------------遍历对象 .each的使用-------------  
 		//对象语法JSON数据格式(当服务器端回调回来的对象数据格式是json数据格式，必须保证JSON的格式要求，回调的对象必须使用eval函数进行转化（否则将得不到Object）。本文不作详细介绍服务器端回调的数据问题，我们将直接自定义对象)  			 11.   $("#result ").html("------------遍历对象.each的使用-------------");  
@@ -52,12 +53,11 @@
 		$.each(list, function(n, value) {
 			//alert(n + ' ' + value);
 			var trs = "<section class=\"re01\">";
-			trs += "<ol><li>用户编号:" + value.f_userid + "</li><li>抄表日期: "
+			trs += "<ol><li>用户编号:" + value.f_userid + "</li><li>用户姓名:" + value.f_name + "</li><li>抄表日期: "
 					+ value.lastinputdate + "</li><li>上期指数:"
 					+ value.astinputgasnum + "</li><li>本期指数:"
 					+ value.lastrecord + "</li><li>气量:" + value.oughtmount
-					+ "</li><li>气费:" + value.totaloughtfee + "</li><li>已交金额:"
-					+ value.oughtfeed + "</li><li>应交金额:" + value.oughtfee
+					+ "</li><li>气费:" + value.totaloughtfee + "</li><li>本次气量金额:" + value.oughtfee
 					+ "</li></ol>";
 			tbody += trs + "</section>";
 		});

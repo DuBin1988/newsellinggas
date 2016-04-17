@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class WeiXinService {
 			// http://weixin.uxinxin.com
 			// http://4504a3ef.nat123.net/rs/weixin/notify
 			String appid = Configure.getAppid();
-			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
+			String redirect_uri = "http://4504a3ef.nat123.net/rs/weixin/getopenid";
 			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
@@ -150,7 +151,7 @@ public class WeiXinService {
 			}
 			if (state.equals("relieve")) {
 				String redirect_url = "/jbind.jsp?openid=" + openid
-						+ "&showwxpaytitle=1" + "&uuid" + uuid;
+						+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 				response.sendRedirect(redirect_url);
 
 			} else {
@@ -158,7 +159,7 @@ public class WeiXinService {
 				if (map == null) {
 					// 重定向到绑定页面
 					String redirect_url = "/bind.jsp?openid=" + openid
-							+ "&showwxpaytitle=1" + "&uuid" + uuid;
+							+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 					response.sendRedirect(redirect_url);
 				} else {
 					String f_userid = map.get("f_userid").toString();
@@ -168,11 +169,12 @@ public class WeiXinService {
 					double f_zhye = object.getDouble("zhye");
 					double money = object.getDouble("money");
 					double zhinajin = object.getDouble("zhinajin");
-					String redirect_url = "/qf1.jsp?openid=" + openid
+					String redirect_url = "/qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
-							+ "&arr=" + arr + "&uuid" + uuid;
-					response.sendRedirect(redirect_url);
+							+ "&arr=" + arr+ "&uuid" + uuid;
+					//response.sendRedirect(redirect_url);
+					response.sendRedirect(URLEncoder.encode(redirect_url,"UTF-8"));
 				}
 			}
 		} catch (Exception e) {
@@ -181,7 +183,7 @@ public class WeiXinService {
 		return null;
 	}
 
-	public JSONObject selectqf(String f_userid) throws JSONException {
+	public JSONObject selectqf(String f_userid) throws JSONException, UnsupportedEncodingException {
 		// 查询欠费金额;
 		JSONObject object = wxquery(f_userid);
 		byte[] b = object.getString("return").getBytes();
@@ -206,14 +208,16 @@ public class WeiXinService {
 		JSONArray arr = new JSONArray();
 		obj1.put("zhye", zhye);
 		obj1.put("money", zhyemoney);
-		obj1.put("zhye", zhye);
 		obj1.put("zhinajin", zhinajin);
+		
 		for (int i = x; i > 0; i--) {
 			obj = new JSONObject();
 			String le = new String(b, len + 8 - 70 * i, 70);
 			System.out.println(le);
 
-			obj.put("f_userid", new String(b, 12, 8));
+			obj.put("f_userid", new String(b, 12, 10));
+			String name =new String(b, 24, 20);
+			obj.put("f_name", nativetoasc.native2ascii(name));
 			obj.put("lastinputdate", le.substring(0, 10));
 			obj.put("astinputgasnum", Integer.parseInt(le.substring(11, 20)));
 			obj.put("lastrecord", Integer.parseInt(le.substring(21, 30)));
@@ -225,9 +229,12 @@ public class WeiXinService {
 			arr.put(obj);
 		}
 		obj1.put("arr", arr);
+		System.out.println(arr);
 		return obj1;
 	}
 
+	 
+	
 	/**
 	 * 获得预下单编号，用于前台调取支付界面
 	 * 
@@ -245,7 +252,9 @@ public class WeiXinService {
 			String id = request.getSession().getId();
 			System.out.println("sessionid=" + id);
 			String openid = request.getParameter("openid");
+			System.out.println("openid=" + openid);
 			String money = request.getParameter("money");
+			System.out.println("money=" + money);
 			WxPaySendData data = new WxPaySendData();
 			data.setAppid(Configure.getAppid());
 			data.setAttach("微信支付");
@@ -258,7 +267,7 @@ public class WeiXinService {
 			data.setTrade_type("JSAPI");
 			data.setSpbill_create_ip(request.getRemoteAddr());
 			data.setOpenid(openid);
-			System.out.println(data);
+			System.out.println("----"+data);
 			// 统一下单
 			String returnXml = unifiedOrder(data, Configure.getKey());
 			WxPayReturnData reData = new WxPayReturnData();
@@ -291,7 +300,7 @@ public class WeiXinService {
 			finalpackage.put("nonceStr", nonceStr2);
 			finalpackage.put("package", packages);
 			finalpackage.put("signType", "MD5");
-			System.out.println(finalpackage);
+			System.out.println("==="+finalpackage);
 			String finalsign = WxSign.createSign(finalpackage,
 					Configure.getKey());
 			// String redirect_url = "/weixin.html?appId=" + appid2
@@ -306,7 +315,7 @@ public class WeiXinService {
 			result.put("pg", reData.getPrepay_id());
 			result.put("sign", finalsign);
 			result.put("signType", "MD5");
-			System.out.println(result);
+			System.out.println("-----"+result);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -336,6 +345,7 @@ public class WeiXinService {
 					new XmlFriendlyNameCoder("-_", "_")));
 			xs.alias("xml", WxPaySendData.class);
 			String xml = xs.toXML(data);
+			System.out.println("22222"+xml);
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(Configure.DOWN_PAY_API);
 			StringEntity postEntity = new StringEntity(xml, "UTF-8");
@@ -345,7 +355,9 @@ public class WeiXinService {
 			HttpEntity entity = httpResponse.getEntity();
 			if (entity != null) {
 				returnXml = EntityUtils.toString(entity, "UTF-8");
+				System.out.println("1111"+returnXml);
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -544,6 +556,7 @@ public class WeiXinService {
 		String sql = "from t_userfiles   where f_openid='" + openid + "'";
 		List list = this.hibernateTemplate.find(sql);
 		int x = list.size();
+		System.out.println(x);
 		if (list.size() != 1)
 			return null;
 		else
@@ -557,6 +570,7 @@ public class WeiXinService {
 				+ f_transaction_id + "'";
 		List listwx = this.hibernateTemplate.find(sql);
 		int x = listwx.size();
+		
 		if (listwx.size() != 1)
 			return null;
 		else

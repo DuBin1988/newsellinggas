@@ -71,7 +71,7 @@
 					var zhinajin = obj.zhinajin;
 					var arr1 = obj.arr;
 					var arr = JSON.stringify(arr1);
-					document.location.href = "qf1.jsp?openid=" + openid
+					document.location.href = "qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
 							+ "&arr=" + arr;
