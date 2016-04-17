@@ -158,8 +158,8 @@ namespace Com.Aote.ObjectTools
                 //服务名称
                 obj.ListGoodsName = names[i];
                 double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
-                obj.ListAmount = Math.Round(amount, 4);
-                obj.ListTaxAmount = amount * InfoTaxRate;
+                obj.ListAmount = Math.Round(amount, 2);
+                obj.ListTaxAmount = amount * InfoTaxRate * 0.01;
                 obj.ListPrice = double.Parse(prices[i]);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
