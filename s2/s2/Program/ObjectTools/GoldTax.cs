@@ -160,7 +160,7 @@ namespace Com.Aote.ObjectTools
                 double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
                 obj.ListAmount = Math.Round(amount, 2);
                 obj.ListTaxAmount = amount * InfoTaxRate * 0.01;
-                obj.ListPrice = double.Parse(prices[i]);
+                obj.ListPrice = double.Parse(prices[i]) / (InfoTaxRate * 0.01 + 1);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
                 obj.AddInvList();

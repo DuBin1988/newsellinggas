@@ -88,9 +88,9 @@
 			 InfoChecker="{m:Exp Str=LoginUser.name}"
 			 ListUnit="方"
 			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}}"
-			 ListNumber="{m:Exp Str=kbfee.f_pregas}"
+			 ListNumber="0"
 			 ListAmount="{m:Exp Str=kbfee.f_grossproceeds}"
-			 ListPrice="0"
+			 ListPrice="{m:Exp Str=kbusers.f_stair1price\=&gt;Completed}"
              />
         </m:ResourceLoad>
 
