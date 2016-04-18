@@ -178,10 +178,6 @@ namespace Com.Aote.ObjectTools
                 {
                     obj.ListPriceKind = Int32.Parse(pricekind[i]);
                 }
-                if (!amounts[i].Equals(""))
-                {
-                    obj.ListAmount = double.Parse(amounts[i]);
-                }
                 obj.AddInvList();
             }
             //收款人
