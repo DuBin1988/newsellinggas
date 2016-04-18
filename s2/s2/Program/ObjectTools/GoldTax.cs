@@ -136,6 +136,10 @@ namespace Com.Aote.ObjectTools
             obj.InfoKind = 2;
             //开票名称
             obj.InfoClientName = InfoClientName;
+            //售方地址及电话
+            obj.InfoSellerAddressPhone = InfoSellerAddressPhone;
+            //售方开户行及账号
+            obj.InfoSellerBankAccount = InfoSellerBankAccount;
             //开票地址，电话
             obj.InfoClientAddressPhone = InfoClientAddressPhone;
             //税率
@@ -224,6 +228,14 @@ namespace Com.Aote.ObjectTools
         /// 电话地址
         /// </summary>
         public string InfoClientAddressPhone { get; set; }
+        /// <summary>
+        /// 售方电话地址
+        /// </summary>
+        public string InfoSellerAddressPhone { get; set; }
+        /// <summary>
+        /// 售方开户银行及账号
+        /// </summary>
+        public string InfoSellerBankAccount { get; set; }
         /// <summary>
         /// 收款人
         /// </summary>
