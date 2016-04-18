@@ -154,7 +154,11 @@ namespace Com.Aote.ObjectTools
             string[] pricekind = ListPriceKind.Split(c);
             obj.ClearInvList();
             for (int i = 0; i < names.Length; i++)
-            {   
+            {
+                if (names[i].Equals("滞纳金") && double.Parse(amounts[i]) <= 0)
+                {
+                    continue;
+                }
                 //设置开票内容
                 obj.InvListInit();
                 //服务名称
