@@ -159,7 +159,7 @@ namespace Com.Aote.ObjectTools
             obj.ClearInvList();
             for (int i = 0; i < names.Length; i++)
             {
-                if (names[i].Equals("滞纳金") && double.Parse(amounts[i]) <= 0)
+                if (names[i].Equals("滞纳金") && double.Parse(prices[i]) <= 0)
                 {
                     continue;
                 }
@@ -174,10 +174,7 @@ namespace Com.Aote.ObjectTools
                 obj.ListPrice = double.Parse(prices[i]);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
-                if (!pricekind[i].Equals(""))
-                {
-                    obj.ListPriceKind = Int32.Parse(pricekind[i]);
-                }
+                obj.ListPriceKind = Int32.Parse(pricekind[i]);
                 obj.AddInvList();
             }
             //收款人
