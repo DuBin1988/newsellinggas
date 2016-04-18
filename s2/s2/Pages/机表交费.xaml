@@ -79,18 +79,19 @@
 			<!--金税盘-->
 			 <oo:GoldTax Name="tax"
              Completed="print_Completed"
-			 ListGoodsName="气费"
+			 ListGoodsName="气费|滞纳金"
              InfoClientName="{m:Exp Str=kbusers.f_username\=&gt;Completed}"
 			 IsInit="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}"
 			 InfoClientAddressPhone="{m:Exp Str=kbusers.f_address\=&gt;Completed}"
 			 InfoTaxRate="{m:Exp Str=single[data.name\=\=$\{LoginUser.f_fengongsi\}税率$].ToObjectList().First().value.ToInt()}"
 			 InfoCashier="{m:Exp Str=LoginUser.name}"
 			 InfoChecker="{m:Exp Str=LoginUser.name}"
-			 ListUnit="方"
+			 ListUnit="方|次"
 			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}}"
-			 ListNumber="0"
-			 ListAmount="{m:Exp Str=kbfee.f_grossproceeds}"
-			 ListPrice="{m:Exp Str=kbusers.f_stair1price\=&gt;Completed}"
+			 ListNumber="{m:Exp Str=$\{kbfee.f_pregas\}|1}"
+			 ListPrice="{m:Exp Str=$\{kbusers.f_stair1price\=&gt;Completed\}|\{kbfee.f_zhinajin1\}}"
+			 ListAmount="{m:Exp Str=$|\{kbfee.f_zhinajin1\}}"
+			 ListPriceKind="1|"
              />
         </m:ResourceLoad>
 

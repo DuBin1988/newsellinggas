@@ -150,6 +150,8 @@ namespace Com.Aote.ObjectTools
             string[] units = ListUnit.Split(c);
             //数量
             string[] numbers = ListNumber.Split(c);
+            //含税价标志
+            string[] pricekind = ListPriceKind.Split(c);
             obj.ClearInvList();
             for (int i = 0; i < names.Length; i++)
             {   
@@ -157,13 +159,21 @@ namespace Com.Aote.ObjectTools
                 obj.InvListInit();
                 //服务名称
                 obj.ListGoodsName = names[i];
-                double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
-                obj.ListAmount = Math.Round(amount, 2);
-                obj.ListTaxAmount = amount * InfoTaxRate * 0.01;
-                double price = double.Parse(prices[i]) / (InfoTaxRate * 0.01 + 1);
-                obj.ListPrice = Math.Round(price, 2);
+                //double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
+                //obj.ListAmount = Math.Round(amount, 2);
+                //obj.ListTaxAmount = amount * InfoTaxRate * 0.01;
+                //double price = double.Parse(prices[i]) / (InfoTaxRate * 0.01 + 1);
+                obj.ListPrice = double.Parse(prices[i]);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
+                if (!pricekind[i].Equals(""))
+                {
+                    obj.ListPriceKind = Int32.Parse(pricekind[i]);
+                }
+                if (!amounts[i].Equals(""))
+                {
+                    obj.ListAmount = double.Parse(amounts[i]);
+                }
                 obj.AddInvList();
             }
             //收款人
@@ -270,6 +280,10 @@ namespace Com.Aote.ObjectTools
         /// 数量，可以设置多个，用"|"分隔开
         /// </summary>
         public string ListNumber { get; set; }
+        /// <summary>
+        /// 含税价标志，单价和金额的种类。0为不含税价，1为含税价
+        /// </summary>
+        public string ListPriceKind { get; set; }
         /// <summary>
         /// 备注信息
         /// </summary>
