@@ -148,7 +148,7 @@ namespace Com.Aote.ObjectTools
             //服务名称
             string[] names = ListGoodsName.Split(c);
             //金额
-            string[] amounts = ListAmount.Split(c);
+            //string[] amounts = ListAmount.Split(c);
             string[] prices = ListPrice.Split(c);
             //单位
             string[] units = ListUnit.Split(c);
