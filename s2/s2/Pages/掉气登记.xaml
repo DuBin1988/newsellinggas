@@ -210,9 +210,9 @@
             		AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
-            				Path="{m:Exp Str=$from t_lostgas where \{pipelinesearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_state\=\'掉气登记\' and f_dengjistate\=\'完成\'}"
+            				Path="{m:Exp Str=$from t_userfiles where \{pipelinesearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_gasmeterstyle\=\'卡表\'}"
             				IsOld="{m:Exp Str=SubmitAction.State\=\=$End$ or SaveAction.State\=\=$End$}"
-							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
+							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
 
                         <sdk:DataGrid.Columns>
@@ -221,9 +221,7 @@
                             <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True"/>
                             <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" d:IsLocked="True"/>
                             <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}" d:IsLocked="True"/>
-
                             <sdk:DataGridTextColumn Header="表品牌" Binding="{Binding f_gaswatchbrand}" d:IsLocked="True"/>
-                            <sdk:DataGridTextColumn Header="补气量" Binding="{Binding f_cmaddgas}" d:IsLocked="True"/>
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                     <!--信息列表-->
