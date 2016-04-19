@@ -27,7 +27,7 @@ namespace Com.Aote.Pages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (ui_SearchUserList.Count < 1 || CoboxStair.SelectedValue == null || "".Equals(CoboxStair.SelectedValue))
+            if ((userfiles.ItemsSource as PagedList).Count < 1 || CoboxStair.SelectedValue == null || "".Equals(CoboxStair.SelectedValue))
             {
                 MessageBox.Show("请选择要修改用户和阶梯气价");
                 return;
@@ -39,7 +39,7 @@ namespace Com.Aote.Pages
                 if (ui_stairmonths.Text != "" || ui_stair1amount.Text != "" || ui_stair1price.Text != "" || ui_stair2amount.Text != "" || ui_stair2price.Text != "" || ui_stair3amount.Text != "" || ui_stair3price.Text != "" || CoboxStair.SelectedValue != null)
                 {
                     //提交更改
-                    string sql = "update t_userfiles set f_stairtype='" + CoboxStair.SelectedValue + "', f_stair1amount=" + ui_stair1amount.Text + " , " +
+                    string sql = "update t_userinfo set f_stairtype='" + CoboxStair.SelectedValue + "', f_stair1amount=" + ui_stair1amount.Text + " , " +
                                     "f_stair1price=" + ui_stair1price.Text + " , f_stair2amount='" + ui_stair2amount.Text + "', f_stair2price=" + ui_stair2price.Text + ",f_stair3amount='" + ui_stair3amount.Text + "', f_stair3price=" + ui_stair3price.Text + ", f_stair4price=" + ui_stair4price.Text + " ,f_stairmonths=" + ui_stairmonths.Text + " where " + search.Condition + "";
                     HQLAction action = new HQLAction();
                     action.HQL = sql;
@@ -48,7 +48,6 @@ namespace Com.Aote.Pages
                     action.Completed += action_Completed;
                     action.Invoke();
                 }
-                ui_searchBusy.IsBusy = false;
             }
             else {
                 MessageBox.Show("请先按照条件筛选出变更的用户，再确认变更！");
@@ -59,6 +58,7 @@ namespace Com.Aote.Pages
 
         private void action_Completed(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
+            ui_searchBusy.IsBusy = false;
             HQLAction action = sender as HQLAction;
             action.Completed -= action_Completed;
 
@@ -86,10 +86,6 @@ namespace Com.Aote.Pages
                 if (ui_gasmeterstyle.SelectedValue != null)
                 {
                     go.SetPropertyValue("f_gasmeterstyle", ui_gasmeterstyle.SelectedValue, false);
-                }
-                if (ui_gaspricetype.SelectedValue != null)
-                {
-                    go.SetPropertyValue("f_gasmeterstyle", ui_gaspricetype.SelectedValue, false);
                 }
                 go.Name = "t_changestairprice";
                 go.Completed += obj_Completed;
@@ -120,12 +116,12 @@ namespace Com.Aote.Pages
                     client.UploadStringCompleted += client_UploadStringCompleted;
                     client.UploadStringAsync(new Uri(uri), json);
                 }
+                MessageBox.Show("阶梯变更完成！");
 
             }
             else
             {
                 MessageBox.Show("请输入阶梯气价类型！");
-                ui_searchBusy.IsBusy = false;
                 return;
             }
         }

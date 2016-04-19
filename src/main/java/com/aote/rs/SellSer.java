@@ -108,11 +108,12 @@ public class SellSer {
 
 		// 取滞纳金比率
 		BigDecimal scale = null;
-		/*
-		 * if(f_usertype.equals("民用")) { scale = new
-		 * BigDecimal(singles.get("民用滞纳金比率")); } else { scale = new
-		 * BigDecimal(singles.get("非民用滞纳金比率")); }
-		 */
+
+		if (f_usertype.equals("民用")) {
+			scale = new BigDecimal(singles.get("民用滞纳金比率"));
+		} else {
+			scale = new BigDecimal(singles.get("非民用滞纳金比率"));
+		}
 
 		// 循环获取欠费数据
 		for (Map<String, Object> hand : list) {
@@ -160,9 +161,9 @@ public class SellSer {
 				f_zhye = bigDec > 0 ? f_zhye.subtract(oughtfee)
 						: new BigDecimal("0");
 			}
-			// f_zhinajin=oughtfee.multiply(new
-			// BigDecimal(days+"")).multiply(scale);
-			// f_zhinajin=f_zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP);
+			f_zhinajin = oughtfee.multiply(new BigDecimal(days + "")).multiply(
+					scale);
+			f_zhinajin = f_zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP);
 			hands += ",f_zhinajin:" + f_zhinajin;
 
 			// 抄表日期
@@ -608,22 +609,27 @@ public class SellSer {
 		// 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
 		JSONObject ret = new JSONObject();
 		try {
-//			final String sql_1 = "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
-//					+ "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
-//					+ "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
-//					+ "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
-//					+ "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
-//					+ userid + "' and id='" + id + "'" + "";
-//			List list = (List) hibernateTemplate
-//					.execute(new HibernateCallback() {
-//						public Object doInHibernate(Session session)
-//								throws HibernateException {
-//							SQLQuery query = session.createSQLQuery(sql_1);
-//							return query.list();
-//						}
-//					});
-			
-			String sql = "from t_sellinggas where id="+id;
+			// final String sql_1 =
+			// "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
+			// +
+			// "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
+			// +
+			// "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
+			// +
+			// "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
+			// +
+			// "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
+			// + userid + "' and id='" + id + "'" + "";
+			// List list = (List) hibernateTemplate
+			// .execute(new HibernateCallback() {
+			// public Object doInHibernate(Session session)
+			// throws HibernateException {
+			// SQLQuery query = session.createSQLQuery(sql_1);
+			// return query.list();
+			// }
+			// });
+
+			String sql = "from t_sellinggas where id=" + id;
 			List list = this.hibernateTemplate.find(sql);
 			// 找到安检记录，判断日期和基表读数
 			if (list.size() == 1) {
@@ -648,9 +654,12 @@ public class SellSer {
 				// ret=fmt.format(now);
 				sell.put("f_deliverydate_tb", fmt.format(now)); // 同步 交费时间
 				sell.put("f_status_tb", "1"); // 同步 状态
-				sell.put("f_grossproceeds", -Double.parseDouble(sell.get("f_grossproceeds")+""));
-				sell.put("f_pregas", -Double.parseDouble(sell.get("f_pregas")+"")); // 气量
-				sell.put("f_preamount",  -Double.parseDouble(sell.get("f_preamount")+"")); // 气费
+				sell.put("f_grossproceeds",
+						-Double.parseDouble(sell.get("f_grossproceeds") + ""));
+				sell.put("f_pregas",
+						-Double.parseDouble(sell.get("f_pregas") + "")); // 气量
+				sell.put("f_preamount",
+						-Double.parseDouble(sell.get("f_preamount") + "")); // 气费
 				sell.put("f_payment", "冲正"); // 付款方式
 				sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
 				sell.put("f_sgnetwork", loginUser.get("f_parentname")
@@ -672,13 +681,13 @@ public class SellSer {
 			} else {
 				ret.put("error", "noid");
 			}
-			ret.put("success",  "机表冲正成功");
+			ret.put("success", "机表冲正成功");
 		} catch (RSException e) {
 			log.debug("售气交费 失败!");
-			ret.put("error",  e.getMessage());
+			ret.put("error", e.getMessage());
 		} catch (Exception ex) {
 			log.debug("售气交费 失败!" + ex.getMessage());
-			ret.put("error",  ex.getMessage());
+			ret.put("error", ex.getMessage());
 		} finally {
 			return ret;
 		}
@@ -823,7 +832,9 @@ public class SellSer {
 				+ "u.f_idnumber f_idnumber, u.f_gaspricetype f_gaspricetype, u.f_gasprice f_gasprice, u.f_usertype f_usertype,"
 				+ "u.f_gasproperties f_gasproperties, u.f_userid f_userid,u.f_zherownum f_zherownum, h.id handid, h.oughtamount oughtamount, h.lastinputgasnum lastinputgasnum,"
 				+ "h.lastrecord lastrecord, h.shifoujiaofei shifoujiaofei, h.oughtfee oughtfee,h.f_debtmoney  f_debtmoney ,h.lastinputdate from t_userfiles u "
-				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否' and f_userid='"+userid+"') h on u.f_userid = h.f_userid where u.f_userid = '"
+				+ "left join (select * from t_handplan where f_state = '已抄表' and shifoujiaofei = '否' and f_userid='"
+				+ userid
+				+ "') h on u.f_userid = h.f_userid where u.f_userid = '"
 				+ userid
 				+ "' "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
@@ -888,19 +899,20 @@ public class SellSer {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * execute sql in hibernate
+	 * 
 	 * @param sql
 	 */
 	private void execSQL(final String sql) {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session)
-                    throws HibernateException {
-                session.createSQLQuery(sql).executeUpdate();
-                return null;
-            }
-        });		
+		hibernateTemplate.execute(new HibernateCallback() {
+			public Object doInHibernate(Session session)
+					throws HibernateException {
+				session.createSQLQuery(sql).executeUpdate();
+				return null;
+			}
+		});
 	}
 
 	// 转换器，在转换期间会检查对象是否已经转换过，避免重新转换，产生死循环

@@ -32,23 +32,27 @@ namespace Com.Aote.ObjectTools
                 App pub = Application.Current as App;
                 if (pub.GoldTax == null)
                 {
-                    pub.GoldTax = AutomationFactory.CreateObject("TaxCardX.GoldTax");
-                }
-                obj = pub.GoldTax;
-                //开启
-                obj.CertPassWord = "0";
-                obj.OpenCard();
-                obj.CertPassWord = ip;
-                obj.OpenCard();
-                if (obj.RetCode != 1011)
-                {
-                    Log.Debug("初始化金税盘失败-" + obj.RetCode + obj.RetMsg);
-                    MessageBox.Show(obj.RetMsg);
+                    obj = AutomationFactory.CreateObject("TaxCardX.GoldTax");
+                    //开启
+                    obj.CertPassWord = "0";
+                    obj.OpenCard();
+                    obj.CertPassWord = ip;
+                    obj.OpenCard();
+                    if (obj.RetCode != 1011)
+                    {
+                        Log.Debug("初始化金税盘失败-" + obj.RetCode + obj.RetMsg);
+                        MessageBox.Show(obj.RetMsg);
+                    }
+                    else
+                    {
+                        Log.Debug("初始化金税盘成功-" + obj.RetCode);
+                        MessageBox.Show("初始化金税盘成功");
+                    }
+                    pub.GoldTax = obj;
                 }
                 else 
-                { 
-                    Log.Debug("初始化金税盘成功-"+obj.RetCode);
-                    MessageBox.Show("初始化金税盘成功");
+                {
+                    obj = pub.GoldTax;
                 }
             }
             catch (Exception ee)
@@ -132,6 +136,10 @@ namespace Com.Aote.ObjectTools
             obj.InfoKind = 2;
             //开票名称
             obj.InfoClientName = InfoClientName;
+            //售方地址及电话
+            obj.InfoSellerAddressPhone = InfoSellerAddressPhone;
+            //售方开户行及账号
+            obj.InfoSellerBankAccount = InfoSellerBankAccount;
             //开票地址，电话
             obj.InfoClientAddressPhone = InfoClientAddressPhone;
             //税率
@@ -140,24 +148,33 @@ namespace Com.Aote.ObjectTools
             //服务名称
             string[] names = ListGoodsName.Split(c);
             //金额
-            string[] amounts = ListAmount.Split(c);
+            //string[] amounts = ListAmount.Split(c);
             string[] prices = ListPrice.Split(c);
             //单位
             string[] units = ListUnit.Split(c);
             //数量
             string[] numbers = ListNumber.Split(c);
+            //含税价标志
+            string[] pricekind = ListPriceKind.Split(c);
             obj.ClearInvList();
             for (int i = 0; i < names.Length; i++)
-            {   
+            {
+                if (names[i].Equals("滞纳金") && double.Parse(prices[i]) <= 0)
+                {
+                    continue;
+                }
                 //设置开票内容
                 obj.InvListInit();
                 //服务名称
                 obj.ListGoodsName = names[i];
-                double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
-                obj.ListAmount = Math.Round(amount, 2);
+                //double amount = double.Parse(amounts[i]) / (InfoTaxRate *0.01 + 1);
+                //obj.ListAmount = Math.Round(amount, 2);
+                //obj.ListTaxAmount = amount * InfoTaxRate * 0.01;
+                //double price = double.Parse(prices[i]) / (InfoTaxRate * 0.01 + 1);
                 obj.ListPrice = double.Parse(prices[i]);
                 obj.ListUnit = units[i];
                 obj.ListNumber = double.Parse(numbers[i]);
+                obj.ListPriceKind = Int32.Parse(pricekind[i]);
                 obj.AddInvList();
             }
             //收款人
@@ -204,6 +221,14 @@ namespace Com.Aote.ObjectTools
         /// 电话地址
         /// </summary>
         public string InfoClientAddressPhone { get; set; }
+        /// <summary>
+        /// 售方电话地址
+        /// </summary>
+        public string InfoSellerAddressPhone { get; set; }
+        /// <summary>
+        /// 售方开户银行及账号
+        /// </summary>
+        public string InfoSellerBankAccount { get; set; }
         /// <summary>
         /// 收款人
         /// </summary>
@@ -264,6 +289,10 @@ namespace Com.Aote.ObjectTools
         /// 数量，可以设置多个，用"|"分隔开
         /// </summary>
         public string ListNumber { get; set; }
+        /// <summary>
+        /// 含税价标志，单价和金额的种类。0为不含税价，1为含税价
+        /// </summary>
+        public string ListPriceKind { get; set; }
         /// <summary>
         /// 备注信息
         /// </summary>

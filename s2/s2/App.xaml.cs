@@ -52,9 +52,6 @@ namespace s2
         }
 
 
-
-
-
         private void OnCheckAndDownloadUpdateCompleted(object sender, CheckAndDownloadUpdateCompletedEventArgs e)
         {
 
@@ -75,9 +72,15 @@ namespace s2
                              + e.Error.Message);
             }
         }
-
+        //关闭前执行
         private void Application_Exit(object sender, EventArgs e)
         {
+            //关闭金税盘
+            if (GoldTax != null)
+            {
+                GoldTax.CloseCard();
+                MessageBox.Show("金税盘已退出");
+            }
         }
 
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
@@ -102,9 +105,15 @@ namespace s2
 
             }
         }
+
+        private dynamic goldtax = null;
         /// <summary>
         /// 金税盘全局变量
         /// </summary>
-        public dynamic GoldTax { get; set; }
+        public dynamic GoldTax 
+        {
+            get { return this.goldtax; }
+            set { this.goldtax = value; }
+        }
     }
 }

@@ -34,7 +34,16 @@
 
 
             <!--抄表的未交费记录-->
-            <o:ObjectList Name="kbsellgas" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"/>
+            <o:ObjectList Name="kbsellgas" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=$from t_handplan h where  h.f_userinfoid\=\'\{kbusers.f_userid\}\' and  h.shifoujiaofei\=\'否\' and h.lastrecord is not null and h.f_state\=\'已抄表\' order by h.f_userinfoid\,h.f_handdate  $}"
+				IsOld="{m:Exp Str=kbusers.State\=\=$Loaded$}"
+				IsClear="{m:Exp Str=kbusers.State\=\=$LoadError$ |or| kbusers.f_userid\=\=null}">
+                <!--滞纳金天数-->
+                <o:PropertySetter PropertyName="f_zhinajintianshu" Default="{m:Exp Str=0}"  NoDependValue="{m:Exp Str=SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\>0:SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\,0}"/>
+                <!--滞纳金-->
+                <o:PropertySetter PropertyName="f_zhinajin"   Default="{m:Exp Str=0}"   
+					NoDependValue="{m:Exp Str=(this.oughtfee*this.f_zhinajintianshu*(kbusers.f_usertype\=\=$民用$:single[data.name\=\=$民用滞纳金比率$].ToObjectList().First().value.ToDouble()\,kbusers.f_usertype\=\=$非民用$:single[data.name\=\=$非民用滞纳金比率$].ToObjectList().First().value.ToDouble()\,null)).MathRound(2)}"/>
+            </o:ObjectList>
 
 
             <!--机表收费对象-->
@@ -70,7 +79,7 @@
             <b:HQLAction Name="UpdateZhinajin"  WebClientInfo="{StaticResource dbclient}"  Type="sql" HQL="{m:Exp Str=$update t_zhinajin set f_state\=\'有效\' where id\=(select top 1 id from t_zhinajin where f_state\=\'无效\' and f_userid\=\'\{kbfee.f_userid\}\' and f_zhinajin\=\'\{kbfee.f_zhinajin\}\'  and f_date\=\'\{kbfee.f_date.ToString($yyyy-MM-dd$)\}\')$}" />
 
 			<!--交费完成临时保存对象-->
-			<o:GeneralObject Name="retsell" CanSave="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" 
+			<o:GeneralObject Name="retsell" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" 
 			IsInit="{m:Exp Str=kbfee.f_userid\=\=null}"/>
 
 			<!--更新交费记录的金税盘发票代码-->
@@ -79,18 +88,20 @@
 			<!--金税盘-->
 			 <oo:GoldTax Name="tax"
              Completed="print_Completed"
-			 ListGoodsName="气费"
+			 ListGoodsName="气费|滞纳金"
              InfoClientName="{m:Exp Str=kbusers.f_username\=&gt;Completed}"
 			 IsInit="{m:Exp Str=single[data.name\=\=$使用金税盘分公司$].ToObjectList().First().value.IndexOf(LoginUser.f_fengongsi) > -1}"
 			 InfoClientAddressPhone="{m:Exp Str=kbusers.f_address\=&gt;Completed}"
 			 InfoTaxRate="{m:Exp Str=single[data.name\=\=$\{LoginUser.f_fengongsi\}税率$].ToObjectList().First().value.ToInt()}"
+             InfoSellerBankAccount="{m:Exp Str=single[data.name\=\=$\{LoginUser.f_fengongsi\}开户银行及帐号$].ToObjectList().First().value.ToString()}"
+             InfoSellerAddressPhone="{m:Exp Str=single[data.name\=\=$\{LoginUser.f_fengongsi\}地址及电话$].ToObjectList().First().value.ToString()}"
 			 InfoCashier="{m:Exp Str=LoginUser.name}"
 			 InfoChecker="{m:Exp Str=LoginUser.name}"
-			 ListUnit="方"
-			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}}"
-			 ListNumber="{m:Exp Str=kbfee.f_pregas}"
-			 ListAmount="{m:Exp Str=kbfee.f_grossproceeds}"
-			 ListPrice="{m:Exp Str=kbusers.f_stair1price\=&gt;Completed}"
+			 ListUnit="方|次"
+			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}上期余额:\{kbfee.f_zhye\}本期余额:\{kbfee.f_benqizhye\}上期指数:\{kbfee.lastinputgasnum\}本期指数:\{kbfee.lastrecord\} 抄表月份:\{kbfee.lastinputdate.ToString($yyyy-MM$)\}-\{kbfee.endinputdate.ToString($yyyy-MM$)\} 抄表员:\{kbusers.f_inputtor\}}"
+			 ListNumber="{m:Exp Str=$\{kbfee.f_pregas\}|1}"
+			 ListPrice="{m:Exp Str=$\{kbusers.f_stair1price\}|\{kbfee.f_zhinajin\}}"
+			 ListPriceKind="1|1"
              />
         </m:ResourceLoad>
 
