@@ -23,7 +23,8 @@
             <RowDefinition Height="0*"/>
         </Grid.RowDefinitions>
         <m:ResourceLoad Margin="0,0,-12,0">
-
+            <!-- 设备类型 -->
+            <o:ObjectList Name="devicelist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='手抄设备类型'"/>
             <!--抄表员列表-->
             <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <!--抄表单信息列表-->
@@ -55,14 +56,20 @@
                             <TextBlock TextWrapping="Wrap" Text="抄  表  员："  Margin="5,0,0,0" Height="25" TextAlignment="Right" Grid.Column="0" />
                             <ComboBox x:Name="f_inputtor"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Column="1" ItemsSource="{m:Exp Str=inputtorlist}"  Margin="0" SelectedValuePath="f_inputtor"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_inputtor" />
+                                    <o:PropertySetter PropertyName="f_inputtor" NotNull="True" />
                                 </a:Data.Prop>
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Height="20" Text="{Binding f_inputtor}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
-                            </ComboBox>                            
+                            </ComboBox>
+                            <TextBlock TextWrapping="Wrap" Text="设备类型："  Margin="5,0,0,0" Height="25" TextAlignment="Right" Grid.Column="2" />
+                            <ComboBox Name="f_device"  Grid.Row="0" Grid.Column="3"  SelectedValue="{m:Bind Path=f_device}" ItemsSource="{m:Exp Str=devicelist}" SelectedValuePath="code"  Margin="0,3,0,2" DisplayMemberPath="name" Height="25" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_device"  NotNull="True" />
+                                </a:Data.Prop>
+                            </ComboBox>
                             <Button Content=" 下载文件 " x:Name="dansearchbutton" Grid.Column="6" Click="dansearchbutton_Click" FontSize="14" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="0"/>
                             <Button Content=" 上传结账 " x:Name="saveButton" Click="saveButton_Click" Grid.Row="0" Grid.Column="8"  Margin="0" FontSize="14"   HorizontalAlignment="Left"/>
                             <StackPanel Background="#FFC3E4FD" Orientation="Horizontal" toolkit:DockPanel.Dock="Bottom" Grid.Row="0" Grid.Column="9" Margin="100,0,0,0">

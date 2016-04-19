@@ -35,6 +35,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.aote.dbf.CQA188;
+import com.aote.dbf.MZA188;
 import com.aote.dbf.util.DateHelper;
 import com.aote.rs.charge.HandCharge;
 import com.linuxense.javadbf.DBFField;
@@ -75,6 +76,9 @@ public class DBFService {
             	if(type.equals("CQA188"))
             		fields=CQA188.getFields();
             	//不同A188抄表适配
+            	if(type.equals("MZA188"))
+            		fields=MZA188.getFields();
+            	//不同A188抄表适配
             	
             	
 	            DBFWriter writer = new DBFWriter();
@@ -88,6 +92,9 @@ public class DBFService {
 					//不同A188抄表适配
 					if(type.equals("CQA188"))
 						writer.addRecord(CQA188.getObjects(fields.length,rows.getJSONObject(i),i+1));
+					//不同A188抄表适配
+					if(type.equals("MZA188"))
+						writer.addRecord(MZA188.getObjects(fields.length,rows.getJSONObject(i),i+1));
 					//不同A188抄表适配
 					
 				}  
@@ -153,6 +160,18 @@ public class DBFService {
 		            			   obj.put("lastreading", rowValues[12]);
 		                	}
 		                	//不同A188抄表适配
+		                	if(type.equals("MZA188")){
+			                	if(i==12)
+			                		obj.put("f_gasdate", rowValues[2].toString().trim());
+			            		if(i==3)
+			            			obj.put("userid", rowValues[9].toString().trim());
+			            		if(i==18)
+			            			obj.put("reading", rowValues[11]);
+			            		if(i==15)
+			            			obj.put("lastreading", rowValues[12]);
+			                }
+			                //不同A188抄表适配
+		                	
 		            	   
 		                }
 		                if(obj.getDouble("reading")>=obj.getDouble("lastreading"))
@@ -161,7 +180,7 @@ public class DBFService {
 		                	result.put(obj);
 		                //保存抄表指数一份档案
 		    			execSQL("insert into t_cbnum (f_userid,f_gasdate,f_gasnum,jval,f_inertdate,f_meternumber,f_gaswatchbrand,f_aliasname) "
-								+ "(select '"+obj.getString("userid")+"','"+obj.getString("f_gasdate")+"',"+obj.getDouble("reading")+","+0+",'"+DateHelper.getdatetime()+"',f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+obj.getString("userid")+"')");
+								+ "(select '"+obj.getString("userid")+"','"+DateHelper.getdateymd(obj.getString("f_gasdate"))+"',"+obj.getDouble("reading")+","+0+",'"+DateHelper.getdatetime()+"',f_meternumber,f_gaswatchbrand,f_aliasname from t_userfiles where f_userid='"+obj.getString("userid")+"')");
 					} catch (Exception e) {
 					}	                
 	            }

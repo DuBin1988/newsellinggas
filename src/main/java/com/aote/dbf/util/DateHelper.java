@@ -47,12 +47,22 @@ public class DateHelper {
 		return fmt.format(now);
 	}
 	
+	public static String getdateymd(String datestr) {
+		String rest="1970-01-01";
+		try {
+			rest=datestr.substring(0, 4)+"-"+datestr.substring(4,6)+"-"+datestr.substring(6, 8);			
+		} catch (Exception e) {
+			rest="1970-01-01";
+		}
+		return rest;
+	}
+	
 	public static long getDateTimeLong() {
 			Date now = new Date();
 			//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			// String f_tbdate=fmt.format(now);
 			return now.getTime();
-	}	
+	}
 	
 	public static long getDateTimeLong(String date) {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

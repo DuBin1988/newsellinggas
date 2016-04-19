@@ -31,7 +31,7 @@ namespace Com.Aote.Pages
         {
             // 调用服务
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/DBFService/readfile/" + f_inputtor.SelectedValue + "/CQA188";
+            string uri = wci.BaseAddress + "/DBFService/readfile/" + f_inputtor.SelectedValue + "/" + f_device.SelectedValue;
             Com.Aote.Controls.FileLoad fl=new Com.Aote.Controls.FileLoad();
             fl.Filter="(*.dbf)|*.dbf" ;
             fl.Path = uri;
@@ -53,7 +53,7 @@ namespace Com.Aote.Pages
         {
             // 调用服务
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/DBFService/savefile/" + f_inputtor.SelectedValue + "/CQA188";
+            string uri = wci.BaseAddress + "/DBFService/savefile/" + f_inputtor.SelectedValue + "/" + f_device.SelectedValue;
             Com.Aote.Controls.DownLoad dl = new Com.Aote.Controls.DownLoad();
             dl.Filter="(*.dbf)|*.dbf" ;
             dl.Path = uri;
