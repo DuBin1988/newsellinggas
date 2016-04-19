@@ -35,7 +35,7 @@
 
             <!--抄表的未交费记录-->
             <o:ObjectList Name="kbsellgas" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_handplan h where  h.f_userinfoid\=\'\{kbusers.f_userid\}\' and  h.shifoujiaofei\=\'否\' and h.lastrecord is not null and h.f_state\=\'已抄表\' order by h.f_userinfoid\,h.f_handdate  $}"
+				Path="{m:Exp Str=$from t_handplan h where  h.f_userinfoid\=\'\{kbusers.f_userid\}\' and  h.shifoujiaofei\=\'否\' and h.lastrecord is not null and h.f_state\=\'已抄表\' order by h.f_inputdate  $}"
 				IsOld="{m:Exp Str=kbusers.State\=\=$Loaded$}"
 				IsClear="{m:Exp Str=kbusers.State\=\=$LoadError$ |or| kbusers.f_userid\=\=null}">
                 <!--滞纳金天数-->
@@ -98,7 +98,7 @@
 			 InfoCashier="{m:Exp Str=LoginUser.name}"
 			 InfoChecker="{m:Exp Str=LoginUser.name}"
 			 ListUnit="方|次"
-			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}上期余额:\{kbfee.f_zhye\}本期余额:\{kbfee.f_benqizhye\}上期指数:\{kbfee.lastinputgasnum\}本期指数:\{kbfee.lastrecord\} 抄表月份:\{kbfee.lastinputdate.ToString($yyyy-MM$)\}-\{kbfee.endinputdate.ToString($yyyy-MM$)\} 抄表员:\{kbusers.f_inputtor\}}"
+			 InfoNotes="{m:Exp Str=$用户编号：\{kbusers.f_userid\} 交易编号:\{retsell.id\}应收金额:\{kbfee.f_totalcost\}实收金额:\{kbfee.f_grossproceeds\}上期余额:\{kbfee.f_zhye\}本期余额:\{kbfee.f_benqizhye\}气量:\{kbfee.f_pregas\}上期指数:\{kbfee.lastinputgasnum\}本期指数:\{kbfee.lastrecord\}}"
 			 ListNumber="{m:Exp Str=$\{kbfee.f_pregas\}|1}"
 			 ListPrice="{m:Exp Str=$\{kbusers.f_stair1price\}|\{kbfee.f_zhinajin\}}"
 			 ListPriceKind="1|1"
@@ -204,7 +204,7 @@
                     <sdk:DataGrid SelectionMode="Extended" AutoGenerateColumns="False" x:Name="dataGrid1" 
             			ItemsSource="{m:Exp Str=kbsellgas}"                         						
 	 
-            			IsReadOnly="True" CanUserSortColumns="False" IsHitTestVisible="False"
+            			 CanUserSortColumns="False" IsHitTestVisible="False"
             			ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridCheckBoxColumn Binding="{Binding IsChecked}"/>

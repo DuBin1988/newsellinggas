@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.dom4j.Branch;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -218,7 +219,8 @@ public class SellSer {
 		JSONObject ret = new JSONObject();
 		try {
 			log.debug("售气交费 开始");
-			BigDecimal payMent = dMoney;
+			BigDecimal znj = BigDecimal.valueOf(zhinajin);
+			BigDecimal payMent = dMoney.subtract(znj);
 			// 查询用户
 			Map user = this.findUserinfo(userid);
 			// 查询户所有欠费信息
@@ -226,7 +228,7 @@ public class SellSer {
 			// 获取每个表的阶梯信息
 			// JSONObject files_stair = this.getfilesInfor(userid);
 			List<Map<String, Object>> hands = this.findHands(userid);
-
+			BigDecimal jieyu = new BigDecimal(user.get("f_zhye").toString());
 			// 循环欠费记录，记录 欠费ids,最小指数，最大指数，欠费气量，金额合计userid
 			String handIds = "";
 			double lastinputgasnum = 0;
@@ -241,7 +243,7 @@ public class SellSer {
 				BigDecimal g = new BigDecimal(hand.get("oughtamount")
 						.toString());
 				debtGas = debtGas.add(g);
-				handIds += hand.get("id") + ",";
+				
 				// 最大指数
 				if (i == 0) {
 					lastrecord = Double.parseDouble(hand.get("lastrecord")
@@ -253,16 +255,18 @@ public class SellSer {
 					lastinputgasnum = Double.parseDouble(hand.get(
 							"lastinputgasnum").toString());
 				}
+				// 先计算payment >=用户结余+用户欠费
+				
+				if (payMent.compareTo(debts.subtract(jieyu)) < 0) {
+					break;
+				}
+				handIds += hand.get("id") + ",";
 			}
 			if (handIds.endsWith(",")) {
 				handIds = handIds.substring(0, handIds.length() - 1);
 			}
-			// 先计算payment >=用户结余+用户欠费
-			BigDecimal jieyu = new BigDecimal(user.get("f_zhye").toString());
-			if (payMent.compareTo(debts.subtract(jieyu)) < 0) {
-				throw new ResultException("交费金额:" + payMent + "不够缴纳本次欠费:"
-						+ debts.subtract(jieyu));
-			}
+			
+			
 			// 计算结余,交费日期，表累计气量，总累计气量
 			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu));
 

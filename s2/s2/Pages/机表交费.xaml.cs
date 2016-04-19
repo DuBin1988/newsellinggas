@@ -200,8 +200,8 @@ namespace Com.Aote.Pages
             decimal f_zhye = decimal.Parse(zhye.Text);
             // 拿余额+实缴金额算未交费抄表记录是否应该交费
             decimal money = decimal.Parse(shoukuan.Text);
-            decimal zhinajin = decimal.Parse(ui_zhinajin.Text);
-            decimal total = f_zhye + money - zhinajin;
+            decimal zhinajin = 0;
+            decimal total = f_zhye + money;
 
             // 存放所有扣费的表号
             List<string> userids = new List<string>();
@@ -216,6 +216,7 @@ namespace Com.Aote.Pages
             // 先收有滞纳金的欠费，有滞纳金的必须收
             foreach (GeneralObject map in dataGrid1.ItemsSource)
             {
+                
                 String f_userid = (String)map.GetPropertyValue("f_userid");
 
                 // 取出应交金额
@@ -224,12 +225,17 @@ namespace Com.Aote.Pages
                 decimal f_zhinajin = decimal.Parse(map.GetPropertyValue("f_zhinajin").ToString());
                 //取出违约金天数
                 int f_zhinajintianshu = int.Parse(map.GetPropertyValue("f_zhinajintianshu").ToString());
-
+                
+                if (total < (oughtfee + f_zhinajin))
+                {
+                    break;
+                }
+                total = total - f_zhinajin;
                 // 超过交费期限，必须选取
                 if (f_zhinajintianshu > 0)
                 {
                     total -= oughtfee;
-
+                    zhinajin = f_zhinajin;
                     // 当前表号没有处理过，上期指数增加
                     if (!userids.Contains(f_userid))
                     {
@@ -261,60 +267,60 @@ namespace Com.Aote.Pages
             // 当前表是否可以继续扣减
             bool canSub = true;
 
-            foreach (GeneralObject map in dataGrid1.ItemsSource)
-            {
-                // 排除掉超期的
-                int f_zhinajintianshu = int.Parse(map.GetPropertyValue("f_zhinajintianshu").ToString());
-                if (f_zhinajintianshu > 0)
-                {
-                    continue;
-                }
+            //foreach (GeneralObject map in dataGrid1.ItemsSource)
+            //{
+            //    // 排除掉超期的
+            //    int f_zhinajintianshu = int.Parse(map.GetPropertyValue("f_zhinajintianshu").ToString());
+            //    if (f_zhinajintianshu > 0)
+            //    {
+            //        continue;
+            //    }
 
-                String f_userid = (String)map.GetPropertyValue("f_userid");
+            //    String f_userid = (String)map.GetPropertyValue("f_userid");
 
-                // 取出应交金额
-                decimal oughtfee = decimal.Parse(map.GetPropertyValue("oughtfee").ToString());
+            //    // 取出应交金额
+            //    decimal oughtfee = decimal.Parse(map.GetPropertyValue("oughtfee").ToString());
 
-                // 如果表号变了，继续可以扣减
-                if (!f_userid.Equals(currentId))
-                {
-                    canSub = true;
-                    currentId = f_userid;
-                }
-                // 当前表没有终止，够交，扣除，交费记录变为已交
-                if (total >= oughtfee && canSub)
-                {
-                    total = total - oughtfee;
+            //    // 如果表号变了，继续可以扣减
+            //    if (!f_userid.Equals(currentId))
+            //    {
+            //        canSub = true;
+            //        currentId = f_userid;
+            //    }
+            //    // 当前表没有终止，够交，扣除，交费记录变为已交
+            //    if (total >= oughtfee && canSub)
+            //    {
+            //        total = total - oughtfee;
 
-                    // 当前表号没有处理过，上期指数增加
-                    if (!userids.Contains(f_userid))
-                    {
-                        userids.Add(f_userid);
+            //        // 当前表号没有处理过，上期指数增加
+            //        if (!userids.Contains(f_userid))
+            //        {
+            //            userids.Add(f_userid);
 
-                        decimal lastinputgasnum = decimal.Parse(map.GetPropertyValue("lastinputgasnum").ToString());
-                        lastnum += lastinputgasnum;
-                    }
+            //            decimal lastinputgasnum = decimal.Parse(map.GetPropertyValue("lastinputgasnum").ToString());
+            //            lastnum += lastinputgasnum;
+            //        }
 
-                    // 气量相加
-                    decimal gas = decimal.Parse(map.GetPropertyValue("oughtamount").ToString());
-                    gasSum += gas;
+            //        // 气量相加
+            //        decimal gas = decimal.Parse(map.GetPropertyValue("oughtamount").ToString());
+            //        gasSum += gas;
 
-                    // 气费相加
-                    feeSum += oughtfee;
+            //        // 气费相加
+            //        feeSum += oughtfee;
 
-                    // 修改为选中
-                    map.SetPropertyValue("IsChecked", true, false);
+            //        // 修改为选中
+            //        map.SetPropertyValue("IsChecked", true, false);
 
-                }
-                else
-                {
-                    // 当前表不能继续扣减
-                    canSub = false;
+            //    }
+            //    else
+            //    {
+            //        // 当前表不能继续扣减
+            //        canSub = false;
 
-                    // 修改为未选中
-                    map.SetPropertyValue("IsChecked", false, false);
-                }
-            }
+            //        // 修改为未选中
+            //        map.SetPropertyValue("IsChecked", false, false);
+            //    }
+            //}
 
             //把计算结果放到界面上
             ui_lastinputgasnum.Text = lastnum.ToString("0.#");
@@ -327,7 +333,7 @@ namespace Com.Aote.Pages
             //本期结余=上期结余+实收-气费
             decimal f_benqizhye = f_zhye + money - feeSum - zhinajin;
             ui_benqizhye.Text = f_benqizhye.ToString("0.##");
-
+            ui_zhinajin.Text = zhinajin.ToString();
         }
 
         // 清除界面上的数据
