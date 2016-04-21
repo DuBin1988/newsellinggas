@@ -86,9 +86,9 @@
         					<RowDefinition Height="28"/>
         				</Grid.RowDefinitions>
         				<TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
-        				<TextBox TextWrapping="Wrap" Grid.Column="1" Height="25" Text="{m:Bind Path=f_userid}" a:ControlAttach.DefaultButton="searchbutton" >
+        				<TextBox TextWrapping="Wrap" Grid.Column="1" Height="25" Text="{m:Bind Path=f_userinfoid}" a:ControlAttach.DefaultButton="searchbutton" >
         					<a:Data.Prop>
-        						<o:PropertySetter PropertyName="f_userid" Operator="f_userid like 'this%'"/>               
+        						<o:PropertySetter PropertyName="f_userinfoid" Operator="f_userinfoid like 'this%'"/>               
         					</a:Data.Prop>
         				</TextBox>
         				<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="用户姓名：" Margin="5,0,0,0" HorizontalAlignment="Right"/>
@@ -117,8 +117,9 @@
 					
         			<sdk:DataGrid.Columns>
         				<sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True"/>
+        				<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}" d:IsLocked="True"/>
+                        <sdk:DataGridTextColumn Header="表具编号" Binding="{Binding f_userid}" d:IsLocked="True"/>
+                        <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True"/>
         				<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}" d:IsLocked="True"/>
         				<sdk:DataGridTextColumn Header="小区" Binding="{Binding f_districtname}" d:IsLocked="True"/>
 						<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_yytdepa}" d:IsLocked="True"/>
@@ -182,7 +183,8 @@
 						<RowDefinition Height="35"/>
             		</Grid.RowDefinitions>
             		<TextBlock TextWrapping="Wrap" Text="用户编号：" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6"/>
-            		<TextBlock Grid.Column="4" Margin="0,6" TextWrapping="Wrap" Text="用户姓名：" HorizontalAlignment="Right"/>
+                        <TextBlock TextWrapping="Wrap" Text="表具编号：" VerticalAlignment="Bottom" Grid.Column="2" HorizontalAlignment="Right" Margin="0,6"/>
+                        <TextBlock Grid.Column="4" Margin="0,6" TextWrapping="Wrap" Text="用户姓名：" HorizontalAlignment="Right"/>
             		<TextBlock Margin="0,6" Grid.Row="1" TextWrapping="Wrap" Text="用户地址：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             		<TextBlock Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Text="身份证号：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             		<TextBlock Margin="0,6" Grid.Row="3" TextWrapping="Wrap" Text="气表品牌：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
@@ -199,27 +201,32 @@
             		<TextBlock Margin="0,6" Grid.Row="8" TextWrapping="Wrap" Text="操 作 人：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>
             		<TextBlock Grid.Column="4" Margin="0,6" Grid.Row="8" TextWrapping="Wrap" Text="部      门：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             		<TextBlock Margin="0,6" Grid.Row="8" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="Black"/>
-            		<TextBox Text="{m:Bind Path=f_userid}" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+            		<TextBox Text="{m:Bind Path=f_userinfoid}" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
             			<a:Data.Prop>
-            				<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}"/>
+            				<o:PropertySetter PropertyName="f_userinfoid" Value="{m:Exp Str=userfiles.f_userinfoid\=>Completed}"/>
             			</a:Data.Prop>
             		</TextBox>
-                        <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=userfiles.f_gasmeterstyle\=>Completed}"/>
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBox Text="{m:Bind Path=f_userstate}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userstate" Default="停用" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBox Text="{m:Bind Path=f_userstatus}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userstatus" Default="1" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                    <TextBox Text="{m:Bind Path=f_userid}" IsReadOnly="True" Grid.Column="3" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                         <a:Data.Prop>
+                             <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}"/>
+                         </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                         <a:Data.Prop>
+                             <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=userfiles.f_gasmeterstyle\=>Completed}"/>
+                         </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_userstate}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                         <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_userstate" Default="停用" />
+                         </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_userstatus}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
+                         <a:Data.Prop>
+                            <o:PropertySetter PropertyName="f_userstatus" Default="1" />
+                         </a:Data.Prop>
+                    </TextBox>
+                    <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
             			<a:Data.Prop>
             				<o:PropertySetter PropertyName="f_username"  Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
             			</a:Data.Prop>
@@ -307,7 +314,7 @@
             					Default="{m:Exp Str=SysTime.Now}"/>
             			</a:Data.Prop>
             		</sdk:DatePicker>	
-            		<Button Content="读卡" Click="{m:Exp Str=card.ReadCard()}" Grid.Column="2" Margin="23,0,37,5" Width="50"/>
+            		<Button Content="读卡" Visibility="Collapsed" Click="{m:Exp Str=card.ReadCard()}" Grid.Column="2" Margin="23,0,37,5" Width="50"/>
             		<!--隐藏域-->
 						<!--卡号-->
 						<TextBox Text="{m:Bind Path=f_cardid}" Visibility="Collapsed" Margin="0,6"  TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">

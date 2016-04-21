@@ -28,6 +28,7 @@
             <o:GeneralObject Name="ghfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  		Path="one/from t_singlevalue where name='过户费' "></o:GeneralObject>
             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
+            <o:ObjectList Name="zhengjianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='证件类型'"/>
             <!--用户对象Path="{m:Exp Str=applys.SelectedItem.id\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\'$\,apply.DataContext.f_userid \!\= null:$one/from t_userinfo where f_userid\=\'\{apply.DataContext.f_userid\}\'$\,$qqq$}"    -->
             <o:GeneralObject Name="userfiles" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
                  Path="{m:Exp Str=
@@ -111,7 +112,7 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_userstate \=\'正常\'}"
+        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\'}"
         					IsOld="{m:Exp Str=print.State\=\=$End$}"
         					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
@@ -185,10 +186,37 @@
                         <TextBlock Margin="1,3,1,2" TextWrapping="Wrap" Text="用户姓名：" Grid.Row="2" TextAlignment="Right" Height="25"/>
                         <TextBlock Margin="0,3,0,2" Grid.Row="1" TextWrapping="Wrap" Text="用户地址：" TextAlignment="Right" Height="25"/>
                         <TextBlock Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Text="电     话：" Grid.Column="4" TextAlignment="Right" Height="25"/>
-                        <TextBlock Grid.Column="2" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Text="身份证号：" TextAlignment="Right" Height="25"/>
-                        <TextBlock Margin="1,3,1,2" Grid.Row="4" TextWrapping="Wrap" Text="新用户姓名：" TextAlignment="Right" Height="25"/>
-                        <TextBlock Grid.Column="4" Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" Text="新 电 话：" TextAlignment="Right" Height="25" />
-                        <TextBlock Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" Text="新身份证号：" Grid.Column="2" TextAlignment="Right" Height="25"/>
+                        <TextBlock Grid.Column="4" Margin="0,3,0,2" Grid.Row="1" TextWrapping="Wrap" Text="证件类型：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_credentials}" Grid.Column="5" Margin="0,3,6,2" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_credentials" Value="{m:Exp Str=userfiles.f_credentials\=>Completed}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Grid.Column="2" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Text="证件号码：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_idnumber}" Grid.Column="3" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=userfiles.f_idnumber\=>Completed}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Margin="1,3,1,2" Grid.Row="4" TextWrapping="Wrap" Text="新用户姓名：" TextAlignment="Right" Height="25"/>
+                        <TextBlock Grid.Column="4" Margin="0,3,0,2" Grid.Row="8" TextWrapping="Wrap" Text="新 电 话：" TextAlignment="Right" Height="25" />
+                        <TextBox Text="{m:Bind Path=f_tnewphone}" Grid.Column="5" Margin="0,3,6,2" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_tnewphone" Value="{m:Exp Str=userfiles.f_tnewphone\=>Completed}" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" Text="新证件号码：" Grid.Column="4" TextAlignment="Right" Height="25"/>
+                        <TextBox Text="{m:Bind Path=f_tnewidnumber}" Grid.Column="5" Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_tnewidnumber" Value="{m:Exp Str=userfiles.f_tnewidnumber\=>Completed}" />
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" Text="新证件类型：" Grid.Column="2" TextAlignment="Right" Height="25"/>
+                        <ComboBox x:Name="CoboxPinp_Copy3" ItemsSource="{m:Exp Str=zhengjianlist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_tnewcredentials}" Grid.Column="3" Margin="0,3,0,2" Grid.Row="4" Height="25" IsEnabled="true" FontSize="13.333" RenderTransformOrigin="-5.111,4.2">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_tnewcredentials"  Default="{m:Exp Str=zhengjianlist.Count &gt; 0 :zhengjianlist.First().name\,null}"/>
+                            </a:Data.Prop>
+                        </ComboBox>
                         <TextBlock Margin="1,3,1,2" Grid.Row="5" TextWrapping="Wrap" Text="新银行开户名：" TextAlignment="Right" Height="25"/>
                         <TextBlock Grid.Column="4" Margin="0,3,0,2" Grid.Row="5" TextWrapping="Wrap" Text="新银行名：" TextAlignment="Right" Height="25" />
                         <TextBlock Margin="0,3,0,2" Grid.Row="5" TextWrapping="Wrap" Text="新银行账号：" Grid.Column="2" TextAlignment="Right" Height="25"/>
@@ -219,24 +247,9 @@
                                 <o:PropertySetter PropertyName="f_phone" Value="{m:Exp Str=userfiles.f_phone\=>Completed}" />
                             </a:Data.Prop>
                         </TextBox>
-                        <TextBox Text="{m:Bind Path=f_idnumber}" Grid.Column="3" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25"  >
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=userfiles.f_idnumber\=>Completed}" />
-                            </a:Data.Prop>
-                        </TextBox>
                         <TextBox Text="{m:Bind Path=f_tnewusername}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch" d:LayoutOverrides="HorizontalAlignment" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_tnewusername" Value="{m:Exp Str=userfiles.f_tnewusername\=>Completed}" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBox Text="{m:Bind Path=f_tnewphone}" Grid.Column="5" Margin="0,3,6,2" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_tnewphone" Value="{m:Exp Str=userfiles.f_tnewphone\=>Completed}" />
-                            </a:Data.Prop>
-                        </TextBox>
-                        <TextBox Text="{m:Bind Path=f_tnewidnumber}" Grid.Column="3" Margin="0,3,0,2" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
-                            <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_tnewidnumber" Value="{m:Exp Str=userfiles.f_tnewidnumber\=>Completed}" />
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_newnusermc}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch" d:LayoutOverrides="HorizontalAlignment" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25">
