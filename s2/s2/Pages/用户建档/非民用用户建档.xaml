@@ -63,7 +63,7 @@
 			<o:ObjectList Name="stairl" WebClientInfo="{StaticResource dbclient}"
              	Path="{m:Exp Str=CoboxGasPro.SelectedValue!\=null:$from t_stairprice where f_gasproperties\=\'\{CoboxGasPro.SelectedValue\}\' and f_branch\=\'\{LoginUser.f_fengongsi\}\'$\,null}"/>
             <!--用气性质-->
-			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype where f_gasproperties\=\'非民用\'}"/>
+			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='非民用用气性质'"/>
             <!--用气设备信息-->
 			<o:ObjectList Name="devicelist" EntityType="t_devices" ></o:ObjectList>
 			<!--表信息-->
@@ -226,7 +226,7 @@
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
                                             <TextBlock Text="用气性质：" Margin="0,3,0,2" Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right"/>
-                                            <ComboBox x:Name="CoboxGasPro" ItemsSource="{m:Exp Str=usegaslist}" DisplayMemberPath="f_gasproperties" SelectedValuePath="f_gasproperties" SelectedValue="{m:Bind Path=f_gasproperties}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                            <ComboBox x:Name="CoboxGasPro" ItemsSource="{m:Exp Str=usegaslist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_gasproperties}"  Grid.Column="1" Margin="0,4,0,1" Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
                                                 <a:Data.Prop>
                                                     <o:PropertySetter PropertyName="f_gasproperties" NotNull="True" />
                                                 </a:Data.Prop>
@@ -281,11 +281,11 @@
 										 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="Auto">
                                         <Grid >
                                         	<Grid.ColumnDefinitions>
-                                        		<ColumnDefinition Width="*"/>
                                         		<ColumnDefinition Width="70"/>
+                                        		<ColumnDefinition Width="*"/>
                                         	</Grid.ColumnDefinitions>
-                                            <Button  Content="添加表具" Click="{m:Exp Str=userfileslist.AddEmpty()}" Width="60" HorizontalAlignment="Left" Margin="5,2,0,2" Grid.Column="1" VerticalAlignment="Top" />
-											<sdk:DataGrid x:Name="userfiles" Margin="0,0,0,0"  AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userfileslist}" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
+                                            <Button  Content="添加表具" Click="{m:Exp Str=userfileslist.AddEmpty()}" Width="60" HorizontalAlignment="Left" Margin="5,2,0,2" VerticalAlignment="Top" />
+											<sdk:DataGrid x:Name="userfiles" Margin="0,0,0,0"  AutoGenerateColumns="False" ItemsSource="{m:Exp Str=userfileslist}" Width="Auto" Background="{x:Null}" IsReadOnly="True" Grid.Column="1" >
                                                 <sdk:DataGrid.Columns>
                                                     <sdk:DataGridTemplateColumn>
 														<sdk:DataGridTemplateColumn.CellTemplate>
@@ -294,10 +294,10 @@
 															</DataTemplate>
 														</sdk:DataGridTemplateColumn.CellTemplate>
 													</sdk:DataGridTemplateColumn>
-                                                    <sdk:DataGridTemplateColumn Header="气表品牌">
+                                                     <sdk:DataGridTemplateColumn Header="气表品牌">
 														<sdk:DataGridTemplateColumn.CellTemplate>
 															<DataTemplate>
-                                                                <ComboBox Name="CoboxPinpai" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" SelectionChanged="{m:Exp Str=data.qbnumber\=CoboxPinpai.SelectedItem.qbnumber;data.f_aliasname\=CoboxPinpai.SelectedItem.f_aliasname;data.f_gasmeterstyle\=CoboxPinpai.SelectedItem.f_type;data.f_send\=CoboxPinpai.SelectedItem.send}" ItemsSource="{m:Exp Str=pinpailist}" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0,2,0,3" Grid.Row="10" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"   >
+                                                                <ComboBox Name="CoboxPinpai" DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" SelectionChanged="{m:Exp Str=data.qbnumber\=CoboxPinpai.SelectedItem.qbnumber;data.f_aliasname\=CoboxPinpai.SelectedItem.f_aliasname;data.f_gasmeterstyle\=CoboxPinpai.SelectedItem.f_type;data.f_send\=CoboxPinpai.SelectedItem.send;data.klx\=CoboxPinpai.SelectedItem.klx;data.dqdm\=CoboxPinpai.SelectedItem.dqdm;data.yhh\=CoboxPinpai.SelectedItem.yhh;data.bjql\=CoboxPinpai.SelectedItem.bjql;data.czsx\=CoboxPinpai.SelectedItem.czsx;data.tzed\=CoboxPinpai.SelectedItem.tzed;data.kmm\=CoboxPinpai.SelectedItem.kmm}" ItemsSource="{m:Exp Str=pinpailist}" SelectedValue="{m:Bind Path=f_gaswatchbrand}" Grid.Column="1" Margin="0,2,0,3" Grid.Row="10" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="3"   >
 																	<a:Data.Prop>
 																		<o:PropertySetter PropertyName="f_gaswatchbrand" NotNull="True" />
 																	</a:Data.Prop>
@@ -391,7 +391,13 @@
                                                     <sdk:DataGridTextColumn Header="气表类型" Binding="{Binding f_gasmeterstyle}"/>
                                                     <sdk:DataGridTextColumn Header="别名" Binding="{Binding f_aliasname}"/>
                                                     <sdk:DataGridTextColumn Header="是否发送指令" Binding="{Binding f_send}"/>
-													
+													<sdk:DataGridTextColumn Header="klx" Binding="{Binding klx}"/>
+                                                    <sdk:DataGridTextColumn Header="dqdm" Binding="{Binding dqdm}"/>
+                                                    <sdk:DataGridTextColumn Header="yhh" Binding="{Binding yhh}"/>
+                                                    <sdk:DataGridTextColumn Header="bjql" Binding="{Binding bjql}"/>
+                                                    <sdk:DataGridTextColumn Header="czsx" Binding="{Binding czsx}"/>
+                                                    <sdk:DataGridTextColumn Header="tzed" Binding="{Binding tzed}"/>
+                                                    <sdk:DataGridTextColumn Header="kmm" Binding="{Binding kmm}"/>
                                                 </sdk:DataGrid.Columns>
                                             </sdk:DataGrid>
                                             <toolkit:DockPanel Margin="5,5,10,25" Grid.ColumnSpan="2" />

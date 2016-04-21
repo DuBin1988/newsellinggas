@@ -41,6 +41,8 @@
 		    IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}">
                 <o:PropertySetter PropertyName="f_zherownum" Value="{m:Exp Str=userfiles !\= null and userfiles.f_zherownum !\= null and userfiles.f_zherownum.ToInt()^24:userfiles.f_zherownum+1\,1}"/>
                 <o:PropertySetter PropertyName="f_state" Default="换表登记"></o:PropertySetter>
+                <o:PropertySetter PropertyName="f_gasproperties" NoDependValue="{m:Exp Str=userfiles.f_gasproperties}"/>
+				<o:PropertySetter  PropertyName="f_userinfoid" NoDependValue="{m:Exp Str=userfiles.f_userinfoid}"/>
             </o:GeneralObject>
 
             <!-- 获取标记信息 -->

@@ -62,8 +62,44 @@
 		>
             </oo:NewGeneralICCard>
 
-            <!--用户对象 -->
+            <!--表对象 -->
             <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+			IsInit="{m:Exp Str=userfile.DataContext.IsInit}"
+
+            Path="{m:Exp Str=userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userid\=\'\{userfile.DataContext.f_userid\}\'$\,$aaa$}">
+
+                <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=sellinggas.f_zherownum}"/>
+                <!--用户总累计购气量-->
+                <o:PropertySetter PropertyName="f_cumulativepurchase"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfile.DataContext.f_upbuynum\,null}"></o:PropertySetter>
+                <!--当前表累计购气量-->
+                <o:PropertySetter PropertyName="f_metergasnums"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfile.DataContext.f_premetergasnums\,null}"></o:PropertySetter>
+                <!--维护费日期-->
+                <o:PropertySetter PropertyName="f_beginfee"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_beginfee\,null}"></o:PropertySetter>
+                <!--最后购气量-->
+                <o:PropertySetter PropertyName="f_finallybought"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_finallybought\,null}"></o:PropertySetter>
+                <!--最后购气日期-->
+                <o:PropertySetter PropertyName="f_finabuygasdate"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_finabuygasdate\,null}"></o:PropertySetter>
+                <!--写卡次数-->
+                <o:PropertySetter PropertyName="f_times"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):userfilego.f_times\,null}"></o:PropertySetter>
+                <!--剩余补气量-->
+                <o:PropertySetter PropertyName="f_surplusgas"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_surplusgas\,null}"></o:PropertySetter>
+                <!--初始化卡标志-->
+                <o:PropertySetter PropertyName="f_initcardsellgas"
+				NoDependValue="{m:Exp Str=(SaveAction2\=>Saving!\=null or SaveAction\=>Saving!\=null):sellinggas.f_initcardsellgas\,null}"></o:PropertySetter>
+                <!--发卡标记-->
+                <o:PropertySetter PropertyName="f_whethergivecard"
+				NoDependValue="{m:Exp Str='(SaveAction2\=>Saving!\=null or SaveAction=>Saving!=null):(sellinggas.f_payfeetype==$发卡售气$:$未发$,$已发$),null'}"></o:PropertySetter>
+       </o:GeneralObject>
+
+            <!--用户对象 -->
+            <o:GeneralObject Name="userinfo" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
 			IsInit="{m:Exp Str=userfile.DataContext.IsInit}"
 
             Path="{m:Exp Str=userfile.DataContext.f_userinfoid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userinfoid\}\'$\,$aaa$}">
@@ -167,6 +203,7 @@
             <!--保存对象 -->
             <b:BatchExcuteAction Name="SaveAction" CanSave="{m:Exp Str=card.State\=\=$End$}" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=users}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=userinfo}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=UpdateSellgas}" MethodName="InvokeToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=UpdateFillgas}" MethodName="InvokeToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=Updatefapiao}" MethodName="InvokeToJson"/>
@@ -179,6 +216,7 @@
 
             <b:BatchExcuteAction Name="SaveAction2" CanSave="{m:Exp Str='save2=>Click!=null'}" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=users}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=userinfo}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=UpdateSellgas}" MethodName="InvokeToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
                 <!--添加一笔负记录-->
@@ -306,10 +344,10 @@
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="表编号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right"/>
+                            <TextBlock Text="用户编号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right"/>
 
                             <TextBlock Text="用户姓名：" Margin="0" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2" Height="25"/>
-                            <TextBlock Text="身份证号：" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right"/>
+                            <TextBlock Text="表编号：" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right"/>
                             <TextBlock Text="小区地址：" Grid.Column="2" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                             <TextBlock Text="小区名称：" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
                             <TextBlock Text="气表品牌：" Grid.Column="4" Margin="0" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
@@ -335,9 +373,9 @@
                             <TextBlock Text="应交金额：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
                             <TextBlock Text="发 票 号：" Margin="0" Grid.Row="8" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
                             <TextBlock Text="找　　零：" Margin="0" Grid.Row="9" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-                            <TextBox x:Name="f_userid" Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" IsReadOnly="True">
+                            <TextBox x:Name="f_userid" Text="{m:Bind Path=f_userinfoid}"  Grid.Column="1" Margin="0" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" IsReadOnly="True">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=sellinggas.f_userid\=&gt;Completed}"/>
+                                    <o:PropertySetter PropertyName="f_userinfoid" Value="{m:Exp Str=sellinggas.f_userinfoid\=&gt;Completed}"/>
                                 </a:Data.Prop>
                             </TextBox>
                             <Button Click="{m:Exp Str=kbsumgas.Clear();card.ReadCard()}" Content="读卡" Margin="1,0,0,2" FontSize="12" Width="32" Grid.Column="2" HorizontalAlignment="Left"/>
@@ -346,9 +384,9 @@
                                     <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=sellinggas.f_username\=&gt;Completed}"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_idnumber}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" >
+                            <TextBox Text="{m:Bind Path=f_userid}" IsReadOnly="True" Grid.Column="1" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" >
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=sellinggas.f_idnumber\=&gt;Completed}"/>
+                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=sellinggas.f_userid\=&gt;Completed}"/>
                                 </a:Data.Prop>
                             </TextBox>
 
@@ -593,10 +631,10 @@
                                 </a:Data.Prop>
  
                             </TextBox>
-                            <TextBlock Text="用户编号：" Foreground="Red" Margin="115,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="3" Height="25" Grid.ColumnSpan="2" />
-                            <TextBox Text="{m:Bind Path=f_userinfoid}" IsReadOnly="True" Grid.Column="5"  Grid.Row="5" TextWrapping="Wrap"  HorizontalAlignment="Stretch" Width="Auto" Margin="0,5,0,0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+                            <TextBlock Text="身份证：" Margin="115,4,0,1" Grid.Row="5" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="3" Height="25" Grid.ColumnSpan="2" />
+                            <TextBox Text="{m:Bind Path=f_idnumber}" IsReadOnly="True" Grid.Column="5"  Grid.Row="5" TextWrapping="Wrap"  HorizontalAlignment="Stretch" Width="Auto" Margin="0,5,0,0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
                             	<a:Data.Prop>
-                            		<o:PropertySetter PropertyName="f_userinfoid"  NoDependValue="{m:Exp Str=sellinggas.f_userinfoid}"/>
+                                    <o:PropertySetter PropertyName="f_idnumber"  NoDependValue="{m:Exp Str=sellinggas.f_idnumber}"/>
                             	</a:Data.Prop>
                             </TextBox>
                         </Grid>

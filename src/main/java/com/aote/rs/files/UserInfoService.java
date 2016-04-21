@@ -82,7 +82,7 @@ public class UserInfoService {
 				insertfile((JSONObject) Transfer.MapToJson(savem), userinfoid,
 						useridname, loginuserid);
 			}
-			result.put("success", userinfoid+"用户建档完成！");
+			result.put("success", userinfoid + "用户建档完成！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("error", e.getMessage());
@@ -368,7 +368,8 @@ public class UserInfoService {
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);
-		Map userfile = JSONHelper.toHashMap(json, hibernateTemplate, "t_userfiles");
+		Map userfile = JSONHelper.toHashMap(json, hibernateTemplate,
+				"t_userfiles");
 		userfile.put("f_yytdate", new Date());
 		userfile.put("f_yyttime", new Date());
 		userfile.put("f_zhye", 0.0);
@@ -379,11 +380,36 @@ public class UserInfoService {
 		userfile.put("f_whethergivecard", "未发");
 		userfile.put("f_whethergivepassbook", "未发");
 		userfile.put("f_zherownum", 13);
-//		userfile.put("refreshCache", 1);
+		// userfile.put("refreshCache", 1);
 		userfile.put("lastinputgasnum", 0.0);
 		userfile.put("lastinputdate", new Date());
 		userfile.put("f_metergasnums", 0.0);
 		userfile.put("f_cumulativepurchase", 0.0);
+		// bjql klx czsx tzed
+		if (userfile.containsKey("bjql")) {
+			String bjql = (String) userfile.get("bjql");
+			if (bjql != null) {
+				userfile.put("bjql", Integer.parseInt(bjql));
+			}
+		}
+		if (userfile.containsKey("klx")) {
+			String klx = (String) userfile.get("klx");
+			if (klx != null) {
+				userfile.put("klx", Integer.parseInt(klx));
+			}
+		}
+		if (userfile.containsKey("czsx")) {
+			String czsx = (String) userfile.get("czsx");
+			if (czsx != null) {
+				userfile.put("czsx", Integer.parseInt(czsx));
+			}
+		}
+		if (userfile.containsKey("tzed")) {
+			String tzed = (String) userfile.get("tzed");
+			if (tzed != null) {
+				userfile.put("tzed", Integer.parseInt(tzed));
+			}
+		}
 		this.hibernateTemplate.save("t_userfiles", userfile);
 		return result;
 	}
