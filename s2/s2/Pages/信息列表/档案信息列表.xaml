@@ -554,9 +554,15 @@
                                     <!--222222222222222222222222222222222222222-->
 
                                     <TextBlock TextWrapping="Wrap" Text="用户编号：" Margin="18,2,0,1" Grid.Row="1"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="82"/>
-                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Grid.Column="1" Grid.Row="1" Height="25" >
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userinfoid}" Width="Auto" Margin="0" Grid.Column="1" Grid.Row="1" Height="25" >
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_userid"  Operator="f_userinfoid like 'this%'"/>
+                                            <o:PropertySetter PropertyName="f_userinfoid"  Operator="f_userinfoid like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                                    <TextBlock TextWrapping="Wrap" Text="表具编号：" Margin="11,2,0,1" Grid.Row="1" Grid.Column="6"  TextAlignment="Right" Height="25" HorizontalAlignment="Center" Width="74"/>
+                                    <TextBox TextWrapping="Wrap" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0" Grid.Column="7" Grid.Row="1" Height="25" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="f_userid"  Operator="f_userid like 'this%'"/>
                                         </a:Data.Prop>
                                     </TextBox>
                                     <StackPanel Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="3" Orientation="Horizontal" >
@@ -571,7 +577,7 @@
                                     </StackPanel>
 
 
-                                    
+
                                 </Grid>
                             </toolkit:DockPanel>
                             <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom">
@@ -591,6 +597,7 @@
 
 
                                     <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}"/>
+                                    <sdk:DataGridTextColumn Header="表具编号" Binding="{Binding f_userid}"/>
                                     <sdk:DataGridTextColumn Header="表号" Binding="{Binding f_meternumber}"/>
                                     <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                                     <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
