@@ -24,7 +24,7 @@
             <!--流程启动对象-->
             <o:GeneralObject  Name="startprocess" WebClientInfo="{StaticResource server}" 
 		        EntityType="t_test" 
-	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/startprocess/散户流程/\{LoginUser.name\}/\{LoginUser.id\}}"
+	 	        IsInit="{m:Exp Str='this.State==$End$'}" CustomePath="{m:Exp Str=$/workflow/startprocess/报装流程/\{LoginUser.name\}/\{LoginUser.id\}}"
                  >
             </o:GeneralObject>
 
@@ -48,7 +48,7 @@
 
             <!--图片信息-->
             <o:ObjectList Name="imagelist" EntityType="t_applyimage" HasEmptyRow="True" >
-                <o:PropertySetter PropertyName="state" Default="申请登记" Value="申请登记"></o:PropertySetter>
+                <!--<o:PropertySetter PropertyName="state" Default="申请登记" Value="申请登记"></o:PropertySetter>-->
             </o:ObjectList>
             <!--附件信息-->
             <o:ObjectList Name="annexlist" EntityType="t_applyannex" HasEmptyRow="True"></o:ObjectList>
