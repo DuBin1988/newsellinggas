@@ -20,9 +20,6 @@
 	  <!--卡对象-->
 		<o:NewGeneralICCard Name="card"  ></o:NewGeneralICCard> 
 		
-		<!--提交-->
-			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
-				HQL="{m:Exp Str=$update t_cancellation  where id in (\{pipelines.SelectedItems.ToString(id)\=>SelectionChanged\}) }"/>
 		<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
 		
 		<!--批量删除语句-->
@@ -35,15 +32,21 @@
         </o:GeneralObject>
 
 			<!--用户对象 {m:Exp Str=$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\' and f_userstate\=\'正常\'}-->
-        	<o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-              Path="{m:Exp Str=pipelines.SelectedItem.id\!\=null:$one/from t_userfiles where id\=\'\{pipelines.SelectedItem.id\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\'$\,$qqq$}" 
-			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
-                <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstate\,$销户$}" />
-                <o:PropertySetter PropertyName="f_userstatus" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstatus\,$1$}" />
-            </o:GeneralObject>
+        	<o:GeneralObject Name="userfiles" EntityType="t_userinfo"
+				LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=$one/from t_userinfo where f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_userid\=\'\{pipeline.DataContext.f_userid\}\'}" 
+				IsInit="{m:Exp Str='SaveAction.State==$End$'}"
+				IsOld="{m:Exp Str=pipeline.DataContext.f_userid!\=null}">
+              </o:GeneralObject>
 			
+			<!--更新表状态为销户-->
+			<b:HQLAction Name="update_userfiles"  WebClientInfo="{StaticResource dbclient}" 
+					HQL="{m:Exp Str=$update t_userfiles set f_userstate\=\'销户\'\,f_userstatus\=\'1\' where f_userinfoid\=\'\{pipeline.DataContext.f_userid\}\'}"/>
+			<b:HQLAction Name="update_userinfo"  WebClientInfo="{StaticResource dbclient}" 
+					HQL="{m:Exp Str=$update t_userinfo set f_userstate\=\'销户\' where f_userid\=\'\{pipeline.DataContext.f_userid\}\'}"/>
 			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
-				<b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=update_userfiles}" MethodName="InvokeToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=update_userinfo}" MethodName="InvokeToJson"/>
 				<b:BatchInfo Source="{m:Exp Str=pipeline.DataContext}" MethodName="SaveToJson"/>
 			</b:BatchExcuteAction>
 
@@ -55,7 +58,7 @@
 			<ColumnDefinition Width="7*"/>
 		</Grid.ColumnDefinitions>
         <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
-        	<toolkit:DockPanel Margin="0,0,0,54" >
+        	<toolkit:DockPanel  >
 			<!--信息列表按钮-->
         		<toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" Margin="0" Height="45">
         			<!--提交审核-->
@@ -108,7 +111,7 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
         			<a:Data.Items>
         				<o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
-        					Path="{m:Exp Str=$from t_userfiles where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
+        					Path="{m:Exp Str=$from t_userinfo where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
         					IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or pipeline.DataContext.State\=\=$End$}"
         					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
         			</a:Data.Items>
@@ -202,7 +205,7 @@
                             <TextBlock Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" Grid.Column="4" d:LayoutOverrides="Height, GridBox"/>
                             <TextBox Text="{m:Bind Path=f_userid}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}" />
+                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=pipelines.SelectedItem.f_userid}" />
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
@@ -222,7 +225,7 @@
                             </TextBox>
                             <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
+                                    <o:PropertySetter PropertyName="f_username" NotNull="True" Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBox Text="{m:Bind Path=f_address}" Grid.ColumnSpan="2" Grid.Column="1" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">

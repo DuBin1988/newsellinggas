@@ -21,7 +21,7 @@
            Title="Frame Page">    
 
     <Grid Background="{StaticResource LoginBgColorBrush1}">
-		<m:ResourceLoad>
+        <m:ResourceLoad Name="resources">
 			<!--后台Hibernate配置在前台的反映-->
 	        <o:CustomTypes Name="CustomTypes" 
 			WebClientInfo="{StaticResource dbclient}" Path=""/>
@@ -69,7 +69,7 @@
 			<!--报建编号工商-->
 			<o:SeriaNumber Name="Seriabjf" Length="5"  Key="{m:Exp Str='${SysTime.Now.ToString($yyyy$)}F'}"/>
             <!--银行名称-->
-            <o:ObjectList Name="banknamelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名' order by id"/>
+            <o:ParamObjectList Name="banknamelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名' order by id"/>
 
             <!--民用合同编号-->
 			<o:SeriaNumber Name="Seriahtm" Length="5"  Key="{m:Exp Str='$A{SysTime.Now.ToString($yyyy$)}'}"/>
@@ -80,26 +80,26 @@
             <!--非民用壁挂炉合同编号-->
 			<o:SeriaNumber Name="Seriahtfmh" Length="5"  Key="{m:Exp Str='$H{SysTime.Now.ToString($yyyy$)}'}"/>
             <!--行政区-->
-            <o:ObjectList Name="arealist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='行政区' order by id"/>
+            <o:ParamObjectList Name="arealist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='行政区' order by id"/>
             <!--城市-->
-            <o:ObjectList Name="citylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='城市' order by id"/>
+            <o:ParamObjectList Name="citylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='城市' order by id"/>
             <!--归口单位-->
-            <o:ObjectList Name="guikoulist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='归口单位' order by id"/>
+            <o:ParamObjectList Name="guikoulist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='归口单位' order by id"/>
             <!--网格编码-->
-            <o:ObjectList Name="gridlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网格编码' order by id"/>
+            <o:ParamObjectList Name="gridlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网格编码' order by id"/>
             <!--街道-->
-            <o:ObjectList Name="roadlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_road order by id}"/>
+            <o:ParamObjectList Name="roadlist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from t_road order by id}"/>
             <!---用户等级-->
-            <o:ObjectList Name="yldjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户等级'"/>
+            <o:ParamObjectList Name="yldjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户等级'"/>
             <!--购买方式-->
-            <o:ObjectList Name="buystylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='购买方式'"/>
+            <o:ParamObjectList Name="buystylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='购买方式'"/>
          
             <!--安装方式-->
-            <o:ObjectList Name="installstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='安装方式'"/>
+            <o:ParamObjectList Name="installstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='安装方式'"/>
             <!--灶具安装方式-->
-            <o:ObjectList Name="kitcheninstallstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='灶具安装方式'"/>
+            <o:ParamObjectList Name="kitcheninstallstylelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='灶具安装方式'"/>
             <!--是否有效-->
-            <o:ObjectList Name="yesornolist"  WebClientInfo="{StaticResource dbclient}" Path=" from paramvalue where param.name = '是否'"/>
+            <o:ParamObjectList Name="yesornolist"  WebClientInfo="{StaticResource dbclient}" Path=" from paramvalue where param.name = '是否'"/>
             <!--剪切板对象-->
             <o:ClipboardObj Name="Clipboard"/>
            
@@ -112,86 +112,86 @@
 			<o:ObjectList Name="params" WebClientInfo="{StaticResource dbclient}" EntityType="param"  
 			Path="select distinct p from param p left join fetch p.f_paramvalues v order by v.id"/>
 <!--抄表月份参数-->
-			<o:ObjectList Name="cbyflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'"/>
-			<o:ObjectList Name="cbyflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="cbyflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'"/>
+			<o:ParamObjectList Name="cbyflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表月份'" HasEmptyRow="True"/>
 			<!--门站参数-->
-			<o:ObjectList Name="menzhanflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'"/>
-			<o:ObjectList Name="menzhanflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="menzhanflist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'"/>
+			<o:ParamObjectList Name="menzhanflistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='门站'" HasEmptyRow="True"/>
 			<!--抄表员-->
-			<o:ObjectList Name="chaobiaoyuanlist" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
-			<o:ObjectList Name="chaobiaoyuanlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="chaobiaoyuanlist" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="chaobiaoyuanlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表员'" HasEmptyRow="True"/>
             
 			
 			<!--抄表录入员-->
-			<o:ObjectList Name="lrylist"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表录入员'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="lrylist"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表录入员'" HasEmptyRow="True"/>
 			
 			<!--责任部门-->
-			<o:ObjectList Name="zerenbumenlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'"/>
-			<o:ObjectList Name="zerenbumenlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="zerenbumenlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'"/>
+			<o:ParamObjectList Name="zerenbumenlistnull" EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='责任部门'" HasEmptyRow="True"/>
 		    <!--用户类型查询用-->
-			<o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
-			<o:ObjectList Name="usertypelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
+			<o:ParamObjectList Name="usertypelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id" HasEmptyRow="True"/>
  
 
             <!--表状态-->
-            <o:ObjectList Name="meterstatelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id"/>
-            <o:ObjectList Name="meterstatelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id" HasEmptyRow="True"/>
+            <o:ParamObjectList Name="meterstatelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id"/>
+            <o:ParamObjectList Name="meterstatelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id" HasEmptyRow="True"/>
   
-			<o:ObjectList Name="anzhuangweizhi" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'"/>
-			<o:ObjectList Name="anzhuangweizhinull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'" HasEmptyRow="True"/>
+			<o:ParamObjectList Name="anzhuangweizhi" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'"/>
+			<o:ParamObjectList Name="anzhuangweizhinull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='表安装位置'" HasEmptyRow="True"/>
 		    <!--付款方式-->
-			<o:ObjectList Name="fukuanfangshilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
-			<o:ObjectList Name="fukuanfangshilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<o:ParamObjectList Name="fukuanfangshilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
+			<o:ParamObjectList Name="fukuanfangshilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='付款方式' order by id"/>
 			<!--查询分公司参数-->
-			<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
-			<o:ObjectList Name="fgslistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<o:ParamObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
+			<o:ParamObjectList Name="fgslistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
 			<!--气表品牌-->
-			<o:ObjectList Name="qblist" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
-			<o:ObjectList Name="qblistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
+			<o:ParamObjectList Name="qblist" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
+			<o:ParamObjectList Name="qblistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from qibiao as qibiao left join fetch qibiao.qbnumber"/>
 			<!--气价类型-->
-			<o:ObjectList Name="qjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
-			<o:ObjectList Name="qjlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
+			<o:ParamObjectList Name="qjlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
+			<o:ParamObjectList Name="qjlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='气价类型' order by id"/>
 			<!--用户状态查询用-->
-			<o:ObjectList Name="statelist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
-		    <o:ObjectList Name="statelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
+			<o:ParamObjectList Name="statelist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
+		    <o:ParamObjectList Name="statelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id"/>
 		    <!--气表类型-->
-			<o:ObjectList Name="qibiaoleixinglist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
-		    <o:ObjectList Name="qibiaoleixinglistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
+			<o:ParamObjectList Name="qibiaoleixinglist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
+		    <o:ParamObjectList Name="qibiaoleixinglistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='气表类型'"/>
 		    <!--用户性质-->
-			<o:ObjectList Name="yhxzlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
-            <o:ObjectList Name="yhxzlistnull" EntityType="paramvalue" HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
+			<o:ParamObjectList Name="yhxzlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
+            <o:ParamObjectList Name="yhxzlistnull" EntityType="paramvalue" HasEmptyRow="True"  WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户性质' order by id"/>
            	<!--收费类型查询用-->
-			<o:ObjectList Name="payfeetypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
-		    <o:ObjectList Name="payfeetypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
+			<o:ParamObjectList Name="payfeetypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
+		    <o:ParamObjectList Name="payfeetypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='收费类型查询用' order by id"/>
 		   	<!--是否有效查询用-->
-			<o:ObjectList Name="youxiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
-		    <o:ObjectList Name="youxiaolistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+			<o:ParamObjectList Name="youxiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
+		    <o:ParamObjectList Name="youxiaolistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否有效查询用' order by id"/>
 		    <!--网点列表对象-->
-			<!--o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/-->
-			<o:ObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
-			<o:ObjectList Name="wangdianlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
+			<!--o:ParamObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网点查询用'  order by id"/-->
+			<o:ParamObjectList Name="wangdianlist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
+			<o:ParamObjectList Name="wangdianlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='网点查询用'"/>
 			<!--操作员列表对象-->
-			<!--o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用' order by id"/-->
-			<o:ObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
-			<o:ObjectList Name="czylistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
+			<!--o:ParamObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用' order by id"/-->
+			<o:ParamObjectList Name="czylist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
+			<o:ParamObjectList Name="czylistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'"/>
 			<!--公司类型列表对象-->
-			<o:ObjectList Name="gongsitypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
-			<o:ObjectList Name="gongsitypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<o:ParamObjectList Name="gongsitypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
+			<o:ParamObjectList Name="gongsitypelistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='公司类型' order by id"/>
 			<!--抄表状态-->
-			<o:ObjectList Name="chaobiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
-			<o:ObjectList Name="chaobiaonull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
+			<o:ParamObjectList Name="chaobiaolist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
+			<o:ParamObjectList Name="chaobiaonull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='抄表状态' order by id"/>
 			<!--是否交费-->
-			<o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
-			<o:ObjectList Name="jiaofeilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
+			<o:ParamObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
+			<o:ParamObjectList Name="jiaofeilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否交费' order by id"/>
 			<!--付款方式-->
-			<o:ObjectList Name="paymentlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型' order by id"/>
+			<o:ParamObjectList Name="paymentlistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型' order by id"/>
 			
 			<!--补气类型-->
-			<o:ObjectList Name="watchtype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
-		    <o:ObjectList Name="watchtypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
+			<o:ParamObjectList Name="watchtype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
+		    <o:ParamObjectList Name="watchtypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='补气类型' order by id"/>
 		    <!--换表操作类型-->
-		    <o:ObjectList Name="huanbiaotype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
-		    <o:ObjectList Name="huanbiaotypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
+		    <o:ParamObjectList Name="huanbiaotype" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
+		    <o:ParamObjectList Name="huanbiaotypenull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='换表操作类型' order by id"/>
 		    
 			
 			
@@ -209,22 +209,22 @@
 			 
 			 
             <!--来电总数-->
-            <o:ObjectList Name="ldcount" WebClientInfo="{StaticResource dbclient}"
+            <o:ParamObjectList Name="ldcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_comingrecord where islink\=\'yes\' and comingtime like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
             
             <!--在线处理-->
-            <o:ObjectList Name="zxcount" WebClientInfo="{StaticResource dbclient}"
+            <o:ParamObjectList Name="zxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'在线处理\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
 			
 			<!--上门维修-->
-            <o:ObjectList Name="smwxcount" WebClientInfo="{StaticResource dbclient}"
+            <o:ParamObjectList Name="smwxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'上门维修\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
 			
 			<!--抢险-->
-            <o:ObjectList Name="qxcount" WebClientInfo="{StaticResource dbclient}"
+            <o:ParamObjectList Name="qxcount" WebClientInfo="{StaticResource dbclient}"
 					Path="{m:Exp Str=$from t_repairsys where f_dealtype\=\'抢险\' and f_cucode like \'\{SysTime.Now.ToString($yyyyMMdd$)\}\%\'}"
 					IsOld="{m:Exp Str='Timer.State==$Loaded'}" />
 
@@ -279,7 +279,7 @@
             <o:GeneralObject Name="mybjqffobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  Path="{m:Exp Str=$one/from t_singlevalue where name\=\'民用报警器费\'$}"  
 		  ></o:GeneralObject>
-            <o:ObjectList Name="devicename" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='设备名称'"/>
+            <o:ParamObjectList Name="devicename" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='设备名称'"/>
             
             
            <!--站点配置对象-->

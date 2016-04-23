@@ -70,11 +70,11 @@ where \{search.Condition\}
 			insert into t_handplan(f_handdate\,f_orgstr\,f_userinfoid\,f_userid\, f_username\, lastinputgasnum\,lastinputdate\,f_stairtype\,f_meternumber\,f_area\,f_gaswatchbrand\, f_metertype\,
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				f_phone\, scinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
-				f_zerenbumen\, f_state\, shifoujiaofei\, users\, f_cusDom\, f_cusDy\,f_gasmeterstyle\,f_books)
+				f_zerenbumen\, f_state\, shifoujiaofei\, users\, f_cusDom\, f_cusDy\,f_gasmeterstyle\,f_books\,f_gasproperties)
 			select \'\{daninfosearch.DataContext.f_handdate\}\'\,\'\{LoginUser.orgpathstr\}\'\,f_userinfoid\,f_userid\, f_username\, isnull(lastinputgasnum\,\'0\')lastinputgasnum\,isnull(lastinputdate\,\'1970-01-01\')lastinputdate\,f_stairtype\,f_meternumber\,f_area\,f_gaswatchbrand\, f_metertype\,
 				f_address\, f_districtname\, f_usertype\, f_gasprice\, f_gaspricetype\, f_dibaohu\, f_apartment\,
 				isnull(f_phone\,\'0\')f_phone\, isnull(lastinputdate\,\'1970-01-01\')lastinputdate\, f_inputtor\, f_yhxz\, f_weizhi\, f_menzhan\,
-				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'\,f_books
+				f_zerenbumen\, \'未抄表\'\, \'否\'\, id\, f_cusDom\, f_cusDy \,\'机表\'\,f_book\,f_gasproperties
 			from t_userfiles b where f_userstate\=\'正常\' and \{search.Condition\} and not exists
 			(select id from t_handplan h where h.f_userid\=b.f_userid and f_state\=\'未抄表\')}"/>
             <!--生成抄表单-->

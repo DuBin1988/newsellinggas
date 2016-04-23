@@ -25,9 +25,9 @@
 				IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or deleteAction.State\=\=$End$}" 
 				PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
             <o:ObjectList Name="stairmonthslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='阶段月数'"/>
-            <!--用气性质列表-->
-            <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype}"/>
-
+            <!--用气性质-->
+			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name like '%用气性质'"/>
+            
             <!--阶梯对象-->
             <o:GeneralObject Name="stair" WebClientInfo="{StaticResource dbclient}" EntityType="t_stairprice"
 				Source="{m:Exp Str=ui_stairDataGaid.SelectedItem}" 

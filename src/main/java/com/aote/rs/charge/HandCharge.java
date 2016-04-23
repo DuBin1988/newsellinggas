@@ -335,6 +335,8 @@ public class HandCharge {
 		String username = map.get("f_username").toString();
 		// 以前欠费条数
 		int items = Integer.parseInt(map.get("c") + "");
+		// 以前欠费合计金额
+		BigDecimal oughtfee = new BigDecimal(map.get("oughtfee") + "");
 		// 抄表id
 		String handid = map.get("id") + "";
 		// 用户缴费类型
@@ -344,7 +346,7 @@ public class HandCharge {
 		// 门站
 		String menzhan = "空";
 		// 抄表员
-		String inputtor = map.get("f_inputtor") + "";
+		String inputtor = user.get("f_inputtor") + "";
 		// 如果抄表员为空则抛出异常，交由上层处理
 		if (inputtor.equals("")) {
 			throw new RSException(map.get("f_userid") + "没有抄表员，不能录入。");
@@ -559,7 +561,7 @@ public class HandCharge {
 					+ map.get("f_filiale")
 					+ "',f_operator='"
 					+ sgoperator
-					+ "'"
+					+ "',f_zhye="+f_zhye
 					+ "where f_userid='"
 					+ userid + "' and f_state='未抄表' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
@@ -608,10 +610,10 @@ public class HandCharge {
 					+ sumamont + ", f_leftgas= "
 					+ leftgas
 					+ ", lastinputgasnum=" // 上期指数
-					+ lrg + " where f_userid='" + userid
+					+ lrg + ",f_zhye=? where f_userid='" + userid
 					+ "' and f_state='未抄表' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
-					lastinputDate, date, inputdate, meterState });
+					lastinputDate, date, inputdate, meterState ,f_zhye.subtract(oughtfee).doubleValue()});
 		}
 		// 保存用户清欠账务,并更新档案中账户余额
 		if (meterType != null && meterType.equals("机表")
@@ -906,7 +908,7 @@ public class HandCharge {
 		final String sql = "select isnull(u.f_userid,'') f_userid, isnull(u.f_zhye,'') f_zhye ,isnull(u.f_accountzhye,'') f_accountzhye ,  isnull(u.lastinputgasnum,'') lastinputgasnum, isnull(u.f_gasprice,0) f_gasprice, isnull(u.f_username,'')  f_username,"
 				+ "isnull(u.f_stair1amount,0)f_stair1amount,isnull(u.f_stair2amount,0)f_stair2amount,isnull(u.f_stair3amount,0)f_stair3amount,isnull(u.f_stair1price,0)f_stair1price,isnull(u.f_stair2price,0)f_stair2price,isnull(u.f_stair3price,0)f_stair3price,isnull(u.f_stair4price,0)f_stair4price,isnull(u.f_stairmonths,0)f_stairmonths,isnull(u.f_stairtype,'未设')f_stairtype,"
 				+ "isnull(u.f_address,'')f_address ,isnull(u.f_districtname,'')f_districtname,isnull(u.f_cusDom,'')f_cusDom,isnull(u.f_cusDy,'')f_cusDy,isnull(u.f_gasmeterstyle,'') f_gasmeterstyle, isnull(u.f_idnumber,'') f_idnumber, isnull(u.f_gaswatchbrand,'')f_gaswatchbrand, isnull(u.f_usertype,'')f_usertype, "
-				+ "isnull(u.f_gasproperties,'')f_gasproperties,isnull(u.f_dibaohu,0)f_dibaohu,isnull(u.f_payment,'')f_payment,isnull(u.f_zerenbumen,'')f_zerenbumen,isnull(u.f_menzhan,'')f_menzhan,isnull(u.f_inputtor,'')f_inputtor, isnull(q.c,0) c,"
+				+ "isnull(u.f_gasproperties,'')f_gasproperties,isnull(u.f_dibaohu,0)f_dibaohu,isnull(u.f_payment,'')f_payment,isnull(u.f_zerenbumen,'')f_zerenbumen,isnull(u.f_menzhan,'')f_menzhan,isnull(u.f_inputtor,'')f_inputtor, isnull(q.c,0) c,isnull(q.oughtfee,0) oughtfee,"
 				+ "isnull(u.f_metergasnums,0) f_metergasnums,isnull(u.f_cumulativepurchase,0)f_cumulativepurchase, "
 				+ "isnull(u.f_finallybought,0)f_finallybought,isnull(u.f_cardid,'NULL') f_cardid,isnull(u.f_filiale,'NULL')f_filiale,"
 				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'计划空') f_handdate from (select * from t_handplan where f_state='未抄表' and f_userid='"
