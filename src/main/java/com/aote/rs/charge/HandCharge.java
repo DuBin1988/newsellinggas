@@ -513,9 +513,7 @@ public class HandCharge {
 					+ address
 					+ "', f_username='"
 					+ username
-					+ "', f_zhye="
-					+ f_zhye
-					+ ", f_bczhye="
+					+ "', f_bczhye="
 					+ f_zhye.subtract(chargenum)
 					+ ","
 					+ "f_stair1amount="
