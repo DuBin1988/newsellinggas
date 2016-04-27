@@ -55,7 +55,7 @@ public class SellSer {
 
 		// 获取用户档案及抄表记录情况
 		String sql = "select "
-				+ "isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(u.f_usertype,'民用') f_usertype,"
+				+ "h.id,isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(u.f_usertype,'民用') f_usertype,"
 				+ "isnull(u.f_districtname,'空小区') f_districtname,isnull(u.f_address,'空地址') f_address,"
 				+ "isnull(u.f_gasproperties,'普通民用') f_gasproperties,isnull(u.f_gaspricetype,'民用气价') f_gaspricetype,"
 				+ "ui.f_userid infoid,isnull(u.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
@@ -126,8 +126,9 @@ public class SellSer {
 				continue;
 			}
 			hands += "{";
+			hands += "id:'" + hand.get("id") + "'";
 			//
-			hands += "f_userid:'" + hand.get("f_userid") + "'";
+			hands += ",f_userid:'" + hand.get("f_userid") + "'";
 			// 用气量
 			hands += ",oughtamount:" + hand.get("oughtamount");
 			// 气费
@@ -209,12 +210,13 @@ public class SellSer {
 	 */
 
 	@GET
-	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}/{orgstr}")
+	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}/{orgstr}/{handids}")
 	public JSONObject txSell(@PathParam("userid") String userid,
 			@PathParam("money") BigDecimal dMoney,
 			@PathParam("zhinajin") double zhinajin,
 			@PathParam("payment") String payments,
-			@PathParam("opid") String opid, @PathParam("orgstr") String orgstr) {
+			@PathParam("opid") String opid, @PathParam("orgstr") String orgstr,
+			@PathParam("handids") String handids) {
 		JSONObject ret = new JSONObject();
 		try {
 			log.debug("售气交费 开始");
@@ -225,7 +227,7 @@ public class SellSer {
 			Map<String, Object> nopayMap = getnopayinfor(userid);
 			// 获取每个表的阶梯信息
 			// JSONObject files_stair = this.getfilesInfor(userid);
-			List<Map<String, Object>> hands = this.findHands(userid);
+			List<Map<String, Object>> hands = this.findHands(userid, handids);
 
 			// 循环欠费记录，记录 欠费ids,最小指数，最大指数，欠费气量，金额合计userid
 			String handIds = "";
@@ -471,10 +473,12 @@ public class SellSer {
 	/**
 	 * 查找抄表欠费记录
 	 */
-	private List findHands(String userId) throws Exception {
+	private List findHands(String userId, String handids) throws Exception {
 		final String sql = "select h.oughtfee oughtfee, h.oughtamount oughtamount, h.id id,h.lastrecord lastrecord, h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum from t_handplan h , t_userfiles u where u.f_userinfoid='"
 				+ userId
-				+ "' and h.shifoujiaofei='否' and h.lastrecord is not null and h.f_state='已抄表' and h.f_userid=u.f_userid order by h.id desc";
+				+ "' and h.id in ("
+				+ handids
+				+ ") and h.shifoujiaofei='否' and h.lastrecord is not null and h.f_state='已抄表' and h.f_userid=u.f_userid order by h.id desc";
 		// List list = session.createQuery(sql).list();
 		log.debug("查询欠费信息开始:" + sql);
 		HibernateSQLCall sqlCall = new HibernateSQLCall(sql);

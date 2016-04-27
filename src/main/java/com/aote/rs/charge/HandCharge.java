@@ -914,7 +914,7 @@ public class HandCharge {
 				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'计划空') f_handdate from (select * from t_handplan where f_state='未抄表' and f_userid='"
 				+ userid
 				+ "') h "
-				+ "left join (select f_userid, COUNT(*) c from t_handplan where f_state='已抄表' and f_userid='"
+				+ "left join (select f_userid, COUNT(*) c,sum(oughtfee) oughtfee from t_handplan where f_state='已抄表' and f_userid='"
 				+ userid
 				+ "' and shifoujiaofei='否' "
 				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid";

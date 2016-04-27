@@ -35,25 +35,22 @@
 
             <!--抄表的未交费记录-->
             <o:ObjectList Name="kbsellgas" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$from t_handplan h where  h.f_userinfoid\=\'\{kbusers.f_userid\}\' and  h.shifoujiaofei\=\'否\' and h.lastrecord is not null and h.f_state\=\'已抄表\' order by h.f_userinfoid\,h.f_handdate  $}"
 				IsOld="{m:Exp Str=kbusers.State\=\=$Loaded$}"
 				IsClear="{m:Exp Str=kbusers.State\=\=$LoadError$ |or| kbusers.f_userid\=\=null}">
-                <!--滞纳金天数-->
-                <o:PropertySetter PropertyName="f_zhinajintianshu" Default="{m:Exp Str=0}"  NoDependValue="{m:Exp Str=SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\>0:SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\,0}"/>
-                <!--滞纳金-->
+                <!--滞纳金天数
+              -->  <o:PropertySetter PropertyName="f_zhinajintianshu" Default="{m:Exp Str=0}"  NoDependValue="{m:Exp Str=SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\>0:SysTime.Today.Subtract(this.f_endjfdate.ToDate()).Days\,0}"/>
+                <!--滞纳金
                 <o:PropertySetter PropertyName="f_zhinajin"   Default="{m:Exp Str=0}"   
 					NoDependValue="{m:Exp Str=(this.oughtfee*this.f_zhinajintianshu*(kbusers.f_usertype\=\=$民用$:single[data.name\=\=$民用滞纳金比率$].ToObjectList().First().value.ToDouble()\,kbusers.f_usertype\=\=$非民用$:single[data.name\=\=$非民用滞纳金比率$].ToObjectList().First().value.ToDouble()\,null)).MathRound(2)}"/>
-            </o:ObjectList>
+           --> </o:ObjectList>
 
 
             <!--机表收费对象-->
             <o:GeneralObject Name="kbfee" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}" IsInit="{m:Exp Str=
 			cancle\=>Click!\=null |or| (dazhe.value\=\=$是$ and zzprint.State\=\=$Cancle$) |or| (dazhe.value\=\=$否$ and print.State\=\=$Cancle$) }" >
-                <!--滞纳金-->
-
-                <o:PropertySetter PropertyName="f_zhinajin1" NoDependValue="{m:Exp Str=selected[True].Sum(f_zhinajin)}" Default="0"/>
-                <o:PropertySetter PropertyName="f_zhinajin" NoDependValue="{m:Exp Str='openkafei.Result!=null:openkafei.Result\,kbfee.f_zhinajin1!=null:kbfee.f_zhinajin1\,0'}" Default="0"/>
-                <o:PropertySetter PropertyName="f_date" Default="{m:Exp Str=SysTime.Today}" />
+				<o:PropertySetter PropertyName="f_date" Default="{m:Exp Str=SysTime.Today}" />
+				<o:PropertySetter PropertyName="lastinputdate" NoDependValue="{m:Exp Str=kbsellgas[True].First().lastinputdate}"/>
+				<o:PropertySetter PropertyName="endinputdate" NoDependValue="{m:Exp Str=kbsellgas[data.IsChecked\=\=$True$].Max(lastinputdate)}"/>
             </o:GeneralObject>
 
             <o:SearchObject Name="search"/>
@@ -167,29 +164,11 @@
                             <sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_apartment}"/>
                             <sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/>
                             <sdk:DataGridTextColumn Header="用气性质" Binding="{Binding f_gasproperties}"/>
-                            <sdk:DataGridTextColumn Header="气价类型" Binding="{Binding f_gaspricetype}"/>
-                            <sdk:DataGridTextColumn Header="气价" Binding="{Binding f_gasprice}"/>
-                            <sdk:DataGridTextColumn Header="气表底数" Binding="{Binding f_gasmeteraccomodations}"/>
-                            <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
-                            <sdk:DataGridTextColumn Header="表号" Binding="{Binding f_meternumber}"/>
-                            <sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}"/>
-                            <sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}"/>
-                            <sdk:DataGridTextColumn Header="额定流量" Binding="{Binding f_flownum}"/>
-                            <sdk:DataGridTextColumn Header="特殊限购" Binding="{Binding f_xiangou}"/>
-
-
-                            <sdk:DataGridTextColumn Header="有壁挂炉" Binding="{Binding f_wallhangboiler}"/>
                             <sdk:DataGridTextColumn Header="账户余额" Binding="{Binding f_zhye}"/>
                             <sdk:DataGridTextColumn Header="总购气量" Binding="{Binding f_cumulativepurchase}"/>
                             <sdk:DataGridTextColumn Header="当前表购气量" Binding="{Binding f_metergasnums}"/>
-                            <sdk:DataGridTextColumn Header="本次剩余补气量" Binding="{Binding f_thisnextaddgasamount}"/>
-                            <sdk:DataGridTextColumn Header="维护费日期" Binding="{Binding f_beginfee, StringFormat=yyyy-MM}"/>
-                            <sdk:DataGridTextColumn Header="发卡日期" Binding="{Binding f_givecarddate, StringFormat=yyyy-MM-dd}"/>
-                            <sdk:DataGridTextColumn Header="是否发卡" Binding="{Binding f_whethergivecard}"/>
-
                             <sdk:DataGridTextColumn Header="最后购气量" Binding="{Binding f_finallybought}"/>
                             <sdk:DataGridTextColumn Header="最后购气日期" Binding="{Binding f_finabuygasdate, StringFormat=yyyy-MM-dd}"/>
-                            <sdk:DataGridTextColumn Header="表安装日期" Binding="{Binding f_watchinstalldate, StringFormat=yyyy-MM-dd}"/>
                             <sdk:DataGridTextColumn Header="所属公司" Binding="{Binding f_filiale}"/>
                             <sdk:DataGridTextColumn Header="网点" Binding="{Binding f_yytdepa}"/>
                             <sdk:DataGridTextColumn Header="建档人" Binding="{Binding f_yytoper}"/>
@@ -202,15 +181,17 @@
             <c:BusyIndicatorEx x:Name="kbsellgasbusy" BusyContent="正在查询，请稍等" Grid.Row="1" Grid.ColumnSpan="2" >
                 <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="240" VerticalAlignment="Top" Margin="0">
                     <sdk:DataGrid SelectionMode="Extended" AutoGenerateColumns="False" x:Name="dataGrid1" 
-            			ItemsSource="{m:Exp Str=kbsellgas}"                         						
-	 
-            			IsReadOnly="True" CanUserSortColumns="False" IsHitTestVisible="False"
+            			ItemsSource="{m:Exp Str=kbsellgas}"  SelectionChanged="dataGrid1_SelectionChanged"                      						
+						
+            			IsReadOnly="True" CanUserSortColumns="False"  
             			ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <sdk:DataGrid.Columns>
-                            <sdk:DataGridCheckBoxColumn Binding="{Binding IsChecked}"/>
+                            <sdk:DataGridCheckBoxColumn Binding="{Binding IsChecked}" />
                             <sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}"/>
                             <sdk:DataGridTextColumn Header="气量" Binding="{Binding oughtamount, StringFormat=0.#}"/>
                             <sdk:DataGridTextColumn Header="金额" Binding="{Binding oughtfee, StringFormat=0.##}"/>
+							<sdk:DataGridTextColumn Header="滞纳金" Binding="{Binding f_zhinajin, StringFormat=0.##}"/>
+							<sdk:DataGridTextColumn Header="交费截止日期" Binding="{Binding f_endjfdate, StringFormat=yyyy-MM-dd}"/>
 
                             <sdk:DataGridTextColumn Header="1阶气量" Binding="{Binding f_stair1amount, StringFormat=0.#}"/>
                             <sdk:DataGridTextColumn Header="1阶单价" Binding="{Binding f_stair1price, StringFormat=0.#}"/>
@@ -300,7 +281,7 @@
             							Default="{m:Exp Str=paylist.Count &gt; 0 :paylist.First().name\,null}" />
                                 </a:Data.Prop>
                             </ComboBox>
-                            <TextBox x:Name="shoukuan" LostFocus="shoukuan_LostFocus"  a:ControlAttach.FocusToOnEnter="save2" Text="{m:Bind Path=f_grossproceeds}" FontWeight="Bold" Foreground="Red" Grid.Column="3" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                            <TextBox x:Name="shoukuan"  a:ControlAttach.FocusToOnEnter="save2" Text="{m:Bind Path=f_grossproceeds}" FontWeight="Bold" Foreground="Red" Grid.Column="3" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_grossproceeds" NotNull="True"/>
                                 </a:Data.Prop>

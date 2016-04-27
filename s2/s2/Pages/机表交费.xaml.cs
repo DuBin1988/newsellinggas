@@ -34,7 +34,6 @@ namespace Com.Aote.Pages
         {
             //如果数据有错，提示不能保存
             GeneralObject kbfee = kbfee1.DataContext as GeneralObject;
-
             if (kbfee.HasErrors)
             {
                 MessageBox.Show("输入数据有错，请检查！");
@@ -56,13 +55,31 @@ namespace Com.Aote.Pages
             string orgpathstr = (string)loginUser.GetPropertyValue("orgpathstr");
             //显示正在工作
             busy.IsBusy = true;
-
+            string handids = "";
+            //获得当前交费的欠费id
+            foreach (GeneralObject item in dataGrid1.ItemsSource)
+            {
+                bool ischeck = (bool)item.GetPropertyValue("IsChecked");
+                if (ischeck)
+                {
+                    string id = item.GetPropertyValue("id") + "";
+                    handids = id + "," + handids;
+                }
+            }
+            if (handids == "")
+            {
+                handids = "0";
+            }
+            else
+            {
+                handids = handids.Substring(0, handids.Length - 1);
+            }
             //获取基础地址
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["server"];
 
             // 提交
             string str = wci.BaseAddress + "/sell/" + ui_userid.Text + "/" + shoukuan.Text + "/"
-                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "/" + orgpathstr + "?uuid=" + System.Guid.NewGuid().ToString();
+                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "/" + orgpathstr + "/" + handids + "?uuid=" + System.Guid.NewGuid().ToString();
 
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
@@ -367,15 +384,11 @@ namespace Com.Aote.Pages
             {
                 return;
             }
-
             kbsellgasbusy.IsBusy = true;
             busy.IsBusy = true;
-
             string f_userid = go.GetPropertyValue("f_userid").ToString();
-
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
             string uri = wci.BaseAddress + "/sell/bill/" + f_userid + "?uuid=" + System.Guid.NewGuid().ToString();
-
             WebClient client = new WebClient();
             client.DownloadStringCompleted += userfiles_DownloadStringCompleted;
             client.DownloadStringAsync(new Uri(uri));
@@ -461,11 +474,12 @@ namespace Com.Aote.Pages
                 decimal oughtamount = (decimal)json["oughtamount"];
                 gasSum += oughtamount;
                 go.SetPropertyValue("oughtamount", oughtamount, false);
+                int id = Int32.Parse(json["id"] + "");
+                go.SetPropertyValue("id", id, false);
                 //计算总滞纳金
                 decimal f_zhinajin = (decimal)json["f_zhinajin"];
                 zhinajinAll += f_zhinajin;
-                go.SetPropertyValue("f_zhinajin", f_zhinajin, false);
-
+                go.SetPropertyValue("f_zhinajin", f_zhinajin, true);
                 go.SetPropertyValue("lastinputdate", DateTime.Parse(json["lastinputdate"]), false);
                 go.SetPropertyValue("lastrecord", (decimal)json["lastrecord"], false);
                 go.SetPropertyValue("f_endjfdate", DateTime.Parse(json["f_endjfdate"]), false);
@@ -550,6 +564,58 @@ namespace Com.Aote.Pages
             kbfee.New();
             MessageBox.Show("交费完成！"); 
             Clear();
+        }
+
+        //欠费记录选中事件
+        private void dataGrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dataGrid1.SelectedItem == null) return;
+            GeneralObject go = dataGrid1.SelectedItem as GeneralObject;
+            decimal selectid = decimal.Parse(go.GetPropertyValue("lastinputgasnum") + "");
+            // 取出余额
+            decimal f_zhye = decimal.Parse(zhye.Text);
+            // 总的上期指数
+            decimal lastnum = 0m;
+            // 总气量
+            decimal gasSum = 0m;
+            // 总气费
+            decimal feeSum = 0m;
+            decimal zhinajinAll = 0m;
+            foreach (GeneralObject item in dataGrid1.ItemsSource)
+            {
+                decimal eachid = decimal.Parse(item.GetPropertyValue("lastinputgasnum") + "");
+                if (selectid >= eachid)
+                {
+                    // 取出应交金额
+                    decimal oughtfee = decimal.Parse(item.GetPropertyValue("oughtfee").ToString());
+                    //取出滞纳金
+                    decimal f_zhinajin = decimal.Parse(item.GetPropertyValue("f_zhinajin").ToString());
+                    // 气量相加
+                    decimal gas = decimal.Parse(item.GetPropertyValue("oughtamount").ToString());
+                    gasSum += gas;
+                    // 气费相加
+                    feeSum += oughtfee;
+                    //滞纳金相加
+                    zhinajinAll += f_zhinajin;
+                    item.SetPropertyValue("IsChecked", true, true);
+                }
+                else
+                {
+                    item.SetPropertyValue("IsChecked", false, true);
+                }
+            }
+            // 计算出来的总气量等放到用户界面上
+            ui_pregas.Text = gasSum.ToString("0.#");//总气量
+            ui_lastinputgasnum.Text = lastnum.ToString("0.#");//总上期底数
+            ui_lastrecord.Text = (lastnum + gasSum).ToString("0.#");//总本期底数
+            ui_zhinajin.Text = zhinajinAll.ToString("0.##");//总滞纳金
+            ui_linshizhinajin.Text = zhinajinAll.ToString("0.##");//滞纳金
+            ui_preamount.Text = feeSum.ToString("0.##");//气费金额
+            decimal f_totalcost = feeSum - f_zhye + zhinajinAll > 0 ? feeSum - f_zhye + zhinajinAll : 0;
+            ui_totalcost.Text = f_totalcost.ToString("0.##");//应缴金额
+            decimal f_benqizhye = (decimal)(f_zhye - feeSum - zhinajinAll > 0 ? f_zhye - feeSum - zhinajinAll : 0);
+            ui_benqizhye.Text = f_benqizhye.ToString("0.##");//本期结余
+            shoukuan.Text = f_totalcost.ToString("0.##");
         }
 
         
