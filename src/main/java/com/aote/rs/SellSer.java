@@ -342,7 +342,9 @@ public class SellSer {
 		sale.put("lastinputdate", lastinputdate);
 		sale.put("f_yhxz", userMap.get("f_yhxz"));
 		sale.put("f_zhye", userMap.get("f_zhye"));
-		sale.put("f_benqizhye", nowye.doubleValue());
+		double f_benqizhye = nowye.setScale(2, BigDecimal.ROUND_HALF_UP)
+		.doubleValue();
+		sale.put("f_benqizhye", f_benqizhye);
 		sale.put("f_gasmeterstyle", "机表");
 		sale.put("f_comtype", "天然气公司");
 		sale.put("f_apartment", userMap.get("f_apartment"));
@@ -458,8 +460,10 @@ public class SellSer {
 			zherownum = 0;
 		}
 		user.put("f_zherownum", zherownum);
+		double f_zhye = nowye.setScale(2, BigDecimal.ROUND_HALF_UP)
+		.doubleValue();
 		// 更新用户
-		String sql = "update t_userinfo  set f_zhye=" + nowye.doubleValue()
+		String sql = "update t_userinfo  set f_zhye=" + f_zhye
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
 				+ "'," + " f_metergasnums=" + newMeterGasNums
 				+ ", f_cumulativepurchase=" + newCumuGas + ",f_zherownum="
