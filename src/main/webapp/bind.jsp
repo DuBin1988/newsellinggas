@@ -31,8 +31,11 @@
 		var f_userid = document.getElementById("username").value;
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
+		
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				
 				if (xhttp.responseText == null||xhttp.responseText=="") {
+					alert(xhttp.responseText);
 					alert("请检查您输入的用户编号是否正确");
 					return;
 				}

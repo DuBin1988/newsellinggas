@@ -39,7 +39,7 @@ public class Configure {
 	//机器IP
 	private static String ip = "";
 	//支付完成回调地址
-	public static String NOTIFY_URL = "http://4504a3ef.nat123.net/rs/weixin/notify";
+	public static String NOTIFY_URL = "http://weixin.uxinxin.com/rs/weixin/notify";
 	
 	//下单地址
 	public static String DOWN_PAY_API = "https://api.mch.weixin.qq.com/pay/unifiedorder";

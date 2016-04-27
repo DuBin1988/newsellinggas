@@ -88,7 +88,7 @@ public class WeiXinService {
 			// http://weixin.uxinxin.com
 			// http://4504a3ef.nat123.net/rs/weixin/notify
 			String appid = Configure.getAppid();
-			String redirect_uri = "http://4504a3ef.nat123.net/rs/weixin/getopenid";
+			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
 			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
@@ -163,6 +163,11 @@ public class WeiXinService {
 					response.sendRedirect(redirect_url);
 				} else {
 					String f_userid = map.get("f_userid").toString();
+					// String f_username = map.get("f_username").toString();
+
+					// f_username = f_username.getBytes("utf-8").toString();
+					// f_username="测试".getBytes("GBK").toString();
+
 					// 重定向到预支付界面
 					JSONObject object = selectqf(f_userid);
 					JSONArray arr = object.getJSONArray("arr");
@@ -172,9 +177,11 @@ public class WeiXinService {
 					String redirect_url = "/qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
-							+ "&arr=" + arr+ "&uuid" + uuid;
-					//response.sendRedirect(redirect_url);
-					response.sendRedirect(URLEncoder.encode(redirect_url,"UTF-8"));
+							+ "&arr=" + arr + "&uuid=" + uuid;
+//					request.setCharacterEncoding("utf-8");
+//				    response.setContentType("text/html;charset=UTF-8");
+					response.sendRedirect(redirect_url);
+					// response.sendRedirect(URLEncoder.encode(redirect_url,"UTF-8"));
 				}
 			}
 		} catch (Exception e) {
@@ -183,7 +190,8 @@ public class WeiXinService {
 		return null;
 	}
 
-	public JSONObject selectqf(String f_userid) throws JSONException, UnsupportedEncodingException {
+	public JSONObject selectqf(String f_userid) throws JSONException,
+			UnsupportedEncodingException {
 		// 查询欠费金额;
 		JSONObject object = wxquery(f_userid);
 		byte[] b = object.getString("return").getBytes();
@@ -209,15 +217,18 @@ public class WeiXinService {
 		obj1.put("zhye", zhye);
 		obj1.put("money", zhyemoney);
 		obj1.put("zhinajin", zhinajin);
-		
+
 		for (int i = x; i > 0; i--) {
 			obj = new JSONObject();
 			String le = new String(b, len + 8 - 70 * i, 70);
 			System.out.println(le);
 
 			obj.put("f_userid", new String(b, 12, 10));
-			String name =new String(b, 24, 20);
-			obj.put("f_name", nativetoasc.native2ascii(name));
+
+			 JSONObject O=selList1(f_userid);
+		     String name=O.getString("f_username");
+		     String f_username=URLEncoder.encode(name,"utf-8");
+			obj.put("f_name", f_username);
 			obj.put("lastinputdate", le.substring(0, 10));
 			obj.put("astinputgasnum", Integer.parseInt(le.substring(11, 20)));
 			obj.put("lastrecord", Integer.parseInt(le.substring(21, 30)));
@@ -233,8 +244,6 @@ public class WeiXinService {
 		return obj1;
 	}
 
-	 
-	
 	/**
 	 * 获得预下单编号，用于前台调取支付界面
 	 * 
@@ -267,7 +276,7 @@ public class WeiXinService {
 			data.setTrade_type("JSAPI");
 			data.setSpbill_create_ip(request.getRemoteAddr());
 			data.setOpenid(openid);
-			System.out.println("----"+data);
+			System.out.println("----" + data);
 			// 统一下单
 			String returnXml = unifiedOrder(data, Configure.getKey());
 			WxPayReturnData reData = new WxPayReturnData();
@@ -300,7 +309,7 @@ public class WeiXinService {
 			finalpackage.put("nonceStr", nonceStr2);
 			finalpackage.put("package", packages);
 			finalpackage.put("signType", "MD5");
-			System.out.println("==="+finalpackage);
+			System.out.println("===" + finalpackage);
 			String finalsign = WxSign.createSign(finalpackage,
 					Configure.getKey());
 			// String redirect_url = "/weixin.html?appId=" + appid2
@@ -315,7 +324,7 @@ public class WeiXinService {
 			result.put("pg", reData.getPrepay_id());
 			result.put("sign", finalsign);
 			result.put("signType", "MD5");
-			System.out.println("-----"+result);
+			System.out.println("-----" + result);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -345,7 +354,7 @@ public class WeiXinService {
 					new XmlFriendlyNameCoder("-_", "_")));
 			xs.alias("xml", WxPaySendData.class);
 			String xml = xs.toXML(data);
-			System.out.println("22222"+xml);
+			System.out.println("22222" + xml);
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(Configure.DOWN_PAY_API);
 			StringEntity postEntity = new StringEntity(xml, "UTF-8");
@@ -355,9 +364,9 @@ public class WeiXinService {
 			HttpEntity entity = httpResponse.getEntity();
 			if (entity != null) {
 				returnXml = EntityUtils.toString(entity, "UTF-8");
-				System.out.println("1111"+returnXml);
+				System.out.println("1111" + returnXml);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -473,15 +482,15 @@ public class WeiXinService {
 	/**
 	 * 银行代码
 	 */
-	private String yhno = "0000000051";
+	private String yhno = "weixin";
 	/**
 	 * 机构号
 	 */
-	private String jgno = "0000000051";
+	private String jgno = "weixin";
 	/**
 	 * 银行方终端设备代码或营业厅编码
 	 */
-	private String sbno = "0000000051";
+	private String sbno = "weixin";
 
 	/**
 	 * 根据用户编号生成查询报文
@@ -491,13 +500,13 @@ public class WeiXinService {
 	 */
 	private String get1001(String userid) {
 		String result = "";
-		result = "000000651001";
+		result = "000000731001";
 		userid = StringUtil.joint(userid, 10, " ");
 		System.out.println(userid);
-		// 银行交易流水号：YYYYMMDD+12位流水号
+		// 银行交易流水号：YYYYMMDD+20位流水号
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-		String pipeline = sdf.format(new Date()) + StringUtil.grandom(6);
-		result += userid + yhno + pipeline + "0" + jgno + sbno;
+		String pipeline = sdf.format(new Date()) + StringUtil.grandom(14);
+		result += userid + StringUtil.joint(yhno , 10, " ") + pipeline + "0" + StringUtil.joint(jgno , 10, " ") + StringUtil.joint(sbno , 10, " ");
 		return result;
 	}
 
@@ -520,7 +529,7 @@ public class WeiXinService {
 		// String pipeline = sdf.format(new Date()) + StringUtil.grandom(6);
 		// byte[] byBuffer = new byte[200];
 		// byBuffer = attach.getBytes();
-		result += userid + yhno + transation_id + "0" + jgno + sbno;
+		result += userid + StringUtil.joint(yhno , 10, " ") + transation_id + "0" + StringUtil.joint(jgno , 10, " ") + StringUtil.joint(sbno , 10, " ");
 		// BigDecimal j = new BigDecimal(money);
 		// j = j.multiply(new BigDecimal(100));
 		money = StringUtil.jointleft(money, 10, "0");
@@ -570,7 +579,7 @@ public class WeiXinService {
 				+ f_transaction_id + "'";
 		List listwx = this.hibernateTemplate.find(sql);
 		int x = listwx.size();
-		
+
 		if (listwx.size() != 1)
 			return null;
 		else
@@ -586,18 +595,24 @@ public class WeiXinService {
 			String sql = "from t_userfiles   where f_userid='" + f_userid + "'";
 			List list = this.hibernateTemplate.find(sql);
 			Map<String, Object> map = (Map<String, Object>) list.get(0);
-			String f_username = map.get("f_username").toString();
-			String f_address = map.get("f_address").toString();
-			String f_openid = (String) map.get("f_openid");
+			JSONObject jo = new JSONObject();
+			
+			if(list.size()==0){
+				return jo;	
+			}else{
+				
+				String f_username = map.get("f_username").toString();
+				String f_address = map.get("f_address").toString();
+				String f_openid = (String) map.get("f_openid");
+				
 			if (f_openid == null) {
 				f_openid = "";
-
 			}
-			JSONObject jo = new JSONObject();
 			jo.put("f_username", f_username);
 			jo.put("f_address", f_address);
 			jo.put("f_openid", f_openid);
 			return jo;
+			}
 		} catch (Exception e) {
 			return null;
 		}
@@ -624,24 +639,24 @@ public class WeiXinService {
 				return ob;
 			}
 		} else {
-		
-			if(f_openid.equals(openid)){
+
+			if (f_openid.equals(openid)) {
 				JSONObject obj1 = selectqf(f_userid);
 				obj1.put("message", "您已绑定");
 				System.out.println(obj1);
 				return obj1;
-				
-			}else{
+
+			} else {
 				JSONObject object = new JSONObject();
 				object.put("message", "此号已经被别的用户绑定");
-				 System.out.println(object);
-				 return object;
-			
+				System.out.println(object);
+				return object;
+
+			}
 		}
-		}
-	
 
 	}
+
 	// 解绑
 	@GET
 	@Path("/one/delete/{f_userid}/{openid}")
@@ -654,14 +669,15 @@ public class WeiXinService {
 		JSONObject object = new JSONObject();
 		if (!f_openid.equals(openid)) {
 			object.put("message", "请您检查输入编号是否正确,或您尚未绑定");
-		
-		} else {	
-			String sql = "update t_userfiles set f_openid=NULL  where " + " f_userid='" + f_userid + "'";
+
+		} else {
+			String sql = "update t_userfiles set f_openid=NULL  where "
+					+ " f_userid='" + f_userid + "'";
 			int length = this.hibernateTemplate.bulkUpdate(sql);
 			object.put("message", "解绑成功");
-			  
+
 		}
 		return object;
 	};
-	
+
 }
