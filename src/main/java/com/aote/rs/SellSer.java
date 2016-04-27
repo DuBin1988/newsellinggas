@@ -264,7 +264,8 @@ public class SellSer {
 						+ debts.subtract(jieyu));
 			}
 			// 计算结余,交费日期，表累计气量，总累计气量
-			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu));
+			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu))
+					.subtract(new BigDecimal(zhinajin));
 
 			BigDecimal metergasnums = new BigDecimal(user.get("f_metergasnums")
 					.toString());
@@ -456,7 +457,7 @@ public class SellSer {
 		}
 		user.put("f_zherownum", zherownum);
 		// 更新用户
-		String sql = "update t_userinfo  set f_zhye=" + nowye
+		String sql = "update t_userinfo  set f_zhye=" + nowye.doubleValue()
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
 				+ "'," + " f_metergasnums=" + newMeterGasNums
 				+ ", f_cumulativepurchase=" + newCumuGas + ",f_zherownum="
