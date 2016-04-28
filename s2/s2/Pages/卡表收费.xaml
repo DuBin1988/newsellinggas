@@ -740,7 +740,7 @@
 										Default="{m:Exp Str=paylist.Count &gt; 0 :paylist.First().name\,null}" />
                                     </a:Data.Prop>
                                 </ComboBox>
-                                <TextBox x:Name="ui_grossproceeds" Text="{m:Bind Path=f_grossproceeds}"  Grid.Column="3" Margin="0" Grid.Row="8" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
+                                <TextBox x:Name="ui_grossproceeds" Text="{m:Bind Path=f_grossproceeds}"  LostFocus="ui_grossproceeds_LostFocus" Grid.Column="3" Margin="0" Grid.Row="8" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
                                     <a:Data.Prop>
                                         <o:PropertySetter PropertyName="f_grossproceeds" NotNull="True"/>
                                     </a:Data.Prop>
