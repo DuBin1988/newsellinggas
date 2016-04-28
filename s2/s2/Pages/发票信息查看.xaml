@@ -75,7 +75,7 @@
 								  Operator=" f_fapiaodate >= substring('this',1,10)"/>    
 								</a:Data.Prop>
 							</sdk:DatePicker>
-						<Button Content="置  空" x:Name="zhikong" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="197,1,181,-2" FontSize="14"  />
+						<Button Content="置  空" x:Name="zhikong" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="197,1,181,-2" FontSize="14" Width="60"  />
 						<TextBlock TextWrapping="Wrap" Text="维护费&gt;=" Margin="10,2,0,1" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right"/>
 						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_repairfee}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,2,8,1" Height="25" >
 							<a:Data.Prop>
@@ -113,9 +113,7 @@
 								<o:PropertySetter PropertyName="f_fapiaostatue"  Operator="f_fapiaostatue = 'this'"/>          
 							</a:Data.Prop>
 						</ComboBox>
-						<Button Content="导出Excel" Click="{m:Exp Str=excel.Export()}"	Margin="0,-1,8,1" toolkit:DockPanel.Dock="Right" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
-						<HyperlinkButton x:Name="annex"  Content="导出xml格式" NavigateUri="{m:Exp Str=$\{dbclient.BaseAddress\}/fapiao/\{fpinfos.ItemsSource.Path\}/\{fpinfos.ItemsSource.Count\}$}" TargetName="_self" 	Margin="0,2,97,1" Background="white" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Width="80" d:LayoutOverrides="GridBox" />
-					</Grid>
+							</Grid>
 				</toolkit:DockPanel>
 					<toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom"  Height="28">
 						<TextBlock TextWrapping="Wrap" Margin="5,0,11,3" Text="{m:Exp Str=$金额小计:\{fpinfos.ItemsSource[True].Sum(f_money)\}$}" Width="440" HorizontalAlignment="Left" Foreground="#FF140000" Height="27"/>
@@ -129,10 +127,10 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
 						<a:Data.Items>
 							<o:PagedObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
-                                MultiPath="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-								Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} order by f_invoicenum$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'  order by f_invoicenum$\,$abc$}"
+                                MultiPath="{m:Exp Str=$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
+								Path="{m:Exp Str=$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\}  and f_filiale \=\'\{LoginUser.f_fengongsi\}\'  order by f_invoicenum}"
 								IsOld="{m:Exp Str=fpinfo.DataContext.State\=\=$End$}"
-								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 						</a:Data.Items>
 						<sdk:DataGrid.Columns>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
@@ -146,11 +144,12 @@
 							<sdk:DataGridTextColumn Header="金　额" Binding="{Binding f_money}"/>
 							<sdk:DataGridTextColumn Header="维护费" Binding="{Binding f_repairfee}"/>
 							<sdk:DataGridTextColumn Header="合　计" Binding="{Binding f_totalfee}"/>
+							<sdk:DataGridTextColumn Header="收  款" Binding="{Binding f_grossproceeds}"/>
 							<sdk:DataGridTextColumn Header="发票状态" Binding="{Binding f_fapiaostatue}"/>
 							<sdk:DataGridTextColumn Header="网　点" Binding="{Binding f_sgnetwork}"/>
 							<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_sgoperator}"/>
-							<sdk:DataGridTextColumn Header="日　期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
-							<sdk:DataGridTextColumn Header="时　间" Binding="{Binding f_fapiaotime,StringFormat=hh:mm:ss tt}"/>
+							<sdk:DataGridTextColumn Header="使用日期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
+							<sdk:DataGridTextColumn Header="使用时间" Binding="{Binding f_fapiaotime,StringFormat=HH:mm:ss}"/>
 							<sdk:DataGridTextColumn Header="分　公　司" Binding="{Binding f_filiale}"/>
 						</sdk:DataGrid.Columns>
 					</sdk:DataGrid>

@@ -261,6 +261,9 @@ public class UserInfoService {
 				Integer.parseInt(map.get("f_stairmonths") + ""));
 		// 获得操作员，网点，分公司，组织信息
 		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
+		if(user.get("f_fengongsi")==null || user.get("f_fengongsi")==""){
+			throw new ResultException("操作员"+ user.get("name")+"没有设置分公司信息，不能获取分公司编号！");
+		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
 		// 网点
@@ -272,10 +275,13 @@ public class UserInfoService {
 		// 组织
 		json.put("f_orgstr", user.get("orgpathstr"));
 		// 产生户编号
-		JSONObject j = SynchronizedTools.getSerialNumber(
-				this.hibernateTemplate, "from t_singlevalue where name='"
-						+ userinfoname + "'", "value");
-		String userinfoid = user.get("f_fengongsinum") + j.getString("value");
+		JSONObject j = SynchronizedTools
+				.getSerialNumber(
+						this.hibernateTemplate,
+						"from t_singlevalue where name='"
+								+ user.get("f_fengongsi") + userinfoname + "'",
+						"value");
+		String userinfoid = j.getString("value");
 		result = userinfoid;
 		json.put("f_userid", userinfoid);
 		Map userinfo = JSONHelper.toHashMap(json, hibernateTemplate,
@@ -350,6 +356,9 @@ public class UserInfoService {
 				Integer.parseInt(map.get("f_stairmonths") + ""));
 		// 获得操作员，网点，分公司，组织信息
 		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
+		if(user.get("f_fengongsi")==null || user.get("f_fengongsi")==""){
+			throw new ResultException("操作员："+ user.get("name")+" 没有设置分公司信息，不能获取分公司编号！");
+		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
 		// 网点
@@ -363,8 +372,8 @@ public class UserInfoService {
 		// 产生户编号
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate, "from t_singlevalue where name='"
-						+ useridname + "'", "value");
-		String userid = user.get("f_fengongsinum") + j.getString("value");
+						+ user.get("f_fengongsi") + useridname + "'", "value");
+		String userid =  j.getString("value");
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);

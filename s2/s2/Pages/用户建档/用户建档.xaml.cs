@@ -18,9 +18,11 @@ namespace s2
         {
             InitializeComponent();
         }
-        private void f_address_MouseEnter(object sender, MouseEventArgs e)
+        
+
+        private void f_address_MouseEnter(object sender, RoutedEventArgs e)
         {
-            f_address.Text =  f_districtname.Text + "#" + f_cusDom.Text + "-" + f_cusDy.Text + "-" + f_cusFloor.Text + "-" + f_apartment.Text;
+            f_address.Text = f_districtname.Text + "#" + f_cusDom.Text + "-" + f_cusDy.Text + "-" + f_cusFloor.Text + "-" + f_apartment.Text;
         }
     }
 }

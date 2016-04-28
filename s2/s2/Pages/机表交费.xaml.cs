@@ -188,6 +188,11 @@ namespace Com.Aote.Pages
                     ui_meterid2.Text = "";
                 }
                  * */
+                //保存发票信息
+                GeneralObject kbfee = kbfee1.DataContext as GeneralObject;
+                GeneralObject fpinfosobj = (GeneralObject)(from r in loader.Res where r.Name.Equals("fpinfosobj") select r).First();
+                fpinfosobj.SetPropertyValue("f_fapiaostatue", "已用", true);
+                fpinfosobj.Save();
                 // 调用打印
                 GoldTax tax = (GoldTax)(from r in loader.Res where r.Name.Equals("tax") select r).First();
                 //气费大于0，打印税票

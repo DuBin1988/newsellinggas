@@ -67,6 +67,27 @@
                 <o:PropertySetter PropertyName="f_zhye" NoDependValue="{m:Exp Str=kbfee.f_benqizhye}"/>
             </o:GeneralObject>
 
+			  <!--重新获取发票号-->
+            <b:ScriptAction Name="loadfapiao" CanRun="{m:Exp Str=print.State\=\=$End$ |or| zzprint.State\=\=$End$ |or| print.State\=\=$Cancle$ |or| zzprint.State\=\=$Cancle$}" Start="{m:Exp Str=LoginUserfapiao.IsOld\=True}"></b:ScriptAction>
+			<!--发票对象-->
+            <o:GeneralObject Name="fpinfosobj" EntityType="t_fapiaoinfos" WebClientInfo="{StaticResource dbclient}"
+			Path="{m:Exp Str=$one/from t_fapiaoinfos where f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_invoicenum\=\'\{kbfee.f_invoicenum\}\'}"
+			IsInit="{m:Exp Str=print.State\=\=$End$ |or| zzprint.State\=\=$End$ |or| print.State\=\=$Cancle$ |or| zzprint.State\=\=$Cancle$}">
+                <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=kbfee1.DataContext.f_username}"/>
+                <o:PropertySetter PropertyName="f_invoicenum" Value="{m:Exp Str=kbfee1.DataContext.f_invoicenum}"/>
+                <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=kbfee1.DataContext.f_userid}" />
+                <o:PropertySetter PropertyName="f_cardid" Value="{m:Exp Str=kbfee1.DataContext.f_cardid}"/>
+                <o:PropertySetter PropertyName="f_gas" Value="{m:Exp Str=kbfee1.DataContext.f_pregas}" />
+                <o:PropertySetter PropertyName="f_money" Value="{m:Exp Str=kbfee1.DataContext.f_preamount}" />
+                <o:PropertySetter PropertyName="f_repairfee" Value="{m:Exp Str=kbfee1.DataContext.f_amountmaintenance}" />
+                <o:PropertySetter PropertyName="f_totalfee" Value="{m:Exp Str=kbfee1.DataContext.f_totalcost}" />
+				<o:PropertySetter PropertyName="f_grossproceeds" Value="{m:Exp Str=kbfee1.DataContext.f_grossproceeds}" />
+				<o:PropertySetter PropertyName="f_sgoperator" Value="{m:Exp Str=kbfee1.DataContext.f_sgoperator}" />
+                <o:PropertySetter PropertyName="f_fapiaotime" Value="{m:Exp Str=save2\=>Click!\=null:SysTime.Now\,SysTime.Now}" />
+				<o:PropertySetter PropertyName="f_fapiaodate" Value="{m:Exp Str=save2\=>Click!\=null:SysTime.Now\,SysTime.Now}" />
+				<o:PropertySetter PropertyName="f_fapiaotype" Default="机表收费" Value="机表收费"/>
+				<o:PropertySetter PropertyName="f_sgnetwork" Default="{m:Exp Str=LoginUser.f_parentname}" />
+            </o:GeneralObject>
 
             <!--户列表-->
             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
@@ -336,7 +357,7 @@
                             <TextBlock Text="发票号：" Grid.Column="4"  TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" Margin="0" Height="25" HorizontalAlignment="Right"/>
                             <TextBox x:Name="ui_fapiaohao" Text="{m:Bind Path=f_invoicenum}"  MaxLength="7"   Grid.Column="5"  Grid.Row="1" TextWrapping="Wrap" IsReadOnly="False"  Width="Auto" Margin="0" Height="25">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_invoicenum"  />
+                                    <o:PropertySetter PropertyName="f_invoicenum"  Default="{m:Exp Str=LoginUserfapiao.fapiaohao !\=null \:LoginUserfapiao.fapiaohao\,$$}" NoDependValue="{m:Exp Str=LoginUserfapiao.fapiaohao !\=null \:LoginUserfapiao.fapiaohao\,$$}"/>
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBlock Text="违约金合计："  Grid.Column="4"  TextWrapping="Wrap" TextAlignment="Right" Grid.Row="2" Margin="0" Height="25" HorizontalAlignment="Right"/>

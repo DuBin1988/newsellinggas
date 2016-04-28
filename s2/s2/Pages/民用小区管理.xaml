@@ -18,7 +18,9 @@
     mc:Ignorable="d" >
     <Grid x:Name="LayoutRoot">
 		<m:ResourceLoad >
-            <o:ChildWindowObj Name="openchild" CWName="/Pages/获取街道" />
+             <!--网格编码-->
+            <o:ObjectList Name="gridlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='网格编码' order by id"/>
+           <o:ChildWindowObj Name="openchild" CWName="/Pages/获取街道" />
 			<b:HQLAction Name="delete"   WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$delete from t_area where id \= \{apply.DataContext.id\}}"/> 
 

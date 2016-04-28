@@ -63,22 +63,26 @@
 							<RowDefinition Height="28"/>
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="50*"/>
-							<ColumnDefinition Width="50*"/>
+							<ColumnDefinition Width="120"/>
+							<ColumnDefinition Width="160"/>
+							<ColumnDefinition Width="90"/>
+							<ColumnDefinition Width="160"/>
+							<ColumnDefinition Width="90"/>
+							<ColumnDefinition Width="90"/>
+							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
-						<TextBlock TextWrapping="Wrap" Text="网　　点：" Margin="5,0,0,0" Height="25"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_invoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
+						<TextBlock TextWrapping="Wrap" Text="网　　点：" Margin="0" Height="25" HorizontalAlignment="Right"/>
+						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=f_invoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="f_invoicenum" Operator="f_invoicenum like 'this%'"/>               
 							</a:Data.Prop>
 						</TextBox>
-						<ComboBox x:Name="wangdian" Grid.Column="1" SelectedValue="{m:Bind Path=f_sgnetwork}" ItemsSource="{m:Exp Str=wangdianlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" >
+						<ComboBox x:Name="wangdian" Grid.Column="1" SelectedValue="{m:Bind Path=f_sgnetwork}" ItemsSource="{m:Exp Str=wangdianlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,2,0,1" Height="25" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="f_sgnetwork" Operator="f_sgnetwork = 'this'"/>               
 							</a:Data.Prop>
 						</ComboBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期 从：" Margin="5,1,0,2" Height="25"/>
+						<TextBlock TextWrapping="Wrap" Grid.Row="2" Text="操作日期 从：" Margin="0" Height="25" HorizontalAlignment="Right"/>
 						<sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate}" Grid.Column="1" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" VerticalAlignment="Stretch" >
 							<a:Data.Prop>
 								<!--o:PropertySetter PropertyName="f_fapiaodate" 
@@ -88,28 +92,24 @@
 								  Operator=" f_fapiaodate >= substring('this',1,10)"/>    
 								</a:Data.Prop>
 							</sdk:DatePicker>
-						<Button Content="查  询" x:Name="fpinfossearchbutton" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.Search()}" Margin="0,-1,66,0" HorizontalAlignment="Right" Width="50" FontSize="14"  />
-						<TextBlock TextWrapping="Wrap" Text="维护费&gt;=" Margin="10,2,0,1" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_repairfee}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,2,8,1" Height="25" >
+						<Button Content="查  询" x:Name="fpinfossearchbutton" Grid.Column="4" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.Search()}" Margin="0" HorizontalAlignment="Right" Width="60" FontSize="14"  />
+						<TextBlock TextWrapping="Wrap" Text="维护费&gt;=" Margin="0" Height="25" Grid.Column="2" TextAlignment="Right" VerticalAlignment="Center"/>
+						<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=f_repairfee}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" Grid.ColumnSpan="1" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="f_repairfee" Operator="f_repairfee >= 'this'"/>               
 							</a:Data.Prop>
 						</TextBox>
-						<TextBlock TextWrapping="Wrap" Margin="5,1,0,2" Height="25" Grid.Row="1"><Run Text="发 票 号"/><Run Text=" 从"/><Run Text="："/></TextBlock>
+						<TextBlock TextWrapping="Wrap" Margin="0" Height="25" Grid.Row="1" HorizontalAlignment="Right"><Run Text="发 票 号"/><Run Text=" 从"/><Run Text="："/></TextBlock>
 						<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="1" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="startinvoicenum" Operator="f_invoicenum >= this"/>               
 							</a:Data.Prop>
 						</TextBox>
-						<ComboBox Name="Comboxfx" Visibility="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$Visible$\,$Collapsed$}" SelectedValue="{m:Bind Path=f_filiale}" ItemsSource="{m:Exp Str=fgslist}" DisplayMemberPath="name" SelectedValuePath="name" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="165,3,49,0" Height="25" VerticalAlignment="Stretch" Grid.Row="3" >
-                    	<a:Data.Prop>
-                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'"/>          
-                    	</a:Data.Prop>
-						</ComboBox>
-						<TextBlock TextWrapping="Wrap" Text="到 " Margin="10,1,0,2" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="1"/>
-						<TextBlock TextWrapping="Wrap" Grid.Row="3" Text="发票状态：" Margin="5,0,0,3" Height="25"/>
-						<TextBlock TextWrapping="Wrap" Text="到 " Margin="10,2,0,1" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="2"/>
-						<sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate2}" Grid.Column="2" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,2,0,1" Height="25" VerticalAlignment="Stretch" >
+						 
+						<TextBlock TextWrapping="Wrap" Text="到：" Margin="0" Height="25" Grid.Column="2" TextAlignment="Right" Grid.Row="1"/>
+						<TextBlock TextWrapping="Wrap" Grid.Row="3" Text="发票状态：" Margin="0" Height="25" HorizontalAlignment="Right"/>
+						<TextBlock TextWrapping="Wrap" Text="到：" Margin="0" Height="25" Grid.Column="2" TextAlignment="Right" Grid.Row="2"/>
+						<sdk:DatePicker SelectedDate="{m:Bind Path=f_fapiaodate2}" Grid.Column="3" Grid.Row="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" >
 							<a:Data.Prop>
 								<!--o:PropertySetter PropertyName="f_fapiaodate" 
 									Operator=" (f_fapiaodate, StringFormat=yyyy-MM-dd)  = substring('this',1,10)"/>               
@@ -118,19 +118,19 @@
 									Operator=" f_fapiaodate ^= substring('this',1,10)"/>    
 							</a:Data.Prop>
 						</sdk:DatePicker>
-						<ComboBox x:Name="fpzt" Grid.Column="1"  SelectedValue="{m:Bind Path=f_fapiaostatue}" ItemsSource="{m:Exp Str=fpztlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Width="130" Margin="0,2,0,1" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" HorizontalAlignment="Left" >
+						<ComboBox x:Name="fpzt" Grid.Column="1"  SelectedValue="{m:Bind Path=f_fapiaostatue}" ItemsSource="{m:Exp Str=fpztlist}" DisplayMemberPath="name" SelectedValuePath="name" a:ControlAttach.DefaultButton="searchbutton" Margin="0,2,0,1" Height="25" VerticalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="1" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="f_fapiaostatue"  Operator="f_fapiaostatue = 'this'"/>          
 							</a:Data.Prop>
 						</ComboBox>
-						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="105,2,8,1" Height="25" VerticalAlignment="Stretch" Grid.Row="1" >
+						<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="1" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="endinvoicenum" Operator="f_invoicenum ^= this"/>               
 							</a:Data.Prop>
 						</TextBox>
-						<Button Content="置  空" x:Name="zhikong" Grid.Column="2" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="0,-2,12,1" HorizontalAlignment="Right" Width="50" FontSize="14"  />
-						<TextBlock TextWrapping="Wrap" Text="工号" Margin="10,1,0,2" Height="25" Grid.Column="2" HorizontalAlignment="Left" Width="95" TextAlignment="Right" Grid.Row="3"/>
-						<TextBox TextWrapping="Wrap" Grid.Column="2" Text="{m:Bind Path=f_sgoperator}" a:ControlAttach.DefaultButton="searchbutton" Width="72" Margin="105,1,0,2" Height="25" VerticalAlignment="Stretch" Grid.Row="3" HorizontalAlignment="Left" >
+						<Button Content="置  空" x:Name="zhikong" Grid.Column="5" Grid.Row="3" Click="{m:Exp Str=fpinfossearch.DataContext.f_repairfee\=null;fpinfossearch.DataContext.startinvoicenum\=null;fpinfossearch.DataContext.endinvoicenum\=null;fpinfossearch.DataContext.f_fapiaodate\=null;fpinfossearch.DataContext.f_fapiaodate2\=null;Comboxfx.SelectedValue\=null;fpzt.SelectedValue\=null;wangdian.SelectedValue\=null}" Margin="0" HorizontalAlignment="Right" Width="50" FontSize="14"  />
+						<TextBlock TextWrapping="Wrap" Text="操作员：" Margin="0" Height="25" Grid.Column="2" HorizontalAlignment="Right" Width="95" TextAlignment="Right" Grid.Row="3"/>
+						<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=f_sgoperator}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="3" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" >
 							<a:Data.Prop>
 								<o:PropertySetter PropertyName="f_sgoperator" Operator="f_sgoperator = 'this'"/>               
 							</a:Data.Prop>
@@ -143,18 +143,14 @@
 					</toolkit:DockPanel>
 					<sdk:DataGrid x:Name="fpinfos" Margin="0,0,0,2"  
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
-						<!--a:Data.Items>
+						<a:Data.Items>
 							<o:PagedObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
-                                Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+                                MultiPath="{m:Exp Str=$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
+                                Path="{m:Exp Str=$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' order by f_invoicenum}"
 								IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_yi"/>
-						</a:Data.Items-->
-						<a:Data.Items>
-							<o:ObjectList x:Name="fpinfoslist" WebClientInfo="{StaticResource dbclient}"
-                                Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\'$\, LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_fapiaoinfos where \{fpinfossearch.DataContext.Condition\} and f_sgoperator\=\'\{LoginUser.name\}\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
-								IsOld="{m:Exp Str='SaveAction.State\=\=$End$'}"
-								/>
 						</a:Data.Items>
+						 
 						<sdk:DataGrid.Columns>
 							<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
 							<sdk:DataGridTextColumn Header="发票代码" Binding="{Binding f_invoiceid}"/>
@@ -166,12 +162,13 @@
 							<sdk:DataGridTextColumn Header="金　额" Binding="{Binding f_money}"/>
 							<sdk:DataGridTextColumn Header="维护费" Binding="{Binding f_repairfee}"/>
 							<sdk:DataGridTextColumn Header="合　计" Binding="{Binding f_totalfee}"/>
+							<sdk:DataGridTextColumn Header="收  款" Binding="{Binding f_grossproceeds}"/>
 							<sdk:DataGridTextColumn Header="发票状态" Binding="{Binding f_fapiaostatue}"/>
 							<sdk:DataGridTextColumn Header="网　点" Binding="{Binding f_sgnetwork}"/>
 							
-							<sdk:DataGridTextColumn Header="日　期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
-							<sdk:DataGridTextColumn Header="时　间" Binding="{Binding f_fapiaotime,StringFormat=hh:mm:ss tt}"/>
-							<sdk:DataGridTextColumn Header="分　公　司" Binding="{Binding f_filiale}"/>
+							<sdk:DataGridTextColumn Header="使用日期" Binding="{Binding f_fapiaodate,StringFormat=yyyy-MM-dd}"/>
+							<sdk:DataGridTextColumn Header="使用时间" Binding="{Binding f_fapiaotime,StringFormat=HH:mm:ss}"/>
+							<sdk:DataGridTextColumn Header="分公司" Binding="{Binding f_filiale}"/>
 						</sdk:DataGrid.Columns>
 					</sdk:DataGrid>
 				</toolkit:DockPanel>
