@@ -281,7 +281,7 @@ public class UserInfoService {
 						"from t_singlevalue where name='"
 								+ user.get("f_fengongsi") + userinfoname + "'",
 						"value");
-		String userinfoid = j.getString("value");
+		String userinfoid = user.get("f_fengongsinum") + j.getString("value");
 		result = userinfoid;
 		json.put("f_userid", userinfoid);
 		Map userinfo = JSONHelper.toHashMap(json, hibernateTemplate,
@@ -373,7 +373,7 @@ public class UserInfoService {
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate, "from t_singlevalue where name='"
 						+ user.get("f_fengongsi") + useridname + "'", "value");
-		String userid =  j.getString("value");
+		String userid =  user.get("f_fengongsinum") + j.getString("value");
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);
