@@ -25,9 +25,7 @@
 
              <oo:NewGeneralICCard Name="card" >
             </oo:NewGeneralICCard>
-            <o:GeneralObject Name="ghfobj" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
-		  		Path="one/from t_singlevalue where name='过户费' "></o:GeneralObject>
-            <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
+             <o:ObjectList Name="jiaofeilist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='交费类型'"/>
             <o:ObjectList Name="zhengjianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='证件类型'"/>
             <!--用户对象Path="{m:Exp Str=applys.SelectedItem.id\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\'$\,apply.DataContext.f_userid \!\= null:$one/from t_userinfo where f_userid\=\'\{apply.DataContext.f_userid\}\'$\,$qqq$}"    -->
             <o:GeneralObject Name="userfiles" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
@@ -269,7 +267,7 @@
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_transferfee}" Grid.Column="1" Margin="0,3,0,2" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" RenderTransformOrigin="0.474,1" HorizontalAlignment="Left" Width="138" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_transferfee" Value="{m:Exp Str=ghfobj.value}"  />
+                                <o:PropertySetter PropertyName="f_transferfee" Default="{m:Exp Str=single[data.name\=\=$过户费$].ToObjectList().First().value.ToString()}" />
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_notnull}" Grid.ColumnSpan="3" Grid.Column="1" Margin="0,1,0,4" Grid.Row="9" TextWrapping="Wrap" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch">
@@ -417,7 +415,7 @@
 
             <TextBlock Text="{m:Exp Str=LoginUser.f_fengongsi}" Margin="131,0,0,75" TextWrapping="Wrap" Height="20" VerticalAlignment="Bottom" Grid.ColumnSpan="1" d:LayoutOverrides="VerticalAlignment, Height, GridBox" HorizontalAlignment="Left" Width="154"/>
 
-            <TextBlock Text="{m:Exp Str=ghfobj.value}" Margin="132,211,0,115" TextWrapping="Wrap" Height="20" d:LayoutOverrides="HorizontalAlignment, GridBox" HorizontalAlignment="Left" Width="153"/>
+            <TextBlock Text="{m:Exp Str=single[data.name\=\=$过户费$].ToObjectList().First().value.ToString()}" Margin="132,211,0,115" TextWrapping="Wrap" Height="20" d:LayoutOverrides="HorizontalAlignment, GridBox" HorizontalAlignment="Left" Width="153"/>
             <TextBlock Text="{m:Exp Str=userfiles.f_username\=&gt;Completed}"  HorizontalAlignment="Left" Margin="387,93,0,0"  Width="141" Height="20" VerticalAlignment="Top"/>
             <TextBlock Text="{m:Exp Str=userfiles.f_address\=&gt;Completed}"  HorizontalAlignment="Left" Margin="385,130,0,0"  Width="367" Height="20" VerticalAlignment="Top" d:LayoutOverrides="HorizontalAlignment, Height, GridBox"/>
             <TextBlock Text="{m:Exp Str=userfiles.f_userid\=&gt;Completed}"  HorizontalAlignment="Left" Margin="132,94,0,0"  Width="149" Height="20" VerticalAlignment="Top" Padding="0,2,0,0" d:LayoutOverrides="Height, GridBox"/>
@@ -430,7 +428,7 @@
             <sdk:Label HorizontalAlignment="Left" Content="网　　点" FontSize="15" Height="22" Margin="295,249,0,0" VerticalAlignment="Top" Width="67"/>
             <TextBlock Text="{m:Exp Str=LoginUser.f_parentname}" Margin="385,0,0,75" TextWrapping="Wrap" Height="20" VerticalAlignment="Bottom" Grid.ColumnSpan="1" HorizontalAlignment="Left" Width="143" d:LayoutOverrides="VerticalAlignment, Height, GridBox"/>
             <sdk:Label Content="大　　写" FontSize="15" Margin="293,209,0,116" HorizontalAlignment="Left" Width="72" d:LayoutOverrides="HorizontalAlignment"/>
-            <TextBlock Text="{m:Exp Str=ghfobj.value.ToChinaMoney()}" Margin="387,211,0,115" TextWrapping="Wrap" Height="20" HorizontalAlignment="Left" Width="253" d:LayoutOverrides="HorizontalAlignment, GridBox"/>
+            <TextBlock Text="{m:Exp Str=single[data.name\=\=$过户费$].ToObjectList().First().value.ToString().ToChinaMoney()}" Margin="387,211,0,115" TextWrapping="Wrap" Height="20" HorizontalAlignment="Left" Width="253" d:LayoutOverrides="HorizontalAlignment, GridBox"/>
 
         </Grid>
         <c:MessageTipObj  Name="submittip" Tip="您确认要提交通气吗？" OK="{m:Exp Str=SubmitAction.Invoke()}" />

@@ -169,6 +169,7 @@
             <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}"
 			EntityType="t_chongzheng"
 			IsInit="{m:Exp Str='SaveAction.State\=\=$End$ |or| SaveAction2.State\=\=$End$'}">
+					<o:PropertySetter PropertyName="chongzhengtype" Default="卡表冲正"/>
             </o:GeneralObject>
             <!--更新售气记录为冲正-->
             <b:HQLAction Name="UpdateSellgas"   WebClientInfo="{StaticResource dbclient}"
@@ -274,9 +275,8 @@
 						AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-
-								Path="{m:Exp Str=$from t_chongzheng where \{userfilesearch.DataContext.Condition\} and f_comtype \!\=\'银行\'  and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and chongzhengtype\=\'卡表冲正\' and f_reversaldate \=\'\{SysTime.Today.ToString($yyyy-MM-dd$)\}\' }"
-
+								MultiPath="{m:Exp Str=$from t_chongzheng where \{userfilesearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and chongzhengtype\=\'卡表冲正\' }"
+								Path="{m:Exp Str=$from t_chongzheng where \{userfilesearch.DataContext.Condition\} and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and chongzhengtype\=\'卡表冲正\' order by f_reversaldate desc }"
 								IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"
 								PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
                         </a:Data.Items>
@@ -286,7 +286,7 @@
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名" Binding="{Binding f_username}"/>
                             <sdk:DataGridTextColumn d:IsLocked="True" Header="卡   号" Binding="{Binding f_cardid}"/>
                             <sdk:DataGridTextColumn Header="冲正日期" Binding="{Binding f_reversaldate,StringFormat=yyyy-MM-dd}"/>
-                            <sdk:DataGridTextColumn Header="冲正时间" Binding="{Binding f_reversaltime,StringFormat=hh:mm:ss tt}"/>
+                            <sdk:DataGridTextColumn Header="冲正时间" Binding="{Binding f_reversaltime,StringFormat=HH:mm:ss}"/>
                             <sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>
 
                             <sdk:DataGridTextColumn Header="电  话" Binding="{Binding f_phone}"/>

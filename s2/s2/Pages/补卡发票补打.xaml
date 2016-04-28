@@ -33,8 +33,8 @@
 		  			Path="one/from t_singlevalue where name='发票格式'"   ></o:GeneralObject>
             <!--补卡对象-->
             <o:GeneralObject Name="buda" EntityType="t_renewalcard" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=$one/from t_renewalcard where id\=(select max(id) from t_renewalcard) and  f_userid\=\'\{userfile.DataContext.f_userid\}\'}" 
-			 IsInit="{m:Exp Str=print.State\=\=$End$}"  >
+				Path="{m:Exp Str=$one/from t_renewalcard where id\=(select max(id) from t_renewalcard where f_userid\=\'\{userfile.DataContext.f_userid\}\')}" 
+				IsInit="{m:Exp Str=print.State\=\=$End$}"  >
             </o:GeneralObject>
 
             <!--补卡发票补打对象Source="{m:Exp Str=userfiles.SelectedItem}"-->

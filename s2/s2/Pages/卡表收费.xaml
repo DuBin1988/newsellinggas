@@ -157,6 +157,7 @@
                 <!--所包含的补气对象，剩余补气量为0时，为空-->
                 <o:PropertySetter PropertyName="f_fillgas"
 				NoDependValue="{m:Exp Str=kbfee.f_surplusgas>0:fillgas\,null}"/>
+				<o:PropertySetter PropertyName="f_OrgStr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
             </o:GeneralObject>
             <!--开票类型-->
             <o:ObjectList Name="invoicelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票样式' order by id"/>
