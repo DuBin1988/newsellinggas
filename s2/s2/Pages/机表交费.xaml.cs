@@ -189,7 +189,6 @@ namespace Com.Aote.Pages
                 }
                  * */
                 //保存发票信息
-                GeneralObject kbfee = kbfee1.DataContext as GeneralObject;
                 GeneralObject fpinfosobj = (GeneralObject)(from r in loader.Res where r.Name.Equals("fpinfosobj") select r).First();
                 fpinfosobj.SetPropertyValue("f_fapiaostatue", "已用", true);
                 fpinfosobj.Save();
