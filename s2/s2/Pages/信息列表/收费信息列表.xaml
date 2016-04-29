@@ -19,6 +19,8 @@
 	x:Class="Com.Aote.Pages.收费信息列表">
     <Grid>
         <m:ResourceLoad Margin="0,0,-12,0">
+             <!--抄表员列表-->
+            <o:ObjectList Name="inputtorlist2" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <o:ExcelObj Name="excel" Bind="Index,f_userid,f_username,f_districtname,f_apartment,f_usertype,f_cardid,f_gaswatchbrand,f_gaspricetype,f_gasprice,f_pregas,f_preamount,f_beginfee,f_endfee,f_amountmaintenance,f_totalcost,f_comtype,f_invoicenum,f_payfeevalid,f_payfeetype,f_filiale,f_sgnetwork,f_sgoperator,f_deliverydate" Source="{m:Exp Str=daninfos}"/>
             <!--操作员列表对象-->
             <o:ObjectList Name="czylist" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='操作员查询用'  order by id"/>
@@ -528,7 +530,7 @@
                             <ColumnDefinition Width="2835*"/>
                             <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
-                        <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos2.ItemsSource.IsBusy  or heji.IsBusy or toExcel2.IsBusy or daninfos2earch2.DataContext.IsBusy}" Grid.ColumnSpan="2">
+                        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos2.ItemsSource.IsBusy  or heji.IsBusy or toExcel2.IsBusy or daninfos2earch2.DataContext.IsBusy}" Grid.ColumnSpan="2">
                             <toolkit:DockPanel>
                                 <Grid x:Name="daninfos2earch2"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
                                     <Grid.RowDefinitions>
@@ -661,10 +663,10 @@
                                         </a:Data.Prop>
                                     </ComboBox>
                                     <TextBlock TextWrapping="Wrap" Text="抄 表 员：" Grid.Column="6"  Margin="0" Height="25" TextAlignment="Right" Grid.Row="1" />
-                                    <ComboBox x:Name="tjc2zy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=czylist2null}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                    <ComboBox x:Name="tjc2zy"  SelectedValue="{m:Bind Path=f_inputtor}" Grid.Row="1" Grid.Column="7" ItemsSource="{m:Exp Str=inputtorlist2}"  Margin="0"  SelectedValuePath="f_inputtor"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding name}" Height="20"></TextBlock>
+                                                <TextBlock Text="{Binding f_inputtor}" Height="20"></TextBlock>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                         <a:Data.Prop>
@@ -876,7 +878,7 @@
                                 </sdk:DataGrid>
                             </toolkit:DockPanel>
 
-                        </toolkit:BusyIndicator>
+                        </c:BusyIndicatorEx>
                     </Grid>
 
                 </Grid>
@@ -917,7 +919,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="0*"/>
                         </Grid.ColumnDefinitions>
-                        <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos3.ItemsSource.IsBusy or toExcel3.IsBusy}">
+                        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=daninfos3.ItemsSource.IsBusy or toExcel3.IsBusy}">
                             <toolkit:DockPanel>
                                 <Grid x:Name="daninfos3earch3"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
                                     <Grid.RowDefinitions>
@@ -1093,7 +1095,7 @@
                                 </sdk:DataGrid>
 
                             </toolkit:DockPanel>
-                        </toolkit:BusyIndicator>
+                        </c:BusyIndicatorEx>
                     </Grid>
 
                     <!--/sdk:TabItem>
@@ -1105,7 +1107,7 @@
                     <m:ResourceLoad Margin="0,0,-12,0" Grid.ColumnSpan="2">
                         <o:ChildWindowObj Name="openchild4" CWName="/Pages/信息列表/个人发卡信息" ParamObj="fkinfos.SelectedItem" />
                     </m:ResourceLoad>
-                    <toolkit:BusyIndicator  Margin="0" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fkinfos.ItemsSource.IsBusy or toExcel34.IsBusy}">
+                    <c:BusyIndicatorEx  Margin="0" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fkinfos.ItemsSource.IsBusy or toExcel34.IsBusy}">
                         <toolkit:DockPanel   >
                             <toolkit:DockPanel x:Name="fkinfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
                                 <a:Data.Context>
@@ -1236,7 +1238,7 @@
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
                         </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
+                    </c:BusyIndicatorEx>
 
                 </Grid>
             </sdk:TabItem>
@@ -1245,7 +1247,7 @@
                     <m:ResourceLoad Margin="0,0,-12,0" Grid.ColumnSpan="2">
                         <o:ChildWindowObj Name="openchild5" CWName="/Pages/信息列表/个人冲正信息" ParamObj="czinfos.SelectedItem" />
                     </m:ResourceLoad>
-                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=czinfos.ItemsSource.IsBusy or toExcel12.IsBusy}" Margin="0" >
+                    <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=czinfos.ItemsSource.IsBusy or toExcel12.IsBusy}" Margin="0" >
                         <toolkit:DockPanel >
                             <toolkit:DockPanel x:Name="czinfosearch"  Background="#FFCFEFFF" toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" >
                                 <a:Data.Context>
@@ -1372,7 +1374,7 @@
                             </sdk:DataGrid>
                             <!--提交按钮-->
                         </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
+                    </c:BusyIndicatorEx>
                 </Grid>
             </sdk:TabItem>
             <sdk:TabItem Header="补卡信息">
@@ -1380,7 +1382,7 @@
                     <m:ResourceLoad Margin="0,0,-12,0" Grid.ColumnSpan="2">
                         <o:ChildWindowObj Name="openchild6" CWName="/Pages/信息列表/个人补卡信息" ParamObj="bkinfos.SelectedItem" />
                     </m:ResourceLoad>
-                    <toolkit:BusyIndicator Margin="0,0,5,0" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bkinfos.ItemsSource.IsBusy  or toExcel7.IsBusy}">
+                    <c:BusyIndicatorEx Margin="0,0,5,0" BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bkinfos.ItemsSource.IsBusy  or toExcel7.IsBusy}">
                         <toolkit:DockPanel   >
                             <toolkit:DockPanel x:Name="bkinfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
                                 <a:Data.Context>
@@ -1487,7 +1489,7 @@
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
                         </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
+                    </c:BusyIndicatorEx>
                 </Grid>
             </sdk:TabItem>
             <sdk:TabItem Header="补气信息">
@@ -1495,7 +1497,7 @@
                     <m:ResourceLoad Margin="0,0,-12,0" Grid.ColumnSpan="2">
                         <o:ChildWindowObj Name="openchild7" CWName="/Pages/信息列表/个人补气信息" ParamObj="bqinfos.SelectedItem" />
                     </m:ResourceLoad>
-                    <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bqinfos.ItemsSource.IsBusy  or toExcel6.IsBusy}">
+                    <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=bqinfos.ItemsSource.IsBusy  or toExcel6.IsBusy}">
                         <toolkit:DockPanel   >
                             <toolkit:DockPanel x:Name="bqinfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" >
                                 <a:Data.Context>
@@ -1595,7 +1597,7 @@
                                 </sdk:DataGrid.Columns>
                             </sdk:DataGrid>
                         </toolkit:DockPanel>
-                    </toolkit:BusyIndicator>
+                    </c:BusyIndicatorEx>
                 </Grid>
 
             </sdk:TabItem>

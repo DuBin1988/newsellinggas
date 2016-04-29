@@ -18,7 +18,8 @@
     mc:Ignorable="d"  FontFamily="Microsoft YaHei">
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
-            <!--发卡费-->
+              <o:ObjectList Name="meterstatelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id" HasEmptyRow="True"/>
+			<!--发卡费-->
             <o:GeneralObject Name="fakafei" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		        IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}" 
 		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'\{LoginUser.f_fengongsi\}\{userfiles.f_usertype\}\卡\费\'}"   >

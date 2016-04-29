@@ -334,8 +334,8 @@ public class SellSer {
 		Map sale = new HashMap<String, Object>();
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		sale.put("lastinputgasnum", nopayMap.get("lastinputgasnum"));
-		sale.put("lastrecord", nopayMap.get("lastrecord"));
+		sale.put("lastinputgasnum",Double.parseDouble(nopayMap.get("lastinputgasnum")+""));
+		sale.put("lastrecord", Double.parseDouble(nopayMap.get("lastrecord")+""));
 		sale.put("f_preamount", debts.doubleValue());
 		sale.put("f_pregas", debtGas.doubleValue());
 		sale.put("f_zhinajin", zhinajin);
@@ -592,7 +592,7 @@ public class SellSer {
 	 */
 	private Map<String, Object> getnopayinfor(String userinfoId) {
 		final String sql = "select f_stair1price f_stair1price, f_stair1amount f_stair1amount, f_stair1fee f_stair1fee, f_stair2price f_stair2price, f_stair2amount f_stair2amount,"
-				+ " f_stair2fee f_stair2fee, f_stair3price f_stair3price, f_stair3amount f_stair3amount, f_stair3fee f_stair3fee from "
+				+ " f_stair2fee f_stair2fee, f_stair3price f_stair3price, f_stair3amount f_stair3amount, f_stair3fee f_stair3fee,isnull(lastinputgasnum,0) lastinputgasnum,isnull(lastrecord,0) lastrecord from "
 				+ "(select sum(h.lastinputgasnum) lastinputgasnum,sum(h.lastrecord) lastrecord, min(u.f_stair1price) f_stair1price, Round(SUM(isnull(h.f_stair1amount,0)),2) f_stair1amount,"
 				+ " Round(SUM(isnull(h.f_stair1fee,0)),2) f_stair1fee,min(u.f_stair2price) f_stair2price,"
 				+ " Round(SUM(isnull(h.f_stair2amount,0)),2) f_stair2amount, Round(SUM(isnull(h.f_stair2fee,0)),2) f_stair2fee,"

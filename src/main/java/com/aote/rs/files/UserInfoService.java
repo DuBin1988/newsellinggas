@@ -72,6 +72,7 @@ public class UserInfoService {
 			String userinfoid = inserthu(hu, userinfoname, loginuserid);
 			JsonTransfer Transfer = new JsonTransfer();
 			Map savem;
+			String userid = "";
 			for (int l = 0; l < list.length(); l++) {
 				JSONObject u = list.getJSONObject(l);
 				Map umap = JSONHelper.toHashMap(u);
@@ -79,10 +80,19 @@ public class UserInfoService {
 				savem.putAll(humap);
 				savem.putAll(umap);
 				// 产生表档案
-				insertfile((JSONObject) Transfer.MapToJson(savem), userinfoid,
-						useridname, loginuserid);
+				String uid = insertfile((JSONObject) Transfer.MapToJson(savem),
+						userinfoid, useridname, loginuserid);
+				if (userid == "") {
+					userid = uid;
+				} else {
+					userid = uid + "," + userid;
+				}
 			}
-			result.put("success", userinfoid + "用户建档完成！");
+			if (flag) {
+				result.put("success", userinfoid + "用户信息已存在，关联户档案完成！表编号：" + userid);
+			} else {
+				result.put("success", userinfoid + "用户建档完成！表编号：" + userid);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("error", e.getMessage());
@@ -204,6 +214,11 @@ public class UserInfoService {
 	}
 
 	/**
+	 * 是否已经有户档案标示
+	 */
+	private boolean flag = false;
+
+	/**
 	 * 导入户信息
 	 * 
 	 * @param json
@@ -217,6 +232,7 @@ public class UserInfoService {
 	 */
 	private String inserthu(JSONObject json, String userinfoname,
 			String loginuserid) throws ResultException, JSONException {
+		flag = false;
 		json.remove("id");
 		// 根据地址判断户是否已经存在，如果存在直接返回户编号
 		if (!json.has("f_address")) {
@@ -227,6 +243,7 @@ public class UserInfoService {
 				.find("from t_userinfo where f_address='" + f_address + "'");
 		// 存在户，返回户编号
 		if (list.size() > 0) {
+			flag = true;
 			Map<String, Object> map = (Map<String, Object>) list.get(0);
 			return map.get("f_userid") + "";
 		}
@@ -261,8 +278,9 @@ public class UserInfoService {
 				Integer.parseInt(map.get("f_stairmonths") + ""));
 		// 获得操作员，网点，分公司，组织信息
 		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
-		if(user.get("f_fengongsi")==null || user.get("f_fengongsi")==""){
-			throw new ResultException("操作员"+ user.get("name")+"没有设置分公司信息，不能获取分公司编号！");
+		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
+			throw new ResultException("操作员" + user.get("name")
+					+ "没有设置分公司信息，不能获取分公司编号！");
 		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
@@ -356,8 +374,9 @@ public class UserInfoService {
 				Integer.parseInt(map.get("f_stairmonths") + ""));
 		// 获得操作员，网点，分公司，组织信息
 		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
-		if(user.get("f_fengongsi")==null || user.get("f_fengongsi")==""){
-			throw new ResultException("操作员："+ user.get("name")+" 没有设置分公司信息，不能获取分公司编号！");
+		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
+			throw new ResultException("操作员：" + user.get("name")
+					+ " 没有设置分公司信息，不能获取分公司编号！");
 		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
@@ -373,7 +392,7 @@ public class UserInfoService {
 		JSONObject j = SynchronizedTools.getSerialNumber(
 				this.hibernateTemplate, "from t_singlevalue where name='"
 						+ user.get("f_fengongsi") + useridname + "'", "value");
-		String userid =  user.get("f_fengongsinum") + j.getString("value");
+		String userid = user.get("f_fengongsinum") + j.getString("value");
 		result = userid;
 		json.put("f_userid", userid);
 		json.put("f_userinfoid", userinfoid);
@@ -390,7 +409,9 @@ public class UserInfoService {
 		userfile.put("f_whethergivepassbook", "未发");
 		userfile.put("f_zherownum", 13);
 		// userfile.put("refreshCache", 1);
-		userfile.put("lastinputgasnum", 0.0);
+		userfile.put("lastinputgasnum", Double.parseDouble(userfile
+				.get("lastinputgasnum")
+				+ ""));
 		userfile.put("lastinputdate", new Date());
 		userfile.put("f_metergasnums", 0.0);
 		userfile.put("f_cumulativepurchase", 0.0);
