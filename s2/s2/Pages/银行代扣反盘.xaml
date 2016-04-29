@@ -23,8 +23,8 @@
             <o:ObjectList Name="daninfoslist" EntityType="t_bankreturn" WebClientInfo="{StaticResource bank}" ></o:ObjectList>
 
             <!--通知对象，文件上传完成后，通知后台处理  -->
-            <o:GeneralObject Name="treatObj" EntityType="t_singlevalue" WebClientInfo="{StaticResource server}" 
-		  		Path="{m:Exp Str=FileLoad.State\=\=$Loaded$ \:$bank/payment/\{FileLoad.BlobId\}$\,$abc$ }"   ></o:GeneralObject>
+          <!--  <o:GeneralObject Name="treatObj" EntityType="t_singlevalue" WebClientInfo="{StaticResource server}" 
+		  		Path="{m:Exp Str=FileLoad.State\=\=$Loaded$ \:$bank/payment/\{FileLoad.BlobId\}$\,$abc$ }"   ></o:GeneralObject>-->
        
        
         </m:ResourceLoad>
@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="10*"/>
                 <ColumnDefinition Width="0*"/>
             </Grid.ColumnDefinitions>
-            <c:BusyIndicatorEx BusyContent="$正在处理中，请等待!$" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy |or| FileLoad.IsBusy}">
+         <!--   <c:BusyIndicatorEx BusyContent="$正在处理中，请等待!$" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy |or| FileLoad.IsBusy}">-->
                 <toolkit:DockPanel>
                     <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
                         <Grid.RowDefinitions>
@@ -59,7 +59,7 @@
                             <o:SearchObject />
                         </a:Data.Context>
                         <StackPanel Grid.Row="1" Grid.Column="7" Orientation="Horizontal"/>
-                        <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="80" Grid.Column="4"/>
+                     <!--   <Button Content="上传文件" Click="{m:Exp Str=FileLoad.UpLoad()}" HorizontalAlignment="Left" Height="24" VerticalAlignment="Bottom" Width="80" Grid.Column="4"/>-->
 
                         <Button x:Name="save" Content="保  存" Margin="77,4,23,0" 
 								Click="{m:Exp Str=daninfoslist.Save()}" Width="50" Grid.Column="5" 
@@ -85,9 +85,9 @@
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
-            </c:BusyIndicatorEx>
+           <!-- </c:BusyIndicatorEx>-->
 
         </Grid>
-        <c:MessageTipObj Tip="{m:Exp Str=$上传文件失败，请重试！$}" IsShow="{m:Exp Str=FileLoad.State\=\=$LoadError$}"/>
+        <!--<c:MessageTipObj Tip="{m:Exp Str=$上传文件失败，请重试！$}" IsShow="{m:Exp Str=FileLoad.State\=\=$LoadError$}"/>-->
    </Grid>
 </UserControl>
