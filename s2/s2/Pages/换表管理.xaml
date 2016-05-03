@@ -18,7 +18,8 @@
     mc:Ignorable="d"  FontFamily="Microsoft YaHei">
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
-            <!--发卡费-->
+              <o:ObjectList Name="meterstatelistnull"  EntityType="paramvalue" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='表状态' order by id" HasEmptyRow="True"/>
+			<!--发卡费-->
             <o:GeneralObject Name="fakafei" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		        IsInit="{m:Exp Str=print.State\=\=$End$ or zzprint.State\=\=$End$ or print.State\=\=$Cancle$ or zzprint.State\=\=$Cancle$}" 
 		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'\{LoginUser.f_fengongsi\}\{userfiles.f_usertype\}\卡\费\'}"   >
@@ -265,7 +266,7 @@
                         <Button x:Name="save" Content="保存并发卡" Margin="0" 
             			IsEnabled="{m:Exp Str=data.f_newgasmeterstyle\=\=$卡表$ and !pipeline.DataContext.HasErrors}" 
             			Click="{m:Exp Str=userfiles.f_surplusgas\=pipeline.DataContext.f_cmaddgas;userfiles.f_bugas\=pipeline.DataContext.f_cmaddgas;userfiles.f_metergasnums\=pipeline.DataContext.f_zhi;userfiles.f_times\=0;card.Gas\=0;card.Sqrq\=pipelinego.f_cmdate.ToString($yyyyMMdd$);submit.IsShow\=True}"/>
-                        <Button x:Name="onlySave" Content=" 保 存 " Margin="20,0,0,0" Width="50" Click="save_Click" 
+                        <Button x:Name="onlySave" Content=" 保 存 " Margin="20,0,0,0" Width="50" Click="{m:Exp Str=SaveAction.Invoke()}" 
             			IsEnabled="{m:Exp Str=data.f_newgasmeterstyle\!\=$卡表$ and !pipeline.DataContext.HasErrors}"/>
                         <Button Content="撤 销" Margin="20,0,5,0" Click="{m:Exp Str=pipeline.DataContext.New();userfiles.New()}" Width="50"/>
                     </StackPanel>
@@ -953,9 +954,9 @@ Margin="18.667,280.706,381.139,0"/>
         </Grid>
 
         <!--发票和折子打印 -->
-        <c:PrintObj Name="print" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End--$}" Area="{m:Res Key=guoshuiprint}"/>
+        <c:PrintObj Name="print" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=guoshuiprint}"/>
         <c:PrintObj Name="zzprint" Message="是否打印购气证" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=zheziprint}" />
-        <c:PrintObj Name="print1" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End---$}" Area="{m:Res Key=aofengprint}" />
+        <c:PrintObj Name="print1" Message="是否打印发票" IsPrint="{m:Exp Str=SaveAction.State\=\=$End$}" Area="{m:Res Key=aofengprint}" />
         <c:MessageTipObj  Name="savedone1" Type="MessageBox" Tip="{m:Exp Str='$此表号未找到对应的表计电话,请联系系统管理人员!'}" IsShow="{m:Exp Str=tabletel.State\=\=$LoadError$}"/>
 
     </Grid>

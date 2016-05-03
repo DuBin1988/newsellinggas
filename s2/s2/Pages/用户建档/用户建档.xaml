@@ -437,6 +437,17 @@
 															</DataTemplate>
 														</sdk:DataGridTemplateColumn.CellTemplate>
 													</sdk:DataGridTemplateColumn>
+													<sdk:DataGridTemplateColumn Header="表底数" Width="90">
+														<sdk:DataGridTemplateColumn.CellTemplate>
+															<DataTemplate>
+																<TextBox Text="{m:Bind Path=lastinputgasnum}">
+																	<a:Data.Prop>
+																		<o:PropertySetter PropertyName="lastinputgasnum" Default="0" NotNull="True" />
+																	</a:Data.Prop>
+																</TextBox>
+															</DataTemplate>
+														</sdk:DataGridTemplateColumn.CellTemplate>
+													</sdk:DataGridTemplateColumn>
 													<sdk:DataGridTemplateColumn Header="表号" Width="90">
 														<sdk:DataGridTemplateColumn.CellTemplate>
 															<DataTemplate>
