@@ -40,7 +40,8 @@ public class BankService {
 
 	// 处理返盘数据，data是JSON格式的返盘数据
 	@POST
-	public void procReturn(String data) {
+	public String procReturn(String data) {
+		JSONObject returnJson = new JSONObject();
 		try {
 			JSONArray array = new JSONArray(data);
 			// 对于data中的每一条数据
@@ -73,7 +74,7 @@ public class BankService {
 				if (paymenstate.equals("成功")) {
 					//查找应缴费抄表记录
 					//List l = findHandplans();
-					String hql = "select hu.oughtfee oughtfee, o.f_userid f_userid, o.f_username f_username, o.f_address f_address, o.f_districtname f_districtname,"
+					String hql = "select (hu.oughtfee-isnull(o.f_zhye,0)) oughtfee, o.f_userid f_userid, o.f_username f_username, o.f_address f_address, o.f_districtname f_districtname,"
 							+ "hu.lastinputgasnum lastinputgasnum, hu.lastrecord lastrecord, o.f_usertype f_usertype,o.f_phone f_phone,hu.f_userid hand,o.f_yytdepa f_yytdepa  from t_userinfo o left join "
 							+ "(select sum(t.oughtfee) oughtfee,t.f_userid, u.f_userinfoid f_userinfoid"
 							+ ",min(t.lastinputgasnum) lastinputgasnum,max(t.lastrecord) lastrecord"
@@ -83,7 +84,7 @@ public class BankService {
 							+ f_bankname
 							+ "' "
 							+ " and t.f_state='已抄表' and shifoujiaofei='否'"
-							+ " and f_sendtime is not null and f_sendtime<getdate() and CONVERT(varchar(12) ,f_sendtime, 112 )>CONVERT(varchar(12) ,f_inputdate, 112 ) group by t.f_userid,u.f_userinfoid,t.f_address,t.f_usertype)hu on o.id = hu.f_userinfoid"
+							+ " and f_sendtime is not null and f_sendtime<getdate() and CONVERT(varchar(12) ,f_sendtime, 112 )>CONVERT(varchar(12) ,f_inputdate, 112 ) group by t.f_userid,u.f_userinfoid,t.f_address,t.f_usertype)hu on o.f_userid = hu.f_userinfoid"
 							+ " where o.f_idofcard='"
 							+ f_idofcard
 							+ "' and o.f_bankname='"
@@ -246,14 +247,12 @@ public class BankService {
 				hibernateTemplate.bulkUpdate(sql);
 
 			}
-
+			returnJson.put("success", "操作成功!");
 		} catch (Exception e) {
-
 			log.error(e.getMessage() + usernames + "aaaaaaa的！");
-			e.printStackTrace();
 			throw new WebApplicationException(500);
-
 		}
+		return returnJson.toString();
 	}
 	
 	

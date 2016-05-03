@@ -20,7 +20,7 @@
     <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-12,0" >
             <!--银行返盘数据-->
-            <o:ObjectList Name="daninfoslist" EntityType="t_bankreturn" WebClientInfo="{StaticResource bank}" ></o:ObjectList>
+            <o:ObjectList Name ="daninfoslist" EntityType="t_bankreturn" WebClientInfo="{StaticResource bank}" IsClear="{m:Exp Str=daninfoslist.Save().State\=$End$}"></o:ObjectList>
 
             <!--通知对象，文件上传完成后，通知后台处理  -->
           <!--  <o:GeneralObject Name="treatObj" EntityType="t_singlevalue" WebClientInfo="{StaticResource server}" 
@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="10*"/>
                 <ColumnDefinition Width="0*"/>
             </Grid.ColumnDefinitions>
-         <!--   <c:BusyIndicatorEx BusyContent="$正在处理中，请等待!$" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy |or| FileLoad.IsBusy}">-->
+          <c:BusyIndicatorEx BusyContent="$正在处理中，请等待!$" IsBusy="{m:Exp Str=daninfos.ItemsSource.IsBusy }">
                 <toolkit:DockPanel>
                     <Grid x:Name="daninfosearch"  toolkit:DockPanel.Dock="Top" Margin="0,0,0,3" Background="#FFCFEFFF" Width="Auto" HorizontalAlignment="Stretch" >
                         <Grid.RowDefinitions>
@@ -73,7 +73,7 @@
                     </toolkit:DockPanel>
 
                     <sdk:DataGrid x:Name="daninfos" Margin="0,0,0,3" IsReadOnly="True"
-								ItemsSource="{m:Exp Str=daninfoslist}"
+								ItemsSource="{m:Exp Str=c}"
 								AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" >
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn Header="开户名" Binding="{Binding f_usermc}"/>
@@ -85,7 +85,7 @@
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
-           <!-- </c:BusyIndicatorEx>-->
+            </c:BusyIndicatorEx>
 
         </Grid>
         <!--<c:MessageTipObj Tip="{m:Exp Str=$上传文件失败，请重试！$}" IsShow="{m:Exp Str=FileLoad.State\=\=$LoadError$}"/>-->
