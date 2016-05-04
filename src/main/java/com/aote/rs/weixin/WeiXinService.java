@@ -218,7 +218,7 @@ public class WeiXinService {
 
 		for (int i = x; i > 0; i--) {
 			obj = new JSONObject();
-			String le = new String(b, len + 8 - 70 * i, 70);
+			String le = new String(b, len + 8 - 68 * i, 68);
 			System.out.println(le);
 
 			obj.put("f_userid", new String(b, 12, 10));
@@ -227,14 +227,14 @@ public class WeiXinService {
 		     String name=O.getString("f_username");
 		     String f_username=URLEncoder.encode(name,"utf-8");
 			obj.put("f_name", f_username);
-			obj.put("lastinputdate", le.substring(0, 10));
-			obj.put("astinputgasnum", Integer.parseInt(le.substring(11, 20)));
-			obj.put("lastrecord", Integer.parseInt(le.substring(21, 30)));
-			obj.put("oughtmount", Integer.parseInt(le.substring(31, 40)));
+			obj.put("lastinputdate", le.substring(0, 8));
+			obj.put("astinputgasnum", Integer.parseInt(le.substring(9, 18)));
+			obj.put("lastrecord", Integer.parseInt(le.substring(19, 28)));
+			obj.put("oughtmount", Integer.parseInt(le.substring(29, 38)));
 			obj.put("totaloughtfee",
-					Double.parseDouble(le.substring(41, 50)) / 100);
-			obj.put("oughtfeed", Double.parseDouble(le.substring(51, 60)) / 100);
-			obj.put("oughtfee", Double.parseDouble(le.substring(61, 70)) / 100);
+					Double.parseDouble(le.substring(39, 48)) / 100);
+			obj.put("oughtfeed", Double.parseDouble(le.substring(49, 58)) / 100);
+			obj.put("oughtfee", Double.parseDouble(le.substring(59, 68)) / 100);
 			arr.put(obj);
 		}
 		obj1.put("arr", arr);
@@ -441,7 +441,7 @@ public class WeiXinService {
 			map.put("f_attach", reData.getAttach());
 			map.put("f_time_end", reData.getTime_end());
 			Map<String, Object> r = selList(reData.getOpenid());
-			map.put("f_userid", r.get("f_userid").toString());
+	 		map.put("f_userid", r.get("f_userid").toString());
 			
 			Map<String, Object> row = selweixin(reData.getTransaction_id());
 			if (row == null) {
@@ -451,6 +451,8 @@ public class WeiXinService {
 				String f_openid = reData.getOpenid();
 				Map<String, Object> row1 = selList(f_openid);
 				String f_total_fee = reData.getTotal_fee() + "";
+				System.out.println("uuuuuuuuuuuuuuuuuuu");
+				System.out.println(row1.get("f_userid").toString());
 				JSONObject object = wxpay(row1.get("f_userid").toString(),
 						f_total_fee, reData.getTransaction_id(),
 						reData.getAttach());
@@ -537,6 +539,7 @@ public class WeiXinService {
 		// j = j.multiply(new BigDecimal(100));
 		money = StringUtil.jointleft(money, 10, "0");
 		result += money;
+		System.out.println(result);
 		return result;
 	}
 
@@ -552,6 +555,7 @@ public class WeiXinService {
 		JSONObject result = new JSONObject();
 		TcpService tcp = new TcpService();
 		result = tcp.send(get1002(userid, money, transation_id, attach));
+		System.out.println(result);
 		return result;
 	}
 
