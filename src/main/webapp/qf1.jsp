@@ -21,9 +21,10 @@
 <script type="text/javascript">
 	function getUrlParam(name) {
 		//构造一个含有目标参数的正则表达式对象 
+		var param=decodeURI(window.location.search.substr(1));
 		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
 		//匹配目标参数 
-		var r = window.location.search.substr(1).match(reg);
+		var r = param.match(reg);
 		//返回参数值 
 		if (r != null)
 			return unescape(r[2]);

@@ -39,8 +39,13 @@
 					alert("请检查您输入的用户编号是否正确");
 					return;
 				}
+				
 				var object = xhttp.responseText;
 				var obj = JSON.parse(object);
+              if( obj.mmessage=="请检查您输入的用户编号是否正确"){
+            	  alert("请检查您输入的用户编号是否正确");
+					return;
+				}
 				var f_name = obj.f_username;
 				$("#name").html(f_name);
 				var f_address = obj.f_address;

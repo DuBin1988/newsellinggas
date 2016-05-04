@@ -178,10 +178,8 @@ public class WeiXinService {
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
 							+ "&arr=" + arr + "&uuid=" + uuid;
-//					request.setCharacterEncoding("utf-8");
-//				    response.setContentType("text/html;charset=UTF-8");
 					response.sendRedirect(redirect_url);
-					// response.sendRedirect(URLEncoder.encode(redirect_url,"UTF-8"));
+					
 				}
 			}
 		} catch (Exception e) {
@@ -442,9 +440,14 @@ public class WeiXinService {
 			map.put("f_out_trade_no", reData.getOut_trade_no());
 			map.put("f_attach", reData.getAttach());
 			map.put("f_time_end", reData.getTime_end());
+			Map<String, Object> r = selList(reData.getOpenid());
+			map.put("f_userid", r.get("f_userid").toString());
+			
 			Map<String, Object> row = selweixin(reData.getTransaction_id());
 			if (row == null) {
+				
 				hibernateTemplate.saveOrUpdate("t_weixinreturnxml", map);
+			
 				String f_openid = reData.getOpenid();
 				Map<String, Object> row1 = selList(f_openid);
 				String f_total_fee = reData.getTotal_fee() + "";
@@ -598,6 +601,7 @@ public class WeiXinService {
 			JSONObject jo = new JSONObject();
 			
 			if(list.size()==0){
+				jo.put("message", "请检查您输入的用户编号是否正确");
 				return jo;	
 			}else{
 				
