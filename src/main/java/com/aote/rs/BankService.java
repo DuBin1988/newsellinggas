@@ -57,7 +57,7 @@ public class BankService {
 				String f_bankname = object.getString("f_bankname");
 				double b_oughtfee = object.getDouble("oughtfee");
 				String f_fanpandate = object.getString("f_fanpandate");
-				String operator = object.getString("f_bankname");
+				String operator = object.getString("oper");
 				// 通过用户姓名，银行账号等信息查找用户详细信息
 				Map map = new HashMap();
 				map.put("f_usermc", f_usermc);
@@ -202,7 +202,7 @@ public class BankService {
 					session.close();
 				} else {
 					String sql2 = "select o.f_userid,o.f_username,o.f_address,o.f_phone,s.f_inputtor,o.f_yytdepa from "
-						+ "t_userinfo o left join t_userfiles s on o.id=s.f_userinfoid where "
+						+ "t_userinfo o left join t_userfiles s on o.f_userid=s.f_userinfoid where "
 						+ "o.f_idofcard='"
 						+ f_idofcard
 						+ "' and o.f_bankname='" + f_bankname + "'";
