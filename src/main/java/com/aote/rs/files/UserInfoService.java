@@ -89,14 +89,14 @@ public class UserInfoService {
 				}
 			}
 			if (flag) {
-				result.put("success", userinfoid + "用户信息已存在，关联户档案完成！表编号：" + userid);
+				result.put("success", userinfoid + "用户信息已存在，关联户档案完成！表编号："
+						+ userid);
 			} else {
 				result.put("success", userinfoid + "用户建档完成！表编号：" + userid);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("error", e.getMessage());
-			throw new WebApplicationException(500);
 		} finally {
 			return result;
 		}
@@ -238,9 +238,16 @@ public class UserInfoService {
 		if (!json.has("f_address")) {
 			throw new ResultException("地址属性f_address没有设置值，不能生成户信息！");
 		}
+		// 获得操作员，网点，分公司，组织信息
+		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
+		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
+			throw new ResultException("操作员" + user.get("name")
+					+ "没有设置分公司信息，不能获取分公司编号！");
+		}
 		String f_address = json.getString("f_address");
 		List list = this.hibernateTemplate
-				.find("from t_userinfo where f_address='" + f_address + "'");
+				.find("from t_userinfo where f_address='" + f_address
+						+ "' and f_filiale='" + user.get("f_fengongsi") + "'");
 		// 存在户，返回户编号
 		if (list.size() > 0) {
 			flag = true;
@@ -255,9 +262,10 @@ public class UserInfoService {
 		}
 		list = this.hibernateTemplate
 				.find("from t_stairprice where f_stairtype='" + f_stairtype
-						+ "'");
+						+ "' and f_branch='" + user.get("f_fengongsi") + "'");
 		if (list.size() == 0) {
-			throw new ResultException("没有找到名称为；" + f_stairtype + "的阶梯信息！");
+			throw new ResultException(user.get("f_fengongsi") + "没有找到名称为；"
+					+ f_stairtype + "的阶梯信息！");
 		}
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
 		json.put("f_stair1amount",
@@ -276,12 +284,6 @@ public class UserInfoService {
 				Double.parseDouble(map.get("f_stair4price") + ""));
 		json.put("f_stairmonths",
 				Integer.parseInt(map.get("f_stairmonths") + ""));
-		// 获得操作员，网点，分公司，组织信息
-		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
-		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
-			throw new ResultException("操作员" + user.get("name")
-					+ "没有设置分公司信息，不能获取分公司编号！");
-		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
 		// 网点
@@ -344,6 +346,12 @@ public class UserInfoService {
 			JSONException {
 		json.remove("id");
 		String result = "";
+		// 获得操作员，网点，分公司，组织信息
+		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
+		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
+			throw new ResultException("操作员：" + user.get("name")
+					+ " 没有设置分公司信息，不能获取分公司编号！");
+		}
 		// 获取阶梯信息
 		String f_stairtype = json.getString("f_stairtype");
 		if (f_stairtype == null || f_stairtype.equals("")) {
@@ -351,7 +359,7 @@ public class UserInfoService {
 		}
 		List list = this.hibernateTemplate
 				.find("from t_stairprice where f_stairtype='" + f_stairtype
-						+ "'");
+						+ "' and f_branch='" + user.get("f_fengongsi") + "'");
 		if (list.size() == 0) {
 			throw new ResultException("没有找到名称为；" + f_stairtype + "的阶梯信息！");
 		}
@@ -372,12 +380,6 @@ public class UserInfoService {
 				Double.parseDouble(map.get("f_stair4price") + ""));
 		json.put("f_stairmonths",
 				Integer.parseInt(map.get("f_stairmonths") + ""));
-		// 获得操作员，网点，分公司，组织信息
-		Map user = UserTools.getUser(loginuserid, this.hibernateTemplate);
-		if (user.get("f_fengongsi") == null || user.get("f_fengongsi") == "") {
-			throw new ResultException("操作员：" + user.get("name")
-					+ " 没有设置分公司信息，不能获取分公司编号！");
-		}
 		// 操作员
 		json.put("f_yytoper", user.get("name"));
 		// 网点
@@ -409,9 +411,8 @@ public class UserInfoService {
 		userfile.put("f_whethergivepassbook", "未发");
 		userfile.put("f_zherownum", 13);
 		// userfile.put("refreshCache", 1);
-		userfile.put("lastinputgasnum", Double.parseDouble(userfile
-				.get("lastinputgasnum")
-				+ ""));
+		userfile.put("lastinputgasnum",
+				Double.parseDouble(userfile.get("lastinputgasnum") + ""));
 		userfile.put("lastinputdate", new Date());
 		userfile.put("f_metergasnums", 0.0);
 		userfile.put("f_cumulativepurchase", 0.0);
