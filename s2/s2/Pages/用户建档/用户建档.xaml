@@ -24,7 +24,7 @@
             <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
             <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor}"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <!--小区列表-->
             <o:PagedObjectList Name="arealist"  WebClientInfo="{StaticResource dbclient}"
 				MultiPath="{m:Exp Str=$from t_area where \{areafilesearch1.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\'}"

@@ -44,6 +44,7 @@
                 <o:PropertySetter PropertyName="f_state" Default="换表登记"></o:PropertySetter>
                 <o:PropertySetter PropertyName="f_gasproperties" NoDependValue="{m:Exp Str=userfiles.f_gasproperties}"/>
 				<o:PropertySetter  PropertyName="f_userinfoid" NoDependValue="{m:Exp Str=userfiles.f_userinfoid}"/>
+				<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
             </o:GeneralObject>
 
             <!-- 获取标记信息 -->
@@ -245,7 +246,8 @@
 
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn Header="序号" Binding="{Binding Index}" d:IsLocked="True"/>
-                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}" d:IsLocked="True"/>
+                            <sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}" d:IsLocked="True"/>
+                            <sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}" d:IsLocked="True"/>
                             <sdk:DataGridTextColumn Header="用户姓名" Binding="{Binding f_username}" d:IsLocked="True"/>
                             <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}" d:IsLocked="True"/>
 
@@ -380,9 +382,9 @@
                         <TextBlock Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="网      点：" Height="25" TextAlignment="Right"/>
                         <TextBlock Grid.Column="2" Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="操 作 人：" Height="25" TextAlignment="Right"/>
                         <TextBlock Grid.Column="4" Margin="0" Grid.Row="17" TextWrapping="Wrap" Text="操作日期：" Height="25" TextAlignment="Right"/>
-                        <TextBox x:Name="ur_userid" Text="{m:Bind Path=f_userid}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
+                        <TextBox x:Name="ur_userid" Text="{m:Bind Path=f_userid}" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,3,42,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" IsReadOnly="True">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_userid" NoDependValue="{m:Exp Str=userfiles.f_userid\=&gt;Completed}"/>
+                                <o:PropertySetter PropertyName="f_userinfoid" NoDependValue="{m:Exp Str=userfiles.f_userinfoid\=&gt;Completed}"/>
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_username}" Grid.Column="1" Margin="0,3,0,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="1" IsReadOnly="True" Height="25">
@@ -598,7 +600,7 @@
                             </a:Data.Prop>
                         </sdk:DatePicker>
                         <StackPanel Grid.Column="3" Orientation="Horizontal"/>
-                        <Button Content="读卡" Click="{m:Exp Str=card.ReadCard()}"  Grid.Column="2" HorizontalAlignment="Left" Width="55" Foreground="#FF1F46BE" VerticalAlignment="Center" RenderTransformOrigin="-4.509,0.68" Margin="3,0,0,0"/>
+                        <Button Content="读卡" Click="{m:Exp Str=card.ReadCard()}"  Grid.Column="1" HorizontalAlignment="Right" Width="40" Foreground="#FF1F46BE" VerticalAlignment="Center" RenderTransformOrigin="-4.509,0.68" Margin="3,0,0,0"/>
                         <!--隐藏域-->
                         <!--补气类型-->
                         <TextBox Text="{m:Bind Path=f_addgastype}" Visibility="Collapsed" Margin="0,6"  TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
@@ -716,6 +718,12 @@
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="kmm" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.kmm}"/>
                             </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock Grid.Column="2" Margin="0,2.5" TextWrapping="Wrap" Text="表编号：" Height="25" TextAlignment="Right"/>
+                        <TextBox Text="{m:Bind Path=f_userid}" Grid.Column="3" Margin="0,2.5" Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True" Height="25">
+                        	<a:Data.Prop>
+                        		<o:PropertySetter PropertyName="f_userid" NoDependValue="{m:Exp Str=userfiles.f_userid\=&gt;Completed}" NotNull="True"/>
+                        	</a:Data.Prop>
                         </TextBox>
                     </Grid>
                 </Grid>

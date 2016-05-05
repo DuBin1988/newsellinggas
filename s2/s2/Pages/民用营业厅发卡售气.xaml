@@ -37,7 +37,7 @@
                 <o:PropertySetter PropertyName="f_fapiaotime" NoDependValue="{m:Exp Str=userfile.DataContext.f_deliverytime}" />
 
                 <o:PropertySetter PropertyName="f_filiale" NoDependValue="{m:Exp Str=userfile.DataContext.f_filiale}" />
-
+				<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
             </o:GeneralObject>
             <!--重新获取发票号-->
             <b:ScriptAction Name="loadfapiao" CanRun="{m:Exp Str=print.State\=\=$End$ |or| print1.State\=\=$End$  }" Start="{m:Exp Str=LoginUserfapiao.IsOld\=True}"></b:ScriptAction>
@@ -147,7 +147,7 @@
                 <!--卡费-->
                 <o:PropertySetter PropertyName="f_cardfees" NoDependValue="{m:Exp Str=userfile.DataContext.f_cardfees}" />
 				<o:PropertySetter PropertyName="f_zherownum" NoDependValue="13" Default="13"/>
-				<o:PropertySetter PropertyName="f_OrgStr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+				<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
 				<o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=userfiles1.f_stair1price}"/>
 				<o:PropertySetter PropertyName="f_stairtype" NoDependValue="{m:Exp Str=userfiles1.f_stairtype}"/>
             </o:GeneralObject>
@@ -157,6 +157,7 @@
 		IsInit="{m:Exp Str='userfiles1.State\=\=$StartLoad$ |or| SaveAction\=\=$Error$ |or| card.State\=\=$Error$ |or| print.State==$End$ |or| print.State==$Cancle$'}">
                 <o:PropertySetter PropertyName="f_sgnetwork" NoDependValue="{m:Exp Str=userfile.DataContext.f_sgnetwork}"/>
                 <o:PropertySetter PropertyName="f_comtype" NoDependValue="天然气公司"/>
+				<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
 
             </o:GeneralObject>
 

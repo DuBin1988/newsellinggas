@@ -66,7 +66,7 @@
             <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
 			IsInit="{m:Exp Str=userfile.DataContext.IsInit}"
 
-            Path="{m:Exp Str=userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userid\=\'\{userfile.DataContext.f_userid\}\'$\,$aaa$}">
+            Path="{m:Exp Str=userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userid\=\'\{userfile.DataContext.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$aaa$}">
 
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=sellinggas.f_zherownum}"/>
                 <!--用户总累计购气量-->
@@ -102,7 +102,7 @@
             <o:GeneralObject Name="userinfo" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
 			IsInit="{m:Exp Str=userfile.DataContext.IsInit}"
 
-            Path="{m:Exp Str=userfile.DataContext.f_userinfoid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userinfoid\}\'$\,$aaa$}">
+            Path="{m:Exp Str=userfile.DataContext.f_userinfoid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userinfoid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$aaa$}">
 
                 <o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=sellinggas.f_zherownum}"/>
                 <!--用户总累计购气量-->
@@ -170,6 +170,7 @@
 			EntityType="t_chongzheng"
 			IsInit="{m:Exp Str='SaveAction.State\=\=$End$ |or| SaveAction2.State\=\=$End$'}">
 					<o:PropertySetter PropertyName="chongzhengtype" Default="卡表冲正"/>
+					<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
             </o:GeneralObject>
             <!--更新售气记录为冲正-->
             <b:HQLAction Name="UpdateSellgas"   WebClientInfo="{StaticResource dbclient}"
@@ -193,10 +194,10 @@
                 <b:HQLAction.HQL   >
                     <m:Exp Str="$insert into t_sellinggas(f_userid, f_pregas, f_preamount, f_grossproceeds,f_gasprice,f_cardid,f_username,f_address,f_districtname
                            ,f_sgoperator, f_deliverytime, f_deliverydate, f_filiale, f_sgnetwork, f_gaspricetype,f_gaswatchbrand,f_usertype,
-                           f_payfeevalid)
+                           f_payfeevalid,f_orgstr)
                            values('{sellinggas.f_userid}', -{sellinggas.f_pregas}, -{sellinggas.f_preamount}, -{sellinggas.f_grossproceeds},{sellinggas.f_gasprice},{sellinggas.f_cardid},'{sellinggas.f_username==null:$null$,sellinggas.f_username}','{sellinggas.f_address==null:$null$,sellinggas.f_address}','{sellinggas.f_districtname==null:$null$,sellinggas.f_districtname}',
                            '{userfilego.f_reversalname==null:$null$,userfilego.f_reversalname}', '{userfilego.f_reversaltime==null:$null$,userfilego.f_reversaltime}','{userfilego.f_reversaldate==null:$null$,userfilego.f_reversaldate}', '{userfilego.f_filiale==null:$null$,userfilego.f_filiale}', '{userfilego.f_sgnetwork==null:$null$,userfilego.f_sgnetwork}',
-                           '{sellinggas.f_gaspricetype==null:$null$,sellinggas.f_gaspricetype}','{sellinggas.f_gaswatchbrand==null:$null$,sellinggas.f_gaswatchbrand}','{sellinggas.f_usertype==null:$null$,sellinggas.f_usertype}','冲正')"
+                           '{sellinggas.f_gaspricetype==null:$null$,sellinggas.f_gaspricetype}','{sellinggas.f_gaswatchbrand==null:$null$,sellinggas.f_gaswatchbrand}','{sellinggas.f_usertype==null:$null$,sellinggas.f_usertype}','冲正',{LoginUser.orgpathstr})"
                     ></m:Exp>
                 </b:HQLAction.HQL>
             </b:HQLAction>
