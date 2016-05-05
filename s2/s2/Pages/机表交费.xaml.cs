@@ -59,7 +59,7 @@ namespace Com.Aote.Pages
             //获得当前交费的欠费id
             foreach (GeneralObject item in dataGrid1.ItemsSource)
             {
-                bool ischeck = (bool)item.GetPropertyValue("IsChecked");
+                bool ischeck = (bool)item.IsChecked;
                 if (ischeck)
                 {
                     string id = item.GetPropertyValue("id") + "";
@@ -268,12 +268,12 @@ namespace Com.Aote.Pages
                     feeSum += oughtfee;
 
                     // 修改为选中
-                    map.SetPropertyValue("IsChecked", true, false);
+                    map.IsChecked = true;
                 }
                 else
                 {
                     // 修改为未选中，避免开始清除所有选中项
-                    map.SetPropertyValue("IsChecked", false, false);
+                    map.IsChecked = false;
                 }
             }
 
@@ -324,7 +324,7 @@ namespace Com.Aote.Pages
                     feeSum += oughtfee;
 
                     // 修改为选中
-                    map.SetPropertyValue("IsChecked", true, false);
+                    map.IsChecked = true;
 
                 }
                 else
@@ -333,7 +333,7 @@ namespace Com.Aote.Pages
                     canSub = false;
 
                     // 修改为未选中
-                    map.SetPropertyValue("IsChecked", false, false);
+                    map.IsChecked = false;
                 }
             }
 
@@ -429,11 +429,7 @@ namespace Com.Aote.Pages
             // ui_gasprice.Text = item["f_gasprice"].ToString();
 
             //把欠费数据插入到欠费表中
-            BaseObjectList list = dataGrid1.ItemsSource as BaseObjectList;
-            if (list != null)
-            {
-                list.Clear();
-            }
+            ObjectList list = new ObjectList(); 
 
             // 当前正在处理的表号
             String currentId = "";
@@ -456,7 +452,7 @@ namespace Com.Aote.Pages
                 go.EntityType = "t_handplan";
 
                 //默认选中
-                go.SetPropertyValue("IsChecked", true, false);
+                go.IsChecked = true;
 
                 //上期指数
                 decimal lastinputgasnum = (decimal)json["lastinputgasnum"];
@@ -507,7 +503,7 @@ namespace Com.Aote.Pages
 
                 list.Add(go);
             }
-
+			dataGrid1.ItemsSource = list;
             // 计算出来的总气量等放到用户界面上
             ui_pregas.Text = gasSum.ToString("0.#");//总气量
             ui_lastinputgasnum.Text = lastnum.ToString("0.#");//总上期底数
@@ -601,11 +597,11 @@ namespace Com.Aote.Pages
                     feeSum += oughtfee;
                     //滞纳金相加
                     zhinajinAll += f_zhinajin;
-                    item.SetPropertyValue("IsChecked", true, true);
+                    item.IsChecked = true;
                 }
                 else
                 {
-                    item.SetPropertyValue("IsChecked", false, true);
+                    item.IsChecked = false;
                 }
             }
             // 计算出来的总气量等放到用户界面上
