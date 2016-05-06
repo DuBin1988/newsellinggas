@@ -469,13 +469,8 @@ public class UserInfoService {
 		// 指令类型
 		info.put("f_typesun", sendtype);
 		info.put("f_json", json.toString());
-		// 分发状态
-		info.put("f_status", "1");
-		info.put("f_taskStatus", "1");
 		info.put("f_datetime", new Date());
 		info.put("f_datetimetime", new Date());
-		info.put("f_ffdatetime", new Date());
-		info.put("f_ffdatetimetime", new Date());
 		this.hibernateTemplate.save("t_infolist", info);
 	}
 
