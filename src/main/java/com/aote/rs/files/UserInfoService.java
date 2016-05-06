@@ -442,7 +442,41 @@ public class UserInfoService {
 			}
 		}
 		this.hibernateTemplate.save("t_userfiles", userfile);
+		// 是否发送指令
+		String f_send = json.getString("f_send");
+		if (f_send.equals("是")) {
+			send(json, "用户档案", 用户档案.建档);
+		}
 		return result;
+	}
+
+	/**
+	 * 发送远传表指令
+	 * 
+	 * @param json
+	 * @param optype
+	 *            操作类型
+	 * @param sendtype
+	 *            指令类型
+	 * @throws JSONException
+	 */
+	private void send(JSONObject json, String optype, String sendtype)
+			throws JSONException {
+		Map info = new HashMap<String, Object>();
+		info.put("f_aliasname", json.getString("f_aliasname"));
+		// 操作类型
+		info.put("f_type", optype);
+		// 指令类型
+		info.put("f_typesun", sendtype);
+		info.put("f_json", json.toString());
+		// 分发状态
+		info.put("f_status", "1");
+		info.put("f_taskStatus", "1");
+		info.put("f_datetime", new Date());
+		info.put("f_datetimetime", new Date());
+		info.put("f_ffdatetime", new Date());
+		info.put("f_ffdatetimetime", new Date());
+		this.hibernateTemplate.save("t_infolist", info);
 	}
 
 	public static void main(String[] args) {
@@ -457,5 +491,12 @@ public class UserInfoService {
 		} finally {
 			System.out.println("finally");
 		}
+	}
+	
+	static class 用户档案{
+		public static String 建档="0";
+		public static String 变更="1";
+		public static String 过户="2";
+		public static String 换表="3";
 	}
 }

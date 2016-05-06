@@ -43,7 +43,7 @@
 				AutoGenerateColumns="False"  Background="{x:Null}" Grid.Row="1" Grid.Column="6" IsReadOnly="True"  >
                         <a:Data.Items>
                             <o:ObjectList x:Name="applyslist1" WebClientInfo="{StaticResource dbclient}"
-                      Path="{m:Exp Str=$from t_area where \{applysearch1.DataContext.Condition\} and f_state is null$}"/>
+                      Path="{m:Exp Str=$from t_area where \{applysearch1.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\'$}"/>
 						
                         </a:Data.Items>
 

@@ -74,12 +74,18 @@ namespace Com.Aote.Pages
             {
                 handids = handids.Substring(0, handids.Length - 1);
             }
+            //发票号
+            string f_invoicenum = kbfee.GetPropertyValue("f_invoicenum") + "";
+            if (string.IsNullOrEmpty(f_invoicenum))
+            {
+                f_invoicenum = "0";
+            }
             //获取基础地址
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["server"];
 
             // 提交
             string str = wci.BaseAddress + "/sell/" + ui_userid.Text + "/" + shoukuan.Text + "/"
-                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "/" + orgpathstr + "/" + handids + "?uuid=" + System.Guid.NewGuid().ToString();
+                + ui_zhinajin.Text + "/" + f_payment.SelectedValue + "/" + loginid + "/" + orgpathstr + "/" + handids + "/" + f_invoicenum + "?uuid=" + System.Guid.NewGuid().ToString();
 
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
@@ -102,92 +108,14 @@ namespace Com.Aote.Pages
                     MessageBox.Show("无法获取编号产生器信息,请重新登陆后操作!");
                     return;
                 }
-                ui_sellid.Text = Seriabx.Key.ToString() + item["id"].ToString();
+                //ui_sellid.Text = Seriabx.Key.ToString() + item["id"].ToString();
 				//把收费id放到收费对象
                 GeneralObject retsell = (GeneralObject)(from r in loader.Res where r.Name.Equals("retsell") select r).First();
                 retsell.FromJson(item);
-                string date = (string)item["f_deliverydate"];
-                ui_day.Text = date;
-                ui_onegas1.Text = item["f_stair1amount"].ToString();
-                ui_oneprice1.Text = item["f_stair1price"].ToString();
-                ui_onefee1.Text = item["f_stair1fee"].ToString();
-                ui_twogas1.Text = item["f_stair2amount"].ToString();
-                ui_twoprice1.Text = item["f_stair2price"].ToString();
-                ui_twofee1.Text = item["f_stair2fee"].ToString();
-                ui_threegas1.Text = item["f_stair3amount"].ToString();
-                ui_threeprice1.Text = item["f_stair3price"].ToString();
-                ui_threefee1.Text = item["f_stair3fee"].ToString();
-                /*
-                ui_minnum1.Text = item["minnum1"].ToString();
-                ui_maxnum1.Text = item["maxnum1"].ToString();
-                ui_minyue1.Text = item["minyue1"].ToString();
-                string my1 = ui_minyue1.Text.Replace(@"""", "");
-                if (item["minyue1"].ToString().Equals("0"))
-                {
-                    ui_minyue1.Text = "";
-                }
-                else
-                {
-                    ui_minyue1.Text = my1.Substring(0, 7);
-                }
-                ui_maxyue1.Text = item["maxyue1"].ToString();
-                string mxy1 = ui_maxyue1.Text.Replace(@"""", "");
-                if (item["maxyue1"].ToString().Equals("0"))
-                {
-                    ui_maxyue1.Text = "";
-                }
-                else
-                {
-                    ui_maxyue1.Text = mxy1.Substring(0, 7);
-                }
-                ui_userid1.Text = item["userid1"].ToString();
-                ui_userid1.Text = ui_userid1.Text.Replace(@"""", "");
-                if (item["userid1"].ToString().Equals("0"))
-                {
-                    ui_userid1.Text = "";
-                }
-                ui_mterid1.Text = item["meterid1"].ToString();
-                ui_mterid1.Text = ui_mterid1.Text.Replace(@"""", "");
-                if (item["meterid1"].ToString().Equals("0"))
-                {
-                    ui_mterid1.Text = "";
-                }
-                ui_onegas2.Text = item["f_stair1amount2"].ToString();
-                ui_oneprice2.Text = item["f_stair1price"].ToString();
-                ui_onefee2.Text = item["f_stair1fee2"].ToString();
-                ui_twogas2.Text = item["f_stair2amount2"].ToString();
-                ui_twoprice2.Text = item["f_stair2price"].ToString();
-                ui_twofee2.Text = item["f_stair2fee2"].ToString();
-                ui_threegas2.Text = item["f_stair3amount2"].ToString();
-                ui_threeprice2.Text = item["f_stair3price"].ToString();
-                ui_threefee2.Text = item["f_stair3fee2"].ToString();
-                ui_minnum2.Text = item["minnum2"].ToString();
-                ui_maxnum2.Text = item["maxnum2"].ToString();
-                ui_minyue2.Text = item["minyue2"].ToString();
-                ui_minyue2.Text = ui_minyue2.Text.Replace(@"""", "");
-                if (item["minyue2"].ToString().Equals("0"))
-                {
-                    ui_minyue2.Text = "";
-                }
-                ui_maxyue2.Text = item["maxyue2"].ToString();
-                ui_maxyue2.Text = ui_maxyue2.Text.Replace(@"""", "");
-                if (item["maxyue2"].ToString().Equals("0"))
-                {
-                    ui_maxyue2.Text = "";
-                }
-                ui_userid2.Text = item["userid2"].ToString();
-                ui_userid2.Text = ui_userid2.Text.Replace(@"""", "");
-                if (item["userid2"].ToString().Equals("0"))
-                {
-                    ui_userid2.Text = "";
-                }
-                ui_meterid2.Text = item["meterid2"].ToString();
-                ui_meterid2.Text = ui_meterid2.Text.Replace(@"""", "");
-                if (item["meterid2"].ToString().Equals("0"))
-                {
-                    ui_meterid2.Text = "";
-                }
-                 * */
+                GeneralObject printobj = aofengprint.DataContext as GeneralObject;
+                printobj.FromJson(item);
+                //string date = (string)item["f_deliverydate"];
+                //ui_day.Text = date;
                 //保存发票信息
                 GeneralObject fpinfosobj = (GeneralObject)(from r in loader.Res where r.Name.Equals("fpinfosobj") select r).First();
                 fpinfosobj.SetPropertyValue("f_fapiaostatue", "已用", true);
@@ -391,8 +319,10 @@ namespace Com.Aote.Pages
             kbsellgasbusy.IsBusy = true;
             busy.IsBusy = true;
             string f_userid = go.GetPropertyValue("f_userid").ToString();
+            GeneralObject loginuser = (GeneralObject)FrameworkElementExtension.FindResource(this.save2,"LoginUser");
+            string fengongsi = loginuser.GetPropertyValue("f_fengongsi").ToString();
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/sell/bill/" + f_userid + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/sell/bill/" + f_userid + "/" + fengongsi + "?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += userfiles_DownloadStringCompleted;
             client.DownloadStringAsync(new Uri(uri));

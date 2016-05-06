@@ -25,7 +25,7 @@
         </Grid.ColumnDefinitions>
         <m:ResourceLoad>
             <o:GeneralObject Name="inputtorexist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}" 
-		  	Path="{m:Exp Str=inputtormanege.DataContext.f_inputtor \!\=null:$one/select new Map(count(*) as count) from t_inputtor where f_inputtor\=\'\{inputtormanege.DataContext.f_inputtor\}\'$\,$aaa$}" 
+		  	Path="{m:Exp Str=inputtormanege.DataContext.f_inputtor \!\=null:$one/select new Map(count(*) as count) from t_inputtor where f_inputtor\=\'\{inputtormanege.DataContext.f_inputtor\}\' and f_branch\=\'\{LoginUser.f_fengongsi\}\'$\,$aaa$}" 
 			IsInit="{m:Exp Str=inputtormanege.DataContext.State\=\=$End$ }">
             </o:GeneralObject>
             <!--街道编号-->

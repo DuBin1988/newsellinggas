@@ -122,7 +122,7 @@
 				
 				f_zhye \= \{userfile.DataContext.f_zhye\} \,
 				f_zherownum\=\{userfile.DataContext.f_zherownum\}
-				where f_userid \= \'\{sellinggas.f_userid\}\' }"/>
+				where f_userid \= \'\{sellinggas.f_userinfoid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"/>
 			<!--更新售气记录为无效-->
 			<b:HQLAction Name="UpdateSellgas"   WebClientInfo="{StaticResource dbclient}" 
 				HQL="{m:Exp Str=$update t_sellinggas set f_payfeevalid\=\'无效\'   where id \= \{sellinggas.id\}}"/> 
@@ -152,7 +152,7 @@
 			HQL="{m:Exp Str=$update t_financedetail set f_payfeevalid\= \'无效\'   where f_sellid \= \{sellinggas.id\} }"/> 
 	   
 			<!--添加一笔负记录-->
-			<o:GeneralObject Name="insertsell" EntityType="t" Completed="insertsell_Completed" LoadOnPathChanged="False" WebClientInfo="{StaticResource server}" Path="{m:Exp Str='$sell/{sellinggas.f_userid}/{sellinggas.id}/{LoginUser.id}'}"/>
+			<o:GeneralObject Name="insertsell" EntityType="t" Completed="insertsell_Completed" LoadOnPathChanged="False" WebClientInfo="{StaticResource server}" Path="{m:Exp Str='$sell/{sellinggas.f_userinfoid}/{sellinggas.id}/{LoginUser.id}'}"/>
 
             <b:HQLAction Name="InsertSellingGas" Type="sql"     WebClientInfo="{StaticResource dbclient}">
                 <b:HQLAction.HQL   >

@@ -105,6 +105,8 @@ namespace Com.Aote.ObjectTools
                             go.SetPropertyValue("f_districtname", this.GetPropertyValue("f_districtname") + "", true);
                             go.SetPropertyValue("f_address", this.GetPropertyValue("f_address") + "", true);
                             go.SetPropertyValue("f_state", this.GetPropertyValue("f_state") + "", true);
+                            go.SetPropertyValue("f_orgstr", this.GetPropertyValue("f_orgstr") + "", true);
+                            go.SetPropertyValue("f_filiale", this.GetPropertyValue("f_filiale") + "", true);
                             //设置楼号，有模式，按模式设置
                             string buildpattern = this.GetPropertyValue("f_buildpattern") + "";
                             string str = MatchPattern(build, buildpattern);
