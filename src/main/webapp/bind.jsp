@@ -68,6 +68,7 @@
 				if (xhttp.readyState == 4 && xhttp.status == 200) {
 					var object = xhttp.responseText;
 					var obj = JSON.parse(object);
+					//alert(obj);
 					var message = obj.message;
 					if (message == "此号已经被别的用户绑定") {
 						alert(message);
@@ -77,12 +78,17 @@
 					var zhye = obj.zhye;
 					var money = obj.money;
 					var zhinajin = obj.zhinajin;
+					var  f_userid=obj.f_userid;
+					var f_username = obj.f_username;
+					var f_address = obj.f_address;
 					var arr1 = obj.arr;
 					var arr = JSON.stringify(arr1);
-					document.location.href = "qf1.html?openid=" + openid
+					document.location.href = "qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
-							+ "&arr=" + arr;
+							+ "&arr=" + arr+ "&f_userid=" + f_userid
+							+ "&f_username=" + f_username + "&f_address="
+							+ f_address;
 				}
 			};
 			xhttp.open("GET", "rs/weixin/one/" + f_userid + "/" + openid, true);
