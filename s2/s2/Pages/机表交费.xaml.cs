@@ -344,18 +344,18 @@ namespace Com.Aote.Pages
 
             //把用户数据写到交费界面上
             ui_username.Text = (string)item["f_username"];
-            ui_usertype.Text = (String)item["f_usertype"];
-            ui_districtname.Text = (String)item["f_districtname"];
-            ui_gasproperties.Text = (String)item["f_gasproperties"];
-            ui_stairpricetype.Text = (String)item["f_stairtype"];
+            ui_usertype.Text = (string)item["f_usertype"];
+            ui_districtname.Text = (string)item["f_districtname"];
+            ui_gasproperties.Text = (string)item["f_gasproperties"];
+            ui_stairpricetype.Text = (string)item["f_stairtype"];
             zhye.Text = item["f_zhye"].ToString();
-            ui_address.Text = (String)item["f_address"];
+            ui_address.Text = (string)item["f_address"];
             //ui_gaspricetype.Text = (String)item["f_gaspricetype"];
-            ui_userid.Text = item["infoid"].ToString();
+            ui_userid.Text = (string)item["infoid"];
             zhe.Text=item["f_zherownum"].ToString();
             //ui_dibaohu.IsChecked = item["f_dibaohu"].ToString().Equals("1");
-            ui_userstate.Text = (String)item["f_userstate"];
-            ui_paytype.Text = (String)item["f_payment"];
+            ui_userstate.Text = (string)item["f_userstate"];
+            ui_paytype.Text = (string)item["f_payment"];
             // ui_gasprice.Text = item["f_gasprice"].ToString();
 
             //把欠费数据插入到欠费表中
@@ -430,6 +430,7 @@ namespace Com.Aote.Pages
                 go.SetPropertyValue("f_stair3amount", (decimal)json["f_stair3amount"], false);
                 go.SetPropertyValue("f_stair3price", (decimal)json["f_stair3price"], false);
                 go.SetPropertyValue("f_stair3fee", (decimal)json["f_stair3fee"], false);
+                go.SetPropertyValue("number", (decimal)json["number"], false);
 
                 list.Add(go);
             }
@@ -501,7 +502,7 @@ namespace Com.Aote.Pages
         {
             if (dataGrid1.SelectedItem == null) return;
             GeneralObject go = dataGrid1.SelectedItem as GeneralObject;
-            decimal selectid = decimal.Parse(go.GetPropertyValue("lastinputgasnum") + "");
+            decimal selectid = decimal.Parse(go.GetPropertyValue("number") + "");
             // 取出余额
             decimal f_zhye = decimal.Parse(zhye.Text);
             // 总的上期指数
@@ -513,7 +514,7 @@ namespace Com.Aote.Pages
             decimal zhinajinAll = 0m;
             foreach (GeneralObject item in dataGrid1.ItemsSource)
             {
-                decimal eachid = decimal.Parse(item.GetPropertyValue("lastinputgasnum") + "");
+                decimal eachid = decimal.Parse(item.GetPropertyValue("number") + "");
                 if (selectid >= eachid)
                 {
                     // 取出应交金额

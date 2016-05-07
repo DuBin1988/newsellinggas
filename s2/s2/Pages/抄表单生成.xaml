@@ -234,8 +234,7 @@ where \{search.Condition\}
                 </toolkit:DockPanel>
             </c:BusyIndicatorEx>
         </Grid>
-        <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
-        <!--
-        <c:MessageTipObj Tip="{m:Exp Str=$导出失败\,请先查询$}" IsShow="{m:Exp Str=toExcel\=>CompletedError!\=null}"/>-->
+        <c:MessageTipObj Tip="{m:Exp Str=$导出Excel完成$}" Type="MessageBox" IsShow="{m:Exp Str=downLoad\=>Completed!\=null}"/>
+        <c:MessageTipObj Tip="生成抄表单完成！" Type="MessageBox" IsShow="{m:Exp Str=CreateHandplan.State\=\=$End$}"/>
     </Grid>
 </UserControl>

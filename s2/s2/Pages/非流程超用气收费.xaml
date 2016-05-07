@@ -72,9 +72,9 @@
 			
 			<!--用户对象-->
 			<o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=kbfee1.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{kbfee1.DataContext.f_userid\}\'$\,card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \!\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId \!\= $$ and card.Factory \!\=$$ and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"  
+             Path="{m:Exp Str=userfiles.SelectedItem.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId \!\= $$ and card.Factory \!\=$$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"  
 			 IsInit="{m:Exp Str=print.State\=\=$End$ or print.State\=\=$Cancle$}"
-			 IsOld="{m:Exp Str=kbfee1.DataContext.f_userid \!\= null}">
+			 >
         		<o:PropertySetter PropertyName="f_cumulativepurchase" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee1.DataContext.f_cumulativepurchase\,null}"/>
         		<o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:kbfee.f_zherownum.ToInt()\,null}"/>
 			</o:GeneralObject>
@@ -562,8 +562,8 @@
 									<o:PropertySetter PropertyName="f_singlegasnum" Value="{m:Exp Str=kbfee.f_usertype\=\=$民用$:mzdgasobj.value\,kbfee.f_usertype\=\=$非民用$:fzdgasobj.value\,0}" />
 								</a:Data.Prop>
 							</TextBox>
-							<TextBlock Text="维护费交费月数：" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>
-							<TextBox Text="{m:Bind Path=f_repairnum}" Grid.Column="5" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch">
+							<TextBlock Text="维护费交费月数：" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_repairnum}" Grid.Column="3" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" Height="25" VerticalAlignment="Stretch">
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_repairnum" Default="0" 
 										Value="{m:Exp Str=kbfee.f_endfee !\=null and kbfee.f_beginfee !\=null :(kbfee.f_endfee.ToDate().Year-kbfee.f_beginfee.ToDate().Year)*12+(kbfee.f_endfee.ToDate().Month-kbfee.f_beginfee.ToDate().Month +1)\,0}" />
@@ -572,9 +572,9 @@
 								</a:Data.Prop>
 							</TextBox>
 							
-							<TextBlock Text="维护费金额：" Margin="0" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
+							<TextBlock Text="维护费金额：" Margin="0" Grid.Row="6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25" />
 											
-							<TextBox Text="{m:Bind Path=f_amountmaintenance}" FontWeight="Bold" Foreground="Red" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
+							<TextBox Text="{m:Bind Path=f_amountmaintenance}" FontWeight="Bold" Foreground="Red" Grid.Column="5" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Height="25" VerticalAlignment="Stretch" >
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_amountmaintenance" 
 										Value="{m:Exp Str=kbfee.f_repairnum*kbfee.f_unitfee}"/>
@@ -762,8 +762,8 @@
 									<o:PropertySetter PropertyName="f_surplusgas" />
 								</a:Data.Prop>
 							</TextBox>
-							<TextBlock Text="发 票 号：" Grid.Column="2" Margin="0,6,0,6" Grid.Row="14" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-							<TextBox Text="{m:Bind Path=f_invoicenum}" Grid.Column="3" Margin="0,6" Grid.Row="14" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
+							<TextBlock Text="发 票 号：" Grid.Column="4" Margin="0,6,0,6" Grid.Row="7" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+							<TextBox Text="{m:Bind Path=f_invoicenum}" Grid.Column="5" Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" >
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_invoicenum" Default="{m:Exp Str=LoginUserfapiao.fapiaohao !\=null \:LoginUserfapiao.fapiaohao\,$$}" NoDependValue="{m:Exp Str=LoginUserfapiao.fapiaohao !\=null \:LoginUserfapiao.fapiaohao\,$$}"/>
 								</a:Data.Prop>
@@ -774,9 +774,9 @@
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Text="表编号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right" Height="25" Grid.Row="1"/>
-							<TextBox  x:Name="f_userid"  IsReadOnly="False" Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.Row="1"  >
+							<TextBox  x:Name="f_userid"  IsReadOnly="True" Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.Row="1"  >
 								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_userid" NotNull="True" NoDependValue="{m:Exp Str=userfiles.SelectedItem.f_userid}"/>
+									<o:PropertySetter PropertyName="f_userid" NotNull="True" NoDependValue="{m:Exp Str=kbusers.f_userid\=>Completed}"/>
 								</a:Data.Prop>
 							</TextBox>
 							<TextBlock Text="用户状态：" Margin="0,6" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="4" Height="25"/>

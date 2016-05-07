@@ -75,7 +75,8 @@ public class SellSer {
 				+ "' and f_filiale='"
 				+ fengongsi
 				+ "') ui join t_userfiles u on ui.f_filiale=u.f_filiale and ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
-				+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
+				+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否' and f_userinfoid='"
+				+ userid + "' and f_filiale='" + fengongsi + "') h "
 				+ "on u.f_userid=h.f_userid and h.f_filiale=u.f_filiale "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
 		log.debug("查询欠费sql:" + sql);
@@ -84,7 +85,7 @@ public class SellSer {
 
 		// 从第一条获取户数据
 		Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
-		result += "infoid:" + userinfo.get("infoid") + "";
+		result += "infoid:'" +  (String) userinfo.get("infoid") + "'";
 		result += ",f_username:'" + (String) userinfo.get("f_username") + "'";
 		BigDecimal zz = new BigDecimal(userinfo.get("f_zherownum").toString());
 		result += ",f_zherownum:" + zz;
@@ -117,7 +118,7 @@ public class SellSer {
 		} else {
 			scale = new BigDecimal(singles.get("非民用滞纳金比率"));
 		}
-
+		int i = 0;
 		// 循环获取欠费数据
 		for (Map<String, Object> hand : list) {
 			if (!hands.equals("")) {
@@ -186,6 +187,7 @@ public class SellSer {
 			hands += ",f_operator:'" + hand.get("f_operator") + "'";
 			// 录入日期
 			hands += ",f_inputdate:'" + hand.get("f_inputdate") + "'";
+			hands += ",number:" + i++ + "";
 			hands += "}";
 		}
 
@@ -321,15 +323,15 @@ public class SellSer {
 			ret.put("f_address", user.get("f_address"));
 			ret.put("f_userinfoid", user.get("f_userid"));
 			ret.put("f_handdate", handdate);
-			//滞纳金
+			// 滞纳金
 			ret.put("f_zhinajin", zhinajin);
-			//上次结余
+			// 上次结余
 			ret.put("f_zhye", user.get("f_zhye"));
-			//应收金额
+			// 应收金额
 			ret.put("f_totalcost", debts.doubleValue());
-			//实收金额
+			// 实收金额
 			ret.put("f_grossproceeds", payMent.doubleValue());
-			//本次结余
+			// 本次结余
 			ret.put("f_benqizhye", nowye);
 			ret.put("id", sellid);
 			ret.put("hands", array);
