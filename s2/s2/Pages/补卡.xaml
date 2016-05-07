@@ -78,11 +78,12 @@
 		    <o:PropertySetter  PropertyName="f_payfeevalid" Default="有效"/>
 		    <o:PropertySetter  PropertyName="f_gasproperties" NoDependValue="{m:Exp Str=userfiles1.f_gasproperties}"/>
 			<o:PropertySetter  PropertyName="f_userinfoid" NoDependValue="{m:Exp Str=userfiles1.f_userinfoid}"/>
+			<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
     	</o:GeneralObject>
 		
 		<!--用户对象 IsInit="{m:Exp Str='SaveAction.State==$End$'}" -->
         <o:GeneralObject Name="userfiles1" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-            Path="{m:Exp Str=users.SelectedItem.f_userid !\= null:$one/from t_userfiles where f_userid\=\'\{users.SelectedItem.f_userid\}\'$\,$abc$}" 
+            Path="{m:Exp Str=users.SelectedItem.f_userid !\= null:$one/from t_userfiles where f_userid\=\'\{users.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}" 
 			IsInit="{m:Exp Str=print1.State\=\=$End$ or print1.State\=\=$Cancle$}">
 			<!--初始化卡标记-->
 			<o:PropertySetter PropertyName="f_initcardsellgas" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$补卡$\,null}"/>
@@ -163,9 +164,9 @@
     					<TextBlock Margin="0" TextWrapping="Wrap" Text="卡　　费：" TextAlignment="Right" Grid.Row="4" Height="25"/>
     					<TextBlock Margin="0" TextWrapping="Wrap" Text="气　　价：" TextAlignment="Right" Grid.Row="3" Height="25"/>
     					<TextBlock Margin="0" TextWrapping="Wrap" Text="补卡原因：" TextAlignment="Right" Grid.Column="0" Grid.Row="5" Height="25"/>
-    					<TextBox Text="{m:Bind Path=f_userid}"  Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Height="25" >
+    					<TextBox Text="{m:Bind Path=f_userinfoid}"  Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1" IsReadOnly="True" Height="25" >
     						<a:Data.Prop>
-    							<o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles1.f_userid}"/>
+    							<o:PropertySetter PropertyName="f_userinfoid" Value="{m:Exp Str=userfiles1.f_userinfoid}"/>
     						</a:Data.Prop>
     					</TextBox>
     					<TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="3" Margin="0" TextWrapping="Wrap" IsEnabled="True" Height="25"  >
@@ -420,13 +421,14 @@
     					<a:Data.Items>
     						<!--userfile.DataContext.State\=\=$End$ or SaveAction.State\=\=$End$-->
     						<o:PagedObjectList x:Name="userslist" WebClientInfo="{StaticResource dbclient}"
-    							Path="{m:Exp Str=LoginUser.f_fengongsi \=\= zonggongsi.value:$from t_userfiles where \{usersearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_gasmeterstyle \=\'卡表\'$\,LoginUser.f_fengongsi \!\= zonggongsi.value:$from t_userfiles where \{usersearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_gasmeterstyle \=\'卡表\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'$\,$abc$}"
+    							Path="{m:Exp Str=$from t_userfiles where \{usersearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_gasmeterstyle \=\'卡表\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
     							IsOld="{m:Exp Str='print.State\=\=$End$'}"
     							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
     					</a:Data.Items>
     					<sdk:DataGrid.Columns>
     						<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-    						<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userid}"/>
+    						<sdk:DataGridTextColumn Header="用户编号" Binding="{Binding f_userinfoid}"/>
+    						<sdk:DataGridTextColumn Header="表编号" Binding="{Binding f_userid}"/>
     						<sdk:DataGridTextColumn d:IsLocked="True" Header="姓名/单位" Binding="{Binding f_username}"/>
 							<sdk:DataGridTextColumn Header="卡  号" Binding="{Binding f_cardid}"/>
 							<sdk:DataGridTextColumn Header="小区名称" Binding="{Binding f_districtname}"/>

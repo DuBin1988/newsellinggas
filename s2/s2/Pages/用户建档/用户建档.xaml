@@ -24,7 +24,7 @@
             <!--气表品牌列表-->
             <o:ObjectList Name="pinpailist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
             <!--抄表员列表-->
-            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor}"  HasEmptyRow="False"/>
+            <o:ObjectList Name="inputtorlist" EntityType="t_inputtor" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_inputtor where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="False"/>
             <!--小区列表-->
             <o:PagedObjectList Name="arealist"  WebClientInfo="{StaticResource dbclient}"
 				MultiPath="{m:Exp Str=$from t_area where \{areafilesearch1.DataContext.Condition\} and f_branch\=\'\{LoginUser.f_fengongsi\}\'}"
@@ -68,6 +68,7 @@
 			<o:ObjectList Name="devicelist" EntityType="t_devices" ></o:ObjectList>
 			<!--表信息-->
 			<o:ObjectList Name="userfileslist" IsClear="{m:Exp Str=userinfogo.State\=\=$End$}" EntityType="t" ></o:ObjectList>
+			 
         </m:ResourceLoad>
         <Grid  x:Name="LayoutRoot1">
             <Grid.ColumnDefinitions>
@@ -188,7 +189,7 @@
 				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-							 Path="{m:Exp Str=$from t_gasaddress where \{applysearch.DataContext.Condition\}}"
+							 Path="{m:Exp Str=$from t_gasaddress where f_state\=\'未建档\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and \{applysearch.DataContext.Condition\}}"
 							 IsOld="{m:Exp Str=userinfogo.State\=\=$End$}"
 							 PageIndex="{m:Exp Str=pager2.PageIndex}" PageSize="{m:Exp Str=pager2.PageSize}" SumNames=","/>
 						
@@ -493,7 +494,7 @@
 														</sdk:DataGridTemplateColumn.CellTemplate>
 													</sdk:DataGridTemplateColumn>
                                                     <sdk:DataGridTextColumn Header="气表类型" Binding="{Binding f_gasmeterstyle}"/>
-                                                    <sdk:DataGridTextColumn Header="别名" Binding="{Binding f_aliasname}"/>
+                                                    <sdk:DataGridTextColumn Header="别名" Binding="{Binding f_aliasname}" FontFamily="Portable User Interface"/>
                                                     <sdk:DataGridTextColumn Header="是否发送指令" Binding="{Binding f_send}"/>
 													<sdk:DataGridTextColumn Header="klx" Binding="{Binding klx}"/>
                                                     <sdk:DataGridTextColumn Header="dqdm" Binding="{Binding dqdm}"/>
@@ -592,7 +593,8 @@
                             <c:BusyIndicatorEx  Grid.Row="2" >
                                 <!--按钮-->
                                 <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                    <Button x:Name="save"   Content="保存" IsEnabled="{m:Exp Str=!(userinfogo.HasErrors or userfileslist.HasErrors or devicelist.HasErrors or userfileslist.Count\=\=0)}" Click="{m:Exp Str=userinfogo.child\=userfileslist.ToJson().ToString();userinfogo.Save()}" Margin="5"  Width="83" />
+                                    <Button x:Name="save"   Content="保存" IsEnabled="{m:Exp Str=!(userinfogo.HasErrors or userfileslist.HasErrors or devicelist.HasErrors or userfileslist.Count\=\=0)}" 
+									Click="{m:Exp Str=userinfogo.child\=userfileslist.ToJson().ToString();userinfogo.Save()}" Margin="5"  Width="83" />
                                     <Button x:Name="cancel" Content="清空" Click="{m:Exp Str=userinfogo.New();userfileslist.New()}" Margin="5"  Width="60"/>
                                 </toolkit:DockPanel>
                             </c:BusyIndicatorEx>
@@ -601,6 +603,6 @@
                 </toolkit:DockPanel>
             </c:BusyIndicatorEx>
         </Grid>
-    <c:MessageTipObj IsShow="{m:Exp Str=userinfogo.State\=\=$Error$}" Type="MessageBox" Tip="保存失败！"/>
+    <c:MessageTipObj IsShow="{m:Exp Str=userinfogo.State\=\=$Error$}" Type="MessageBox" Tip="{m:Exp Str=$保存失败：\{userinfogo.Error\}}"/>
     </Grid>
 </UserControl>

@@ -83,9 +83,10 @@ namespace Com.Aote.Pages
 
             GeneralObject loginUser = (GeneralObject)FrameworkElementExtension.FindResource(this, "LoginUser");
             string orgpathstr = (string)loginUser.GetPropertyValue("orgpathstr");
+            string loginuserid = (string)loginUser.GetPropertyValue("id");
             //将产生的json串送后台服务进行处理
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + ui_sgoperator.Text + "/" + chaobiaoriqi.SelectedDate + "/" + meter.SelectedValue.ToString() + "/" + orgpathstr + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/handcharge/record/batch/" + ui_handdate.SelectedDate + "/" + ui_sgnetwork.Text + "/" + loginuserid + "/" + chaobiaoriqi.SelectedDate + "/" + meter.SelectedValue.ToString() + "/" + orgpathstr + "?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
             client.UploadStringCompleted += client_UploadStringCompleted;
             client.UploadStringAsync(new Uri(uri), json);
@@ -145,8 +146,10 @@ namespace Com.Aote.Pages
             search.Search();
 
             // 调用服务
+            GeneralObject loginuser = (GeneralObject)FrameworkElementExtension.FindResource(this.saveButton, "LoginUser");
+            string fengongsi = loginuser.GetPropertyValue("f_fengongsi").ToString();
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/handcharge/download" + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/handcharge/download/" +fengongsi+ "?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
             client.UploadStringCompleted += dansearch_UploadStringCompleted;
             client.UploadStringAsync(new Uri(uri), search.Condition);

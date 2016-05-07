@@ -21,15 +21,14 @@
 		<m:ResourceLoad Margin="0" x:Name="loader" > 
 			 <!--用户对象-->
 			<o:GeneralObject Name="kbusers" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=$one/from t_userinfo where f_userstate !\=\'注销\' and f_userid\=\'\{userfilego.f_userid\}\'$}" 
+             Path="{m:Exp Str=$one/from t_userinfo where f_userstate !\=\'注销\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_userid\=\'\{userfilego.f_userid\}\'$}" 
 			 IsOld="{m:Exp Str=userfilego.f_userid!\=null}"
 			 IsInit="{m:Exp Str=userfilego.f_userid\=\=null}">
 				</o:GeneralObject>
 		   	<!--售气收费对象-->
         	<o:GeneralObject Name="sellinggas" NotEmpty="True" LoadOnPathChanged="False" EntityType="t_sellinggas" WebClientInfo="{StaticResource dbclient}"
-			 	Path="{m:Exp Str=kbfee1.DataContext.f_cardid!\=null:$one/from t_sellinggas where id\=
-				 (select max(id) from t_sellinggas where f_cardid\=\'\{userfilego.f_cardid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,kbfee1.DataContext.f_userid!\=null:$one/from t_sellinggas where id\=
-				  (select max(id) from t_sellinggas where f_userinfoid\=\'\{userfilego.f_userid\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,$aaa$}"
+			 	Path="{m:Exp Str=kbfee1.DataContext.f_userid!\=null:$one/from t_sellinggas where id\=
+				  (select max(id) from t_sellinggas where f_userinfoid\=\'\{userfilego.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_payment\!\=\'冲正\' and f_payfeevalid\=\'有效\')$\,$aaa$}"
              	IsOld="{m:Exp Str=userfilego.f_userid!\=null}"
 				IsInit="{m:Exp Str=sellinggas.State\=\=$LoadError$ |or| userfilego.f_userid\=\=null}">  
         		<!--门牌号 -->
@@ -93,13 +92,14 @@
 				
 				<!-- 冲正人-->
 				<o:PropertySetter PropertyName="f_reversalname"  
-										Default="{m:Exp Str=LoginUser.name}"/>														
+										Default="{m:Exp Str=LoginUser.name}"/>		
+				<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>												
 			</o:GeneralObject>
 			
 			<!--发票对象-->
 			<o:GeneralObject Name="fapiao" EntityType="t_fapiaoinfos" WebClientInfo="{StaticResource dbclient}" 
 			IsInit="{m:Exp Str=SaveAction.State\=\=$End$}" 
-			Path="{m:Exp Str=sellinggas.f_invoicenum !\= null:$one/from t_fapiaoinfos where f_userid \=\'\{sellinggas.f_userid\}\' and f_invoicenum \=\'\{sellinggas.f_invoicenum\}\'$\,$null$}">
+			Path="{m:Exp Str=sellinggas.f_invoicenum !\= null:$one/from t_fapiaoinfos where f_userid \=\'\{sellinggas.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_invoicenum \=\'\{sellinggas.f_invoicenum\}\'$\,$null$}">
 		    </o:GeneralObject>
 			<!--用户对象
 			<o:GeneralObject Name="user" WebClientInfo="{StaticResource dbclient}" 
@@ -122,7 +122,7 @@
 				
 				f_zhye \= \{userfile.DataContext.f_zhye\} \,
 				f_zherownum\=\{userfile.DataContext.f_zherownum\}
-				where f_userid \= \'\{sellinggas.f_userid\}\' }"/>
+				where f_userid \= \'\{sellinggas.f_userinfoid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"/>
 			<!--更新售气记录为无效-->
 			<b:HQLAction Name="UpdateSellgas"   WebClientInfo="{StaticResource dbclient}" 
 				HQL="{m:Exp Str=$update t_sellinggas set f_payfeevalid\=\'无效\'   where id \= \{sellinggas.id\}}"/> 
@@ -152,16 +152,16 @@
 			HQL="{m:Exp Str=$update t_financedetail set f_payfeevalid\= \'无效\'   where f_sellid \= \{sellinggas.id\} }"/> 
 	   
 			<!--添加一笔负记录-->
-			<o:GeneralObject Name="insertsell" EntityType="t" Completed="insertsell_Completed" LoadOnPathChanged="False" WebClientInfo="{StaticResource server}" Path="{m:Exp Str='$sell/{sellinggas.f_userid}/{sellinggas.id}/{LoginUser.id}'}"/>
+			<o:GeneralObject Name="insertsell" EntityType="t" Completed="insertsell_Completed" LoadOnPathChanged="False" WebClientInfo="{StaticResource server}" Path="{m:Exp Str='$sell/{sellinggas.f_userinfoid}/{sellinggas.id}/{LoginUser.id}'}"/>
 
             <b:HQLAction Name="InsertSellingGas" Type="sql"     WebClientInfo="{StaticResource dbclient}">
                 <b:HQLAction.HQL   >
                     <m:Exp Str="$insert into t_sellinggas(f_userid, f_pregas, f_preamount, f_grossproceeds,f_gasprice,f_cardid,f_username,f_address,f_districtname
                            ,f_sgoperator, f_deliverytime, f_deliverydate, f_filiale, f_sgnetwork, f_gaspricetype,f_gaswatchbrand,f_usertype,
-                           f_payfeevalid)
+                           f_payfeevalid,f_orgstr)
                            values('{sellinggas.f_userid}', -{sellinggas.f_pregas}, -{sellinggas.f_preamount}, -{sellinggas.f_grossproceeds},{sellinggas.f_gasprice},{sellinggas.f_cardid},'{sellinggas.f_username==null:$null$,sellinggas.f_username}','{sellinggas.f_address==null:$null$,sellinggas.f_address}','{sellinggas.f_districtname==null:$null$,sellinggas.f_districtname}',
                            '{userfilego.f_reversalname==null:$null$,userfilego.f_reversalname}', '{userfilego.f_reversaltime==null:$null$,userfilego.f_reversaltime}','{userfilego.f_reversaldate==null:$null$,userfilego.f_reversaldate}', '{userfilego.f_filiale==null:$null$,userfilego.f_filiale}', '{userfilego.f_sgnetwork==null:$null$,userfilego.f_sgnetwork}',
-                           '{sellinggas.f_gaspricetype==null:$null$,sellinggas.f_gaspricetype}','{sellinggas.f_gaswatchbrand==null:$null$,sellinggas.f_gaswatchbrand}','{sellinggas.f_usertype==null:$null$,sellinggas.f_usertype}','冲正')"
+                           '{sellinggas.f_gaspricetype==null:$null$,sellinggas.f_gaspricetype}','{sellinggas.f_gaswatchbrand==null:$null$,sellinggas.f_gaswatchbrand}','{sellinggas.f_usertype==null:$null$,sellinggas.f_usertype}','冲正',{LoginUser.orgpathstr})"
                     ></m:Exp>
                 </b:HQLAction.HQL>
             </b:HQLAction>								
@@ -338,7 +338,6 @@
 								<ColumnDefinition Width="130"/>
 								<ColumnDefinition Width="1*"/>
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="卡      号：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right" Height="25" Grid.Column="2"/>
 							<TextBlock Text="用户/单位名称：" Margin="0,6" TextWrapping="Wrap"  TextAlignment="Right" Height="25" Grid.Row="1"/>
 							<TextBlock Text="地　　址：" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2" RenderTransformOrigin="1.638,0.44"/>
 							<TextBlock Text="小区名称：" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
@@ -357,12 +356,6 @@
 							<TextBlock Text="收　　款：" Grid.Column="2" Margin="0,6" Grid.Row="11" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
 							<TextBlock Text="应交金额：" Margin="0,6" Grid.Row="11" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
 							<TextBlock Text="本期结余：" Margin="0,5,0,7" Grid.Row="10" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-							<TextBox x:Name="f_cardid" IsReadOnly="True" Text="{m:Bind Path=f_cardid}"  Grid.Column="3" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch"  >
-								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_cardid" 
-									NoDependValue="{m:Exp Str=userfiles.SelectedItem!\=null:userfiles.SelectedItem.f_cardid\,userfilego.f_cardid}"/>
-								</a:Data.Prop>
-							</TextBox>
 							<TextBox Text="{m:Bind Path=f_username}" IsReadOnly="True" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.Row="1"  >
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=sellinggas.f_username}" NotNull="True"/>
@@ -517,12 +510,6 @@
 										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
 								</a:Data.Prop>
 							</TextBox>
-							
-							<CheckBox IsChecked="{m:Bind Path=f_wallhangboiler}"  Content="有壁挂炉" Margin="0,7,25,5" Grid.Row="0" Grid.Column="4" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Right" IsEnabled="False">
-								<a:Data.Prop>
-									<o:PropertySetter PropertyName="f_wallhangboiler" Value="{m:Exp Str=sellinggas.f_wallhangboiler}"/>
-								</a:Data.Prop>
-							</CheckBox>
 					
 							
 							<TextBlock Text="表上次累计购气量：" Margin="0,6" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="6" Grid.Column="2" Height="25"/>

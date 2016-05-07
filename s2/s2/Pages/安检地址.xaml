@@ -86,7 +86,7 @@
 				AutoGenerateColumns="False"  Background="{x:Null}" IsReadOnly="True" >
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-                      Path="{m:Exp Str=$from t_gasaddress where \{applysearch.DataContext.Condition\}}"
+                      Path="{m:Exp Str=$from t_gasaddress where \{applysearch.DataContext.Condition\} and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
 					 IsOld="{m:Exp Str=apply.DataContext.State\=\=$End$}"
 					 PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
 
@@ -115,6 +115,8 @@
                             <o:PropertySetter PropertyName="f_state" Default="未建档"/>
                             <o:PropertySetter PropertyName="f_road" Default="{m:Exp Str=openchild.Result.f_road}"/>
 							<o:PropertySetter PropertyName="f_address" Default="{m:Exp Str=openchild.Result.f_address}"/>
+							<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+							<o:PropertySetter  PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
 
                         </oo:GasADObject>
                     </a:Data.Context>

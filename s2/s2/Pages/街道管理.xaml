@@ -23,7 +23,7 @@
 
 			<!--判断街道名称是否存在-->
 			<o:GeneralObject Name="areaexist" EntityType="t_area2" WebClientInfo="{StaticResource dbclient}" 
-		  		Path="{m:Exp Str=apply.DataContext.f_road \!\=null:$one/select new Map(count(*) as count) from t_road where f_road\=\'\{apply.DataContext.f_road\}\'$\,$aaa$}" 
+		  		Path="{m:Exp Str=apply.DataContext.f_road \!\=null:$one/select new Map(count(*) as count) from t_road where f_road\=\'\{apply.DataContext.f_road\}\' and f_branch\=\'\{LoginUser.f_fengongsi\}\'$\,$aaa$}" 
 				IsInit="{m:Exp Str=apply.DataContext.State\=\=$End$ }">
 			</o:GeneralObject>
 

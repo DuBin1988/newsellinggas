@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import com.aote.rs.exception.RSException;
 import com.aote.rs.exception.ResultException;
+import com.aote.rs.util.UserTools;
 
 @Path("sell")
 @Scope("prototype")
@@ -45,9 +46,9 @@ public class SellSer {
 	// 查询欠费信息
 	// 获取某个编号基本信息及欠费数据
 	@GET
-	@Path("bill/{userid}")
-	public String getUserBill(@PathParam("userid") String userid)
-			throws Exception {
+	@Path("bill/{userid}/{fengongsi}")
+	public String getUserBill(@PathParam("userid") String userid,
+			@PathParam("fengongsi") String fengongsi) throws Exception {
 		String result = "{";
 
 		// 获取所有单值
@@ -71,9 +72,11 @@ public class SellSer {
 				+ // h t_handplan
 				"  from (select * from t_userinfo where f_userid='"
 				+ userid
-				+ "') ui join t_userfiles u on ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
+				+ "' and f_filiale='"
+				+ fengongsi
+				+ "') ui join t_userfiles u on ui.f_filiale=u.f_filiale and ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
 				+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否') h "
-				+ "on u.f_userid=h.f_userid "
+				+ "on u.f_userid=h.f_userid and h.f_filiale=u.f_filiale "
 				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
 		log.debug("查询欠费sql:" + sql);
 		List<Map<String, Object>> list = this.hibernateTemplate
@@ -210,32 +213,40 @@ public class SellSer {
 	 */
 
 	@GET
-	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}/{orgstr}/{handids}")
+	@Path("{userid}/{money}/{zhinajin}/{payment}/{opid}/{orgstr}/{handids}/{invoicenum}")
 	public JSONObject txSell(@PathParam("userid") String userid,
 			@PathParam("money") BigDecimal dMoney,
 			@PathParam("zhinajin") double zhinajin,
 			@PathParam("payment") String payments,
 			@PathParam("opid") String opid, @PathParam("orgstr") String orgstr,
-			@PathParam("handids") String handids) {
+			@PathParam("handids") String handIds,
+			@PathParam("invoicenum") String invoicenum) {
 		JSONObject ret = new JSONObject();
 		try {
 			log.debug("售气交费 开始");
+			// 获得操作员，网点，分公司，组织信息
+			Map loginuser = UserTools.getUser(opid, this.hibernateTemplate);
+			// 分公司
+			String f_filiale = loginuser.get("f_fengongsi").toString();
 			BigDecimal payMent = dMoney;
 			// 查询用户
-			Map user = this.findUserinfo(userid);
+			Map user = this.findUserinfo(userid, f_filiale);
 			// 查询户所有欠费信息
-			Map<String, Object> nopayMap = getnopayinfor(userid);
+			// Map<String, Object> nopayMap = getnopayinfor(userid, f_filiale);
 			// 获取每个表的阶梯信息
 			// JSONObject files_stair = this.getfilesInfor(userid);
-			List<Map<String, Object>> hands = this.findHands(userid, handids);
+			List<Map<String, Object>> hands = this.findHands(userid, handIds);
 
 			// 循环欠费记录，记录 欠费ids,最小指数，最大指数，欠费气量，金额合计userid
-			String handIds = "";
-			double lastinputgasnum = 0;
-			double lastrecord = 0;
+			BigDecimal lastinputgasnum = new BigDecimal(0);
+			BigDecimal lastrecord = new BigDecimal(0);
 			Date lastinputdate = null;
 			BigDecimal debts = new BigDecimal(0);
 			BigDecimal debtGas = new BigDecimal(0);
+			String userids = null;
+			String handdate = null;
+			JSONArray array = new JSONArray();
+			JsonTransfer transfer = new JsonTransfer();
 			for (int i = 0; i < hands.size(); i++) {
 				Map<String, Object> hand = (Map<String, Object>) hands.get(i);
 				BigDecimal d = new BigDecimal(hand.get("oughtfee").toString());
@@ -243,22 +254,37 @@ public class SellSer {
 				BigDecimal g = new BigDecimal(hand.get("oughtamount")
 						.toString());
 				debtGas = debtGas.add(g);
-				handIds += hand.get("id") + ",";
-				// 最大指数
+				// 一户多表，合计本次底数
+				BigDecimal lastr = new BigDecimal(hand.get("lastrecord")
+						.toString());
+				lastrecord = lastrecord.add(lastr);
+				// 一户多表，合计上次底数
+				BigDecimal lastin = new BigDecimal(hand.get("lastinputgasnum")
+						.toString());
+				lastinputgasnum = lastinputgasnum.add(lastin);
 				if (i == 0) {
-					lastrecord = Double.parseDouble(hand.get("lastrecord")
-							.toString());
 					lastinputdate = (Date) hand.get("lastinputdate");
+					handdate = formatmonth.format(lastinputdate);
+				} else if (i == hands.size() - 1) {
+					handdate = handdate
+							+ "-"
+							+ formatmonth.format((Date) hand
+									.get("lastinputdate"));
 				}
-				// 最小指数
-				if (i == hands.size() - 1) {
-					lastinputgasnum = Double.parseDouble(hand.get(
-							"lastinputgasnum").toString());
+				// 拼接表编号
+				String f_userid = hand.get("f_userid").toString();
+				if (userids == null) {
+					userids = f_userid;
+				} else {
+					userids = userids + "," + f_userid;
 				}
+				JSONObject json = (JSONObject) transfer.MapToJson(hand);
+				array.put(json);
 			}
-			if (handIds.endsWith(",")) {
-				handIds = handIds.substring(0, handIds.length() - 1);
-			}
+			// 放入交费的表编号
+			user.put("userids", userids);
+			// 放入发票号
+			user.put("invoicenum", invoicenum);
 			// 先计算payment >=用户结余+用户欠费
 			BigDecimal jieyu = new BigDecimal(user.get("f_zhye").toString());
 			if (payMent.compareTo(debts.subtract(jieyu)) < 0) {
@@ -282,12 +308,31 @@ public class SellSer {
 				updateHands(handIds);
 			}
 			// 插入交费记录
-			ret = insertSell(user, nopayMap, nowye, lastinputgasnum,
-					lastrecord, debts, debtGas, handIds, lastinputdate,
-					payMent, metergasnums, cumuGas, newMeterGasNums,
-					newCumuGas, opid, payments, orgstr, zhinajin);
-			log.debug("售气交费成功!" + ret);
+			int sellid = insertSell(user, nowye, lastinputgasnum.doubleValue(),
+					lastrecord.doubleValue(), debts, debtGas, handIds,
+					lastinputdate, payMent, metergasnums, cumuGas,
+					newMeterGasNums, newCumuGas, opid, payments, orgstr,
+					zhinajin);
+			log.debug("售气交费成功!" + sellid);
 			ret.put("success", "机表交费成功");
+			ret.put("f_deliverydate", format.format(new Date()));
+			ret.put("f_invoicenum", invoicenum);
+			ret.put("f_username", user.get("f_username"));
+			ret.put("f_address", user.get("f_address"));
+			ret.put("f_userinfoid", user.get("f_userid"));
+			ret.put("f_handdate", handdate);
+			//滞纳金
+			ret.put("f_zhinajin", zhinajin);
+			//上次结余
+			ret.put("f_zhye", user.get("f_zhye"));
+			//应收金额
+			ret.put("f_totalcost", debts.doubleValue());
+			//实收金额
+			ret.put("f_grossproceeds", payMent.doubleValue());
+			//本次结余
+			ret.put("f_benqizhye", nowye);
+			ret.put("id", sellid);
+			ret.put("hands", array);
 			// 抓取自定义异常
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -310,20 +355,22 @@ public class SellSer {
 		return (Map<String, Object>) userList.get(0);
 	}
 
+	private SimpleDateFormat format = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+	private SimpleDateFormat formatmonth = new SimpleDateFormat("yyyyMM");
+
 	/**
 	 * 保存收费记录，返回保存后的id
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public JSONObject insertSell(Map<String, Object> userMap,
-			Map<String, Object> nopayMap, BigDecimal nowye,
+	public int insertSell(Map<String, Object> userMap, BigDecimal nowye,
 			double lastinputgasnum, double lastrecord, BigDecimal debts,
 			BigDecimal debtGas, String handIds, Date lastinputdate,
 			BigDecimal payMent, BigDecimal metergasnums, BigDecimal cumuGas,
 			BigDecimal newMeterGasNums, BigDecimal newCumuGas, String opid,
 			String payments, String orgstr, double zhinajin) throws Exception {
-		JSONObject result = new JSONObject();
 		// 查找登陆用户,获取登陆网点,操作员
 		Map<String, Object> loginUser = this.findloginUser(opid);
 		loginUser.put("orgstr", orgstr);
@@ -333,9 +380,8 @@ public class SellSer {
 		}
 		Map sale = new HashMap<String, Object>();
 		Date now = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		sale.put("lastinputgasnum",Double.parseDouble(nopayMap.get("lastinputgasnum")+""));
-		sale.put("lastrecord", Double.parseDouble(nopayMap.get("lastrecord")+""));
+		sale.put("lastinputgasnum", lastinputgasnum);
+		sale.put("lastrecord", lastrecord);
 		sale.put("f_preamount", debts.doubleValue());
 		sale.put("f_pregas", debtGas.doubleValue());
 		sale.put("f_zhinajin", zhinajin);
@@ -343,12 +389,12 @@ public class SellSer {
 		sale.put("f_yhxz", userMap.get("f_yhxz"));
 		sale.put("f_zhye", userMap.get("f_zhye"));
 		double f_benqizhye = nowye.setScale(2, BigDecimal.ROUND_HALF_UP)
-		.doubleValue();
+				.doubleValue();
 		sale.put("f_benqizhye", f_benqizhye);
 		sale.put("f_gasmeterstyle", "机表");
 		sale.put("f_comtype", "天然气公司");
 		sale.put("f_apartment", userMap.get("f_apartment"));
-		sale.put("f_userid", userMap.get("f_userid"));
+		sale.put("f_userid", userMap.get("userids"));
 		sale.put("f_userinfoid", userMap.get("f_userid"));// 用户id
 		sale.put("f_username", userMap.get("f_username"));
 		sale.put("f_address", userMap.get("f_address"));
@@ -383,23 +429,22 @@ public class SellSer {
 		sale.put("f_useful", handIds); // 抄表记录id
 		sale.put("f_deliverydate", now);
 		sale.put("f_deliverytime", now);
-
 		sale.put("f_jiezhangstate", "未结账");
 		sale.put("f_wheatherduizhang", "未对账");
-
 		sale.put("f_amountmaintenance", 0.0);
 		sale.put("f_metergasnums", newMeterGasNums.doubleValue());
 		sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
 		sale.put("f_stairtype", userMap.get("f_stairtype"));
-		sale.put("f_stair1price", nopayMap.get("f_stair1price"));
-		sale.put("f_stair1amount", nopayMap.get("f_stair1amount"));
-		sale.put("f_stair1fee", nopayMap.get("f_stair1fee"));
-		sale.put("f_stair2price", nopayMap.get("f_stair2price"));
-		sale.put("f_stair2amount", nopayMap.get("f_stair2amount"));
-		sale.put("f_stair2fee", nopayMap.get("f_stair2fee"));
-		sale.put("f_stair3price", nopayMap.get("f_stair3price"));
-		sale.put("f_stair3amount", nopayMap.get("f_stair3amount"));
-		sale.put("f_stair3fee", nopayMap.get("f_stair3fee"));
+		sale.put("f_invoicenum", userMap.get("invoicenum").toString());
+		// sale.put("f_stair1price", nopayMap.get("f_stair1price"));
+		// sale.put("f_stair1amount", nopayMap.get("f_stair1amount"));
+		// sale.put("f_stair1fee", nopayMap.get("f_stair1fee"));
+		// sale.put("f_stair2price", nopayMap.get("f_stair2price"));
+		// sale.put("f_stair2amount", nopayMap.get("f_stair2amount"));
+		// sale.put("f_stair2fee", nopayMap.get("f_stair2fee"));
+		// sale.put("f_stair3price", nopayMap.get("f_stair3price"));
+		// sale.put("f_stair3amount", nopayMap.get("f_stair3amount"));
+		// sale.put("f_stair3fee", nopayMap.get("f_stair3fee"));
 		sale.put("f_OrgStr", userMap.get("f_OrgStr") + "");
 		sale.put("f_zherownum", userMap.get("f_zherownum")); // 折子号
 		log.debug("交费记录保存信息：" + sale.toString());
@@ -407,18 +452,15 @@ public class SellSer {
 		int sellId = (Integer) hibernateTemplate.save("t_sellinggas", sale);
 		// 格式化交费日期
 		SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		result.put("id", sellId);
-		result.put("f_deliverydate", f2.format(now));
-		result.put("f_stair1price", nopayMap.get("f_stair1price"));
-		result.put("f_stair1amount", nopayMap.get("f_stair1amount"));
-		result.put("f_stair1fee", nopayMap.get("f_stair1fee"));
-		result.put("f_stair2price", nopayMap.get("f_stair2price"));
-		result.put("f_stair2amount", nopayMap.get("f_stair2amount"));
-		result.put("f_stair2fee", nopayMap.get("f_stair2fee"));
-		result.put("f_stair3price", nopayMap.get("f_stair3price"));
-		result.put("f_stair3amount", nopayMap.get("f_stair3amount"));
-		result.put("f_stair3fee", nopayMap.get("f_stair3fee"));
+		// result.put("f_stair1price", nopayMap.get("f_stair1price"));
+		// result.put("f_stair1amount", nopayMap.get("f_stair1amount"));
+		// result.put("f_stair1fee", nopayMap.get("f_stair1fee"));
+		// result.put("f_stair2price", nopayMap.get("f_stair2price"));
+		// result.put("f_stair2amount", nopayMap.get("f_stair2amount"));
+		// result.put("f_stair2fee", nopayMap.get("f_stair2fee"));
+		// result.put("f_stair3price", nopayMap.get("f_stair3price"));
+		// result.put("f_stair3amount", nopayMap.get("f_stair3amount"));
+		// result.put("f_stair3fee", nopayMap.get("f_stair3fee"));
 		// 更新抄表记录sellid
 		if (handIds != null && !handIds.equals("") && !handIds.equals("0")) {
 			String updateHandplan = "update t_handplan set f_sellid =" + sellId
@@ -426,7 +468,7 @@ public class SellSer {
 			log.debug("更新抄表记录sql：" + updateHandplan);
 			hibernateTemplate.bulkUpdate(updateHandplan);
 		}
-		return result;
+		return sellId;
 	}
 
 	/**
@@ -461,7 +503,7 @@ public class SellSer {
 		}
 		user.put("f_zherownum", zherownum);
 		double f_zhye = nowye.setScale(2, BigDecimal.ROUND_HALF_UP)
-		.doubleValue();
+				.doubleValue();
 		// 更新用户
 		String sql = "update t_userinfo  set f_zhye=" + f_zhye
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
@@ -476,18 +518,22 @@ public class SellSer {
 
 	/**
 	 * 查找抄表欠费记录
+	 * 
+	 * @param userinfoId
+	 *            用户编号
+	 * @param handids
+	 *            选择的欠费的抄表id
+	 * @return 抄表记录
+	 * @throws Exception
 	 */
-	private List findHands(String userId, String handids) throws Exception {
-		final String sql = "select h.oughtfee oughtfee, h.oughtamount oughtamount, h.id id,h.lastrecord lastrecord, h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum from t_handplan h , t_userfiles u where u.f_userinfoid='"
-				+ userId
-				+ "' and h.id in ("
-				+ handids
-				+ ") and h.shifoujiaofei='否' and h.lastrecord is not null and h.f_state='已抄表' and h.f_userid=u.f_userid order by h.id desc";
+	private List findHands(String userinfoId, String handids) throws Exception {
+		final String sql = "from t_handplan h" + " where h.f_userinfoid='"
+				+ userinfoId + "' and h.id in (" + handids
+				+ ") and h.shifoujiaofei='否' and h.lastrecord is not null "
+				+ "and h.f_state='已抄表' order by h.id";
 		// List list = session.createQuery(sql).list();
 		log.debug("查询欠费信息开始:" + sql);
-		HibernateSQLCall sqlCall = new HibernateSQLCall(sql);
-		List<Map<String, Object>> list = this.hibernateTemplate
-				.executeFind(sqlCall);
+		List<Map<String, Object>> list = this.hibernateTemplate.find(sql);
 		return list;
 	}
 
@@ -590,7 +636,8 @@ public class SellSer {
 	 * @param userinfoId
 	 * @return 针对一户多表，上期底数为每条欠费上期底数合计，本期同上
 	 */
-	private Map<String, Object> getnopayinfor(String userinfoId) {
+	private Map<String, Object> getnopayinfor(String userinfoId,
+			String f_filiale) {
 		final String sql = "select f_stair1price f_stair1price, f_stair1amount f_stair1amount, f_stair1fee f_stair1fee, f_stair2price f_stair2price, f_stair2amount f_stair2amount,"
 				+ " f_stair2fee f_stair2fee, f_stair3price f_stair3price, f_stair3amount f_stair3amount, f_stair3fee f_stair3fee,isnull(lastinputgasnum,0) lastinputgasnum,isnull(lastrecord,0) lastrecord from "
 				+ "(select sum(h.lastinputgasnum) lastinputgasnum,sum(h.lastrecord) lastrecord, min(u.f_stair1price) f_stair1price, Round(SUM(isnull(h.f_stair1amount,0)),2) f_stair1amount,"
@@ -600,7 +647,13 @@ public class SellSer {
 				+ " Round(SUM(isnull(h.f_stair3fee,0)),2) f_stair3fee from(select * from t_userfiles"
 				+ " where f_userinfoid='"
 				+ userinfoId
-				+ "') u left join (select * from t_handplan where shifoujiaofei='否'"
+				+ "' and f_filiale='"
+				+ f_filiale
+				+ "') u left join (select * from t_handplan where f_userinfoid='"
+				+ userinfoId
+				+ "' and f_filiale='"
+				+ f_filiale
+				+ "' and  shifoujiaofei='否'"
 				+ " and f_state='已抄表' and lastrecord is not null) h on u.f_userid=h.f_userid) t";
 		log.debug("查询具体阶梯信息开始:" + sql);
 		HibernateSQLCall sqlCall = new HibernateSQLCall(sql);
@@ -618,33 +671,15 @@ public class SellSer {
 		// 返回信息，为空则操作成功，不为空则操作失败，内容为错误信息
 		JSONObject ret = new JSONObject();
 		try {
-			// final String sql_1 =
-			// "SELECT id,f_userid,isnull(lastinputgasnum,0)lastinputgasnum,isnull(lastrecord,0)lastrecord,isnull(f_totalcost,0)f_totalcost,isnull(f_grossproceeds,0)f_grossproceeds,"
-			// +
-			// "isnull(f_zhinajin,0)f_zhinajin,isnull(f_zhye,0)f_zhye,isnull(f_benqizhye,0)f_benqizhye,f_beginfee,isnull(f_premetergasnums,0)f_premetergasnums,isnull(f_upbuynum,0)f_upbuynum,f_gasmeterstyle,"
-			// +
-			// "f_comtype,f_username,f_address,f_districtname,f_cusDom,f_cusDy,f_idnumber,f_gaswatchbrand,"
-			// +
-			// "f_gaspricetype,f_gasprice,f_usertype,f_gasproperties,f_cardid,isnull(f_pregas,0)f_pregas,isnull(f_preamount,0)f_preamount,f_payment,"
-			// +
-			// "f_sgnetwork,f_sgoperator,f_filiale,f_fengongsinum,f_payfeetype,f_useful FROM t_sellinggas where f_userid='"
-			// + userid + "' and id='" + id + "'" + "";
-			// List list = (List) hibernateTemplate
-			// .execute(new HibernateCallback() {
-			// public Object doInHibernate(Session session)
-			// throws HibernateException {
-			// SQLQuery query = session.createSQLQuery(sql_1);
-			// return query.list();
-			// }
-			// });
-
 			String sql = "from t_sellinggas where id=" + id;
 			List list = this.hibernateTemplate.find(sql);
 			// 找到安检记录，判断日期和基表读数
 			if (list.size() == 1) {
 				// 查找登陆用户,获取登陆网点,操作员
 				Map<String, Object> loginUser = this.findloginUser(opid);
-				Map<String, Object> userinfo = this.findUserinfo(userid);
+				String f_filiale = loginUser.get("f_fengongsi").toString();
+				Map<String, Object> userinfo = this.findUserinfo(userid,
+						f_filiale);
 				if (loginUser == null) {
 					log.debug("机表缴费处理时未找到登陆用户,登陆id" + opid);
 					throw new RSException("机表缴费处理时未找到登陆用户,登陆id" + opid);
@@ -683,7 +718,7 @@ public class SellSer {
 						sell);
 				// ID 返回去
 				if (sellId > 0) {
-					execSQL("update t_sellinggas set f_payfeevalid='有效',f_payment='冲正'  where f_userid='"
+					execSQL("update t_sellinggas set f_payfeevalid='有效',f_payment='冲正'  where f_userinfoid='"
 							+ userid + "' and id='" + id + "'" + "");
 				} else
 					ret.put("error", "noid");
@@ -859,9 +894,9 @@ public class SellSer {
 	 * @param userid
 	 * @return
 	 */
-	private Map<String, Object> findUserinfo(String userid) {
-		final String userSql = "from t_userinfo  where f_userid='" + userid
-				+ "'  ";
+	private Map<String, Object> findUserinfo(String userid, String f_filiale) {
+		final String userSql = "from t_userinfo  where f_filiale='" + f_filiale
+				+ "' and f_userid='" + userid + "'  ";
 		// List userlist = session.createQuery(userSql).list();
 		log.debug("查询户信息开始:" + userSql);
 		List<Object> userlist = this.hibernateTemplate.find(userSql);

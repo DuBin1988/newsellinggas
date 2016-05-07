@@ -46,6 +46,7 @@ import com.aote.rs.sms.MianZhuSms;
 import com.aote.rs.sms.SmsService;
 import com.aote.rs.util.BeanUtil;
 import com.aote.rs.util.JSONHelper;
+import com.aote.rs.util.UserTools;
 
 @Path("handcharge")
 @Scope("prototype")
@@ -59,6 +60,7 @@ public class HandCharge {
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+
 	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
 		this.hibernateTemplate = hibernateTemplate;
 	}
@@ -95,9 +97,9 @@ public class HandCharge {
 	@Produces("application/json")
 	public JSONArray ReadRecordInput(@PathParam("operator") String operator) {
 		JSONArray array = new JSONArray();
-		List<Object> list = this.hibernateTemplate.find(
-				"from t_handplan where f_userid is not null and f_userid!='' and f_inputtor=? and f_state='未抄表'",
-				operator);
+		List<Object> list = this.hibernateTemplate
+				.find("from t_handplan where f_userid is not null and f_userid!='' and f_inputtor=? and f_state='未抄表'",
+						operator);
 		for (Object obj : list) {
 			// 把单个map转换成JSON对象
 			Map<String, Object> map = (Map<String, Object>) obj;
@@ -109,14 +111,22 @@ public class HandCharge {
 
 	// 查询批量抄表单
 	@POST
-	@Path("download")
-	public String downLoadRecord(String condition) {
+	@Path("download/{fengongsi}")
+	public String downLoadRecord(@PathParam("fengongsi") String fengongsi,
+			String condition) {
 
 		String sql = "select top 1000 h.id,u.f_userinfoid,u.f_userid,u.f_username,u.f_address,u.lastinputgasnum,info.f_zhye "
 				+ "from t_handplan h left join t_userfiles u on h.f_userid = u.f_userid "
-				+ "left join t_userinfo info on u.f_userinfoid=info.f_userid where h.shifoujiaofei='否' "
-				+ "and u.f_userstate!='注销' and h.f_state='未抄表' and "
-				+ condition + "	order by u.f_address,u.f_apartment";
+				+ "and h.f_filiale=u.f_filiale and u.f_filiale='"
+				+ fengongsi
+				+ "'"
+				+ "left join t_userinfo info on u.f_userinfoid=info.f_userid and "
+				+ "info.f_filiale=u.f_filiale where h.shifoujiaofei='否' "
+				+ "and u.f_userstate!='注销' and h.f_state='未抄表' and h.f_filiale='"
+				+ fengongsi
+				+ "' and "
+				+ condition
+				+ "	order by u.f_address,u.f_apartment";
 		List<Object> list = this.hibernateTemplate
 				.executeFind(new HibernateSQLCall(sql));
 		// String result="[";
@@ -268,15 +278,19 @@ public class HandCharge {
 	 * @throws Exception
 	 */
 	public String afrecordInput(String userid, double lastreading,
-			double reading, String sgnetwork, String sgoperator,
+			double reading, String sgnetwork, String loginuserid,
 			String lastinputdate, String handdate, double leftgas,
 			String meterstate, int flag, String orgpathstr) throws Exception {
+		// 获得操作员，网点，分公司，组织信息
+		Map loginuser = UserTools.getUser(loginuserid, this.hibernateTemplate);
+		String f_filiale = loginuser.get("f_fengongsi").toString();
+		String sgoperator = loginuser.get("name").toString();
 		// 查找用户未抄表记录
-		Map map = this.findHandPlan(userid);
+		Map map = this.findHandPlan(userid, f_filiale);
 		if (map == null) {
 			return "";
 		}
-		Map user = this.findUser(userid);
+		Map user = this.findUser(userid, f_filiale);
 		// 获取表类型
 		String meterType = map.get("f_gasmeterstyle").toString();
 		// 下面程序执行hql变量
@@ -559,9 +573,11 @@ public class HandCharge {
 					+ map.get("f_filiale")
 					+ "',f_operator='"
 					+ sgoperator
-					+ "',f_zhye="+f_zhye
+					+ "',f_zhye="
+					+ f_zhye
 					+ "where f_userid='"
-					+ userid + "' and f_state='未抄表' and id=" + handid;
+					+ userid
+					+ "' and f_state='未抄表' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
 					lastinputDate, inputdate, meterState });
 		} else {
@@ -611,7 +627,8 @@ public class HandCharge {
 					+ lrg + ",f_zhye=? where f_userid='" + userid
 					+ "' and f_state='未抄表' and id=" + handid;
 			hibernateTemplate.bulkUpdate(hql, new Object[] { handDate,
-					lastinputDate, date, inputdate, meterState ,f_zhye.subtract(oughtfee).doubleValue()});
+					lastinputDate, date, inputdate, meterState,
+					f_zhye.subtract(oughtfee).doubleValue() });
 		}
 		// 保存用户清欠账务,并更新档案中账户余额
 		if (meterType != null && meterType.equals("机表")
@@ -900,7 +917,7 @@ public class HandCharge {
 	/**
 	 * 查找用户未抄表记录
 	 */
-	private Map<String, Object> findHandPlan(String userid) {
+	private Map<String, Object> findHandPlan(String userid, String f_filiale) {
 		Map<String, Object> result = null;
 		String hql = "";
 		final String sql = "select isnull(u.f_userid,'') f_userid, isnull(u.f_zhye,'') f_zhye ,isnull(u.f_accountzhye,'') f_accountzhye ,  isnull(u.lastinputgasnum,'') lastinputgasnum, isnull(u.f_gasprice,0) f_gasprice, isnull(u.f_username,'')  f_username,"
@@ -911,11 +928,15 @@ public class HandCharge {
 				+ "isnull(u.f_finallybought,0)f_finallybought,isnull(u.f_cardid,'NULL') f_cardid,isnull(u.f_filiale,'NULL')f_filiale,"
 				+ "h.id id, isnull(CONVERT(varchar(12), h.f_handdate, 120 ),'计划空') f_handdate from (select * from t_handplan where f_state='未抄表' and f_userid='"
 				+ userid
+				+ "' and f_filiale='"
+				+ f_filiale
 				+ "') h "
 				+ "left join (select f_userid, COUNT(*) c,sum(oughtfee) oughtfee from t_handplan where f_state='已抄表' and f_userid='"
 				+ userid
+				+ "' and f_filiale='"
+				+ f_filiale
 				+ "' and shifoujiaofei='否' "
-				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid";
+				+ "group by f_userid) q on h.f_userid=q.f_userid join t_userfiles u on h.f_userid=u.f_userid and h.f_filiale=u.f_filiale";
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
 					public Object doInHibernate(Session session)
@@ -1002,9 +1023,10 @@ public class HandCharge {
 		return null;
 	}
 
-	@Path("record/batch/App")
+	@Path("record/batch/App/{fengongsi}")
 	@POST
-	public String afAPPUploadBatch(String data) {
+	public String afAPPUploadBatch(String data,
+			@PathParam("fengongsi") String fengongsi) {
 		log.debug("App抄表记录上传 开始");
 		JSONObject jo = new JSONObject();
 		try {
@@ -1029,7 +1051,7 @@ public class HandCharge {
 				}
 				if ("noPlan".equals(row.getString("source"))) {
 				} else {
-					if (findHandPlan(userid) == null) {
+					if (findHandPlan(userid,fengongsi) == null) {
 						jo.put(userid, "null");
 					} else {
 						re = afrecordInput(userid, lastreading, reading,
@@ -1048,11 +1070,11 @@ public class HandCharge {
 
 	// 批量抄表记录上传
 	// data以JSON格式上传，[{userid:'用户编号', showNumber:本期抄表数},{}]
-	@Path("record/batch/{handdate}/{sgnetwork}/{sgoperator}/{lastinputdate}/{meterstate}/{orgpathstr}")
+	@Path("record/batch/{handdate}/{sgnetwork}/{loginuserid}/{lastinputdate}/{meterstate}/{orgpathstr}")
 	@POST
 	public String afRecordInputForMore(String data,
 			@PathParam("sgnetwork") String sgnetwork,
-			@PathParam("sgoperator") String sgoperator,
+			@PathParam("loginuserid") String loginuserid,
 			@PathParam("lastinputdate") String lastinputdate,
 			@PathParam("handdate") String handdate,
 			@PathParam("meterstate") String meterstate,
@@ -1078,7 +1100,7 @@ public class HandCharge {
 
 				try {
 					afrecordInput(userid, lastreading, reading, sgnetwork,
-							sgoperator, lastinputdate, handdate, leftgas,
+							loginuserid, lastinputdate, handdate, leftgas,
 							meterstate, 2, orgpathstr);
 					// 获得自定义异常
 				} catch (RSException e) {
@@ -1130,10 +1152,10 @@ public class HandCharge {
 	}
 
 	// 批量抄表走收录入
-	@Path("record/payfeeforhand")
+	@Path("record/payfeeforhand/{fengongsi}")
 	@POST
 	public String afRecordInputForZS(String data,
-			@PathParam("handdate") String handdate) {
+			@PathParam("fengongsi") String fengongsi) {
 		log.debug("批量抄表记录上传 开始");
 		String ret = "";
 		// 错误信息
@@ -1149,7 +1171,7 @@ public class HandCharge {
 				double lastinputgasnum = row.getDouble("lastinputgasnum");
 				double lastrecord = row.getDouble("lastrecord");
 				double oughtamount = row.getDouble("oughtamount");
-				afhandinput(map);
+				afhandinput(map, fengongsi);
 			}
 			log.debug("批量抄表记录上传 结束");
 		} catch (Exception e) {
@@ -1167,10 +1189,10 @@ public class HandCharge {
 	 * @param hand
 	 * @throws JSONException
 	 */
-	private void afhandinput(Map data) throws Exception {
+	private void afhandinput(Map data, String f_filiale) throws Exception {
 		String userid = data.get("f_userid") + "";
-		Map userinfo = this.findUser(userid);
-		Map hand = this.findHandPlan(userid);
+		Map userinfo = this.findUser(userid, f_filiale);
+		Map hand = this.findHandPlan(userid, f_filiale);
 		// 获取表类型
 		String meterType = (String) hand.get("f_gasmeterstyle");
 		String stairtype = (String) userinfo.get("f_stairtype");
@@ -1493,9 +1515,11 @@ public class HandCharge {
 	/**
 	 * 查找用户信息
 	 */
-	private Map<String, Object> findUser(String userid) {
-		final String userSql = "from t_userinfo  where f_userid= (select f_userinfoid from t_userfiles where  f_userid = '"
-				+ userid + "')";
+	private Map<String, Object> findUser(String userid, String f_filiale) {
+		final String userSql = "from t_userinfo  where f_filiale='"
+				+ f_filiale
+				+ "' and f_userid= (select f_userinfoid from t_userfiles where  f_userid = '"
+				+ userid + "' and f_filiale='" + f_filiale + "')";
 		// List userlist = session.createQuery(userSql).list();
 		log.debug("查询户信息开始:" + userSql);
 		List<Object> userlist = this.hibernateTemplate.find(userSql);
@@ -1515,9 +1539,9 @@ public class HandCharge {
 		if (nowye.compareTo(new BigDecimal(0)) < 0) {
 			nowye = new BigDecimal(0);
 		}
-		
+
 		int f_zherownum = zherownum + 1;
-		
+
 		// 更新用户
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
