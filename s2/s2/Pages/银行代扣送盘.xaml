@@ -24,7 +24,15 @@
             <o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='用户类型查询用' order by id"/>
             <!--银行名列表对象-->
             <o:ObjectList Name="yinhanglist1" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='银行名'"/>
-
+            <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		    Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+            <!--用户状态查询用-->
+            <o:ObjectList Name="statelist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户状态查询用' order by id" EntityType="paramvalue" HasEmptyRow="True"/>
+            <o:ObjectList Name="SecondStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.FirstStair\}\'$}" />
+            <o:ObjectList Name="ThirdStairStairlist" EntityType="t_organization" WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.SecondStair\}\'$}" />
+            <o:ObjectList Name="FourthStairlist"  WebClientInfo="{StaticResource dbclient}"  Path="{m:Exp Str=$from t_organization where f_parentname\=\'\{daninfosearch.DataContext.ThirdStair\}\'$}" />
             <!--导出成功后，更新户状态为银行扣款-->
             <b:HQLAction Name="UpdateUserinfo" WebClientInfo="{StaticResource dbclient}" Type="sql"
 			HQL="{m:Exp Str=$
@@ -115,13 +123,39 @@
                                 <o:PropertySetter PropertyName="f_bankname"  Operator="o.f_bankname = 'this'"  NotNull="True"/>
                             </a:Data.Prop>
                         </ComboBox>
-                        <TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="0,0,2,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.Row="1" />
-                        <ComboBox x:Name="CoboxPin_Copy" ItemsSource="{m:Exp Str=usertypelist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_usertype}" Grid.Column="1" Grid.Row="1" Margin="0,-1,0,1">
+                        <TextBlock TextWrapping="Wrap" Text="用户类型："  Margin="0,0,2,1" Height="25" TextAlignment="Right" VerticalAlignment="Bottom" d:LayoutOverrides="Height" Grid.Row="0"  Grid.Column="2"/>
+                        <ComboBox x:Name="CoboxPin_Copy" ItemsSource="{m:Exp Str=usertypelist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_usertype}" Grid.Column="3" Grid.Row="0" Margin="0,-1,0,0" Height="28" VerticalAlignment="Top">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_usertype"  Operator="o.f_usertype = 'this'"  NotNull="True"/>
                             </a:Data.Prop>
                         </ComboBox>
-                       <!-- <ComboBox x:Name="CoboxPin_Copy1" ItemsSource="{m:Exp Str=wangdianlistnull}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_network}" Grid.Column="3" Margin="0,27,0,1" Grid.RowSpan="2">
+                        <TextBlock TextWrapping="Wrap" Text="总公司："  Margin="0,2,0,1"  Height="25" TextAlignment="Right"  Grid.Column="4" Grid.Row="0"    />
+                                    <TextBox Name="FirstStair" TextWrapping="Wrap" Grid.Row="0" Grid.Column="5" Text="{m:Bind Path=FirstStair}"   Width="Auto" Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" IsReadOnly="True" >
+                                        <a:Data.Prop>
+                                            <o:PropertySetter PropertyName="FirstStair" Default="{m:Exp Str= zonggongsi.value}" NoDependValue="{m:Exp Str= zonggongsi.value}" Operator="u.f_OrgStr like 'this%'"/>
+                                        </a:Data.Prop>
+                                    </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="二级公司：" Grid.Column="6" Grid.Row="0"  Height="25" TextAlignment="Right" Margin="0"/>
+                        <ComboBox x:Name="SecondStair"  IsEnabled="{m:Exp Str=LoginUser.orgpathstr.Split($.$\,1)\=\=null}"  SelectedValue="{m:Bind Path=SecondStair}" Grid.Row="0" Grid.Column="7" ItemsSource="{m:Exp Str=SecondStairlist}" DisplayMemberPath="name" SelectedValuePath="name"  Margin="0,2,0,1" Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="SecondStair"  Default="{m:Exp Str=SecondStairlist.Count>0:LoginUser.orgpathstr.Split($.$\,1)\,null}" Operator="u.f_OrgStr like '%this%'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="三级公司：" Grid.Column="0" Grid.Row="1"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <ComboBox x:Name="ThirdStair"  IsEnabled="{m:Exp Str=LoginUser.orgpathstr.Split($.$\,2)\=\=null}" SelectedValue="{m:Bind Path=ThirdStair}" Grid.Row="1" Grid.Column="1" ItemsSource="{m:Exp Str=ThirdStairStairlist}"  Margin="0,2,0,1" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="ThirdStair" Default="{m:Exp Str=ThirdStairStairlist.Count>0:LoginUser.orgpathstr.Split($.$\,2)\,null}" Operator="u.f_OrgStr like '%this%'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+                        <TextBlock TextWrapping="Wrap" Text="四级公司：" Grid.Column="2" Grid.Row="1"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
+                        <ComboBox x:Name="FourthStair" IsEnabled="{m:Exp Str=LoginUser.orgpathstr.Split($.$\,3)\=\=null}" SelectedValue="{m:Bind Path=FourthStair}" Grid.Row="1" Grid.Column="3" ItemsSource="{m:Exp Str=FourthStairlist}"  Margin="0" DisplayMemberPath="name" SelectedValuePath="name"  Height="25" HorizontalAlignment="Stretch" Width="Auto">
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="FourthStair" Default="{m:Exp Str=FourthStairlist.Count>0:LoginUser.orgpathstr.Split($.$\,3)\,null}" Operator="u.f_OrgStr like '%this%'"/>
+                            </a:Data.Prop>
+                        </ComboBox>
+
+                        <!-- <ComboBox x:Name="CoboxPin_Copy1" ItemsSource="{m:Exp Str=wangdianlistnull}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_network}" Grid.Column="3" Margin="0,27,0,1" Grid.RowSpan="2">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_network"  Operator="g.f_yytdepa = 'this'"  NotNull="True"/>
                             </a:Data.Prop>
