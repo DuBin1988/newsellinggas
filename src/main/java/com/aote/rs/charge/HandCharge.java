@@ -1,5 +1,7 @@
 package com.aote.rs.charge;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -379,25 +381,26 @@ public class HandCharge {
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
 		// 取出抄表日期得到缴费截止日期DateFormat.parse(String s)
-		Date date = endDate(lastinputdate, userid);// 缴费截止日期
+		Date date = endDate(lastinputdate, userid, loginuser);// 缴费截止日期
 		// 录入日期
 		Date inputdate = new Date();
 		// 计划月份
 		DateFormat hd = new SimpleDateFormat("yyyy-MM");
 		String dateStr1 = handdate.substring(0, 7);
 		Date handDate = hd.parse(dateStr1);
-		// 当前表累计购气量 （暂）
-		BigDecimal f_metergasnums = new BigDecimal(map.get("f_metergasnums")
-				+ "");
-		// f_cumulativepurchase 总累计购气量
-		BigDecimal f_cumulativepurchase = new BigDecimal(
-				map.get("f_cumulativepurchase") + "");
-		// 户累计购气量 （暂）
-		BigDecimal f_metergasnumsu = new BigDecimal(user.get("f_metergasnums")
-				+ "");
-		// f_cumulativepurchase 总累计购气量
-		BigDecimal f_cumulativepurchaseu = new BigDecimal(
-				user.get("f_cumulativepurchase") + "");
+		// // 当前表累计购气量 （暂）
+		// BigDecimal f_metergasnums = new BigDecimal(map.get("f_metergasnums")
+		// + "");
+		// // f_cumulativepurchase 总累计购气量
+		// BigDecimal f_cumulativepurchase = new BigDecimal(
+		// map.get("f_cumulativepurchase") + "");
+		// // 户累计购气量 （暂）
+		// BigDecimal f_metergasnumsu = new
+		// BigDecimal(user.get("f_metergasnums")
+		// + "");
+		// // f_cumulativepurchase 总累计购气量
+		// BigDecimal f_cumulativepurchaseu = new BigDecimal(
+		// user.get("f_cumulativepurchase") + "");
 		// 表状态
 		String meterState = meterstate;
 		// 针对设置阶梯气价的用户运算
@@ -487,25 +490,19 @@ public class HandCharge {
 				f_zherownum = 0;
 			}
 			this.updateUser(user, f_zhye.subtract(chargenum),
-					f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas),
-					f_zherownum);
+
+			f_zherownum);
 
 			hql = "update t_userfiles set lastinputgasnum=?,"
 					+
 					// 本次抄表日期
 					"  lastinputdate=? "
-					+
-					// 当前表累计购气量 （暂） 总累计购气量
-					",f_metergasnums=  ?, f_cumulativepurchase= ? ,"
 					// 最后购气量 最后购气日期 最后购气时间
-					+ "f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
+					+ ",f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
 					+ "where f_userid=?";
-			hibernateTemplate.bulkUpdate(
-					hql,
-					new Object[] { reading, lastinputDate,
-							f_metergasnums.add(gas).doubleValue(),
-							f_cumulativepurchase.add(gas).doubleValue(),
-							gas.doubleValue(), inputdate, inputdate, userid });
+			hibernateTemplate.bulkUpdate(hql, new Object[] { reading,
+					lastinputDate, gas.doubleValue(), inputdate, inputdate,
+					userid });
 			String sellId = sellid + "";
 			// 更新抄表记录
 			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate=?,f_stairtype='"
@@ -1051,7 +1048,7 @@ public class HandCharge {
 				}
 				if ("noPlan".equals(row.getString("source"))) {
 				} else {
-					if (findHandPlan(userid,fengongsi) == null) {
+					if (findHandPlan(userid, fengongsi) == null) {
 						jo.put(userid, "null");
 					} else {
 						re = afrecordInput(userid, lastreading, reading,
@@ -1115,9 +1112,13 @@ public class HandCharge {
 			}
 			log.debug("批量抄表记录上传 结束");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.debug("批量抄表记录上传 失败：" + e.getMessage());
-			ret = e.getMessage();
 			log.debug("批量抄表记录上传 失败异常信息" + e);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			ret = sw.toString();
 		} finally {
 			return ret;
 		}
@@ -1306,9 +1307,7 @@ public class HandCharge {
 			f_zherownum = 0;
 		}
 		// 更新户
-		this.updateUser(userinfo, f_zhye.subtract(chargenum),
-				f_metergasnumsu.add(gas), f_cumulativepurchaseu.add(gas),
-				f_zherownum);
+		this.updateUser(userinfo, f_zhye.subtract(chargenum), f_zherownum);
 		// 当前表累计购气量 （暂）
 		BigDecimal f_metergasnums = new BigDecimal(hand.get("f_metergasnums")
 				+ "");
@@ -1409,13 +1408,14 @@ public class HandCharge {
 	}
 
 	// 产生交费截止日期
-	private Date endDate(String str, String userid) throws ParseException {
+	private Date endDate(String str, String userid, Map loginuser)
+			throws Exception {
 		// 查找是否配置了截止日期处理类，如果有执行处理类
 		ApplicationContext applicationContext = WebApplicationContextUtils
 				.getWebApplicationContext(ContextListener.getContext());
 		if (applicationContext.containsBean("EndDate")) {
 			IEndDate end = (IEndDate) applicationContext.getBean("EndDate");
-			return end.enddate(userid, hibernateTemplate).getTime();
+			return end.enddate(userid, hibernateTemplate, loginuser).getTime();
 		}
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String dateStr = str.substring(0, 10);
@@ -1533,8 +1533,7 @@ public class HandCharge {
 	/**
 	 * 更新用户信息
 	 */
-	private void updateUser(Map user, BigDecimal nowye,
-			BigDecimal newMeterGasNums, BigDecimal newCumuGas, int zherownum)
+	private void updateUser(Map user, BigDecimal nowye, int zherownum)
 			throws Exception {
 		if (nowye.compareTo(new BigDecimal(0)) < 0) {
 			nowye = new BigDecimal(0);
@@ -1549,9 +1548,7 @@ public class HandCharge {
 		String tm = format.format(now);
 		String sql = "update t_userinfo  set f_zhye=" + nowye.doubleValue()
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
-				+ "'," + " f_metergasnums=" + newMeterGasNums.doubleValue()
-				+ ", f_cumulativepurchase=" + newCumuGas.doubleValue()
-				+ ",f_zherownum=" + f_zherownum + " where f_userid='"
+				+ "',f_zherownum=" + f_zherownum + " where f_userid='"
 				+ user.get("f_userid") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);

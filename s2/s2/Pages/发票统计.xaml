@@ -27,7 +27,12 @@
 			<ColumnDefinition Width="0*"/>
 		</Grid.ColumnDefinitions>
 		<m:ResourceLoad d:LayoutOverrides="GridBox" Margin="0,0,23,52">
-		<!--发票-->
+			 <!--总公司名称-->
+            <o:GeneralObject Name="zonggongsi" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
+		  		Path="{m:Exp Str=$one/from t_singlevalue where name \= \'总公司名称\'}"   >
+            </o:GeneralObject>
+		  <o:ObjectList Name="czylistnull" EntityType="t_user" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=zonggongsi.value\=\=LoginUser.f_fengongsi:$from t_user$\,$from t_user where f_fengongsi\=\'\{LoginUser.f_fengongsi\}\'}" HasEmptyRow="True"/>
+           <!--发票-->
 
 		<o:PagedList Name="fapiao" WebClientInfo="{StaticResource dbclient}"
 		LoadOnPathChanged="False" IsOld="{m:Exp Str='dansearchbutton=>Click!=null'}"
@@ -70,7 +75,9 @@
 		</o:PagedList>
 
 		<!--查询对象-->					
-			<o:SearchObject Name="search"/> 
+			<o:SearchObject Name="search">
+				<o:PropertySetter  PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}" Operator="f_filiale='this'"/>
+			</o:SearchObject>
 		
 		</m:ResourceLoad>
 		
@@ -80,11 +87,12 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
 			<RowDefinition Height="30"/> 
+			<RowDefinition Height="30"/> 
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="90"/>
+			<ColumnDefinition Width="100"/>
 			<ColumnDefinition Width="150"/>
-			<ColumnDefinition Width="80"/>
+			<ColumnDefinition Width="60"/>
 			<ColumnDefinition Width="150"/>
 			<ColumnDefinition Width="80"/>
 			<ColumnDefinition Width="150"/>
@@ -100,35 +108,58 @@
 			Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{userfiles.ItemsSource.Count\}/fapiao.fapiaohao:号码段|fapiao.zuofeihao:作废发票号码|fapiao.zuofeishu:作废发票份数|fapiao.yiyongshu:有效发票份数|fapiao.money1:开票金额$}"/>
 		<Button Grid.Column="7" Content="下载" Click="{m:Exp Str=downLoad.Down()}" Height="28" VerticalAlignment="Bottom" Margin="24,0,73,2" Grid.Row="1"/>
 		<c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}"></c:DownLoad>
-		<TextBlock TextWrapping="Wrap" Grid.Column="0" Margin="3,0,-10,1" Height="25" TextAlignment="Right" Text="交款所属时间：" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-		<sdk:DatePicker x:Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="19,0,56,2" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" >
+		<TextBlock TextWrapping="Wrap" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" Text="交款所属日期：" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
+		<sdk:DatePicker x:Name="tj4" SelectedDate="{m:Bind Path=f_yytdate1}" Grid.Row="0" Grid.Column="1" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="1" >
 			<a:Data.Prop>
 				<o:PropertySetter PropertyName="f_yytdate1"  Value="{m:Exp Str=SysTime.Today}" 
 					Operator="f_fapiaodate >= substring('this',1,10)"/>               
 			</a:Data.Prop>
 		</sdk:DatePicker>
-		<TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="27,0,20,1" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Bottom"/>
-		<sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="0" Grid.Column="2" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="65,0,10,2" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" >
+		<TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="0" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<sdk:DatePicker x:Name="tj4_Copy" SelectedDate="{m:Bind Path=f_yytdate2}" Grid.Row="0" Grid.Column="3" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="1" >
 			<a:Data.Prop>
 				<o:PropertySetter PropertyName="f_yytdate2"  Value="{m:Exp Str=SysTime.Today}" 
 					Operator="f_fapiaodate ^= substring('this',1,10) + ' 23:59:59'"/>               
 			</a:Data.Prop>
 		</sdk:DatePicker>
-			<TextBlock TextWrapping="Wrap" Text="发 票 号 　从：" Margin="19,4,119,0" Height="25" VerticalAlignment="Top" Grid.Column="4" Grid.ColumnSpan="2"/>
-			<TextBox TextWrapping="Wrap" Grid.Column="5" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="129" Margin="0,3,64,2" Height="25" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Grid.RowSpan="1" >
+			<TextBlock TextWrapping="Wrap" Text="发票号 从：" Margin="0" Height="25" Grid.Row="2" HorizontalAlignment="Right"/>
+			<TextBox TextWrapping="Wrap" Grid.Column="1" Text="{m:Bind Path=startinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Grid.RowSpan="1" >
 				<a:Data.Prop>
 					<o:PropertySetter PropertyName="startinvoicenum"  Operator="f_invoicenum >= this"/>               
 				</a:Data.Prop>
 			</TextBox>
-			<TextBlock TextWrapping="Wrap" Text="到" Margin="21,2,42,3" Grid.Column="6" TextAlignment="Right"/>
-			<TextBox TextWrapping="Wrap" Grid.Column="6" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="50,3,69,2" Height="25" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="1" >
+			<TextBox TextWrapping="Wrap" Grid.Column="3" Text="{m:Bind Path=endinvoicenum}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0" Height="25" VerticalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="1" Grid.RowSpan="1" >
 				<a:Data.Prop>
 					<o:PropertySetter PropertyName="endinvoicenum"  Operator="f_invoicenum ^= this"/>               
 				</a:Data.Prop>
 			</TextBox>
+			<TextBlock TextWrapping="Wrap" Grid.Column="0" Margin="0" Height="25" TextAlignment="Right" Text="交款所属时间：" VerticalAlignment="Bottom" Grid.Row="1"/>
+			<TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="0,2.5" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Center"/>
+			<TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="0,2.5" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2"/>
+			<toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime}"  Grid.Column="1" Margin="0" Grid.Row="1"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" >
+				<a:Data.Prop>
+					<o:PropertySetter PropertyName="f_fapiaotime" Operator="f_fapiaotime>='1970-01-01 '+substring('this',12,8)"/>
+				</a:Data.Prop>
+			</toolkit:TimePicker>
+			<toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime2}"  Grid.Column="3" Margin="0,2.5" Grid.Row="1"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" >
+				<a:Data.Prop>
+					<o:PropertySetter PropertyName="f_fapiaotime2" Operator="f_fapiaotime^='1970-01-01 '+substring('this',12,8)"/>
+				</a:Data.Prop>
+			</toolkit:TimePicker>
+			<TextBlock TextWrapping="Wrap" Grid.Column="4" Margin="0,2.5" Height="25" TextAlignment="Right" Text="发票使用人：" VerticalAlignment="Center"/>
+			<ComboBox x:Name="tjczy"  SelectedValue="{m:Bind Path=f_sgoperator}" Grid.Column="5" ItemsSource="{m:Exp Str=czylistnull}"  Margin="0"  SelectedValuePath="name"  Height="25" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding name}" Height="20"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+				<a:Data.Prop>
+					<o:PropertySetter PropertyName="f_sgoperator"  Operator="f_sgoperator = 'this'"/>
+				</a:Data.Prop>
+			</ComboBox>
 	</Grid>
-	<toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fapiao.IsBusy}" >
-	<ScrollViewer Margin="0,63,0,310">
+	<c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=fapiao.IsBusy}" >
+	<ScrollViewer Margin="0,93,0,310">
 		<Grid x:Name="guoshuiprint"  Background="White" Width="875" Margin="0,0,0,0">
 			<Grid.RowDefinitions >
 				<RowDefinition Height="15"/>
@@ -164,7 +195,7 @@
 			</Grid>
 
 	</ScrollViewer>
-	</toolkit:BusyIndicator>
+	</c:BusyIndicatorEx>
 	<sdk:DataPager x:Name="pager" Source="{Binding ItemsSource.Count, Converter={StaticResource DataPagerConverter}, ElementName=userfiles}"  Margin="5,0,23,315" PageSize="20" Height="29" FontSize="13.333" VerticalAlignment="Bottom"/>
 
 	

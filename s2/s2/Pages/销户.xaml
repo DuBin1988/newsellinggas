@@ -7,6 +7,7 @@
     xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
 	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
     xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
     xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -14,12 +15,15 @@
     xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
     xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"
     x:Class="Com.Aote.Pages.销户" FontSize="13"
-    mc:Ignorable="d" >
+    mc:Ignorable="d" FontFamily="Portable User Interface" >
 	  <Grid x:Name="LayoutRoot">
         <m:ResourceLoad Margin="0,0,-12,0" x:Name="loader">
 	  <!--卡对象-->
 		<o:NewGeneralICCard Name="card"  ></o:NewGeneralICCard> 
 		
+		<!--提交-->
+			<b:HQLAction Name="SubmitAction"  WebClientInfo="{StaticResource dbclient}" 
+				HQL="{m:Exp Str=$update t_cancellation  where id in (\{pipelines.SelectedItems.ToString(id)\=>SelectionChanged\}) }"/>
 		<o:ObjectList Name="fgslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='分公司' order by id"/>
 		
 		<!--批量删除语句-->
@@ -32,40 +36,37 @@
         </o:GeneralObject>
 
 			<!--用户对象 {m:Exp Str=$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\' and f_userstate\=\'正常\'}-->
-        	<o:GeneralObject Name="userfiles" EntityType="t_userinfo"
-				LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=$one/from t_userinfo where f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\' and f_userid\=\'\{pipeline.DataContext.f_userid\}\'}" 
-				IsInit="{m:Exp Str='SaveAction.State==$End$'}"
-				IsOld="{m:Exp Str=pipeline.DataContext.f_userid!\=null}">
-              </o:GeneralObject>
+        	<o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+              Path="{m:Exp Str=pipelines.SelectedItem.id\!\=null:$one/from t_userinfo where id\=\'\{pipelines.SelectedItem.id\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userinfo where f_userid\=\'\{pipeline.DataContext.f_userid\}\'$\,$qqq$}" 
+			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
+                <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstate\,$销户$}" />
+                <o:PropertySetter PropertyName="f_userstatus" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstatus\,$1$}" />
+            </o:GeneralObject>
+
+			<!--表状态-->
+        	<o:ObjectList Name="userfilelist" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=userfiles.f_userid\!\=null:$from t_userfiles where f_userinfoid\=\'\{userfiles.f_userid\}\'$\,$qqq$}" 
+				IsClear="{m:Exp Str='SaveAction.State==$End$'}">
+                <o:PropertySetter PropertyName="f_userstate" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstate\,$销户$}" />
+                <o:PropertySetter PropertyName="f_userstatus" Value="{m:Exp Str=SaveAction\=>Saving!\=null:pipeline.DataContext.f_userstatus\,$1$}" />
+            </o:ObjectList>
 			
-			<!--更新表状态为销户-->
-			<b:HQLAction Name="update_userfiles"  WebClientInfo="{StaticResource dbclient}" 
-					HQL="{m:Exp Str=$update t_userfiles set f_userstate\=\'销户\'\,f_userstatus\=\'1\' where f_userinfoid\=\'\{pipeline.DataContext.f_userid\}\'}"/>
-			<b:HQLAction Name="update_userinfo"  WebClientInfo="{StaticResource dbclient}" 
-					HQL="{m:Exp Str=$update t_userinfo set f_userstate\=\'销户\' where f_userid\=\'\{pipeline.DataContext.f_userid\}\'}"/>
 			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
-				<b:BatchInfo Source="{m:Exp Str=update_userfiles}" MethodName="InvokeToJson"/>
-				<b:BatchInfo Source="{m:Exp Str=update_userinfo}" MethodName="InvokeToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
 				<b:BatchInfo Source="{m:Exp Str=pipeline.DataContext}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=userfilelist}" MethodName="SaveToJson"/>
 			</b:BatchExcuteAction>
 
 	</m:ResourceLoad>
-	<toolkit:BusyIndicator BusyContent="该用户已停用，不能操作" IsBusy="{m:Exp Str='pipeline.DataContext.f_userstate==$停用$:$True$,$False$'}" Grid.Column="1" Margin="8,0,0,0">
+	<c:BusyIndicatorEx BusyContent="该用户已停用，不能操作" IsBusy="{m:Exp Str='pipeline.DataContext.f_userstate==$停用$:$True$,$False$'}" Grid.Column="1" Margin="8,0,0,0">
 	<Grid  VerticalAlignment="Stretch" >
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="3*"/>
 			<ColumnDefinition Width="7*"/>
 		</Grid.ColumnDefinitions>
-        <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
+        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
         	<toolkit:DockPanel  >
-			<!--信息列表按钮-->
-        		<toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" Margin="0" Height="45">
-        			<!--提交审核-->
-        			<!--Button Content=" 提交审核 " Click="{m:Exp Str=submittip.Show()}"
-                        IsEnabled="{m:Exp Str='pipelines.SelectedItems.Count=>SelectionChanged!=0'}"  Height="25" Width="100" Margin="0,10" RenderTransformOrigin="1.18,0.56" /-->
-				<!--信息列表翻页-->        			
-        		</toolkit:DockPanel>
+			
         		<toolkit:DockPanel x:Name="pipelinesearch" toolkit:DockPanel.Dock="Top" Margin="0,0,0,5" Background="#FFCFEFFF" >
         			<a:Data.Context>
         				<o:SearchObject  />        	
@@ -111,9 +112,10 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
         			<a:Data.Items>
         				<o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
+        					MultiPath="{m:Exp Str=$from t_userinfo where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
         					Path="{m:Exp Str=$from t_userinfo where \{pipelinesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_filiale \=\'\{LoginUser.f_fengongsi\}\'}"
         					IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or pipeline.DataContext.State\=\=$End$}"
-        					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="id"/>
+        					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
         			</a:Data.Items>
 					
         			<sdk:DataGrid.Columns>
@@ -125,20 +127,15 @@
         				<sdk:DataGridTextColumn Header="门牌号" Binding="{Binding f_menpai}" d:IsLocked="True"/>
         				<sdk:DataGridTextColumn Header="收费类型" Binding="{Binding f_feetype}" d:IsLocked="True"/>
         				<sdk:DataGridTextColumn Header="费用" Binding="{Binding f_fee}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="是否有效" Binding="{Binding f_payfeevalid}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="气表品牌" Binding="{Binding f_gaswatchbrand}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="气表型号" Binding="{Binding f_metertype}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="操作人" Binding="{Binding f_cmoperator}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="网点" Binding="{Binding f_parentname4}" d:IsLocked="True"/>
-        				<sdk:DataGridTextColumn Header="操作日期" Binding="{Binding f_cmdate, StringFormat=yyyy-MM-dd}" d:IsLocked="True"/>
-						
+        				<sdk:DataGridTextColumn Header="分公司" Binding="{Binding f_filiale}" d:IsLocked="True"/>
+        			 	
 						
         			</sdk:DataGrid.Columns>
         		</sdk:DataGrid>
         	</toolkit:DockPanel>
-        </toolkit:BusyIndicator>
+        </c:BusyIndicatorEx>
 		<!--操作区按钮-->
-                <toolkit:BusyIndicator x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+                <c:BusyIndicatorEx x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
                     <Grid  x:Name="pipeline" >
                         <a:Data.Context>
                             <!--o:GeneralObject  Name="pipelinego" WebClientInfo="{StaticResource dbclient}" 
@@ -150,13 +147,14 @@
 						EntityType="t_cancellation"
 						IsInit="{m:Exp Str='SaveAction.State==$End'}">
                                 <o:PropertySetter PropertyName="f_userstate"  />
+								<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>	
                             </o:GeneralObject >
                         </a:Data.Context>
                         <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0">
-                            <Button x:Name="save" Content="保 存" Margin="5" 
+                            <Button x:Name="save" Content="保存" Margin="5" 
             			IsEnabled="{m:Exp Str=pipeline.DataContext.IsModified and !pipeline.DataContext.HasErrors}"
-            			Click="save_Click" HorizontalAlignment="Right" Width="50"/>
-                            <Button Content="撤 销" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New()}" HorizontalAlignment="Right" Width="50"/>
+            			Click="save_Click" HorizontalAlignment="Right" Width="90"/>
+                            <Button Content="清空" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New()}" HorizontalAlignment="Right" Width="50"/>
 
                         </toolkit:DockPanel>
                         <Grid Margin="0,0,0,45" >
@@ -168,44 +166,39 @@
                             </Grid.Background>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="110"/>
-                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="110"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="110"/>
-                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="35"/>
                                 <RowDefinition Height="35"/>
                                 <RowDefinition Height="35"/>
                                 <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="45"/>
-                                <RowDefinition Height="45" />
+                                <RowDefinition Height="60"/>
+                                <RowDefinition Height="60"/>
+                                <RowDefinition Height="35" />
                                 <RowDefinition Height="35"/>
                                 <RowDefinition Height="35"/>
                             </Grid.RowDefinitions>
                             <TextBlock TextWrapping="Wrap" Text="用户编号：" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,6"/>
-                            <TextBlock Grid.Column="4" Margin="0,6" TextWrapping="Wrap" Text="用户姓名：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Margin="0,6" Grid.Row="1" TextWrapping="Wrap" Text="用户地址：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Margin="0,6" TextWrapping="Wrap" Text="用户姓名：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1"/>
+                            <TextBlock Margin="0,6" TextWrapping="Wrap" Text="用户地址：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3"/>
                             <TextBlock Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Text="身份证号：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Text="用户类型：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4"/>
-                            <TextBlock Margin="0,6" Grid.Row="3" TextWrapping="Wrap" Text="气 表 号：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Margin="0,6" Grid.Row="3" TextWrapping="Wrap" Text="气表厂家：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4"/>
-                            <TextBlock Grid.Column="2" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" Text="气表类型：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <CheckBox IsChecked="{m:Bind Path=f_recoveredcheck}" Content="卡表是否收回" Margin="0,6" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1">
+                            <TextBlock Margin="0,6" Grid.Row="1" TextWrapping="Wrap" Text="用户类型：" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>
+                            <CheckBox IsChecked="{m:Bind Path=f_recoveredcheck}" Content="卡表是否收回" Margin="0,6" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Column="3">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_recoveredcheck" Default="{m:Exp Str=False}"/>
                                 </a:Data.Prop>
                             </CheckBox>
-                            <TextBlock Margin="0,6" Grid.Row="5" TextWrapping="Wrap" Text="销户原因：" HorizontalAlignment="Right"/>
-                            <TextBlock Margin="0,6" Grid.Row="6" TextWrapping="Wrap" Text="备      注：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Margin="0,6" Grid.Row="4" TextWrapping="Wrap" Text="销户原因：" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                            <TextBlock Margin="0,6" Grid.Row="5" TextWrapping="Wrap" Text="备      注：" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                             <TextBlock Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="部      门：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操 作 人：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" Grid.Column="4" d:LayoutOverrides="Height, GridBox"/>
+                            <TextBlock Margin="0,6" Grid.Row="6" TextWrapping="Wrap" Text="操 作 人：" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Margin="0,6" Grid.Row="7" TextWrapping="Wrap" Text="操作日期：" HorizontalAlignment="Right" Grid.Column="2" d:LayoutOverrides="Height, GridBox"/>
                             <TextBox Text="{m:Bind Path=f_userid}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=pipelines.SelectedItem.f_userid}" />
+                                    <o:PropertySetter PropertyName="f_userid" Value="{m:Exp Str=userfiles.f_userid\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Visibility="Collapsed" IsReadOnly="True" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="Auto">
@@ -223,47 +216,32 @@
                                     <o:PropertySetter PropertyName="f_userstatus" Default="1" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_username}" Grid.Column="5" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_username}" Grid.Column="1" Margin="0,6" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True" Grid.Row="1">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_username" NotNull="True" Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
+                                    <o:PropertySetter PropertyName="f_username" Value="{m:Exp Str=userfiles.f_username\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_address}" Grid.ColumnSpan="2" Grid.Column="1" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_address}" Grid.ColumnSpan="2" Grid.Column="1" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_address" Value="{m:Exp Str=userfiles.f_address\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_idnumber}" Grid.ColumnSpan="2" Grid.Column="1" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_idnumber}" Grid.ColumnSpan="1" Grid.Column="1" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_idnumber" Value="{m:Exp Str=userfiles.f_idnumber\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center">
+                            <TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="3" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_usertype" Value="{m:Exp Str=userfiles.f_usertype\=>Completed}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_meternumber}" Grid.Column="1" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_creason}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0,6" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Stretch">
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=userfiles.f_meternumber\=>Completed}" />
+                                    <o:PropertySetter PropertyName="f_creason" NotNull="True"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_gasmetermanufacturers}" Grid.Column="5" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
-                                <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gasmetermanufacturers" Value="{m:Exp Str=userfiles.f_gasmetermanufacturers\=>Completed}" />
-                                </a:Data.Prop>
-                            </TextBox>
-                            <TextBox Text="{m:Bind Path=f_gasmeterstyle}" Grid.Column="3" Margin="0,6" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
-                                <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_gasmeterstyle" Value="{m:Exp Str=userfiles.f_gasmeterstyle\=>Completed}" />
-                                </a:Data.Prop>
-                            </TextBox>
-                            <TextBox Text="{m:Bind Path=f_creason}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0,6" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch">
-                                <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_creason" />
-                                </a:Data.Prop>
-                            </TextBox>
-                            <TextBox Text="{m:Bind Path=f_cnote}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Stretch">
+                            <TextBox Text="{m:Bind Path=f_cnote}" Grid.ColumnSpan="5" Grid.Column="1" Margin="0,6" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Stretch">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_cnote" />
                                 </a:Data.Prop>
@@ -273,18 +251,17 @@
                                     <o:PropertySetter PropertyName="f_departments" Default="{m:Exp Str=LoginUser.f_parentname}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBox Text="{m:Bind Path=f_coperator}" Grid.Column="3" Margin="0,6" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True">
+                            <TextBox Text="{m:Bind Path=f_coperator}" Grid.Column="1" Margin="0,6" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Stretch" IsReadOnly="True">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_coperator" Default="{m:Exp Str=LoginUser.name}" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_cdate}" Grid.Column="5" Margin="0,6" Grid.Row="7" d:LayoutOverrides="Height, GridBox" VerticalAlignment="Stretch" IsEnabled="False">
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_cdate}" Grid.Column="3" Margin="0,6" Grid.Row="7" d:LayoutOverrides="Height, GridBox" VerticalAlignment="Stretch" IsEnabled="False">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_cdate"
             					Default="{m:Exp Str=SysTime.Now}"/>
                                 </a:Data.Prop>
                             </sdk:DatePicker>
-                            <Button Content="读卡" Click="{m:Exp Str=card.ReadCard()}" Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Width="50" Background="#FF2F628D"/>
                             <!--隐藏域-->
                             <!--卡号-->
                             <TextBox Text="{m:Bind Path=f_cardid}" Visibility="Collapsed" Margin="0,6"  TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True">
@@ -330,19 +307,19 @@
 									Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBlock Text="操作时间：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="8" Height="25" Grid.Column="4" FontSize="13.333" />
-                            <toolkit:TimePicker Value="{m:Bind Path=f_time}" IsEnabled="False" Grid.Column="5" Margin="0" Grid.Row="8"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" FontSize="13.333" >
+                            <TextBlock Text="操作时间：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="8" Height="25" Grid.Column="2" FontSize="13.333" />
+                       <toolkit:TimePicker Value="{m:Bind Path=f_time}" IsEnabled="False" Grid.Column="3" Margin="0" Grid.Row="8"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" FontSize="13.333" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_time" Value="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
                                 </a:Data.Prop>
-                            </toolkit:TimePicker>
+                            </toolkit:TimePicker> 
                         </Grid>
                     </Grid>
-                </toolkit:BusyIndicator>
+                </c:BusyIndicatorEx>
                 <!--<sdk:DataPager x:Name="1" Source="{Binding Path=ItemsSource.Count,ElementName=pipelines,Converter={StaticResource DataPagerConverter}}"   Margin="1,0,0,45" PageSize="22" Height="24" VerticalAlignment="Bottom"/>
                 <TextBlock  TextWrapping="Wrap" Text="{m:Exp Str=$共\{pipelines.ItemsSource.Count\}项}" Width="197" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Stretch" Margin="0,20,0,10"/>-->
             </Grid>
-	</toolkit:BusyIndicator>
+	</c:BusyIndicatorEx>
   </Grid>
   
 </UserControl>

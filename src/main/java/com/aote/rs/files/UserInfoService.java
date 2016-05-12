@@ -1,5 +1,7 @@
 package com.aote.rs.files;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +98,10 @@ public class UserInfoService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.put("error", e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			result.put("error", sw.toString());
 		} finally {
 			return result;
 		}

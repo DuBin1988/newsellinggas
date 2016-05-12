@@ -101,6 +101,12 @@ namespace Com.Aote.Pages
             {
                 //把数据转换成JSON
                 JsonObject item = JsonValue.Parse(e.Result) as JsonObject;
+                if (item.ContainsKey("error"))
+                {
+                    string error = item["error"];
+                    MessageBox.Show("交费失败：" + error);
+                    return;
+                }
                 // 把交易编号、交易日期写入打印界面
                 SeriaNumber Seriabx = (SeriaNumber)FrameworkElementExtension.FindResource(this, "Seriabx");
                 if (Seriabx == null)
@@ -136,7 +142,7 @@ namespace Com.Aote.Pages
             else
             {
                 // 提示出错
-                MessageBox.Show("交易失败，请重试！如果继续失败，请联系系统管理员。");
+                MessageBox.Show("交易失败，链接错误！如果继续失败，请联系系统管理员。");
                 // 清除界面数据
                 Clear();
             }

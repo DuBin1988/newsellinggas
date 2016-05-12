@@ -1,5 +1,7 @@
 package com.aote.rs;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ public class SellSer {
 
 		// 从第一条获取户数据
 		Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
-		result += "infoid:'" +  (String) userinfo.get("infoid") + "'";
+		result += "infoid:'" + (String) userinfo.get("infoid") + "'";
 		result += ",f_username:'" + (String) userinfo.get("f_username") + "'";
 		BigDecimal zz = new BigDecimal(userinfo.get("f_zherownum").toString());
 		result += ",f_zherownum:" + zz;
@@ -297,14 +299,14 @@ public class SellSer {
 			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu))
 					.subtract(new BigDecimal(zhinajin));
 
-			BigDecimal metergasnums = new BigDecimal(user.get("f_metergasnums")
-					.toString());
-			BigDecimal newMeterGasNums = metergasnums.add(debtGas);
-			BigDecimal cumuGas = new BigDecimal(user
-					.get("f_cumulativepurchase").toString());
-			BigDecimal newCumuGas = cumuGas.add(debtGas);
+//			BigDecimal metergasnums = new BigDecimal(user.get("f_metergasnums")
+//					.toString());
+//			BigDecimal newMeterGasNums = metergasnums.add(debtGas);
+//			BigDecimal cumuGas = new BigDecimal(user
+//					.get("f_cumulativepurchase").toString());
+//			BigDecimal newCumuGas = cumuGas.add(debtGas);
 			// 更新用户
-			this.updateUser(user, nowye, debtGas, newMeterGasNums, newCumuGas);
+			this.updateUser(user, nowye, debtGas);
 			// 更新抄表欠费为已缴费
 			if (handIds != null && !handIds.equals("")) {
 				updateHands(handIds);
@@ -312,8 +314,7 @@ public class SellSer {
 			// 插入交费记录
 			int sellid = insertSell(user, nowye, lastinputgasnum.doubleValue(),
 					lastrecord.doubleValue(), debts, debtGas, handIds,
-					lastinputdate, payMent, metergasnums, cumuGas,
-					newMeterGasNums, newCumuGas, opid, payments, orgstr,
+					lastinputdate, payMent, opid, payments, orgstr,
 					zhinajin);
 			log.debug("售气交费成功!" + sellid);
 			ret.put("success", "机表交费成功");
@@ -338,10 +339,12 @@ public class SellSer {
 			// 抓取自定义异常
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			hibernateTemplate.getSessionFactory().getCurrentSession()
-					.getTransaction().rollback();
-			log.error("售气交费 失败!" + ex.getMessage());
-			ret.put("error", ex.getMessage());
+			log.debug("售气交费 失败!" + ex.getMessage());
+			log.debug("售气交费 失败!", ex);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			ret.put("error", sw.toString());
 		} finally {
 			return ret;
 		}
@@ -370,8 +373,7 @@ public class SellSer {
 	public int insertSell(Map<String, Object> userMap, BigDecimal nowye,
 			double lastinputgasnum, double lastrecord, BigDecimal debts,
 			BigDecimal debtGas, String handIds, Date lastinputdate,
-			BigDecimal payMent, BigDecimal metergasnums, BigDecimal cumuGas,
-			BigDecimal newMeterGasNums, BigDecimal newCumuGas, String opid,
+			BigDecimal payMent, String opid,
 			String payments, String orgstr, double zhinajin) throws Exception {
 		// 查找登陆用户,获取登陆网点,操作员
 		Map<String, Object> loginUser = this.findloginUser(opid);
@@ -413,8 +415,8 @@ public class SellSer {
 		sale.put("f_finallybought", debtGas.doubleValue());
 		sale.put("f_finabuygasdate", now);
 		sale.put("f_payment", "现金");
-		sale.put("f_upbuynum", cumuGas.doubleValue());
-		sale.put("f_premetergasnums", metergasnums.doubleValue());
+		//sale.put("f_upbuynum", cumuGas.doubleValue());
+		//sale.put("f_premetergasnums", metergasnums.doubleValue());
 		sale.put("f_grossproceeds", payMent.doubleValue());
 		sale.put("f_totalcost", debts.doubleValue());
 		sale.put("f_givechange", 0.0);
@@ -434,8 +436,8 @@ public class SellSer {
 		sale.put("f_jiezhangstate", "未结账");
 		sale.put("f_wheatherduizhang", "未对账");
 		sale.put("f_amountmaintenance", 0.0);
-		sale.put("f_metergasnums", newMeterGasNums.doubleValue());
-		sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
+		//sale.put("f_metergasnums", newMeterGasNums.doubleValue());
+		//sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
 		sale.put("f_stairtype", userMap.get("f_stairtype"));
 		sale.put("f_invoicenum", userMap.get("invoicenum").toString());
 		// sale.put("f_stair1price", nopayMap.get("f_stair1price"));
@@ -487,8 +489,7 @@ public class SellSer {
 	/**
 	 * 更新用户信息
 	 */
-	private void updateUser(Map user, BigDecimal nowye, BigDecimal debtGas,
-			BigDecimal newMeterGasNums, BigDecimal newCumuGas) throws Exception {
+	private void updateUser(Map user, BigDecimal nowye, BigDecimal debtGas) throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		String dt = format.format(now);
@@ -508,9 +509,7 @@ public class SellSer {
 				.doubleValue();
 		// 更新用户
 		String sql = "update t_userinfo  set f_zhye=" + f_zhye
-				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
-				+ "'," + " f_metergasnums=" + newMeterGasNums
-				+ ", f_cumulativepurchase=" + newCumuGas + ",f_zherownum="
+				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm + "',f_zherownum="
 				+ (zherownum + 1) + " where f_userid='" + user.get("f_userid")
 				+ "'";
 		// this.session.createQuery(sql).executeUpdate();
@@ -706,6 +705,9 @@ public class SellSer {
 						-Double.parseDouble(sell.get("f_pregas") + "")); // 气量
 				sell.put("f_preamount",
 						-Double.parseDouble(sell.get("f_preamount") + "")); // 气费
+				sell.put("f_zhinajin", -Double.parseDouble(sell
+						.get("f_zhinajin")
+						+ "")); // 滞纳金
 				sell.put("f_payment", "冲正"); // 付款方式
 				sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
 				sell.put("f_sgnetwork", loginUser.get("f_parentname")
