@@ -29,9 +29,7 @@
             <o:ObjectList Name="zhengjianlist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='证件类型'"/>
             <!--用户对象Path="{m:Exp Str=applys.SelectedItem.id\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\'$\,apply.DataContext.f_userid \!\= null:$one/from t_userinfo where f_userid\=\'\{apply.DataContext.f_userid\}\'$\,$qqq$}"    -->
             <o:GeneralObject Name="userfiles" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
-                 Path="{m:Exp Str=
-			card.CardId\=>ReadCompleted!\=null and card.Factory!\=null:$one/from t_userinfo where f_cardid\=\'\{card.CardId\}\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,
-			applys.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$null$}">
+                 Path="{m:Exp Str=applys.SelectedItem.f_userid\=>SelectionChanged\!\=null:$one/from t_userinfo where f_userid\=\'\{applys.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,null}">
                 <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewusername}"/>
                 <o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewidnumber}"/>
                 <o:PropertySetter PropertyName="f_phone" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewphone}"/>
@@ -44,10 +42,24 @@
 				<o:PropertySetter PropertyName="f_payment" NoDependValue="{m:Exp Str=apply.DataContext.f_payment}"/-->
             </o:GeneralObject>
 
+			<o:ObjectList Name="userfilelist" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+                 Path="{m:Exp Str=applys.SelectedItem.f_userid\=>SelectionChanged\!\=null:$from t_userfiles where f_userinfoid\=\'\{applys.SelectedItem.f_userid\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,null}">
+                <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewusername}"/>
+                <o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewidnumber}"/>
+                <o:PropertySetter PropertyName="f_phone" NoDependValue="{m:Exp Str=apply.DataContext.f_tnewphone}"/>
+                <o:PropertySetter PropertyName="f_danganstatus" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$过户$\,$过户$}"/>
+                <o:PropertySetter PropertyName="f_danganreturnvalue" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$1$\,$1$}"/>
+                <o:PropertySetter PropertyName="refreshCache" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:$0$\,$0$}"/>
+                <!--o:PropertySetter PropertyName="f_usermc" NoDependValue="{m:Exp Str=apply.DataContext.f_newnusermc}"/>
+				<o:PropertySetter PropertyName="f_bankname" NoDependValue="{m:Exp Str=apply.DataContext.f_newnbankname}"/>
+				<o:PropertySetter PropertyName="f_idofcard" NoDependValue="{m:Exp Str=apply.DataContext.f_newnidofcard}"/>
+				<o:PropertySetter PropertyName="f_payment" NoDependValue="{m:Exp Str=apply.DataContext.f_payment}"/-->
+            </o:ObjectList>
 
             <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
                 <b:BatchInfo Source="{m:Exp Str=apply.DataContext}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
+                <b:BatchInfo Source="{m:Exp Str=userfilelist}" MethodName="SaveToJson"/>
             </b:BatchExcuteAction>
 
         </m:ResourceLoad>
@@ -57,7 +69,7 @@
                 <ColumnDefinition Width="7*"/>
             </Grid.ColumnDefinitions>
 
-            <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applys.ItemsSource.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=applys.ItemsSource.IsBusy}">
                 <toolkit:DockPanel Margin="0,0,0,89" >
                     <!--信息列表-->
 
@@ -110,7 +122,7 @@
         			AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
                             <o:PagedObjectList x:Name="applyslist" WebClientInfo="{StaticResource dbclient}"
-        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\'}"
+        					Path="{m:Exp Str=$from t_userinfo where \{applysearch.DataContext.Condition\} and f_userstate \=\'正常\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
         					IsOld="{m:Exp Str=print.State\=\=$End$}"
         					PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
@@ -128,9 +140,9 @@
                         </sdk:DataGrid.Columns>
                     </sdk:DataGrid>
                 </toolkit:DockPanel>
-            </toolkit:BusyIndicator>
+            </c:BusyIndicatorEx>
             <!--操作区按钮-->
-            <toolkit:BusyIndicator x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=apply.DataContext.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
+            <c:BusyIndicatorEx x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=apply.DataContext.IsBusy}"  Grid.Column="1" Margin="8,0,0,0">
                 <Grid Background="{x:Null}" x:Name="apply" Height="415" >
                     <a:Data.Context>
                         <!--o:GeneralObject  Name="applygo" WebClientInfo="{StaticResource dbclient}" 
@@ -338,7 +350,7 @@
                             </a:Data.Prop>
                         </TextBox>
                         <TextBlock Margin="1,3,1,2" TextWrapping="Wrap" Text="银行开户名：" Grid.Row="3" TextAlignment="Right" Height="25"/>
-                        <TextBox Text="{m:Bind Path=f_nusermc}"  Grid.Column="1" Margin="0,3,0,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Row="3" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25">
+                        <TextBox Text="{m:Bind Path=f_nusermc}"  Grid.Column="1" Margin="0,3,0,2" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Row="3" IsReadOnly="True" d:LayoutOverrides="HorizontalAlignment" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" Height="25" FontFamily="Portable User Interface">
                             <a:Data.Prop>
                                 <o:PropertySetter PropertyName="f_nusermc" Value="{m:Exp Str=userfiles.f_usermc\=&gt;Completed}" />
                             </a:Data.Prop>
@@ -362,7 +374,7 @@
 					</TextBox-->
                     </Grid>
                 </Grid>
-            </toolkit:BusyIndicator>
+            </c:BusyIndicatorEx>
             <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=applys,Converter={StaticResource DataPagerConverter}}"  Margin="1,0,0,44" PageSize="22" Height="24" VerticalAlignment="Bottom"/>
         </Grid>
         <Grid x:Name="aofengprint" Background="b" Margin="-1645,0,1194,-430" Height="346" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" d:LayoutOverrides="VerticalAlignment" RenderTransformOrigin="0.5,0.5">

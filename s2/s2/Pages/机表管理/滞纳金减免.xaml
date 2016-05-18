@@ -43,10 +43,12 @@
 			<b:HQLAction Name="Updateenddate" WebClientInfo="{StaticResource dbclient}" 
 			HQL="{m:Exp Str=$update t_handplan set f_endjfdate\= \'\{kbfee.f_endjfdate.ToString($yyyy-MM-dd$)\}\' where id in (\{kbsellgas.Count>0:kbsellgas.ToString(id)\,null\})}"/> 
 		
-			<b:BatchExcuteAction Name="SaveAction"  WebClientInfo="{StaticResource dbclient}">
+			<b:BatchExcuteAction Name="SaveAction"   WebClientInfo="{StaticResource dbclient}" >
 				<b:BatchInfo Source="{m:Exp Str=Updateenddate}" MethodName="InvokeToJson"/>
 				<b:BatchInfo Source="{m:Exp Str=kbfee}" MethodName="SaveToJson"/>
 			</b:BatchExcuteAction>
+
+			 
         </m:ResourceLoad>
         <Grid >
             <Grid.ColumnDefinitions>
@@ -290,9 +292,9 @@
                                     </a:Data.Prop>
                                 </toolkit:TimePicker>
                                 <TextBlock Text="滞纳金合计："  TextWrapping="Wrap" TextAlignment="Right" Grid.Row="9" Margin="0,6" Height="25"/>
-                                <TextBox x:Name="f_zhinajin" Text="{m:Bind Path=f_zhinajin}" Grid.Column="1"  Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Foreground="#FFF11313">
+                                <TextBox x:Name="ui_zhinajin" Text="{m:Bind Path=f_zhinajin}" Grid.Column="1"  Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" Margin="0" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" Grid.RowSpan="1" Foreground="#FFF11313">
 									<a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_zhinajin" NoDependValue="{m:Exp Str=kbsellgas[True].Sum(f_zhinajin)}"/>
+                                        <o:PropertySetter PropertyName="f_zhinajin" NoDependValue="{m:Exp Str=kbsellgas[True].Sum(f_zhinajin)}"  Validation="{m:Exp Str=value>0}" ErrorMessage="滞纳金必须大于0！"/>
                                     </a:Data.Prop>
 								</TextBox>
                                 <TextBlock Margin="0,5,0,7" Grid.Row="14" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25"/>
@@ -328,8 +330,7 @@
 								 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" />
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                                     <Button x:Name="save2" Content="保存" Margin="5" 
-									IsEnabled="{m:Exp Str=kbsellgas.Count>0 and !kbfee.HasErrors}"
-									Click="{m:Exp Str=SaveAction.Invoke()}"
+									IsEnabled="{m:Exp Str=kbfee1.DataContext.f_zhinajin&gt;0}" 	Click="save2_Click"
 									  Width="84" />
                                     <Button Name="cancle" Content="清空" Click="{m:Exp Str=kbfee.New()}" Margin="5" FontSize="12" Width="50"/>
                                 </StackPanel>

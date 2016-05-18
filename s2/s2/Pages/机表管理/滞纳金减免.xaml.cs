@@ -13,6 +13,7 @@ using System.Linq;
 using Com.Aote.Utils;
 using Com.Aote.Controls;
 using System.Json;
+using Com.Aote.Behaviors;
 
 namespace Com.Aote.Pages
 {
@@ -36,8 +37,10 @@ namespace Com.Aote.Pages
             kbsellgasbusy.IsBusy = true;
             busy.IsBusy = true;
             string f_userid = go.GetPropertyValue("f_userid").ToString();
+            GeneralObject loginuser = (GeneralObject)FrameworkElementExtension.FindResource(this.save2,"LoginUser");
+            string fengongsi = loginuser.GetPropertyValue("f_fengongsi").ToString();
             WebClientInfo wci = Application.Current.Resources["server"] as WebClientInfo;
-            string uri = wci.BaseAddress + "/sell/bill/" + f_userid + "?uuid=" + System.Guid.NewGuid().ToString();
+            string uri = wci.BaseAddress + "/sell/bill/" + f_userid + "/" + fengongsi + "?uuid=" + System.Guid.NewGuid().ToString();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += userfiles_DownloadStringCompleted;
             client.DownloadStringAsync(new Uri(uri));
@@ -96,7 +99,7 @@ namespace Com.Aote.Pages
                 go.EntityType = "t_handplan";
 
                 //默认选中
-                go.SetPropertyValue("IsChecked", true, false);
+                go.IsChecked=true;
 
                 //上期指数
                 decimal lastinputgasnum = (decimal)json["lastinputgasnum"];
@@ -151,6 +154,26 @@ namespace Com.Aote.Pages
 
            
             }
+
+        private void save2_Click(object sender, RoutedEventArgs e)
+        {
+            ObjectList ol = dataGrid1.ItemsSource as ObjectList;
+            foreach (GeneralObject item in ol)
+            {
+                if (item.IsChecked)
+                {
+                    string f_zhinajin = item.GetPropertyValue("f_zhinajin").ToString();
+                    string id =  item.GetPropertyValue("id").ToString();
+                    HQLAction hql = new HQLAction();
+                    hql.Name = "hql";
+                    hql.WebClientInfo = ol.WebClientInfo;
+                    hql.HQL = "update t_handplan set f_jmzhinajin=" + f_zhinajin +" where id="+id;
+                    hql.Invoke();
+                }
+            }
+            BatchExcuteAction SaveAction = FrameworkElementExtension.FindResource(this.save2, "SaveAction") as BatchExcuteAction;
+            SaveAction.Invoke();
+        }
         }
 
     

@@ -181,7 +181,16 @@
                 <b:BatchInfo Source="{m:Exp Str=InsertHandplan}" MethodName="InvokeToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=Insertcbnum}" MethodName="InvokeToJson"/>
             </b:BatchExcuteAction>
-
+			<!--消息表-->
+			<o:GeneralObject Name="infolist" EntityType="t_infolist" WebClientInfo="{StaticResource dbclient}"
+				IsInit="{m:Exp Str=SaveAction.State\=\=$End$}">
+				<o:PropertySetter PropertyName="f_aliasname" NoDependValue="{m:Exp Str=CoboxPinpai.SelectedItem.f_aliasname}"/>
+                <o:PropertySetter PropertyName="f_type" Default="用户档案"/>
+                <o:PropertySetter PropertyName="f_typesun" Default="3"/>
+                <o:PropertySetter PropertyName="f_datetime" Default="{m:Exp Str=SysTime.Today}"/>
+                <o:PropertySetter PropertyName="f_datetimetime" NoDependValue="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
+                <o:PropertySetter PropertyName="f_json" />
+            </o:GeneralObject>
             <!--保存-->
             <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}"  CanSave="{m:Exp Str=card.State\=\=$End$}" >
                 <!-- CanSave="{m:Exp Str=card.State\=\=$End$ |or| onlySave\=>Click!\=null}"
@@ -189,6 +198,7 @@
                 <b:BatchInfo Source="{m:Exp Str=InsertHandplan}" MethodName="InvokeToJson"/>  -->
                 <b:BatchInfo Source="{m:Exp Str=pipelinego}" MethodName="SaveToJson"/>
                 <b:BatchInfo Source="{m:Exp Str=userfiles}" MethodName="SaveToJson"/>
+				<b:BatchInfo Source="{m:Exp Str=infolist}" CanSave="{m:Exp Str=CoboxPinpai.SelectedItem.send\=\=$是$}" MethodName="SaveToJson"/>
 
             </b:BatchExcuteAction>
         </m:ResourceLoad>
@@ -476,7 +486,7 @@
                         </TextBox>
                         <TextBox x:Name="lastinputgasnum" Visibility="Collapsed" Text="{m:Bind Path=lastinputgasnum}" Grid.Column="5" Margin="0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25">
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="lastinputgasnum" NotNull="True" NoDependValue="{m:Exp Str=userfiles.lastinputgasnum\=&gt;Completed}" />
+                                <o:PropertySetter PropertyName="lastinputgasnum"  NoDependValue="{m:Exp Str=userfiles.lastinputgasnum\=&gt;Completed}" />
                             </a:Data.Prop>
                         </TextBox>
                         <TextBox Text="{m:Bind Path=f_payfeevalid}" Visibility="Collapsed" Grid.Column="1" Margin="0" Grid.Row="9" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" >

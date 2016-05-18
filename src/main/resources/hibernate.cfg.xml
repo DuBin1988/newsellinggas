@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
@@ -10,7 +10,7 @@
 		<property name="connection.pool_size">2</property>
 		
 		<!-- SQL dialect -->
-		<property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
+		<property name="dialect">org.hibernate.dialetc.SQLServerCustomDialect</property>
 
 		<!-- Enable Hibernate's automatic session context management
 		<property name="current_session_context_class">thread</property> -->
@@ -358,6 +358,7 @@
    	    <mapping resource="营收/cbmeiriduizhang.hbm.xml"/>  
    	    <mapping resource="营收/smstemplate.hbm.xml"/>  
    	    <mapping resource="营收/reduction.hbm.xml" />
+   	    <mapping resource="营收/refund.hbm.xml"/>  
        
 	</session-factory>
   
