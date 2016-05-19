@@ -24,7 +24,8 @@
             <!--公司类型列表对象-->
             <o:ObjectList Name="fslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='滞纳金日期类型' order by id"/>
 
-            
+              <o:ObjectList Name="usertypelist" WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='用户类型查询用' order by id" EntityType="paramvalue" HasEmptyRow="True"/>
+          
               <!--把收据记录中的原收据号对应的记录更新为作废f_shoujustatue-->
             <o:GeneralObject Name="shouju" EntityType="t_shoujuinfos" WebClientInfo="{StaticResource dbclient}" 
 		  Path="{m:Exp Str=$one/from t_shoujuinfos where f_invoicenum\=\'\{userfile.DataContext.f_oldinvoicenum\}\'}"
@@ -32,8 +33,8 @@
             
             <o:GeneralObject Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
 							EntityType="t_zhinajindate" 
-							Path="{m:Exp Str=$one/from t_zhinajindate where f_filiale\=\'\{LoginUser.f_fengongsi\}\'}"
-							IsOld="{m:Exp Str=SaveAction.State\=\=$End$}"        	>
+							IsInit="{m:Exp Str=SaveAction.State\=\=$End$}"    
+							Source="{m:Exp Str=userfiles.SelectedItem}"    	>
             </o:GeneralObject>
            
             <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
@@ -83,6 +84,8 @@
                         <sdk:DataGrid.Columns>
                             <sdk:DataGridTextColumn Header="序  号" Binding="{Binding Index}"/>
                             <sdk:DataGridTextColumn Header="分公司" Binding="{Binding f_filiale}" />
+                            <sdk:DataGridTextColumn Header="用户类型" Binding="{Binding f_usertype}"/>
+                            <sdk:DataGridTextColumn Header="滞纳金比率" Binding="{Binding f_ratio}"/>
                             <sdk:DataGridTextColumn Header="类型" Binding="{Binding f_type}"/>
                             <sdk:DataGridTextColumn Header="推后天数" Binding="{Binding f_day}" />
                             <sdk:DataGridTextColumn Header="推后几个月" Binding="{Binding f_month}"/>
@@ -122,6 +125,7 @@
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/> 
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -130,23 +134,23 @@
                                 <ColumnDefinition Width="130"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="类型：" Margin="0" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" Height="25"/>
-                            <TextBlock Margin="0" Grid.Row="6" TextWrapping="Wrap" Text="网      点：" TextAlignment="Right" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_parentname}" Grid.Column="1" Margin="0" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25">
+                            <TextBlock Text="类型：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" Height="25"/>
+                            <TextBlock Margin="0,3,0,2" Grid.Row="7" TextWrapping="Wrap" Text="网      点：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_parentname}" Grid.Column="1" Margin="0,3,136.333,2" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="2">
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_parentname"
 										Default="{m:Exp Str=LoginUser.f_parentname}"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBlock Margin="0" Grid.Row="4" TextWrapping="Wrap" Text="操  作 员："  TextAlignment="Right" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_opertor}" Grid.Column="1" Margin="0" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" >
+                            <TextBlock Margin="0,3,0,2" Grid.Row="5" TextWrapping="Wrap" Text="操  作 员："  TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_opertor}" Grid.Column="1" Margin="0,3,136.333,2" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" Grid.ColumnSpan="2" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_opertor"  
 										Default="{m:Exp Str=LoginUser.name}"/>
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBlock Margin="0" Grid.Row="4" TextWrapping="Wrap" Text="操作日期：" TextAlignment="Right" Height="25" Grid.Column="2"/>
-                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_reversaldate}" IsEnabled="False" Grid.Column="3" Margin="0" Grid.Row="4"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" >
+                            <TextBlock Margin="0.333,3,0,2" Grid.Row="5" TextWrapping="Wrap" Text="操作日期：" TextAlignment="Right" Height="25" Grid.Column="2"/>
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_reversaldate}" IsEnabled="False" Grid.Column="3" Margin="0,3,0,2" Grid.Row="5"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" Grid.ColumnSpan="1" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_reversaldate" 
 										Default="{m:Exp Str=SysTime.Today}"/>
@@ -202,41 +206,60 @@
                                     <o:PropertySetter PropertyName="f_reprinttype" Default="银行" />
                                 </a:Data.Prop>
                             </TextBox>
-                            <TextBlock Margin="0" Grid.Row="5" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="1" >
+                            <TextBlock Margin="0,3,0,2" Grid.Row="6" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0,3,136.333,2" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" Grid.ColumnSpan="2" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_filiale" 
 										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                                 </a:Data.Prop>
                             </TextBox>
                             
-                            <TextBlock Margin="0" Grid.Row="5" Text="操作员时间：" TextAlignment="Right" Height="25" Grid.Column="2" />
-                            <toolkit:TimePicker Value="{m:Bind Path=f_time}" IsEnabled="False" Grid.Column="3" Margin="0" Grid.Row="5"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" FontFamily="Portable User Interface" >
+                            <TextBlock Margin="0.333,3,0,2" Grid.Row="6" Text="操作员时间：" TextAlignment="Right" Height="25" Grid.Column="2" />
+                            <toolkit:TimePicker Value="{m:Bind Path=f_time}" IsEnabled="False" Grid.Column="3" Margin="0,3,0,2" Grid.Row="6"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" FontFamily="Portable User Interface" Grid.ColumnSpan="1" >
 								<a:Data.Prop>
 									<o:PropertySetter PropertyName="f_time" NoDependValue="{m:Exp Str=SecRefresh\=&gt;TimeEvent!\=null:SysTime.Now\,$$}"/>
 								</a:Data.Prop>
 							</toolkit:TimePicker>
-                            <TextBlock Text="推后天数：" Visibility="{m:Exp Str=data.f_type\=\=$按天推后$:$Visible$\,$Collapsed$}" Margin="0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_day}" Visibility="{m:Exp Str=data.f_type\=\=$按天推后$:$Visible$\,$Collapsed$}" IsReadOnly="False" Grid.Column="3" Margin="0" Grid.Row="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
+                            <TextBlock Text="推后天数：" Visibility="{m:Exp Str=data.f_type\=\=$按天推后$:$Visible$\,$Collapsed$}" Margin="0,3,0,0" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25" Grid.ColumnSpan="1"/>
+                            <TextBox Text="{m:Bind Path=f_day}" Visibility="{m:Exp Str=data.f_type\=\=$按天推后$:$Visible$\,$Collapsed$}" IsReadOnly="False" Grid.Column="3" Margin="0,3,0,2" Grid.Row="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" >
                                 <a:Data.Prop>
                                     <o:PropertySetter PropertyName="f_day"   />
                                 </a:Data.Prop>
                             </TextBox>
-                            <ComboBox   DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=fslist}" SelectedValue="{m:Bind Path=f_type}"  Grid.Column="1" Margin="0" Grid.Row="1" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" >
+                            <ComboBox   DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=fslist}" SelectedValue="{m:Bind Path=f_type}"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="1" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" >
                             	<a:Data.Prop>
                             		<o:PropertySetter  PropertyName="f_type" NotNull="True"/>
                             	</a:Data.Prop>
                             </ComboBox>
-                            <TextBlock Margin="0,2.5" Grid.Row="2" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" TextWrapping="Wrap" Text="推后几个月："  TextAlignment="Right" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_month}" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" Grid.Column="1" Margin="0,2.5" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" >
+                            <TextBlock Margin="0,3,0,2" Grid.Row="2" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" TextWrapping="Wrap" Text="推后几个月："  TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_month}" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" Grid.Column="1" Margin="0" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="False" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" Grid.ColumnSpan="1" >
                             	<a:Data.Prop>
                             		<o:PropertySetter PropertyName="f_month" />
                             	</a:Data.Prop>
                             </TextBox>
-                            <TextBlock Text="当月几号：" Margin="0,2.5" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_monthday}"  Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" IsReadOnly="False" Grid.Column="3" Margin="0,2.5" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" >
+                            <TextBlock Text="推后月几号：" Margin="0.333,3,0,2" Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25" Grid.ColumnSpan="1"/>
+                            <TextBox Text="{m:Bind Path=f_monthday}"  Visibility="{m:Exp Str=data.f_type\=\=$按月推后$:$Visible$\,$Collapsed$}" IsReadOnly="False" Grid.Column="3" Margin="0,3,0,2" Grid.Row="2" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" >
                             	<a:Data.Prop>
                             		<o:PropertySetter PropertyName="f_monthday"   />
+                            	</a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="用户类型：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="3" Height="25"/>
+                            <ComboBox   DisplayMemberPath="name" SelectedValuePath="name" ItemsSource="{m:Exp Str=usertypelist}" SelectedValue="{m:Bind Path=f_usertype}"  Grid.Column="1" Margin="0,3,0,2" Grid.Row="3" HorizontalAlignment="Stretch" Width="Auto" Height="25" VerticalAlignment="Stretch" >
+                            	<a:Data.Prop>
+                            		<o:PropertySetter  PropertyName="f_usertype" NotNull="True"/>
+                            	</a:Data.Prop>
+                            </ComboBox>
+                            <TextBlock Text="滞纳金比率：" Margin="0,3,0,2"  Grid.Row="3" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_ratio}"    IsReadOnly="False" Grid.Column="3" Margin="0,3,0,2" Grid.Row="3" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" >
+                            	<a:Data.Prop>
+                            		<o:PropertySetter PropertyName="f_ratio"   NotNull="True"/>
+                            	</a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Margin="0,3,0,2" Grid.Row="9" TextWrapping="Wrap" Text="必须分别设置民用和非民用两种滞纳金信息！" TextAlignment="Right" Height="25" Grid.ColumnSpan="3" Foreground="#FFF50F0F" HorizontalAlignment="Left" FontSize="16" Grid.Column="1"/>
+                            <TextBlock Margin="0,3,0,2" Grid.Row="4"  TextWrapping="Wrap" Text="开始滞纳气量："  TextAlignment="Right" Height="25"/>
+                            <TextBox Text="{m:Bind Path=f_zhinagas}"  Grid.Column="1" Margin="0,2.5,136.333,2.5" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="False" VerticalAlignment="Stretch" Height="25" FontFamily="Portable User Interface" Grid.ColumnSpan="2" >
+                            	<a:Data.Prop>
+                            		<o:PropertySetter PropertyName="f_zhinagas" NotNull="True" Default="0"/>
                             	</a:Data.Prop>
                             </TextBox>
                         </Grid>
