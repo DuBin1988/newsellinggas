@@ -341,13 +341,19 @@ namespace Com.Aote.Pages
 
             if (e.Error != null)
             {
-                MessageBox.Show("未找到用户的表具信息，请去表具建档！");
+                MessageBox.Show("查询失败，链接错误！");
                 return;
             }
 
             //把数据转换成JSON
             JsonObject item = JsonValue.Parse(e.Result) as JsonObject;
-
+            if (item.ContainsKey("error"))
+            {
+                string error = item["error"];
+                MessageBox.Show("查询失败：" + error);
+                busy.IsBusy = false;
+                return;
+            }
             //把用户数据写到交费界面上
             ui_username.Text = (string)item["f_username"];
             ui_usertype.Text = (string)item["f_usertype"];
@@ -410,7 +416,7 @@ namespace Com.Aote.Pages
                 decimal oughtamount = (decimal)json["oughtamount"];
                 gasSum += oughtamount;
                 go.SetPropertyValue("oughtamount", oughtamount, false);
-                int id = Int32.Parse(json["id"] + "");
+                int id = (int)json["id"];
                 go.SetPropertyValue("id", id, false);
                 //计算总滞纳金
                 decimal f_zhinajin = (decimal)json["f_zhinajin"];
