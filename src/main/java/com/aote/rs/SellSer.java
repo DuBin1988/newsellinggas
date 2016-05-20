@@ -58,11 +58,11 @@ public class SellSer {
 
 			// 获取用户档案及抄表记录情况
 			String sql = "select "
-					+ "h.id,isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(u.f_usertype,'民用') f_usertype,"
-					+ "isnull(u.f_districtname,'空小区') f_districtname,isnull(u.f_address,'空地址') f_address,"
-					+ "isnull(u.f_gasproperties,'普通民用') f_gasproperties,isnull(u.f_gaspricetype,'民用气价') f_gaspricetype,"
-					+ "ui.f_userid infoid,isnull(u.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
-					+ "isnull(u.f_payment,'现金') f_payment,isnull(u.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
+					+ "h.id,isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(ui.f_usertype,'民用') f_usertype,"
+					+ "isnull(ui.f_districtname,'空小区') f_districtname,isnull(ui.f_address,'空地址') f_address,"
+					+ "isnull(ui.f_gasproperties,'普通民用') f_gasproperties,isnull(ui.f_gaspricetype,'民用气价') f_gaspricetype,"
+					+ "ui.f_userid infoid,isnull(ui.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
+					+ "isnull(ui.f_payment,'现金') f_payment,isnull(ui.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
 																																			// t_userinfo
 					+ "" // u t_userfiles
 					+ "h.days days,h.f_userid f_userid,isnull(h.oughtamount,0) oughtamount,"
