@@ -26,6 +26,7 @@ namespace Com.Aote.Pages
             ui_busy.IsBusy = true;
             string userid = ui_userid.Text;
             string pregas = ui_pregas.Text;
+            string f_filiale = ui_filiale.Text;
             if(userid.Equals(""))
             {
                 MessageBox.Show("请先查询!");
@@ -39,7 +40,7 @@ namespace Com.Aote.Pages
                 return;
             }
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas;
+            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "/" + f_filiale + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += client_DownloadStringCompleted;

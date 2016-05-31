@@ -74,9 +74,10 @@ public class CardCharge {
 	private double sumamont;
 
 	@GET
-	@Path("/num/{userid}/{pregas}")
+	@Path("/num/{userid}/{pregas}/{filiale}")
 	public JSONObject pregas(@PathParam("userid") String userid,
-			@PathParam("pregas") double pregas) {
+			@PathParam("pregas") double pregas,
+			@PathParam("filiale") String filiale) {
 		JSONObject obj = new JSONObject();
 		try {
 			double chargenum = 0;
@@ -94,10 +95,10 @@ public class CardCharge {
 			double stair2fee = 0;
 			double stair3fee = 0;
 			double stair4fee = 0;
-			SearchStair(userid);
+			SearchStair(userid, filiale);
 			// 针对设置阶梯气价的用户运算
 			if (!stairtype.equals("未设")) {
-				CountAmount(userid);
+				CountAmount(userid, filiale);
 				// 累计购气量
 				double allamont = sumamont + pregas;
 				// 当前购气量在第一阶梯
@@ -227,9 +228,10 @@ public class CardCharge {
 
 	// 出入金额
 	@GET
-	@Path("/fee/{userid}/{prefee}")
+	@Path("/fee/{userid}/{prefee}/{filiale}")
 	public JSONObject prefee(@PathParam("userid") String userid,
-			@PathParam("prefee") double prefee) {
+			@PathParam("prefee") double prefee,
+			@PathParam("filiale") String filiale) {
 		JSONObject obj = new JSONObject();
 		try {
 			double chargeamont = 0;
@@ -242,12 +244,12 @@ public class CardCharge {
 			double stair3fee = 0;
 			double stair4fee = 0;
 
-			SearchStair(userid);
+			SearchStair(userid,filiale);
 			prefee += zhye;
 			// 针对设置阶梯气价的用户运算
 			if (!stairtype.equals("未设")) {
 				// 查询本月总购气量
-				CountAmount(userid);
+				CountAmount(userid,filiale);
 				// 当前购气量在第一阶梯
 				if (sumamont < stair1amount) {
 					// 阶段一剩下气量的金额大于本次购气金额 直接按阶梯一的价格算出气量
@@ -373,15 +375,18 @@ public class CardCharge {
 	}
 
 	// 查询用户阶梯气价信息 用户档案里面的阶梯
-	private void SearchStair(String userid) {
+	private void SearchStair(String userid, String filiale) {
 		try {
 			// 查出该用户阶梯气价信息
 			final String usersql = "select isnull(uo.f_stairtype,'未设')f_stairtype, isnull(uo.f_gasprice,0)f_gasprice, isnull(uo.f_stair1amount,0)f_stair1amount,isnull(uo.f_stair2amount,0)f_stair2amount,"
 					+ "isnull(uo.f_stair3amount,0)f_stair3amount,isnull(uo.f_stair1price,0) f_stair1price,"
 					+ "isnull(uo.f_stair2price,0) f_stair2price,isnull(uo.f_stair3price,0) f_stair3price,isnull(uo.f_stair4price,0) f_stair4price,"
 					+ "isnull(uo.f_stairmonths,0)f_stairmonths,Substring( CONVERT(varchar(12), uo.f_yytdate, 111 ),1,10) f_yytdate,isnull(uo.f_zhye,0)* 100 f_zhye "
-					+ " from t_userfiles um left join t_userinfo uo on um.f_userinfoid = uo.f_userid where um.f_userid='"
-					+ userid + "'";
+					+ " from t_userfiles um left join t_userinfo uo on um.f_userinfoid = uo.f_userid and um.f_filiale=uo.f_filiale and um.f_filiale='"
+					+ filiale
+					+ "' where um.f_userid='"
+					+ userid
+					+ "' and f_filiale='" + filiale + "'";
 			List<Map<String, Object>> userlist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)
@@ -470,17 +475,22 @@ public class CardCharge {
 	}
 
 	// 查询本月总购气量
-	private void CountAmount(String userid) {
+	private void CountAmount(String userid, String filiale) {
 		try {
 			// 先计算开始和技术时间
 			CountDate(userid, hibernateTemplate);
 
 			final String gassql = " select count(*) times, sum(isnull(f_pregas,0))f_pregas from t_sellinggas "
-					+ "where f_userid in (select f_userid from t_userfiles   where f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
+					+ "where f_userid in (select f_userid from t_userfiles   where f_filiale='"
+					+ filiale
+					+ "' and f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
 					+ userid
 					+ "')) and f_deliverydate>='"
 					+ stardate
-					+ "' and f_deliverydate<='" + enddate + "'";
+					+ "' and f_deliverydate<='"
+					+ enddate
+					+ "' and f_filiale='"
+					+ filiale + "'";
 			List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)

@@ -888,9 +888,9 @@
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25"/>
-                                <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
+                                <TextBox x:Name="ui_filiale" Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_filiale"
+                                        <o:PropertySetter PropertyName="f_filiale" NotNull="True"
 										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                                     </a:Data.Prop>
                                 </TextBox>
