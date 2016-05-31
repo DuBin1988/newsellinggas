@@ -213,11 +213,11 @@
                 <toolkit:DockPanel>
                         <Grid x:Name="userfile" >
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="0.45*"/>
+                                <RowDefinition Height="300"/>
                                 <RowDefinition Height="0.45*"/>
                                 <RowDefinition Height="0.10*"/>
                             </Grid.RowDefinitions>
-                            <c:BusyIndicatorEx  >
+                            <c:BusyIndicatorEx Grid.Row="0"  >
                                 <sdk:TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <sdk:TabItem Header="用户信息">
                                         <Grid Margin="0" HorizontalAlignment="Stretch" DataContext="{m:Exp Str=userinfogo}">
@@ -228,6 +228,7 @@
                                                 </LinearGradientBrush>
                                             </Grid.Background>
                                             <Grid.RowDefinitions>
+                                                <RowDefinition Height="30"/>
                                                 <RowDefinition Height="30"/>
                                                 <RowDefinition Height="30"/>
                                                 <RowDefinition Height="30"/>
@@ -365,6 +366,12 @@
                                             	</a:Data.Prop>
                                             </ComboBox>
                                             <TextBlock Margin="0,6,0,5" TextWrapping="Wrap" Text="银行账号：" TextAlignment="Right" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center" Height="19" Width="71" Grid.Column="4"/>
+                                            <TextBlock Text="开户名称：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="0" />
+                                            <TextBox Text="{m:Bind Path=f_usermc}" x:Name="f_cusDom_Copy" Grid.Column="1"  Grid.Row="7"  Margin="0,2.5"  Grid.ColumnSpan="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                            	<a:Data.Prop>
+                                            		<o:PropertySetter PropertyName="f_usermc"  ValidationVal="{m:Exp Str=userinfogo.f_usermc!\=null or userinfogo.f_payment!\=$银行代扣$}" ErrorMessage="开户名称不能为空！"/>
+                                            	</a:Data.Prop>
+                                            </TextBox>
                                         </Grid>
                                     </sdk:TabItem>
                                 </sdk:TabControl>

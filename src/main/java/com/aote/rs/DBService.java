@@ -220,7 +220,7 @@ public class DBService {
 		log.debug(array.toString());
 		return array;
 	}
-	
+
 	@GET
 	@Path("/one/sql/{sql}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -232,8 +232,7 @@ public class DBService {
 		JSONObject result = new JSONObject();
 		try {
 
-			HibernateSQLCall sqlCall = new HibernateSQLCall(query, 0,
-					10);
+			HibernateSQLCall sqlCall = new HibernateSQLCall(query, 0, 10);
 			sqlCall.transformer = Transformers.ALIAS_TO_ENTITY_MAP;
 			List<Map<String, Object>> list = executeFind(
 					sessionFactory.getCurrentSession(), sqlCall);
@@ -937,7 +936,9 @@ public class DBService {
 	@Path("sql/{pageIndex}/{pageSize}")
 	// 按sql方式执行后，获取一页数据，字段名由SQL语句决定
 	public JSONArray queryPostSQLPage(@PathParam("pageSize") int pageSize,
-			@PathParam("pageIndex") int pageIndex, String query) {
+			@PathParam("pageIndex") int pageIndex, String query,
+			@Context HttpServletRequest request) {
+		String EntityType = request.getParameter("EntityType");
 		JSONArray array = new JSONArray();
 		log.debug(query + ", size=" + pageSize + ", index=" + pageIndex);
 		// 如果pageIndex小于0，直接返回
@@ -950,6 +951,7 @@ public class DBService {
 		List<Map<String, Object>> list = executeFind(
 				sessionFactory.getCurrentSession(), sqlCall);
 		for (Map<String, Object> map : list) {
+			map.put("EntityType", EntityType);
 			JSONObject json = (JSONObject) new JsonTransfer().MapToJson(map);
 			array.put(json);
 		}

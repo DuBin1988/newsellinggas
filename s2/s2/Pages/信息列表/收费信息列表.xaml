@@ -19,6 +19,8 @@
 	x:Class="Com.Aote.Pages.收费信息列表">
     <Grid>
         <m:ResourceLoad Margin="0,0,-12,0">
+            <!--用气性质-->
+			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name like '%用气性质'"/>
             <!--阶梯气价信息列表-->
             <o:ObjectList Name="stairlist" EntityType="t_stairprice" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=zonggongsi.value\=\=LoginUser.f_fengongsi:$from t_stairprice$\,$from t_stairprice where f_branch\=\'\{LoginUser.f_fengongsi\}\'}"  HasEmptyRow="True" />
             <o:ObjectList Name="jiaofeilistnull" EntityType="paramvalue" HasEmptyRow="True" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='是否' order by id"/>
@@ -79,6 +81,8 @@
                                         <RowDefinition Height="28"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="90"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="90"/>
@@ -225,7 +229,7 @@
                                     		Completed="{m:Exp Str=downLoad.Down()}"
                                     		Path="{m:Exp Str=$\{server.BaseAddress\}/excel/\{daninfos.ItemsSource.Count\}/f_userid:用户编号|f_username:用户姓名|f_address:地址|f_districtname:小区名称|f_apartment:门牌号|f_cardid:卡号|f_gasprice:气价|f_pregas:气量|f_preamount:金额|f_zhinajin:违约金|f_grossproceeds:充值|f_cardfees:发卡费|f_payfeevalid:是否有效|f_sgnetwork:网点|f_sgoperator:操作员|f_invoicenum:发票号|f_deliverydate:收费日期|f_usertype:用户类型|f_gaswatchbrand:气表品牌|f_gaspricetype:气价类型|f_beginfee:维护费起始日期|f_endfee:维护费截止日期|f_amountmaintenance:维护费|f_payment:付款方式|f_zhye:上期余额|f_benqizhye:本期余额|f_invoicenum:发票号|f_payfeetype:收费类型|f_filiale:所属公司|f_comtype:公司类型|f_deliverytime:交费时间|id:序号$}"/>
                                         <c:DownLoad x:Name="downLoad" Path="{m:Exp Str=$\{server.BaseAddress\}/file/\{toExcel.FileName\}}" Filter="(*.xls)|*.xls"/>
-                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" RenderTransformOrigin="1.2,0.1" Grid.Column="7" Grid.Row="4" Width="70" HorizontalAlignment="Left" Margin="140,0,0,0" />
+                                        <Button Content="导出Excel" IsEnabled="{m:Exp Str=daninfos.ItemsSource.Count!\=0:True\,False}" Click="{m:Exp Str=toExcel.ToExcel()}" RenderTransformOrigin="1.2,0.1" Grid.Column="7" Grid.Row="4" Width="70" HorizontalAlignment="Left" Margin="140,0,0,0" Grid.ColumnSpan="2" />
                                         <TextBlock TextWrapping="Wrap" Text="总公司：" Grid.Column="0" Grid.Row="3"  Height="25" TextAlignment="Right" Margin="0,2,0,1"/>
                                         <TextBox x:Name="FirstStair" TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" Text="{m:Bind Path=FirstStair}"   Width="Auto" Margin="0" Height="25" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" IsReadOnly="True" >
                                         	<a:Data.Prop>
@@ -263,6 +267,12 @@
                                         		<o:PropertySetter PropertyName="FourthStair" Default="{m:Exp Str=FourthStairlist.Count&gt;0:LoginUser.orgpathstr.Split($.$\,3)\,null}" Operator="f_OrgStr like '%this%'"/>
                                         	</a:Data.Prop>
                                         </ComboBox>
+                                        <TextBlock TextWrapping="Wrap" Text="用气性质：" Grid.Column="8"  Margin="0,1.5" Height="25" TextAlignment="Right" />
+										 <ComboBox x:Name="CoboxGasPro" ItemsSource="{m:Exp Str=usegaslist}" DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_gasproperties}"  Grid.Column="9" Margin="0,4,0,1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                                <a:Data.Prop>
+                                                    <o:PropertySetter PropertyName="f_gasproperties" Operator="f_gasproperties='this'" />
+                                                </a:Data.Prop>
+                                            </ComboBox>
                                    </Grid>
 
                                 <toolkit:DockPanel   Background="#FFC3E4FD" toolkit:DockPanel.Dock="Bottom" Height="51">
