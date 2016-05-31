@@ -151,10 +151,11 @@ namespace Com.Aote.Pages
             ui_chargeBusy.IsBusy = false;
             if (e.Error == null)
             {
+                string f_filiale = ui_filiale.Text;
                 JsonObject items = JsonValue.Parse(e.Result) as JsonObject;
                 pregas = Math.Floor(double.Parse(items["chargeamont"].ToString()));
                 WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
+                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "/" + f_filiale + "?uuid=" + System.Guid.NewGuid().ToString();
                 Uri uri = new Uri(str);
                 WebClient client2 = new WebClient();
                 client2.DownloadStringCompleted += client2_DownloadStringCompleted;
