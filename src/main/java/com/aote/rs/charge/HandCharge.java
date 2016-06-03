@@ -378,7 +378,8 @@ public class HandCharge {
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
 		// 取出抄表日期得到缴费截止日期DateFormat.parse(String s)
-		Date date = endDate(lastinputdate, userid, loginuser);// 缴费截止日期
+		String userinfoid = user.get("f_userid").toString();
+		Date date = endDate(lastinputdate, userinfoid, loginuser);// 缴费截止日期
 		// 录入日期
 		Date inputdate = new Date();
 		// 计划月份
