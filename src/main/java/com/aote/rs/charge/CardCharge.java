@@ -386,7 +386,7 @@ public class CardCharge {
 					+ filiale
 					+ "' where um.f_userid='"
 					+ userid
-					+ "' and f_filiale='" + filiale + "'";
+					+ "' and um.f_filiale='" + filiale + "'";
 			List<Map<String, Object>> userlist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)
