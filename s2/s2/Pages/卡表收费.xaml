@@ -158,6 +158,8 @@
                 <o:PropertySetter PropertyName="f_fillgas"
 				NoDependValue="{m:Exp Str=kbfee.f_surplusgas>0:fillgas\,null}"/>
 				<o:PropertySetter PropertyName="f_OrgStr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+				<o:PropertySetter PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+				<o:PropertySetter PropertyName="f_gasmeterstyle" Default="卡表"/>
             </o:GeneralObject>
             <!--开票类型-->
             <o:ObjectList Name="invoicelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票样式' order by id"/>
