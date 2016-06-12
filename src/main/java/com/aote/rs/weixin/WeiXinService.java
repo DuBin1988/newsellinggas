@@ -177,17 +177,19 @@ public class WeiXinService {
 					double f_zhye = object.getDouble("zhye");
 					double money = object.getDouble("money");
 					double zhinajin = object.getDouble("zhinajin");
-					
-					String  f_userid=object.getString("f_userid");
-					String f_username =URLEncoder.encode(object.getString("f_username"), "utf-8");
-					String f_address = URLEncoder.encode(object.getString("f_address"), "utf-8");
+
+					String f_userid = object.getString("f_userid");
+					String f_username = URLEncoder.encode(
+							object.getString("f_username"), "utf-8");
+					String f_address = URLEncoder.encode(
+							object.getString("f_address"), "utf-8");
 
 					String redirect_url = "/qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
-							+ "&arr=" + arr + 
-							"&f_userid=" + f_userid+"&f_username=" +f_username + "&f_address="
-									+ f_address + "&uuid=" + uuid;
+							+ "&arr=" + arr + "&f_userid=" + f_userid
+							+ "&f_username=" + f_username + "&f_address="
+							+ f_address + "&uuid=" + uuid;
 					System.out.println(redirect_url);
 					response.sendRedirect(redirect_url);
 
@@ -392,11 +394,18 @@ public class WeiXinService {
 	public String notify(@Context HttpServletRequest request,
 			@Context HttpServletResponse response) throws JSONException {
 		System.out.println("微信支付weixin-notify");
+		log.debug("微信支付weixin-notify");
 		JSONObject ob = xml(request, response);
 		// String redirect_url = "/success.jsp?openid=" + openid
 		// + "&showwxpaytitle=1";
 		// response.sendRedirect(redirect_url);
 		return "";
+	}
+	
+	public boolean GetWeChatPayResult(String OrderFormID)
+	{
+		//通过OrderFormID查询微信结果表
+		return false;
 	}
 
 	public synchronized JSONObject xml(@Context HttpServletRequest request,
@@ -417,6 +426,7 @@ public class WeiXinService {
 			}
 			String xml = sb.toString();
 			System.out.println(xml);
+			log.debug(xml);
 			WxNofityReturnData reData = new WxNofityReturnData();
 			XStream xs1 = new XStream(new DomDriver());
 			xs1.alias("xml", WxNofityReturnData.class);
@@ -480,6 +490,7 @@ public class WeiXinService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.debug("", e);
 		}
 
 		// String result = "";
@@ -613,6 +624,7 @@ public class WeiXinService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JSONObject selList1(@PathParam("f_userid") String f_userid) {
 		try {
+
 			String sql = "from t_userfiles   where f_userid='" + f_userid + "'";
 
 			List list = this.hibernateTemplate.find(sql);
@@ -651,10 +663,12 @@ public class WeiXinService {
 			IOException {
 		JSONObject obj = selList1(f_userid);
 		String f_openid = obj.getString("f_openid");
-		if (f_openid.equals("")) {
-			String sql = "update t_userfiles set f_openid='" + openid
-					+ "'  where " + " f_userid='" + f_userid + "'";
-
+		String sqluser = "from t_userfiles   where f_openid='"+openid+"'";
+		List list = this.hibernateTemplate.find(sqluser);
+		log.debug(list.size());
+		if (f_openid.equals("") && list.size() == 0) {
+			String sql = "update t_userfiles set f_openid='"+openid+"'  where "
+					+ " f_userid='" + f_userid + "'";
 			int length = this.hibernateTemplate.bulkUpdate(sql);
 			log.debug("用户绑定" + sql);
 			if (length == 0) {
@@ -662,25 +676,46 @@ public class WeiXinService {
 			} else {
 				JSONObject ob = selectqf(f_userid);
 				ob.put("message", "绑定成功");
+				log.debug(ob);
+				System.out.println(ob);
 				return ob;
 			}
 		} else {
-
-			if (f_openid.equals(openid)) {
-				JSONObject obj1 = selectqf(f_userid);
-				obj1.put("message", "您已绑定");
-				System.out.println(obj1);
-				return obj1;
-
-			} else {
+			if(!f_openid.equals("")){
 				JSONObject object = new JSONObject();
 				object.put("message", "此号已经被别的用户绑定");
 				System.out.println(object);
+				log.debug( object );
 				return object;
+			}
+			if (list.size() > 1) {
+				JSONObject object = new JSONObject();
+				object.put("message", "要绑定新的用户编号，请先对已绑定的用户编号解除绑定");
+				System.out.println(object);
+				log.debug( object );
+				return object;
+			} else {
+				if (list.size() == 1) {
+					Map<String, Object> map = (Map<String, Object>) list.get(0);
+					String userid = map.get("f_userid").toString();
+					if (userid.equals(f_userid)) {
+						JSONObject obj1 = selectqf(f_userid);
+						obj1.put("message", "您已绑定");
+						log.debug( obj1 );
+						//System.out.println(obj1);
+						return obj1;
+					} else {
+						JSONObject object = new JSONObject();
+						object.put("message", "要绑定新的用户编号，请先对已绑定的用户编号解除绑定");
+					//	System.out.println(object);
+						log.debug(object);
+						return object;
+					}
 
+				}
 			}
 		}
-
+		return null;
 	}
 
 	// 解绑

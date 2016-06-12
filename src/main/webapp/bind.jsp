@@ -7,6 +7,12 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <title>用户查询与绑定</title>
+<style>
+.a {
+	text-align: center;
+	font-size: 16px;
+}
+</style>
 <link href="style/css.css" rel="stylesheet" type="text/css">
 </head>
 <script src="js/jquery-1.7.2.min.js"></script>
@@ -31,21 +37,21 @@
 		var f_userid = document.getElementById("username").value;
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
-		
+
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
-				
-				if (xhttp.responseText == null||xhttp.responseText=="") {
+
+				if (xhttp.responseText == null || xhttp.responseText == "") {
 					alert(xhttp.responseText);
 					alert("请检查您输入的用户编号是否正确");
 					return;
 				}
-				
 				var object = xhttp.responseText;
 				var obj = JSON.parse(object);
-              if( obj.mmessage=="请检查您输入的用户编号是否正确"){
-            	  alert("请检查您输入的用户编号是否正确");
+				if (obj.mmessage == "请检查您输入的用户编号是否正确") {
+					alert("请检查您输入的用户编号是否正确");
 					return;
 				}
+				
 				var f_name = obj.f_username;
 				$("#name").html(f_name);
 				var f_address = obj.f_address;
@@ -74,11 +80,15 @@
 						alert(message);
 						return;
 					}
+					if (message == "要绑定新的用户编号，请先对已绑定的用户编号解除绑定") {
+						alert(message);
+						return;
+					}
 					alert(message);
 					var zhye = obj.zhye;
 					var money = obj.money;
 					var zhinajin = obj.zhinajin;
-					var  f_userid=obj.f_userid;
+					var f_userid = obj.f_userid;
 					var f_username = obj.f_username;
 					var f_address = obj.f_address;
 					var arr1 = obj.arr;
@@ -86,7 +96,7 @@
 					document.location.href = "qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
-							+ "&arr=" + arr+ "&f_userid=" + f_userid
+							+ "&arr=" + arr + "&f_userid=" + f_userid
 							+ "&f_username=" + f_username + "&f_address="
 							+ f_address;
 				}
@@ -103,30 +113,33 @@
 <body>
 	<header class="findstyle">
 	<ul class="list">
-		<li  class="userid">用户编号：</li><br>
-		<li  class="textinput"><input type="text"
-			value="" id=username></li>
-	<li class="findbtn"><input type="button"
-			value="查询" onclick="f_select();"></li>
+		<li class="userid">用户编号：</li>
+		<br>
+		<li class="textinput"><input type="text" value="" id=username></li>
+		<li class="findbtn"><input type="button" value="查询"
+			onclick="f_select();"></li>
 		<br>
 	</ul>
-	
+
 	</header>
 	<section class="userinfo" style="display: none;" id="sel">
 	<body onload="f_select()">
 		<ul class="list">
-			<li><strong>用户姓名：</strong><span
-				id="name"></li>
-			<li><strong>用户地址：</strong><span
-				id="address"></span></li>
+			<li><strong>用户姓名：</strong><span id="name"></li>
+			<li><strong>用户地址：</strong><span id="address"></span></li>
 			<li>请您仔细核对自己的信息，然后再绑定</li>
+
 		</ul>
 	</section>
 	<div class="btn">
-		<input type="submit" value="绑定" class="bdbtn"
-			onclick="f_bind();">
+		<input type="submit" value="绑定" class="bdbtn" onclick="f_bind();">
 	</div>
-	
-	
+	<br>
+	<br>
+	<div class="a">
+		<p>可拨打热线64363768查询用户编号</p>
+	</div>
+
+
 </body>
 </html>
