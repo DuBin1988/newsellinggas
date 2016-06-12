@@ -49,153 +49,185 @@ public class SellSer {
 	// 获取某个编号基本信息及欠费数据
 	@GET
 	@Path("bill/{userid}/{fengongsi}")
-	public String getUserBill(@PathParam("userid") String userid,
+	public JSONObject getUserBill(@PathParam("userid") String userid,
 			@PathParam("fengongsi") String fengongsi) throws Exception {
-		String result = "{";
+		JSONObject result = new JSONObject();
+		try {
+			// 获取所有单值
+			Map<String, String> singles = getSingles();
 
-		// 获取所有单值
-		Map<String, String> singles = getSingles();
-
-		// 获取用户档案及抄表记录情况
-		String sql = "select "
-				+ "h.id,isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(u.f_usertype,'民用') f_usertype,"
-				+ "isnull(u.f_districtname,'空小区') f_districtname,isnull(u.f_address,'空地址') f_address,"
-				+ "isnull(u.f_gasproperties,'普通民用') f_gasproperties,isnull(u.f_gaspricetype,'民用气价') f_gaspricetype,"
-				+ "ui.f_userid infoid,isnull(u.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
-				+ "isnull(u.f_payment,'现金') f_payment,isnull(u.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
-																																		// t_userinfo
-				+ "" // u t_userfiles
-				+ "h.days days,h.f_userid f_userid,isnull(h.oughtamount,0) oughtamount,"
-				+ "isnull(h.oughtfee,0) oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
-				+ "h.lastrecord lastrecord,h.f_endjfdate f_endjfdate,h.f_operator f_operator,"
-				+ "h.f_inputdate f_inputdate,h.f_network f_network,h.f_handdate f_handdate,"
-				+ "h.id handId ,isnull(h.f_stair1amount,0) f_stair1amount ,isnull(h.f_stair1price,0) f_stair1price, isnull(h.f_stair1fee,0) f_stair1fee, isnull(h.f_stair2amount,0) f_stair2amount, isnull(h.f_stair2price,0) f_stair2price, isnull(h.f_stair2fee,0) f_stair2fee"
-				+ ", isnull(h.f_stair3amount,0) f_stair3amount, isnull(h.f_stair3price,0) f_stair3price, isnull(h.f_stair3fee,0) f_stair3fee"
-				+ // h t_handplan
-				"  from (select * from t_userinfo where f_userid='"
-				+ userid
-				+ "' and f_filiale='"
-				+ fengongsi
-				+ "') ui join t_userfiles u on ui.f_filiale=u.f_filiale and ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
-				+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否' and f_userinfoid='"
-				+ userid + "' and f_filiale='" + fengongsi + "') h "
-				+ "on u.f_userid=h.f_userid and h.f_filiale=u.f_filiale "
-				+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
-		log.debug("查询欠费sql:" + sql);
-		List<Map<String, Object>> list = this.hibernateTemplate
-				.executeFind(new HibernateSQLCall(sql));
-
-		// 从第一条获取户数据
-		Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
-		result += "infoid:'" + (String) userinfo.get("infoid") + "'";
-		result += ",f_username:'" + (String) userinfo.get("f_username") + "'";
-		BigDecimal zz = new BigDecimal(userinfo.get("f_zherownum").toString());
-		result += ",f_zherownum:" + zz;
-		result += ",f_address:'" + (String) userinfo.get("f_address") + "'";
-		// 用户结余
-		BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye").toString());
-		result += ",f_zhye:" + f_zhye;
-		String f_usertype = (String) userinfo.get("f_usertype");
-		result += ",f_usertype:'" + f_usertype + "'";
-		result += ",f_districtname:'" + (String) userinfo.get("f_districtname")
-				+ "'";
-		result += ",f_gasproperties:'"
-				+ (String) userinfo.get("f_gasproperties") + "'";
-		result += ",f_gaspricetype:'" + (String) userinfo.get("f_gaspricetype")
-				+ "'";
-		result += ",f_gasprice:" + userinfo.get("f_gasprice");
-		result += ",f_dibaohu:" + userinfo.get("f_dibaohu");
-		result += ",f_payment:'" + (String) userinfo.get("f_payment") + "'";
-		result += ",f_userstate:'" + (String) userinfo.get("f_userstate") + "'";
-		result += ",f_stairtype:'" + (String) userinfo.get("f_stairtype") + "'";
-		result += ", f_hands:[";
-		// 欠费表的数据
-		String hands = "";
-
-		// 取滞纳金比率
-		BigDecimal scale = null;
-
-		if (f_usertype.equals("民用")) {
-			scale = new BigDecimal(singles.get("民用滞纳金比率"));
-		} else {
-			scale = new BigDecimal(singles.get("非民用滞纳金比率"));
-		}
-		int i = 0;
-		// 循环获取欠费数据
-		for (Map<String, Object> hand : list) {
-			if (!hands.equals("")) {
-				hands += ",";
+			// 获取用户档案及抄表记录情况
+			String sql = "select "
+					+ "h.id,isnull(ui.f_zhye,0) f_zhye,isnull(ui.f_username,'空名字') f_username,isnull(ui.f_zherownum,13) f_zherownum,isnull(ui.f_usertype,'民用') f_usertype,"
+					+ "isnull(ui.f_districtname,'空小区') f_districtname,isnull(ui.f_address,'空地址') f_address,"
+					+ "isnull(ui.f_gasproperties,'普通民用') f_gasproperties,isnull(ui.f_gaspricetype,'民用气价') f_gaspricetype,"
+					+ "ui.f_userid infoid,isnull(ui.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
+					+ "isnull(ui.f_payment,'现金') f_payment,isnull(ui.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
+																																				// t_userinfo
+					+ "" // u t_userfiles
+					+ "h.days days,h.f_userid f_userid,isnull(h.oughtamount,0) oughtamount,"
+					+ "isnull(h.oughtfee,0) oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
+					+ "h.lastrecord lastrecord,h.f_endjfdate f_endjfdate,h.f_operator f_operator,"
+					+ "h.f_inputdate f_inputdate,h.f_network f_network,h.f_handdate f_handdate,"
+					+ "h.id handId ,isnull(h.f_stair1amount,0) f_stair1amount ,isnull(h.f_stair1price,0) f_stair1price, isnull(h.f_stair1fee,0) f_stair1fee, isnull(h.f_stair2amount,0) f_stair2amount, isnull(h.f_stair2price,0) f_stair2price, isnull(h.f_stair2fee,0) f_stair2fee"
+					+ ", isnull(h.f_stair3amount,0) f_stair3amount, isnull(h.f_stair3price,0) f_stair3price, isnull(h.f_stair3fee,0) f_stair3fee"
+					+ // h t_handplan
+					"  from (select * from t_userinfo where f_userid='"
+					+ userid
+					+ "' and f_filiale='"
+					+ fengongsi
+					+ "') ui join t_userfiles u on ui.f_filiale=u.f_filiale and ui.f_userid=u.f_userinfoid and u.f_gasmeterstyle='机表'"
+					+ "left join (select datediff(day,isnull(f_endjfdate,GETDATE()),GETDATE()) days,* from t_handplan where f_state='已抄表' and shifoujiaofei='否' and f_userinfoid='"
+					+ userid + "' and f_filiale='" + fengongsi + "') h "
+					+ "on u.f_userid=h.f_userid and h.f_filiale=u.f_filiale "
+					+ "order by u.f_userid, h.lastinputdate, h.lastinputgasnum";
+			log.debug("查询欠费sql:" + sql);
+			List<Map<String, Object>> list = this.hibernateTemplate
+					.executeFind(new HibernateSQLCall(sql));
+			if (list.size() == 0) {
+				result.put("error", "没有找到机表欠费信息或者用户正在送盘中..");
+				return result;
 			}
-			// 如果没有欠费数据，继续
-			Object handId = hand.get("handId");
-			if (handId == null) {
-				continue;
-			}
-			hands += "{";
-			hands += "id:'" + hand.get("id") + "'";
-			//
-			hands += ",f_userid:'" + hand.get("f_userid") + "'";
-			// 用气量
-			hands += ",oughtamount:" + hand.get("oughtamount");
-			// 气费
-			hands += ",oughtfee:" + hand.get("oughtfee");
-			// 滞纳金金额=气费*比例*天数
-			BigDecimal oughtfee = new BigDecimal(hand.get("oughtfee")
+			// 从第一条获取户数据
+			Map<String, Object> userinfo = (Map<String, Object>) list.get(0);
+			result.put("infoid", (String) userinfo.get("infoid"));
+			result.put("f_username", (String) userinfo.get("f_username"));
+			BigDecimal zz = new BigDecimal(userinfo.get("f_zherownum")
 					.toString());
-
-			hands += ",f_stair1amount:" + hand.get("f_stair1amount");
-			hands += ",f_stair1price:" + hand.get("f_stair1price");
-			hands += ",f_stair1fee:" + hand.get("f_stair1fee");
-
-			hands += ",f_stair2amount:" + hand.get("f_stair2amount");
-			hands += ",f_stair2price:" + hand.get("f_stair2price");
-			hands += ",f_stair2fee:" + hand.get("f_stair2fee");
-
-			hands += ",f_stair3amount:" + hand.get("f_stair3amount");
-			hands += ",f_stair3price:" + hand.get("f_stair3price");
-			hands += ",f_stair3fee:" + hand.get("f_stair3fee");
-
-			int days = Integer.parseInt(hand.get("days") + "");
-			days = days > 0 ? days : 0;
-
-			BigDecimal f_zhinajin = new BigDecimal("0");
-			// 如果有滞纳金，计算基数去掉结余
-			int equals = f_zhye.compareTo(new BigDecimal("0"));// 比较余额是否大于0
-			if (equals > 0) {
-				int bigDec = f_zhye.compareTo(oughtfee);// 判断余额是否大余气费
-				oughtfee = bigDec > 0 ? new BigDecimal("0") : oughtfee
-						.subtract(f_zhye);
-				f_zhye = bigDec > 0 ? f_zhye.subtract(oughtfee)
-						: new BigDecimal("0");
+			result.put("f_zherownum", zz);
+			result.put("f_address", (String) userinfo.get("f_address"));
+			// 用户结余
+			BigDecimal f_zhye = new BigDecimal(userinfo.get("f_zhye")
+					.toString());
+			result.put("f_zhye", f_zhye);
+			String f_usertype = (String) userinfo.get("f_usertype");
+			result.put("f_usertype", f_usertype);
+			result.put("f_districtname",
+					(String) userinfo.get("f_districtname"));
+			result.put("f_gasproperties",
+					(String) userinfo.get("f_gasproperties"));
+			result.put("f_gaspricetype",
+					(String) userinfo.get("f_gaspricetype"));
+			result.put("f_gasprice", userinfo.get("f_gasprice"));
+			result.put("f_dibaohu", userinfo.get("f_dibaohu"));
+			result.put("f_payment", (String) userinfo.get("f_payment"));
+			result.put("f_userstate", (String) userinfo.get("f_userstate"));
+			result.put("f_stairtype", (String) userinfo.get("f_stairtype"));
+			// result += ", f_hands:[";
+			// 欠费表的数据
+			JSONArray handlist = new JSONArray();
+			// 取滞纳金比率
+			Map zhina = getratio(f_usertype, fengongsi);
+			BigDecimal scale = new BigDecimal(zhina.get("f_ratio") + "");
+			BigDecimal zhinagas = new BigDecimal(0);
+			// 滞纳气量
+			if (zhina.get("f_zhinagas") != null) {
+				zhinagas = new BigDecimal(zhina.get("f_zhinagas") + "");
 			}
-			f_zhinajin = oughtfee.multiply(new BigDecimal(days + "")).multiply(
-					scale);
-			f_zhinajin = f_zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP);
-			hands += ",f_zhinajin:" + f_zhinajin;
+			int i = 0;
+			// 循环获取欠费数据
+			for (Map<String, Object> hand : list) {
+				// 如果没有欠费数据，继续
+				Object handId = hand.get("handId");
+				if (handId == null) {
+					continue;
+				}
+				JSONObject hands = new JSONObject();
+				hands.put("id", hand.get("id"));
+				hands.put("f_userid", hand.get("f_userid"));
+				// 用气量
+				hands.put("oughtamount", hand.get("oughtamount"));
 
-			// 抄表日期
-			hands += ",lastinputdate:'" + hand.get("lastinputdate") + "'";
-			// 上期抄表底数
-			hands += ",lastinputgasnum:" + hand.get("lastinputgasnum");
-			// 本期抄表底数
-			hands += ",lastrecord:" + hand.get("lastrecord");
-			// 交费截止日期
-			hands += ",f_endjfdate:'" + hand.get("f_endjfdate") + "'";
-			// 滞纳金天数
-			hands += ",days:" + days;
-			// 网点
-			hands += ",f_network:'" + hand.get("f_network") + "'";
-			// 操作员
-			hands += ",f_operator:'" + hand.get("f_operator") + "'";
-			// 录入日期
-			hands += ",f_inputdate:'" + hand.get("f_inputdate") + "'";
-			hands += ",number:" + i++ + "";
-			hands += "}";
+				// 气费
+				hands.put("oughtfee", hand.get("oughtfee"));
+				// 滞纳金金额=气费*比例*天数
+				BigDecimal oughtfee = new BigDecimal(hand.get("oughtfee")
+						.toString());
+				hands.put("f_stair1amount", hand.get("f_stair1amount"));
+				hands.put("f_stair1price", hand.get("f_stair1price"));
+				hands.put("f_stair1fee", hand.get("f_stair1fee"));
+				hands.put("f_stair2amount", hand.get("f_stair2amount"));
+				hands.put("f_stair2price", hand.get("f_stair2price"));
+				hands.put("f_stair2fee", hand.get("f_stair2fee"));
+				hands.put("f_stair3amount", hand.get("f_stair3amount"));
+				hands.put("f_stair3price", hand.get("f_stair3price"));
+				hands.put("f_stair3fee", hand.get("f_stair3fee"));
+				int days = Integer.parseInt(hand.get("days") + "");
+				days = days > 0 ? days : 0;
+				BigDecimal f_zhinajin = new BigDecimal("0");
+				// 如果有滞纳金，计算基数去掉结余
+				int equals = f_zhye.compareTo(new BigDecimal("0"));// 比较余额是否大于0
+				if (equals > 0) {
+					int bigDec = f_zhye.compareTo(oughtfee);// 判断余额是否大余气费
+					oughtfee = bigDec > 0 ? new BigDecimal("0") : oughtfee
+							.subtract(f_zhye);
+					f_zhye = bigDec > 0 ? f_zhye.subtract(new BigDecimal(hand
+							.get("oughtfee").toString())) : new BigDecimal("0");
+				}
+				f_zhinajin = oughtfee.multiply(new BigDecimal(days + ""))
+						.multiply(scale);
+				f_zhinajin = f_zhinajin.setScale(2, BigDecimal.ROUND_HALF_UP);
+				// 用气量小于等于滞纳气量不收取滞纳金
+				BigDecimal oughtamount = new BigDecimal(hand.get("oughtamount")
+						+ "");
+				if (zhinagas.compareTo(oughtamount) >= 0) {
+					f_zhinajin = new BigDecimal(0);
+				}
+				hands.put("f_zhinajin", f_zhinajin);
+
+				// 抄表日期
+				hands.put("lastinputdate", hand.get("lastinputdate"));
+				// 上期抄表底数
+				hands.put("lastinputgasnum", hand.get("lastinputgasnum"));
+				// 本期抄表底数
+				hands.put("lastrecord", hand.get("lastrecord"));
+				// 交费截止日期
+				hands.put("f_endjfdate", hand.get("f_endjfdate"));
+				// 滞纳金天数
+				hands.put("days", days);
+				// 网点
+				hands.put("f_network", hand.get("f_network"));
+				// 操作员
+				hands.put("f_operator", hand.get("f_operator"));
+				// 录入日期
+				hands.put("f_inputdate", hand.get("f_inputdate"));
+				hands.put("number", i++);
+				handlist.put(hands);
+			}
+			result.put("f_hands", handlist);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			log.debug("售气交费 失败!" + ex.getMessage());
+			log.debug("售气交费 失败!", ex);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			result.put("error", sw.toString());
 		}
-
-		result = result + hands + "]}";
 		return result;
 
+	}
+
+	/**
+	 * 获取滞纳金设置对象
+	 * 
+	 * @param usertype
+	 * @param f_filiale
+	 * @return
+	 * @throws Exception
+	 */
+	private Map<String, Object> getratio(String usertype, String f_filiale)
+			throws Exception {
+		Map result = new HashMap<String, String>();
+		String hql = "from t_zhinajindate where f_usertype='" + usertype
+				+ "' and f_filiale='" + f_filiale + "'";
+		List<Map<String, Object>> list = this.hibernateTemplate.find(hql);
+		if (list.size() == 0) {
+			throw new ResultException("没有找到分公司名：" + f_filiale + ",用户类型: "
+					+ usertype + "的滞纳金设置信息！");
+		}
+		Map<String, Object> map = (Map<String, Object>) list.get(0);
+		return map;
 	}
 
 	/**
@@ -299,12 +331,13 @@ public class SellSer {
 			BigDecimal nowye = payMent.subtract(debts.subtract(jieyu))
 					.subtract(new BigDecimal(zhinajin));
 
-//			BigDecimal metergasnums = new BigDecimal(user.get("f_metergasnums")
-//					.toString());
-//			BigDecimal newMeterGasNums = metergasnums.add(debtGas);
-//			BigDecimal cumuGas = new BigDecimal(user
-//					.get("f_cumulativepurchase").toString());
-//			BigDecimal newCumuGas = cumuGas.add(debtGas);
+			// BigDecimal metergasnums = new
+			// BigDecimal(user.get("f_metergasnums")
+			// .toString());
+			// BigDecimal newMeterGasNums = metergasnums.add(debtGas);
+			// BigDecimal cumuGas = new BigDecimal(user
+			// .get("f_cumulativepurchase").toString());
+			// BigDecimal newCumuGas = cumuGas.add(debtGas);
 			// 更新用户
 			this.updateUser(user, nowye, debtGas);
 			// 更新抄表欠费为已缴费
@@ -314,8 +347,7 @@ public class SellSer {
 			// 插入交费记录
 			int sellid = insertSell(user, nowye, lastinputgasnum.doubleValue(),
 					lastrecord.doubleValue(), debts, debtGas, handIds,
-					lastinputdate, payMent, opid, payments, orgstr,
-					zhinajin);
+					lastinputdate, payMent, opid, payments, orgstr, zhinajin);
 			log.debug("售气交费成功!" + sellid);
 			ret.put("success", "机表交费成功");
 			ret.put("f_deliverydate", format.format(new Date()));
@@ -373,8 +405,8 @@ public class SellSer {
 	public int insertSell(Map<String, Object> userMap, BigDecimal nowye,
 			double lastinputgasnum, double lastrecord, BigDecimal debts,
 			BigDecimal debtGas, String handIds, Date lastinputdate,
-			BigDecimal payMent, String opid,
-			String payments, String orgstr, double zhinajin) throws Exception {
+			BigDecimal payMent, String opid, String payments, String orgstr,
+			double zhinajin) throws Exception {
 		// 查找登陆用户,获取登陆网点,操作员
 		Map<String, Object> loginUser = this.findloginUser(opid);
 		loginUser.put("orgstr", orgstr);
@@ -415,8 +447,8 @@ public class SellSer {
 		sale.put("f_finallybought", debtGas.doubleValue());
 		sale.put("f_finabuygasdate", now);
 		sale.put("f_payment", "现金");
-		//sale.put("f_upbuynum", cumuGas.doubleValue());
-		//sale.put("f_premetergasnums", metergasnums.doubleValue());
+		// sale.put("f_upbuynum", cumuGas.doubleValue());
+		// sale.put("f_premetergasnums", metergasnums.doubleValue());
 		sale.put("f_grossproceeds", payMent.doubleValue());
 		sale.put("f_totalcost", debts.doubleValue());
 		sale.put("f_givechange", 0.0);
@@ -436,8 +468,8 @@ public class SellSer {
 		sale.put("f_jiezhangstate", "未结账");
 		sale.put("f_wheatherduizhang", "未对账");
 		sale.put("f_amountmaintenance", 0.0);
-		//sale.put("f_metergasnums", newMeterGasNums.doubleValue());
-		//sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
+		// sale.put("f_metergasnums", newMeterGasNums.doubleValue());
+		// sale.put("f_cumulativepurchase", newCumuGas.doubleValue());
 		sale.put("f_stairtype", userMap.get("f_stairtype"));
 		sale.put("f_invoicenum", userMap.get("invoicenum").toString());
 		// sale.put("f_stair1price", nopayMap.get("f_stair1price"));
@@ -489,7 +521,8 @@ public class SellSer {
 	/**
 	 * 更新用户信息
 	 */
-	private void updateUser(Map user, BigDecimal nowye, BigDecimal debtGas) throws Exception {
+	private void updateUser(Map user, BigDecimal nowye, BigDecimal debtGas)
+			throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		String dt = format.format(now);
@@ -509,9 +542,9 @@ public class SellSer {
 				.doubleValue();
 		// 更新用户
 		String sql = "update t_userinfo  set f_zhye=" + f_zhye
-				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm + "',f_zherownum="
-				+ (zherownum + 1) + " where f_userid='" + user.get("f_userid")
-				+ "'";
+				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
+				+ "',f_zherownum=" + (zherownum + 1) + " where id='"
+				+ user.get("id") + "'";
 		// this.session.createQuery(sql).executeUpdate();
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
@@ -705,9 +738,8 @@ public class SellSer {
 						-Double.parseDouble(sell.get("f_pregas") + "")); // 气量
 				sell.put("f_preamount",
 						-Double.parseDouble(sell.get("f_preamount") + "")); // 气费
-				sell.put("f_zhinajin", -Double.parseDouble(sell
-						.get("f_zhinajin")
-						+ "")); // 滞纳金
+				sell.put("f_zhinajin",
+						-Double.parseDouble(sell.get("f_zhinajin") + "")); // 滞纳金
 				sell.put("f_payment", "冲正"); // 付款方式
 				sell.put("f_paytype", "现金"); // 交费类型，银行代扣/现金
 				sell.put("f_sgnetwork", loginUser.get("f_parentname")

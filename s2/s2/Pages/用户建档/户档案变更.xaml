@@ -25,7 +25,7 @@
            <!--用户对象-->
             <o:GeneralObject Name="userinfogo" WebClientInfo="{StaticResource dbclient}" 
 					EntityType="t_userinfo"  IsInit="{m:Exp Str=SaveAction.State\=\=$End$}"
-					Path="{m:Exp Str=$one/from t_userinfo as apply left join fetch apply.f_device where f_userid\=\'\{areafiles.SelectedItem.f_userid\}\'}">
+					Path="{m:Exp Str=areafiles.SelectedItem!\=null:$one/from t_userinfo as apply left join fetch apply.f_device where f_filiale\=\'\{LoginUser.f_fengongsi\}\' and  f_userid\=\'\{areafiles.SelectedItem.f_userid\}\'$\,$null$}">
 						<o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1amount}"  />
 						<o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1price}"  />
 						<o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2amount}"  />
@@ -56,7 +56,7 @@
 			<!--表对象列表-->
             <o:ObjectList Name="userfilelist" WebClientInfo="{StaticResource dbclient}" 
 					EntityType="t_userfiles"  IsClear="{m:Exp Str=SaveAction.State\=\=$End$}"
-					Path="{m:Exp Str=$from t_userfiles where f_userinfoid\=\'\{areafiles.SelectedItem.f_userid\}\'}">
+					Path="{m:Exp Str=areafiles.SelectedItem!\=null:$from t_userfiles where f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_userinfoid\=\'\{areafiles.SelectedItem.f_userid\}\'$\,$null$}">
 						<o:PropertySetter PropertyName="f_stair1amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1amount}"  />
 						<o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair1price}"  />
 						<o:PropertySetter PropertyName="f_stair2amount" NoDependValue="{m:Exp Str=CoboxStair.SelectedItem.f_stair2amount}"  />
@@ -122,7 +122,10 @@
 					<o:PropertySetter PropertyName="f_stairtype" NoDependValue="{m:Exp Str=userinfogo.f_stairtype}" />							
 					<o:PropertySetter PropertyName="f_stair1price" NoDependValue="{m:Exp Str=userinfogo.f_stair1price}" />							
 					<o:PropertySetter PropertyName="f_bankname" NoDependValue="{m:Exp Str=userinfogo.f_bankname}" />							
-					<o:PropertySetter PropertyName="f_idofcard" NoDependValue="{m:Exp Str=userinfogo.f_idofcard}" />												
+					<o:PropertySetter PropertyName="f_idofcard" NoDependValue="{m:Exp Str=userinfogo.f_idofcard}" />	
+					<o:PropertySetter  PropertyName="f_orgstr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>	
+					<o:PropertySetter  PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>	
+					<o:PropertySetter  PropertyName="f_sgoperator" Default="{m:Exp Str=LoginUser.name}"/>										
 			</o:GeneralObject>
 		 </m:ResourceLoad>
         <Grid  x:Name="LayoutRoot1">

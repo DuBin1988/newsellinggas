@@ -138,12 +138,12 @@
 			<TextBlock TextWrapping="Wrap" Grid.Column="2" Margin="0,2.5" Height="25" TextAlignment="Right" Text="到：" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2"/>
 			<toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime}"  Grid.Column="1" Margin="0" Grid.Row="1"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" >
 				<a:Data.Prop>
-					<o:PropertySetter PropertyName="f_fapiaotime" Operator="f_fapiaotime>='1970-01-01 '+substring('this',12,8)"/>
+					<o:PropertySetter PropertyName="f_fapiaotime" Operator="{m:Exp Str=$CONVERT(char(10)\, f_fapiaodate\, 120)+\' \'+CONVERT(varchar(12) \, f_fapiaotime\, 108 )>\=substring(\'\{data.f_yytdate1\}\'\,1\,10)+\' \'+substring(\'this\'\,12\,8)}"/>
 				</a:Data.Prop>
 			</toolkit:TimePicker>
 			<toolkit:TimePicker Value="{m:Bind Path=f_fapiaotime2}"  Grid.Column="3" Margin="0,2.5" Grid.Row="1"   IsDropDownOpen="False"  VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="1" >
 				<a:Data.Prop>
-					<o:PropertySetter PropertyName="f_fapiaotime2" Operator="f_fapiaotime^='1970-01-01 '+substring('this',12,8)"/>
+					<o:PropertySetter PropertyName="f_fapiaotime2" Operator="{m:Exp Str=$CONVERT(char(10)\, f_fapiaodate\, 120)+\' \'+CONVERT(varchar(12) \, f_fapiaotime\, 108 )^\=substring(\'\{data.f_yytdate2\}\'\,1\,10)+\' \'+substring(\'this\'\,12\,8)}"/>
 				</a:Data.Prop>
 			</toolkit:TimePicker>
 			<TextBlock TextWrapping="Wrap" Grid.Column="4" Margin="0,2.5" Height="25" TextAlignment="Right" Text="发票使用人：" VerticalAlignment="Center"/>
@@ -186,7 +186,13 @@
 			<sdk:DataGrid x:Name="userfiles" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{m:Exp Str=fapiao}" Margin="0,0,28,0" Grid.Row="2" Grid.ColumnSpan="5">
 						<sdk:DataGrid.Columns>
 							<sdk:DataGridTextColumn Header="号码段" Width="1*" Binding="{Binding fapiaohao}"/>
-							<sdk:DataGridTextColumn Header="作废发票号码" Width="1*" Binding="{Binding zuofeihao}"/>
+							<sdk:DataGridTemplateColumn Header="作废发票号码" Width="200" >
+                                <sdk:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{m:Bind Path=zuofeihao}"    Width="200"   TextWrapping="Wrap"/>   
+                                    </DataTemplate>
+                                </sdk:DataGridTemplateColumn.CellTemplate>
+                            </sdk:DataGridTemplateColumn>
 							<sdk:DataGridTextColumn Header="作废发票份数" Width="1*" Binding="{Binding zuofeishu}"/>
 							<sdk:DataGridTextColumn Header="有效发票份数" Width="1*" Binding="{Binding yiyongshu}"/>
 							<sdk:DataGridTextColumn Header="开票金额" Width="1*" Binding="{Binding money1}"/>

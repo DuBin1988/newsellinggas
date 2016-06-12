@@ -186,17 +186,20 @@ public class HandCharge {
 
 	// 根据前台录入购气量计算各阶梯气量金额
 	@GET
-	@Path("/num/{userid}/{pregas}/{enddate}")
+	@Path("/num/{userid}/{pregas}/{enddate}/{filiale}")
 	public JSONObject pregas(@PathParam("userid") String userid, // 用户编号
 			@PathParam("pregas") double pregas, // 用气量
-			@PathParam("enddate") String endjddate // 结束日期, 格式为yyyymmdd
+			@PathParam("enddate") String endjddate, // 结束日期, 格式为yyyymmdd
+			@PathParam("filiale") String filiale // 分公司
 	) {
 		final String usersql = "select isnull(f_stairtype,'未设')f_stairtype, isnull(f_gasprice,0)f_gasprice, "
 				+ "isnull(f_stair1amount,0)f_stair1amount,isnull(f_stair2amount,0)f_stair2amount,"
 				+ "isnull(f_stair3amount,0)f_stair3amount,isnull(f_stair1price,0)f_stair1price,"
 				+ "isnull(f_stair2price,0)f_stair2price,isnull(f_stair3price,0)f_stair3price,"
 				+ "isnull(f_stair4price,0)f_stair4price,isnull(f_stairmonths,0)f_stairmonths,isnull(f_zhye,0)f_zhye "
-				+ "from t_userinfo where f_userid = '" + userid + "'";
+				+ "from t_userinfo where f_filiale='"
+				+ filiale
+				+ "' and f_userid = '" + userid + "'";
 		List<Map<String, Object>> list = (List<Map<String, Object>>) hibernateTemplate
 				.execute(new HibernateCallback() {
 					public Object doInHibernate(Session session)
@@ -237,7 +240,7 @@ public class HandCharge {
 		BigDecimal chargenum = stair(userid, new BigDecimal(pregas), cal,
 				stairtype, gasprice, stairmonths, stair1amount, stair2amount,
 				stair3amount, stair1price, stair2price, stair3price,
-				stair4price);
+				stair4price,filiale);
 
 		Map sell = new HashMap();
 		sell.put("f_stair1amount", stair1num);
@@ -301,12 +304,12 @@ public class HandCharge {
 		// BigDecimal chargenum = new BigDecimal(0);
 		// BigDecimal sumamont = new BigDecimal(0);
 		BigDecimal gasprice = new BigDecimal(map.get("f_gasprice").toString());
-		String stairtype = map.get("f_stairtype").toString();
-		BigDecimal stair1amount = new BigDecimal(map.get("f_stair1amount")
+		String stairtype = user.get("f_stairtype").toString();
+		BigDecimal stair1amount = new BigDecimal(user.get("f_stair1amount")
 				.toString());
-		BigDecimal stair2amount = new BigDecimal(map.get("f_stair2amount")
+		BigDecimal stair2amount = new BigDecimal(user.get("f_stair2amount")
 				.toString());
-		BigDecimal stair3amount = new BigDecimal(map.get("f_stair3amount")
+		BigDecimal stair3amount = new BigDecimal(user.get("f_stair3amount")
 				.toString());
 		BigDecimal stair1price = new BigDecimal(user.get("f_stair1price")
 				.toString());
@@ -337,12 +340,6 @@ public class HandCharge {
 			throw new RSException(map.get("f_userid") + "用气量为："
 					+ gas.doubleValue() + ",不能录入!");
 		}
-
-		// 上期读数（上期的本次抄表底数）上期底数（）
-		// BigDecimal lastReading = new BigDecimal(map.get("lastinputgasnum") +
-		// "");
-		// 气量
-		// BigDecimal gas = new BigDecimal(reading).subtract(lastReading);
 		// 从户里取出余额(上期余额)
 		BigDecimal f_zhye = new BigDecimal(user.get("f_zhye") + "");
 		// 用户地址
@@ -381,26 +378,14 @@ public class HandCharge {
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
 		// 取出抄表日期得到缴费截止日期DateFormat.parse(String s)
-		Date date = endDate(lastinputdate, userid, loginuser);// 缴费截止日期
+		String userinfoid = user.get("f_userid").toString();
+		Date date = endDate(lastinputdate, userinfoid, loginuser);// 缴费截止日期
 		// 录入日期
 		Date inputdate = new Date();
 		// 计划月份
 		DateFormat hd = new SimpleDateFormat("yyyy-MM");
 		String dateStr1 = handdate.substring(0, 7);
 		Date handDate = hd.parse(dateStr1);
-		// // 当前表累计购气量 （暂）
-		// BigDecimal f_metergasnums = new BigDecimal(map.get("f_metergasnums")
-		// + "");
-		// // f_cumulativepurchase 总累计购气量
-		// BigDecimal f_cumulativepurchase = new BigDecimal(
-		// map.get("f_cumulativepurchase") + "");
-		// // 户累计购气量 （暂）
-		// BigDecimal f_metergasnumsu = new
-		// BigDecimal(user.get("f_metergasnums")
-		// + "");
-		// // f_cumulativepurchase 总累计购气量
-		// BigDecimal f_cumulativepurchaseu = new BigDecimal(
-		// user.get("f_cumulativepurchase") + "");
 		// 表状态
 		String meterState = meterstate;
 		// 针对设置阶梯气价的用户运算
@@ -408,7 +393,7 @@ public class HandCharge {
 		BigDecimal chargenum = stair(userid, gas, Calendar.getInstance(),
 				stairtype, gasprice, stairmonths, stair1amount, stair2amount,
 				stair3amount, stair1price, stair2price, stair3price,
-				stair4price);
+				stair4price, f_filiale);
 		// 气费大于0,结余够，前面无欠费，自动下账
 		if (chargenum.compareTo(BigDecimal.ZERO) > 0
 				&& chargenum.compareTo(f_zhye) <= 0 && items < 1) {
@@ -499,10 +484,10 @@ public class HandCharge {
 					"  lastinputdate=? "
 					// 最后购气量 最后购气日期 最后购气时间
 					+ ",f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
-					+ "where f_userid=?";
+					+ "where f_userid=? and f_filiale=?";
 			hibernateTemplate.bulkUpdate(hql, new Object[] { reading,
 					lastinputDate, gas.doubleValue(), inputdate, inputdate,
-					userid });
+					userid ,f_filiale});
 			String sellId = sellid + "";
 			// 更新抄表记录
 			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate=?,f_stairtype='"
@@ -643,7 +628,7 @@ public class HandCharge {
 			BigDecimal stair1amount, BigDecimal stair2amount,
 			BigDecimal stair3amount, BigDecimal stair1price,
 			BigDecimal stair2price, BigDecimal stair3price,
-			BigDecimal stair4price) {
+			BigDecimal stair4price, String filiale) {
 		BigDecimal chargenum = new BigDecimal(0);
 		stair1num = new BigDecimal(0);
 		stair1fee = new BigDecimal(0);
@@ -661,12 +646,20 @@ public class HandCharge {
 		if (!stairtype.equals("未设")) {
 			final String gassql = " select isnull(sum(h.oughtamount),0)oughtamount "
 					+ "from t_handplan h left join t_userfiles u on h.f_state='已抄表' and u.f_userid=h.f_userid "
-					+ "where u.f_userinfoid=(select f_userinfoid from t_userfiles where f_userid='"
+					+ "where u.f_filiale='"
+					+ filiale
+					+ "' and u.f_userinfoid=(select f_userinfoid from t_userfiles where "
+					+ "f_filiale='"
+					+ filiale
+					+ "' and f_userid='"
 					+ userid
 					+ "')"
 					+ " and h.f_handdate>='"
 					+ stardate
-					+ "' and h.f_handdate<='" + enddate + "'";
+					+ "' and h.f_handdate<='"
+					+ enddate
+					+ "' and h.f_filiale='"
+					+ filiale + "'";
 			List<Map<String, Object>> gaslist = (List<Map<String, Object>>) hibernateTemplate
 					.execute(new HibernateCallback() {
 						public Object doInHibernate(Session session)
@@ -1548,8 +1541,8 @@ public class HandCharge {
 		String tm = format.format(now);
 		String sql = "update t_userinfo  set f_zhye=" + nowye.doubleValue()
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
-				+ "',f_zherownum=" + f_zherownum + " where f_userid='"
-				+ user.get("f_userid") + "'";
+				+ "',f_zherownum=" + f_zherownum + " where id='"
+				+ user.get("id") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
 	}
