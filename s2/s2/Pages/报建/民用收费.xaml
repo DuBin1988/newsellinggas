@@ -25,7 +25,7 @@
             <!--报装选中对象-->
             <o:GeneralObject Name="mypgshObj" WebClientInfo="{StaticResource dbclient}" EntityType="t_apply"
                 Source="{m:Exp Str='applys.SelectedItem'}"  IsInit="{m:Exp Str='SaveAction.State==$End$'}">
-               <!--实交金额-->
+                <!--实交金额-->
 
                 <o:PropertySetter PropertyName="f_actualfee" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:fee.f_fee + mypgshObj.f_actualfee\,null}"/>
             </o:GeneralObject>
@@ -40,7 +40,7 @@
                 <o:PropertySetter PropertyName="f_state" Default="有效"/>
             </o:GeneralObject>
 
-         
+
             <o:ObjectList Name="costreductionlist_mypgsh" WebClientInfo="{StaticResource dbclient}" IsOld="{m:Exp Str='mypgshInfo.DataContext.State==$End$'}"
              Path="{m:Exp Str='mypgshInfo.DataContext.id!=null:$from t_costreduction where applyid={mypgshInfo.DataContext.id}$,null'}"      EntityType="t_costreduction" HasEmptyRow="False" />
 
@@ -208,23 +208,23 @@
 									Default="{m:Exp Str=mygastype[data.f_gasproperties\=\=$民用$].ToObjectList().Count &gt; 0 :$民用$\,null}" />
                                             </a:Data.Prop>
                                         </ComboBox>
-                                        <TextBlock Grid.Column="4" Margin="0" Grid.Row="9" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right"/>
+                                        <TextBlock Grid.Column="4" Margin="0,29,0,27" Grid.Row="9" TextWrapping="Wrap" Text="气价类型：" TextAlignment="Right" Grid.RowSpan="2"/>
                                         <ComboBox  x:Name="pricetype1" ItemsSource="{m:Exp Str=mypricetype}" DisplayMemberPath="f_gaspricetype"  SelectedValuePath="f_gaspricetype" SelectedValue="{m:Bind Path=f_gaspricetype}"  
-										Grid.Column="5" Margin="0,0,0,10" Grid.Row="9" Height="Auto" IsEnabled="false" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+										Grid.Column="5" Margin="0,30,0,26" Grid.Row="9" Height="Auto" IsEnabled="false" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="2">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_gaspricetype"
 									Default="{m:Exp Str=mypricetype[data.f_gaspricetype\=\=$民用气价$].ToObjectList().Count &gt; 0 :$民用气价$\,null}" />
                                             </a:Data.Prop>
                                         </ComboBox>
-                                        <TextBlock Grid.Column="4" Margin="0" Grid.Row="10" TextWrapping="Wrap" Text="气价：" TextAlignment="Right"/>
-                                        <TextBox Text="{m:Bind Path=f_gasprice}"   IsReadOnly="True" Grid.Column="5" Margin="0,0,0,10"   Height="Auto" Grid.Row="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08" Grid.RowSpan="1">
+                                        <TextBlock Grid.Column="4" Margin="0,16,0,1" Grid.Row="10" TextWrapping="Wrap" Text="气价：" TextAlignment="Right"/>
+                                        <TextBox Text="{m:Bind Path=f_gasprice}"   IsReadOnly="True" Grid.Column="5" Margin="0,16,0,1"   Height="Auto" Grid.Row="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.389,2.08" Grid.RowSpan="1">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_gasprice"  Value="{m:Exp Str=pricetype1.SelectedItem.f_gasprice}" Default="1.55" />
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="合同约定：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="11" Grid.Column="4"/>
+                                        <TextBlock Margin="0,6,0,14" TextWrapping="Wrap" Text="合同约定：" TextAlignment="Right" RenderTransformOrigin="0.393,2.625" Grid.Row="11" Grid.Column="4"/>
 
-                                        <ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_htyuding}" Grid.Column="5" Margin="0,4,0,7" Grid.Row="11" Height="Auto" Width="Auto">
+                                        <ComboBox DisplayMemberPath="name" SelectedValuePath="name" SelectedValue="{m:Bind Path=f_htyuding}" Grid.Column="5" Margin="0,4,0,10" Grid.Row="11" Height="Auto" Width="Auto">
                                             <a:Data.Items>
                                                 <o:ObjectList WebClientInfo="{StaticResource dbclient}"  Path="from paramvalue where param.name='合同约定'" />
                                             </a:Data.Items>
@@ -320,10 +320,16 @@
                                                 <o:PropertySetter PropertyName="f_jiebofei"/>
                                             </a:Data.Prop>
                                         </TextBox>
-                                        <TextBlock Margin="0,6,0,0" Grid.Row="8" Grid.Column="4" TextWrapping="Wrap" Text="减免金额合计：" TextAlignment="Right"/>
-                                        <TextBox Text="{m:Bind Path=f_jmhj}" Grid.Column="5" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch">
+                                        <TextBlock Margin="0,4,0,12" Grid.Row="9" Grid.Column="4" TextWrapping="Wrap" Text="减免金额合计：" TextAlignment="Right"/>
+                                        <TextBox Text="{m:Bind Path=f_jmhj}" Grid.Column="5" Margin="0,2,0,12" Grid.Row="9" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
                                             <a:Data.Prop>
                                                 <o:PropertySetter PropertyName="f_jmhj"/>
+                                            </a:Data.Prop>
+                                        </TextBox>
+                                        <TextBlock Margin="0,4,0,2" Grid.Row="8" Grid.Column="4" TextWrapping="Wrap" Text="剩余未交费用：" TextAlignment="Right"/>
+                                        <TextBox Text="{m:Bind Path=f_Payablefee}" Grid.Column="5" Margin="0,2" Grid.Row="8" TextWrapping="Wrap" Height="Auto" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1">
+                                            <a:Data.Prop>
+                                                <o:PropertySetter PropertyName="f_Payablefee" Default="{m:Exp Str=this.f_totalfee-this.f_actualfee}" Value="{m:Exp Str=this.f_totalfee-this.f_actualfee}" />
                                             </a:Data.Prop>
                                         </TextBox>
                                     </Grid>
@@ -379,14 +385,14 @@
                                         <TextBlock  Margin="0" TextWrapping="Wrap" Text="本次收款：" TextAlignment="Right" Grid.RowSpan="2"/>
                                         <TextBox Name="bcsk" Text="{m:Bind Path=f_fee}" Grid.Column="1" Margin="0" Grid.Row="0" TextWrapping="Wrap" Height="Auto" IsReadOnly="false" Width="Auto" HorizontalAlignment="Stretch" Grid.RowSpan="1"/>
                                         <a:Data.Prop>
-                                            <o:PropertySetter PropertyName="f_fee" NotNull="True" />
+                                            <o:PropertySetter PropertyName="f_fee" NotNull="True" Default="0" Validation="{m:Exp Str=value^\=mypgshInfo.DataContext.f_Payablefee}" ErrorMessage="本次交费不能大于剩余未交金额" />
                                         </a:Data.Prop>
 
                                     </Grid>
                                 </StackPanel>
                             </ScrollViewer>
                         </sdk:TabItem>
-                       <sdk:TabItem Header="减免明细">
+                        <sdk:TabItem Header="减免明细">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                                 <sdk:DataGrid AutoGenerateColumns="False" x:Name="user" ItemsSource="{m:Exp Str=costreductionlist_mypgsh}" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                                     <sdk:DataGrid.Columns>
