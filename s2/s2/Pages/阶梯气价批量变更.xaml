@@ -91,6 +91,12 @@
                         </a:Data.Prop>
                     </TextBox>
                     <TextBlock Text="用户编号：" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5.545,0,5.455" Grid.Row="1"/>
+                    <TextBox x:Name="tj7_Copy" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" Text="{m:Bind Path=f_filiale}" Width="Auto" Margin="0,2.5" Height="25" Grid.ColumnSpan="1" VerticalAlignment="Stretch" IsReadOnly="True" >
+                    	<a:Data.Prop>
+                    		<o:PropertySetter PropertyName="f_filiale"  Operator="f_filiale = 'this'" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+                    	</a:Data.Prop>
+                    </TextBox>
+                    <TextBlock Text="分公司：" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5.635,0,5.365" Grid.Row="2"/>
                 </Grid>
                 <Grid x:Name="stairtype" toolkit:DockPanel.Dock="Bottom" DataContext="{m:Res Key=change}">
                     <Grid.RowDefinitions>

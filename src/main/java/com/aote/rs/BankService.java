@@ -25,6 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+
+import com.aote.rs.exception.ResultException;
+import com.aote.rs.util.UserTools;
+
 import sun.security.jca.GetInstance;
 import sun.util.resources.CalendarData;
 
@@ -57,8 +61,8 @@ public class BankService {
 				String f_bankname = object.getString("f_bankname");
 				double b_oughtfee = object.getDouble("oughtfee");
 				String f_fanpandate = object.getString("f_fanpandate");
-				String operator = object.getString("oper");
-				// 通过用户姓名，银行账号等信息查找用户详细信息
+				String operatorid = object.getString("operid");
+				
 				Map map = new HashMap();
 				map.put("f_usermc", f_usermc);
 				map.put("paymenstate", paymenstate);
@@ -67,9 +71,15 @@ public class BankService {
 				map.put("oughtfee", b_oughtfee);
 				map.put("f_fanpandate", f_fanpandate);
 				map.put("f_returntime", new java.util.Date());
-                
 				
-
+				
+				Map loginuser = UserTools.getUser(operatorid, this.hibernateTemplate);
+				// 分公司
+				String f_filiale = loginuser.get("f_fengongsi").toString();
+				
+				Map<String, Object> userinfo = this.findUserinfo(
+						f_filiale,f_idofcard,f_bankname);
+				loginuser.put("orgstr", userinfo.get("f_orgstr").toString());
 				// 如果扣款成功，找出银行、账号、金额一致，且已送盘，送盘日期小于当前日期的数据
 				if (paymenstate.equals("成功")) {
 					//查找应缴费抄表记录
@@ -84,7 +94,7 @@ public class BankService {
 							+ f_bankname
 							+ "' "
 							+ " and t.f_state='已抄表' and shifoujiaofei='否'"
-							+ " and f_sendtime is not null and f_sendtime<getdate() and CONVERT(varchar(12) ,f_sendtime, 112 )>CONVERT(varchar(12) ,f_inputdate, 112 ) group by t.f_userid,u.f_userinfoid,t.f_address,t.f_usertype)hu on o.f_userid = hu.f_userinfoid"
+							+ " and f_sendtime is not null and f_sendtime<getdate() and CONVERT(varchar(12) ,f_sendtime, 120 )>CONVERT(varchar(12) ,f_inputdate, 120 ) group by t.f_userid,u.f_userinfoid,t.f_address,t.f_usertype)hu on o.f_userid = hu.f_userinfoid"
 							+ " where o.f_idofcard='"
 							+ f_idofcard
 							+ "' and o.f_bankname='"
@@ -163,7 +173,12 @@ public class BankService {
 									sell.put("f_comtype", "天然气公司");
 									sell.put("f_payfeevalid", "有效");
 									sell.put("f_payfeetype", "银行代扣");
-									sell.put("f_filiale", "安顺达管道天燃气有限公司");
+									sell.put("f_sgnetwork", loginuser.get("f_parentname").toString()); // 网点
+									sell.put("f_sgoperator", loginuser.get("name").toString()); // 操 作 员
+									sell.put("f_filiale", loginuser.get("f_fengongsi").toString()); // 分公司
+									sell.put("f_fengongsinum", loginuser.get("f_fengongsinum").toString()); // 分公司编号
+									sell.put("f_orgstr", loginuser.get("orgstr").toString()); // 组织信息
+									//sell.put("f_filiale", "安顺达管道天燃气有限公司");
 									sell.put("f_fanpandate", f_fanpandate1);
 									sell.put("f_preamount", f_preamount);
 									sell.put("f_totalcost", f_totalcost);
@@ -254,9 +269,6 @@ public class BankService {
 		}
 		return returnJson.toString();
 	}
-	
-	
-
 
 	// 给字符串添加逗号分隔的内容
 	private String add(String source, String str) {
@@ -265,5 +277,44 @@ public class BankService {
 		} else {
 			return source + "," + str;
 		}
+	}
+	
+	
+	
+	public static Map<String, Object> getUser(String operator,
+			HibernateTemplate hibernateTemplate) throws ResultException {
+		Map<String, Object> user = new HashMap<String, Object>();
+		String hql = "from t_user where name=" + operator;
+		List list = hibernateTemplate.find(hql);
+		if (list.size() == 0) {
+			throw new ResultException("没有找到name为" + operator + "的操作员信息");
+		}
+		Map<String, Object> map = (Map<String, Object>) list.get(0);
+		
+		return map;
+	}
+	
+	
+	/**
+	 * 查找户信息
+	 * 
+	 * @param userid
+	 * @return
+	 */
+	private Map<String, Object> findUserinfo( String f_filiale,String f_idofcard,String f_bankname) {
+		final String userSql = "from t_userinfo  where f_filiale='" + f_filiale
+				+"' and f_idofcard='"
+						+ f_idofcard
+						+ "' and f_bankname='"
+						+ f_bankname
+						+ "' and (f_userstate = '银行扣款' or f_userstate = '正常')";
+		// List userlist = session.createQuery(userSql).list();
+		log.debug("查询户信息开始:" + userSql);
+		List<Object> userlist = this.hibernateTemplate.find(userSql);
+		if (userlist.size() != 1) {
+			return null;
+		}
+		Map<String, Object> userMap = (Map<String, Object>) userlist.get(0);
+		return userMap;
 	}
 }

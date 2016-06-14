@@ -378,7 +378,8 @@ public class HandCharge {
 		String dateStr = lastinputdate.substring(0, 10);
 		Date lastinputDate = df.parse(dateStr);
 		// 取出抄表日期得到缴费截止日期DateFormat.parse(String s)
-		Date date = endDate(lastinputdate, userid, loginuser);// 缴费截止日期
+		String userinfoid = user.get("f_userid").toString();
+		Date date = endDate(lastinputdate, userinfoid, loginuser);// 缴费截止日期
 		// 录入日期
 		Date inputdate = new Date();
 		// 计划月份
@@ -483,10 +484,10 @@ public class HandCharge {
 					"  lastinputdate=? "
 					// 最后购气量 最后购气日期 最后购气时间
 					+ ",f_finallybought= ?, f_finabuygasdate=?, f_finabuygastime=? "
-					+ "where f_userid=?";
+					+ "where f_userid=? and f_filiale=?";
 			hibernateTemplate.bulkUpdate(hql, new Object[] { reading,
 					lastinputDate, gas.doubleValue(), inputdate, inputdate,
-					userid });
+					userid ,f_filiale});
 			String sellId = sellid + "";
 			// 更新抄表记录
 			hql = "update t_handplan set f_state='已抄表',shifoujiaofei='是',f_handdate=?,f_stairtype='"
@@ -1540,8 +1541,8 @@ public class HandCharge {
 		String tm = format.format(now);
 		String sql = "update t_userinfo  set f_zhye=" + nowye.doubleValue()
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
-				+ "',f_zherownum=" + f_zherownum + " where f_userid='"
-				+ user.get("f_userid") + "'";
+				+ "',f_zherownum=" + f_zherownum + " where id='"
+				+ user.get("id") + "'";
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
 	}

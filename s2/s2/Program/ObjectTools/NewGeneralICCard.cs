@@ -755,6 +755,10 @@ namespace Com.Aote.ObjectTools
             {
                 MeterId = "12345678";
             }
+            if (Sxbj == null || Sxbj == "")
+            {
+                Sxbj = "1";
+            }
             string p = "http://127.0.0.1:8000/WriteNewCard" +
                                         "/" + Factory +     //厂家
                                         "/" + Kmm +     //卡密码，写卡后返回新密码

@@ -540,9 +540,9 @@
                                 </a:Data.Prop>
                             </TextBox>
                             <TextBlock Margin="0" Grid.Row="14" TextWrapping="Wrap" Text="分  公  司：" TextAlignment="Right" Height="25"/>
-                            <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="14" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
+                            <TextBox x:Name="ui_filiale" Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="14" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25"  >
                                 <a:Data.Prop>
-                                    <o:PropertySetter PropertyName="f_filiale" 
+                                    <o:PropertySetter PropertyName="f_filiale" NotNull="True"
 									Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                                 </a:Data.Prop>
                             </TextBox>

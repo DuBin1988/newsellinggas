@@ -251,7 +251,7 @@
                         </o:GeneralObject>
                     </a:Data.Context>
                     <toolkit:DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                        <Button x:Name="save" Content="保 存" Margin="5"
+                       <Button x:Name="save" Content="保 存" Margin="5"
             			IsEnabled="{m:Exp Str=!apply.DataContext.HasErrors}"
             			Click="{m:Exp Str=SaveAction.Invoke()}" Width="50"/>
                         <Button Content="清空" Margin="5" Click="{m:Exp Str=pipeline.DataContext.New();userfiles.New()}" Width="50"/>
@@ -446,7 +446,7 @@
                         <TextBlock Text="分公司编号：" Visibility="Collapsed" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="18"  Grid.Column="2" Height="25" />
                         <TextBox Text="{m:Bind Path=f_fengongsinum}" Visibility="Collapsed"  Grid.Column="3" Margin="0,3,0,2" Grid.Row="18" TextWrapping="Wrap" IsReadOnly="True"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="25" >
                             <a:Data.Prop>
-                                <o:PropertySetter PropertyName="f_fengongsinum" NotNull="True"
+                                <o:PropertySetter PropertyName="f_fengongsinum"  
 								Default="{m:Exp Str=LoginUser.f_fengongsinum}"/>
                             </a:Data.Prop>
                         </TextBox>

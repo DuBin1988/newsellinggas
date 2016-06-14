@@ -271,6 +271,12 @@
                                             		<o:PropertySetter PropertyName="f_bankname"  ValidationVal="{m:Exp Str=userinfogo.f_bankname!\=null or userinfogo.f_payment!\=$银行代扣$}" ErrorMessage="开户银行不能为空！"/>
                                             	</a:Data.Prop>
                                             </ComboBox>
+											 <TextBlock Text="开户名称：" Margin="0,3,0,2" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="7" Grid.Column="0" />
+                                            <TextBox Text="{m:Bind Path=f_usermc}" x:Name="f_cusDom_Copy" Grid.Column="1"  Grid.Row="7"  Margin="0,2.5"  Grid.ColumnSpan="1" TextWrapping="Wrap" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto">
+                                            	<a:Data.Prop>
+                                            		<o:PropertySetter PropertyName="f_usermc"  ValidationVal="{m:Exp Str=userinfogo.f_usermc!\=null or userinfogo.f_payment!\=$银行代扣$}" ErrorMessage="开户名称不能为空！"/>
+                                            	</a:Data.Prop>
+                                            </TextBox>
                                         </Grid>
                                     </sdk:TabItem>
                                 </sdk:TabControl>

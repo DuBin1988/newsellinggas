@@ -6,6 +6,7 @@
     xmlns:a="clr-namespace:Com.Aote.Attachs;assembly=s2DLL"
     xmlns:o="clr-namespace:Com.Aote.ObjectTools;assembly=s2DLL"
 	xmlns:oo="clr-namespace:Com.Aote.ObjectTools"
+	xmlns:c="clr-namespace:Com.Aote.Controls;assembly=s2DLL"
     xmlns:b="clr-namespace:Com.Aote.Behaviors;assembly=s2DLL"
     xmlns:m="clr-namespace:Com.Aote.Marks;assembly=s2DLL"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -35,7 +36,7 @@
             <!--用户对象{m:Exp Str=$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\' and f_userstate\=\'停用\'} 
 		Path="{m:Exp Str=card.CardId !\= null and card.Factory !\=null and card.Factory !\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_userstate\=\'停用\' and f_aliasname\=\'\{card.Factory\}\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,card.CardId !\= null and card.Factory !\=null and card.Factory \=\=$TianQingSI$:$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_userstate\=\'停用\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,pipeline.DataContext.f_userid \!\= null:$one/from t_userfiles where f_userid\=\'\{pipeline.DataContext.f_userid\}\' and f_userstate\=\'停用\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,$one/from t_userfiles where f_cardid\=\'\{card.CardId\}\' and f_userstate\=\'停用\' and f_filiale\=\'\{LoginUser.f_fengongsi\}\'$\,pipelines.SelectedItem.f_userid\!\=null:$one/from t_userfiles where f_userid\=\'\{pipelines.SelectedItem.f_userid\}\'$\,$qqq$}" -->
             <o:GeneralObject Name="userfiles" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-             Path="{m:Exp Str=pipelines.SelectedItem.f_userid\!\=null:$one/from t_userfiles where f_userid\=\'\{pipelines.SelectedItem.f_userid\}\'$\,$qqq$}" 
+             Path="{m:Exp Str=pipelines.SelectedItem.f_userid\!\=null:$one/from t_userfiles where id\=\'\{pipelines.SelectedItem.id\}\'$\,$qqq$}" 
 			 IsInit="{m:Exp Str='SaveAction.State==$End$'}">
                 <!--o:PropertySetter PropertyName="f_gasmeteraccomodations" Value="{m:Exp Str=pipeline.DataContext.f_openingradix}"/-->
                 <!--o:PropertySetter PropertyName="f_openingdate" Value="{m:Exp Str=pipeline.DataContext.f_openingdate}"/-->
@@ -62,7 +63,7 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="7*"/>
             </Grid.ColumnDefinitions>
-            <toolkit:BusyIndicator BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=pipelines.ItemsSource.IsBusy}">
                 <toolkit:DockPanel >
                     <!--信息列表按钮-->
                     <toolkit:DockPanel  toolkit:DockPanel.Dock="Bottom" Margin="0" Height="45">
@@ -96,10 +97,10 @@
                     <sdk:DataGrid x:Name="pipelines" Margin="0,0,0,24"  
             		AutoGenerateColumns="False"  IsReadOnly="True">
                         <a:Data.Items>
-                            <o:PagedList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
-                            SumHQL="{m:Exp Str=$select u.f_userid f_userid\,u.f_username f_username\,u.f_address f_address\,st.f_parentname f_parentname\, f_soperator\,u.f_stopdate f_stopdate\,st.f_stopgasreason f_stopgasreason  from t_userfiles u left join t_stopgas st on u.f_userid \= st.f_userid where u.f_userstate !\=\'注销\' and \{pipelinesearch.DataContext.Condition\} and u.f_userstate\=\'停用\' and u.f_filiale\=\'\{LoginUser.f_fengongsi\}\'$}"
-            				HQL="{m:Exp Str=$select u.f_userid f_userid\,u.f_username f_username\,u.f_address f_address\,st.f_parentname f_parentname\,f_soperator\,u.f_stopdate f_stopdate\,st.f_stopgasreason f_stopgasreason  from t_userfiles u left join t_stopgas st on u.f_userid \= st.f_userid where u.f_userstate !\=\'注销\' and \{pipelinesearch.DataContext.Condition\} and u.f_userstate\=\'停用\' and u.f_filiale\=\'\{LoginUser.f_fengongsi\}\' order by st.id$}"
-							IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or pipeline.DataContext.State\=\=$End$}" Path="sql"
+                            <o:PagedObjectList x:Name="pipelineslist" WebClientInfo="{StaticResource dbclient}"
+                            MultiPath="{m:Exp Str=$from t_userfiles u where u.f_userstate !\=\'注销\' and \{pipelinesearch.DataContext.Condition\} and u.f_userstate\=\'停用\' and u.f_filiale\=\'\{LoginUser.f_fengongsi\}\'$}"
+            				Path="{m:Exp Str=$from t_userfiles u where u.f_userstate !\=\'注销\' and \{pipelinesearch.DataContext.Condition\} and u.f_userstate\=\'停用\' and u.f_filiale\=\'\{LoginUser.f_fengongsi\}\' order by id$}"
+							IsOld="{m:Exp Str=SaveAction.State\=\=$End$ or pipeline.DataContext.State\=\=$End$}" 
 							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
                         </a:Data.Items>
 
@@ -118,9 +119,9 @@
 
                     <!--信息列表按钮-->
                 </toolkit:DockPanel>
-            </toolkit:BusyIndicator>
+            </c:BusyIndicatorEx>
             <!--操作区按钮-->
-            <toolkit:BusyIndicator x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
+            <c:BusyIndicatorEx x:Name="ui_apply" BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=pipeline.DataContext.IsBusy}" Grid.Column="1" Margin="8,0,0,0">
                 <Grid  x:Name="pipeline" DataContext="{m:Exp Str=pipelineg}">
                     <!--a:Data.Context>
             		
@@ -317,7 +318,7 @@
                         </toolkit:TimePicker>-->
                     </Grid>
                 </Grid>
-            </toolkit:BusyIndicator>
+            </c:BusyIndicatorEx>
             <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=pipelines,Converter={StaticResource DataPagerConverter}}"   Margin="1,0,0,44" PageSize="22" Height="24" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>

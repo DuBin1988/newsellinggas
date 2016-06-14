@@ -21,8 +21,9 @@
 		<m:ResourceLoad Margin="0,0,-12,0" d:IsHidden="True">
 			<!--银行返盘数据-->
 			<o:ObjectList Name="daninfoslist" EntityType="t_bankreturn" WebClientInfo="{StaticResource bank}">
-				<o:PropertySetter PropertyName="oper" Value="{m:Exp Str=LoginUser.name}" />
-			</o:ObjectList>	
+                <o:PropertySetter PropertyName="operid" Value="{m:Exp Str=LoginUser.id}" />
+
+            </o:ObjectList>	
 		</m:ResourceLoad>
 				<Grid>
 					<Grid.ColumnDefinitions>

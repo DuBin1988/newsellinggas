@@ -56,6 +56,7 @@ namespace Com.Aote.Pages
             string userid = f_userid.Text;
             string pregas = ui_pregas.Text;
             string usertype = f_usertype.Text;
+            string f_filiale = ui_filiale.Text;
             if (userid.Equals(""))
             {
                 MessageBox.Show("请先读卡！");
@@ -69,7 +70,7 @@ namespace Com.Aote.Pages
                 return;
             }
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
+            string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "/" + f_filiale + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += client_DownloadStringCompleted;
@@ -122,6 +123,7 @@ namespace Com.Aote.Pages
         {
             ui_chargeBusy.IsBusy = true;
             string grossproceeds = ui_grossproceeds.Text;
+            string f_filiale = ui_filiale.Text;
             if (f_userid.Text.Equals(""))
             {
                 MessageBox.Show("请先读卡！");
@@ -136,7 +138,7 @@ namespace Com.Aote.Pages
             }
             userid = f_userid.Text;
             WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-            string str = wci.BaseAddress + "/fee/" + userid + "/" + grossproceeds + "?uuid=" + System.Guid.NewGuid().ToString();
+            string str = wci.BaseAddress + "/fee/" + userid + "/" + grossproceeds + "/" + f_filiale + "?uuid=" + System.Guid.NewGuid().ToString();
             Uri uri = new Uri(str);
             WebClient client1 = new WebClient();
             client1.DownloadStringCompleted += client1_DownloadStringCompleted;
@@ -149,10 +151,11 @@ namespace Com.Aote.Pages
             ui_chargeBusy.IsBusy = false;
             if (e.Error == null)
             {
+                string f_filiale = ui_filiale.Text;
                 JsonObject items = JsonValue.Parse(e.Result) as JsonObject;
                 pregas = Math.Floor(double.Parse(items["chargeamont"].ToString()));
                 WebClientInfo wci = (WebClientInfo)Application.Current.Resources["chargeserver"];
-                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "?uuid=" + System.Guid.NewGuid().ToString();
+                string str = wci.BaseAddress + "/num/" + userid + "/" + pregas + "/" + f_filiale + "?uuid=" + System.Guid.NewGuid().ToString();
                 Uri uri = new Uri(str);
                 WebClient client2 = new WebClient();
                 client2.DownloadStringCompleted += client2_DownloadStringCompleted;

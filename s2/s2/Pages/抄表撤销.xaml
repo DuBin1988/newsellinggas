@@ -36,8 +36,8 @@
 		
 		<!--抄表对象-->
 		<o:GeneralObject Name="scbdw" NotEmpty="True" LoadOnPathChanged="False" WebClientInfo="{StaticResource dbclient}" EntityType="t_handplan"
-		 	Path="{m:Exp Str=$one/from t_handplan h left join fetch h.users where h.id\=
-			 (select max(id) from t_handplan where f_userid\=\'\{scbdw.f_userid\}\' and f_state \= \'已抄表\')$}" 
+		 	Path="{m:Exp Str=$one/from t_handplan h left join fetch h.users where h. f_userid\=\'\{scbdw.f_userid\}\' and h.f_filiale\=\'\{LoginUser.f_fengongsi\}\' and h.f_state \= \'已抄表\' and h.lastinputdate\=
+			 (select max(lastinputdate) from t_handplan where f_filiale\=\'\{LoginUser.f_fengongsi\}\' and f_userid\=\'\{scbdw.f_userid\}\' and f_state \= \'已抄表\')$}" 
 			IsOld="{m:Exp Str=scbdw.f_userid!\=null}"
 			IsInit="{m:Exp Str=
 				SaveAction.State\=\=$End$ |or| 

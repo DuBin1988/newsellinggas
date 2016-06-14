@@ -35,7 +35,7 @@
             </o:GeneralObject>
             <!--历史交费列表-->
             <o:ObjectList Name="kbsellgas" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=kbusers.f_userid !\= null:$sql/select f_userid f_userid\,f_username f_username\,f_cardid f_cardid\,CONVERT(varchar(12)\, f_deliverydate\, 111 )  f_deliverydate\,CONVERT(varchar(8)\, f_deliverytime\, 108 ) f_deliverytime\,IsNUll(f_stair1amount\,0) f_stair1amount\,Isnull(f_stair1price\,0) f_stair1price\,isnull(f_stair1fee\,0) f_stair1fee\,isnull(f_stair2amount\,0) f_stair2amount\,isnull(f_stair2price\,0) f_stair2price\,isnull(f_stair2fee\,0) f_stair2fee\,f_pregas f_pregas\,f_preamount f_preamount\,f_sgnetwork f_sgnetwork\,f_sgoperator f_sgoperator\,f_payfeevalid f_payfeevalid\,IsNUll(f_stair3amount\,0) f_stair3amount\,Isnull(f_stair3price\,0) f_stair3price\,isnull(f_stair3fee\,0) f_stair3fee from t_sellinggas where f_payfeevalid\=\'有效\' and (f_payfeetype\=\'发卡售气\' or f_payfeetype\=\'卡表收费\' or f_payfeetype\=\'超用收费\') and f_userid in (select u1.f_userid from t_userfiles u1 left join t_userfiles u2 on u1.f_userinfoid\=u2.f_userinfoid where u2.f_userid\=\'\{kbfee.f_userid\}\') and Substring( CONVERT(varchar(12)\, f_deliverydate\, 111 )\,1\,4) \= \'\{SysTime.Today.ToString($yyyy$)\}\' order by f_deliverydate desc \, id desc $\,null}"
+				Path="{m:Exp Str=kbusers.f_userid !\= null:$sql/select f_userid f_userid\,f_username f_username\,f_cardid f_cardid\,CONVERT(varchar(12)\, f_deliverydate\, 111 )  f_deliverydate\,CONVERT(varchar(8)\, f_deliverytime\, 108 ) f_deliverytime\,IsNUll(f_stair1amount\,0) f_stair1amount\,Isnull(f_stair1price\,0) f_stair1price\,isnull(f_stair1fee\,0) f_stair1fee\,isnull(f_stair2amount\,0) f_stair2amount\,isnull(f_stair2price\,0) f_stair2price\,isnull(f_stair2fee\,0) f_stair2fee\,f_pregas f_pregas\,f_preamount f_preamount\,f_sgnetwork f_sgnetwork\,f_sgoperator f_sgoperator\,f_payfeevalid f_payfeevalid\,IsNUll(f_stair3amount\,0) f_stair3amount\,Isnull(f_stair3price\,0) f_stair3price\,isnull(f_stair3fee\,0) f_stair3fee from t_sellinggas where f_payfeevalid\=\'有效\' and (f_payfeetype\=\'发卡售气\' or f_payfeetype\=\'卡表收费\' or f_payfeetype\=\'超用收费\') and f_userid \=\'\{kbfee.f_userid\}\' and Substring( CONVERT(varchar(12)\, f_deliverydate\, 111 )\,1\,4) \= \'\{SysTime.Today.ToString($yyyy$)\}\' order by f_deliverydate desc \, id desc $\,null}"
 				IsOld="{m:Exp Str=SaveAction.State\=\=$End$}" />
             <!--本月有效费列表,目的是计算用户本月已经购买的气量-->
             <o:ObjectList Name="kbbysellgas" WebClientInfo="{StaticResource dbclient}"
@@ -158,6 +158,8 @@
                 <o:PropertySetter PropertyName="f_fillgas"
 				NoDependValue="{m:Exp Str=kbfee.f_surplusgas>0:fillgas\,null}"/>
 				<o:PropertySetter PropertyName="f_OrgStr" Default="{m:Exp Str=LoginUser.orgpathstr}"/>
+				<o:PropertySetter PropertyName="f_filiale" Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
+				<o:PropertySetter PropertyName="f_gasmeterstyle" Default="卡表"/>
             </o:GeneralObject>
             <!--开票类型-->
             <o:ObjectList Name="invoicelist" WebClientInfo="{StaticResource dbclient}" Path="from paramvalue where param.name='发票样式' order by id"/>
@@ -888,9 +890,9 @@
                                     </a:Data.Prop>
                                 </TextBox>
                                 <TextBlock Margin="0" Grid.Row="11" TextWrapping="Wrap" Text="分 公 司：" TextAlignment="Right" Height="25"/>
-                                <TextBox Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
+                                <TextBox x:Name="ui_filiale" Text="{m:Bind Path=f_filiale}" Grid.Column="1" Margin="0" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" Height="25" HorizontalAlignment="Stretch" >
                                     <a:Data.Prop>
-                                        <o:PropertySetter PropertyName="f_filiale"
+                                        <o:PropertySetter PropertyName="f_filiale" NotNull="True"
 										Default="{m:Exp Str=LoginUser.f_fengongsi}"/>
                                     </a:Data.Prop>
                                 </TextBox>

@@ -63,7 +63,7 @@ public class SellSer {
 					+ "isnull(ui.f_gasproperties,'普通民用') f_gasproperties,isnull(ui.f_gaspricetype,'民用气价') f_gaspricetype,"
 					+ "ui.f_userid infoid,isnull(ui.f_gasprice,0) f_gasprice,isnull(u.f_dibaohu,0) f_dibaohu,"
 					+ "isnull(ui.f_payment,'现金') f_payment,isnull(ui.f_stairtype,'未设') f_stairtype,isnull(ui.f_userstate,'正常') f_userstate," // ui
-																																			// t_userinfo
+																																				// t_userinfo
 					+ "" // u t_userfiles
 					+ "h.days days,h.f_userid f_userid,isnull(h.oughtamount,0) oughtamount,"
 					+ "isnull(h.oughtfee,0) oughtfee,h.lastinputdate lastinputdate,h.lastinputgasnum lastinputgasnum,"
@@ -161,8 +161,8 @@ public class SellSer {
 					int bigDec = f_zhye.compareTo(oughtfee);// 判断余额是否大余气费
 					oughtfee = bigDec > 0 ? new BigDecimal("0") : oughtfee
 							.subtract(f_zhye);
-					f_zhye = bigDec > 0 ? f_zhye.subtract(oughtfee)
-							: new BigDecimal("0");
+					f_zhye = bigDec > 0 ? f_zhye.subtract(new BigDecimal(hand
+							.get("oughtfee").toString())) : new BigDecimal("0");
 				}
 				f_zhinajin = oughtfee.multiply(new BigDecimal(days + ""))
 						.multiply(scale);
@@ -543,8 +543,8 @@ public class SellSer {
 		// 更新用户
 		String sql = "update t_userinfo  set f_zhye=" + f_zhye
 				+ ", f_finabuygasdate='" + dt + "', f_finabuygastime='" + tm
-				+ "',f_zherownum=" + (zherownum + 1) + " where f_userid='"
-				+ user.get("f_userid") + "'";
+				+ "',f_zherownum=" + (zherownum + 1) + " where id='"
+				+ user.get("id") + "'";
 		// this.session.createQuery(sql).executeUpdate();
 		log.debug("更新户信息开始:" + sql);
 		this.hibernateTemplate.bulkUpdate(sql);
