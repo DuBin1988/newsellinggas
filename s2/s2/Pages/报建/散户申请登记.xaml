@@ -107,7 +107,7 @@
 				         SelectedItem="{m:Exp Str='main.DataContext.IsInit:null,persons.SelectedItem'}" IsReadOnly="True" >
                                         <a:Data.Items>
                                             <o:ObjectList Name="personslist" WebClientInfo="{StaticResource dbclient}"
-                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\' and f_substate \=\'已完成\'}"
+                             Path="{m:Exp Str=$select distinct apply from t_apply as apply left join fetch apply.f_applyimage where \{personsearch.DataContext.Condition\} and f_usertype \=\'民用\'  and f_projecttype\=\'散户报建\'  and f_substate \=\'已完成\'}"
 					         IsOld="{m:Exp Str='DeleteAction=>Completed!=null and BatchSave=>Completed!=null'}">
                                             </o:ObjectList>
                                         </a:Data.Items>
