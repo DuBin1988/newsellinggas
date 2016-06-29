@@ -34,7 +34,7 @@
                 on act.actorexpression \= p.actorid 
                 join t_apply apply 
                 on apply.f_processid\=act.processid 
-                where \{myfbhtSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'涉县报装流程\' and act.defname\=\'分包合同\' and p.userid\=\'\{LoginUser.ename\}\'}"
+                where \{myfbhtSearch.DataContext.Condition\} and act.state\=\'开始活动\' and act.processName\=\'报装流程\' and act.defname\=\'分包合同\' and p.userid\=\'\{LoginUser.ename\}\'}"
                 Path="sql" PageIndex="{m:Exp Str=myfbhtPager.PageIndex}" PageSize="{m:Exp Str=myfbhtPager.PageSize}" SumNames="," />
 
             <o:GeneralObject Name="myfbhtObj" EntityType="t_apply" WebClientInfo="{StaticResource dbclient}" 
