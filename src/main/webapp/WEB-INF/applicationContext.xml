@@ -148,18 +148,16 @@
 		</property>
 	</bean>
 
-	<!-- 
-	<bean id="MianZhuSms" class="com.aote.rs.sms.MianZhuSms">
-	</bean>
-	<bean id="SmsService" class="com.aote.rs.sms.SmsService">
-	</bean>
-	<bean id="MzSmsQuartzs" class="com.aote.rs.sms.MzSmsQuartzs">
+	<bean id="HaiLeSms" class="com.aote.rs.sms.HaiLeSms">
 	</bean>
 	
+	<bean id="MzSmsQuartzs" class="com.aote.rs.sms.MzSmsQuartzs">
+	</bean>
+<!--	
 	<bean id="MianZhuTask5"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
-			<ref bean="MianZhuSms" />
+			<ref bean="HaiLeSms" />
 		</property>
 		<property name="targetMethod">
 			<value>send</value>
@@ -171,7 +169,7 @@
 			<ref bean="MianZhuTask5" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0/5 * * * ?"</value>
+			<value>0 0/2 * * * ?"</value>
 		</property>
 	</bean>
 
@@ -181,14 +179,15 @@
 			<ref bean="remindCronTriggerista5" />
 		</property>
 	</bean>
-
+	
+ -->
 	<bean id="MianZhuTask"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="MzSmsQuartzs" />
 		</property>
 		<property name="targetMethod">
-			<value>zhyeLt20</value>
+			<value>syqf</value>
 		</property>
 	</bean>
 
@@ -197,7 +196,7 @@
 			<ref bean="MianZhuTask" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 0 16 * ?</value>
+			<value>0 0/2 * * * ?</value>
 		</property>
 	</bean>
 
@@ -214,7 +213,7 @@
 			<ref bean="MzSmsQuartzs" />
 		</property>
 		<property name="targetMethod">
-			<value>lastMonthQf</value>
+			<value>ssyqf</value>
 		</property>
 	</bean>
 
@@ -223,7 +222,7 @@
 			<ref bean="MianZhuTask1" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 0 5 * ?</value>
+			<value>0 0/2 * * * ?</value>
 		</property>
 	</bean>
 
@@ -240,7 +239,7 @@
 			<ref bean="MzSmsQuartzs" />
 		</property>
 		<property name="targetMethod">
-			<value>lastMonthQf</value>
+			<value>sssyqf</value>
 		</property>
 	</bean>
 
@@ -249,67 +248,15 @@
 			<ref bean="MianZhuTask2" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 0 15 * ?</value>
+			<value>0 0/2 * * * ?</value>
 		</property>
 	</bean>
-
+	
 	<bean id="schedulerista2"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<ref bean="remindCronTriggerista2" />
 		</property>
 	</bean>
-	
-	<bean id="MianZhuTask3"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref bean="MzSmsQuartzs" />
-		</property>
-		<property name="targetMethod">
-			<value>thisMonthSy</value>
-		</property>
-	</bean>
-
-	<bean id="remindCronTriggerista3" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<ref bean="MianZhuTask3" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 0 27 * ?</value>
-		</property>
-	</bean>
-
-	<bean id="schedulerista3"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<ref bean="remindCronTriggerista3" />
-		</property>
-	</bean>
-	
-	<bean id="MianZhuTask4"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref bean="MzSmsQuartzs" />
-		</property>
-		<property name="targetMethod">
-			<value>thisMonthSy</value>
-		</property>
-	</bean>
-
-	<bean id="remindCronTriggerista4" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<ref bean="MianZhuTask4" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 0 28 * ?</value>
-		</property>
-	</bean>
-
-	<bean id="schedulerista4"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<ref bean="remindCronTriggerista4" />
-		</property>
-	</bean> 
-	-->
+	 
 </beans>
