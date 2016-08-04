@@ -34,8 +34,8 @@
 	   </b:SyncActionFactory> 
 	  
 			<!--用户对象 -->
-       <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-		Path="{m:Exp Str=$one/from t_userfiles where id\=\{userfiles.SelectedItem.id\}}"
+       <o:GeneralObject Name="users" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
+		Path="{m:Exp Str=$one/from t_userinfo where id\=\{userfiles.SelectedItem.id\}}"
 			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
         		</o:GeneralObject>	
 			
@@ -267,9 +267,9 @@
     							</a:Data.Prop>
     						</TextBox>
     						<TextBlock Margin="0,7,0,5" Grid.Row="3" TextWrapping="Wrap" Text="住址：" TextAlignment="Right" Grid.Column="4"/>
-    						<TextBox Text="{m:Bind Path=f_rightaddress}" IsReadOnly="True"  Grid.Column="5" Margin="0,7,0,5" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
+    						<TextBox Text="{m:Bind Path=f_address}" IsReadOnly="True"  Grid.Column="5" Margin="0,7,0,5" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
     							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_rightaddress" NoDependValue="{m:Exp Str=users.f_rightaddress}" />
+                                    <o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=users.f_address}" />
 							</a:Data.Prop>
     						</TextBox>
     					</Grid>
@@ -346,7 +346,7 @@
     				AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
     				<a:Data.Items>
     					<o:PagedObjectList x:Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-    						Path="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_whethergivepassbook\=\'已发\' }"
+    						Path="{m:Exp Str=$from t_userinfo where \{userfilesearch.DataContext.Condition\} and f_userstate\=\'正常\' and f_whethergivepassbook\=\'已发\' and f_filiale\=\'\{\LoginUser.f_fengongsi\}\'}"
     						IsOld="{m:Exp Str=print.State\=\=$End$}"
 							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames=","/>
     				</a:Data.Items>

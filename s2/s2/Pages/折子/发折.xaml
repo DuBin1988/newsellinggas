@@ -23,8 +23,8 @@
 			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype }"/>
 		
 			<!--用户对象 -->
-	        <o:GeneralObject Name="users" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
-				Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userfiles where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userid\=\'\{userfile.DataContext.f_userid\}\' and f_whethergivepassbook\=\'未发\'$\,$null$}"
+	        <o:GeneralObject Name="users" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userinfo where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,userfile.DataContext.f_userid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userid\}\' and f_whethergivepassbook\=\'未发\'$\,$null$}"
 				IsInit="{m:Exp Str=print.State\=\=$End$ or print.State\=\=$Cancle$}">
 	        	<!--发折日期-->
 				<o:PropertySetter PropertyName="f_recoverypassbookdate" Default="{m:Exp Str=SysTime.Today}"/>
@@ -109,7 +109,7 @@
             		AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
             		<a:Data.Items>
     					<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
-    						Path="{m:Exp Str=$from t_userfiles where \{userfilesearch.DataContext.Condition\} and f_whethergivepassbook\=\'未发\'}"
+    						Path="{m:Exp Str=$from t_userinfo where \{userfilesearch.DataContext.Condition\} and f_whethergivepassbook\=\'未发\' and f_filiale\=\'\{\LoginUser.f_fengongsi\}\'}"
     						IsOld="{m:Exp Str=print.State\=\=$End$}"
 							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
     				</a:Data.Items>

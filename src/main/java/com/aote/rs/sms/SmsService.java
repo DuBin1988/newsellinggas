@@ -68,7 +68,7 @@ public class SmsService {
 			Date date = new Date();
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 			String time = df.format(date);
-			Date createdate = (Date)df.parse(time);
+			Date createdate = df.parse(time);
 			Map<String, Object> sms = new HashMap<String, Object>();
 			sms.put("f_username", p.get("f_username").toString()); // 用户姓名
 			sms.put("f_content", msg);// 短信内容
@@ -100,7 +100,7 @@ public class SmsService {
 			Date date = new Date();
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 			String time = df.format(date);
-			Date createdate = (Date)df.parse(time);
+			Date createdate = df.parse(time);
 			Map<String, Object> sms = new HashMap<String, Object>();
 			sms.put("f_username", f_username); // 用户姓名
 			sms.put("f_content", f_content);// 短信内容
