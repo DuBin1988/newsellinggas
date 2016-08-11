@@ -17,365 +17,363 @@
 	mc:Ignorable="d" FontSize="14"
 	x:Class="Com.Aote.Pages.发折"   FontFamily="Microsoft YaHei" >
 
-	<Grid x:Name="LayoutRoot">
-		<m:ResourceLoad Margin="0,0,-101,0">	 
-		 	<o:ObjectList Name="qbpplist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>			
-			<o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype }"/>
-		
-			<!--用户对象 -->
-	        <o:GeneralObject Name="users" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
+    <Grid x:Name="LayoutRoot">
+        <m:ResourceLoad Margin="0,0,-101,0">
+            <o:ObjectList Name="qbpplist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from qibiao as qibiao left join fetch qibiao.qbnumber}"/>
+            <o:ObjectList Name="usegaslist" WebClientInfo="{StaticResource dbclient}" Path="{m:Exp Str=$from gasproper as gasproper left join fetch gasproper.pricetype }"/>
+
+            <!--用户对象 -->
+            <o:GeneralObject Name="users" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
 				Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userinfo where f_userid\=\'\{userfiles.SelectedItem.f_userid\}\'$\,userfile.DataContext.f_userid!\=null:$one/from t_userinfo where f_userid\=\'\{userfile.DataContext.f_userid\}\' and f_whethergivepassbook\=\'未发\'$\,$null$}"
 				IsInit="{m:Exp Str=print.State\=\=$End$ or print.State\=\=$Cancle$}">
-	        	<!--发折日期-->
-				<o:PropertySetter PropertyName="f_recoverypassbookdate" Default="{m:Exp Str=SysTime.Today}"/>
-				<o:PropertySetter PropertyName="f_zherownum" Default="13"/>
-				<o:PropertySetter PropertyName="f_whethergivepassbook" Default="已发"/>
-				<o:PropertySetter PropertyName="f_foldnum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfile.DataContext.f_foldnum\,null}"/>
-		 
-			</o:GeneralObject>
-			
-		 
-		 
-			<b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
-				<b:BatchInfo Source="{m:Exp Str=users}" MethodName="SaveToJson"  />
-			 	<b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
-			</b:BatchExcuteAction>
-				
-			<!--打印-->
-			<b:SyncActionFactory Name="print"  CanSave="{m:Exp Str=SaveAction.State\=\=$End$}"  >
-			    <b:CallMethodAction    Name="printzhezi" TargetObject="{m:Exp Str=zzprint}"  MethodName="TipPrint"/>  
-		    </b:SyncActionFactory>  
+                <!--发折日期-->
+                <o:PropertySetter PropertyName="f_recoverypassbookdate" Default="{m:Exp Str=SysTime.Today}"/>
+                <o:PropertySetter PropertyName="f_zherownum" Default="13"/>
+                <o:PropertySetter PropertyName="f_whethergivepassbook" Default="已发"/>
+                <o:PropertySetter PropertyName="f_foldnum" NoDependValue="{m:Exp Str=SaveAction\=>Saving!\=null:userfile.DataContext.f_foldnum\,null}"/>
 
-		</m:ResourceLoad>
-    <Grid >
-    	<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="3*"/>
-			<ColumnDefinition Width="7*"/>
-		</Grid.ColumnDefinitions>
-        <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" >
-            <toolkit:DockPanel >
-                <toolkit:DockPanel  Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5" Height="16">
-            		<TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,10" />
+            </o:GeneralObject>
 
-            	</toolkit:DockPanel>
-            	 <Grid x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Background="#FFCFEFFF" Margin="0,0,0,1" >
-                	<Grid.RowDefinitions>
-							<RowDefinition Height="27"/>
-							<RowDefinition Height="27"/>
-							<RowDefinition Height="27"/>
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="50*"/>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="50*"/>
-						</Grid.ColumnDefinitions>
-                   <a:Data.Context>
-            		  	<o:SearchObject ></o:SearchObject>        	
-				   </a:Data.Context>
-				   
-					   <TextBlock TextWrapping="Wrap" Margin="5,0,0,0" TextAlignment="Right">
+            <!--表对象 -->
+            <o:GeneralObject Name="meters" EntityType="t_userfiles" WebClientInfo="{StaticResource dbclient}"
+				Path="{m:Exp Str=userfiles.SelectedItem!\=null:$one/from t_userfiles where f_userinfoid\=\'\{userfiles.SelectedItem.f_userid\}\' and id \=(select MIn(id) from t_userfiles where f_userinfoid\=\'\{userfiles.SelectedItem.f_userid\}\')$\,userfile.DataContext.f_userid!\=null:$one/from t_userfiles where f_userinfoid\=\'\{userfile.DataContext.f_userid\}\' and id \=(select MIn(id) from t_userfiles where f_userinfoid\=\'\{userfiles.SelectedItem.f_userid\}\') and f_whethergivepassbook\=\'未发\'$\,$null$}"
+				IsInit="{m:Exp Str=print.State\=\=$End$ or print.State\=\=$Cancle$}">
+            </o:GeneralObject>
+
+
+            <b:HQLAction Name="UpdateZheNum"   WebClientInfo="{StaticResource dbclient}" 
+                    CanSave="{m:Exp Str=SaveAction.State\=\=$End$}"			        
+                    HQL="{m:Exp Str=$update t_userinfo  set f_foldnum\=\{userfile.DataContext.f_foldnum\}\,f_whethergivepassbook\=\'已发\'\,f_recoverypassbookdate\=CONVERT(varchar(100)\, GETDATE()\, 23) where f_userid \=\'\{userfile.DataContext.f_userid\}\'$}"/>
+            <b:BatchExcuteAction Name="SaveAction" WebClientInfo="{StaticResource dbclient}">
+                <b:BatchInfo Source="{m:Exp Str=userfile.DataContext}" MethodName="SaveToJson"/>
+            </b:BatchExcuteAction>
+
+            <!--打印-->
+            <b:SyncActionFactory Name="print"  CanSave="{m:Exp Str=UpdateZheNum.State\=\=$End$}"  >
+                <b:CallMethodAction    Name="printzhezi" TargetObject="{m:Exp Str=zzprint}"  MethodName="TipPrint"/>
+            </b:SyncActionFactory>
+
+        </m:ResourceLoad>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="7*"/>
+            </Grid.ColumnDefinitions>
+            <c:BusyIndicatorEx BusyContent="正在查询，请稍等" IsBusy="{m:Exp Str=userfiles.ItemsSource.IsBusy}" >
+                <toolkit:DockPanel >
+                    <toolkit:DockPanel  Background="{x:Null}" toolkit:DockPanel.Dock="Bottom" Margin="0,0,0,5" Height="16">
+                        <TextBlock TextWrapping="Wrap" Text="{m:Exp Str=$共\{userfiles.ItemsSource.Count\}项}" Width="Auto" HorizontalAlignment="Stretch" Foreground="#FF140000" VerticalAlignment="Bottom" Margin="0,0,0,10" />
+
+                    </toolkit:DockPanel>
+                    <Grid x:Name="userfilesearch" toolkit:DockPanel.Dock="Top" Background="#FFCFEFFF" Margin="0,0,0,1" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="27"/>
+                            <RowDefinition Height="27"/>
+                            <RowDefinition Height="27"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <a:Data.Context>
+                            <o:SearchObject ></o:SearchObject>
+                        </a:Data.Context>
+
+                        <TextBlock TextWrapping="Wrap" Margin="5,0,0,0" TextAlignment="Right">
 					   	<Run Text="用户"/>
 					   	<Run Text="ID"/>
 					   	<Run Text="号"/>
 					   	<Run Text="："/>
-					   </TextBlock>
-	                    <TextBox TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="username" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,1" >
-	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_userid" Operator="f_userid like 'this'"/>               
-						  </a:Data.Prop>
-						</TextBox>
-					   <TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
-	                    <TextBox x:Name="username" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqdm" Grid.Column="3" Grid.Row="0" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,1" >
-	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this'"/>               
-						  </a:Data.Prop>
-						</TextBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区名称：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
-	                    <TextBox x:Name="xqmc" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="searchbutton" Grid.Column="3" Grid.Row="1" Text="{m:Bind Path=f_districtname}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1" >
-	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this'"/>               
-						  </a:Data.Prop>
-						</TextBox>
-						<TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区代码：" Margin="3,0,0,0" TextAlignment="Right"/>
-	                    <TextBox x:Name="xqdm" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqmc" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_communityid}" Width="Auto" Margin="0,1" >
-	                      <a:Data.Prop>
-	                      	   <o:PropertySetter PropertyName="f_communityid" Operator="f_communityid like 'this'"/>               
-						  </a:Data.Prop>
-						</TextBox>
-	                    <Button Content="查  询" x:Name="searchbutton" Grid.Column="3" Grid.Row="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,0" HorizontalAlignment="Right" Width="50"/>					
-                </Grid>
-            	<sdk:DataGrid x:Name="userfiles" Margin="0"  
+                        </TextBlock>
+                        <TextBox TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="username" Grid.Column="1" Text="{m:Bind Path=f_userid}" Width="Auto" Margin="0,1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_userid" Operator="f_userid like 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Text="用户姓名：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
+                        <TextBox x:Name="username" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqdm" Grid.Column="3" Grid.Row="0" Text="{m:Bind Path=f_username}" Width="Auto" Margin="0,1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_username" Operator="f_username like 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区名称：" Margin="3,0,0,0" TextAlignment="Right" Grid.Column="2"/>
+                        <TextBox x:Name="xqmc" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="searchbutton" Grid.Column="3" Grid.Row="1" Text="{m:Bind Path=f_districtname}" a:ControlAttach.DefaultButton="searchbutton" Width="Auto" Margin="0,1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_districtname" Operator="f_districtname like 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <TextBlock TextWrapping="Wrap" Grid.Row="1" Text="小区代码：" Margin="3,0,0,0" TextAlignment="Right"/>
+                        <TextBox x:Name="xqdm" TextWrapping="Wrap" a:ControlAttach.FocusToOnEnter="xqmc" Grid.Column="1" Grid.Row="1" Text="{m:Bind Path=f_communityid}" Width="Auto" Margin="0,1" >
+                            <a:Data.Prop>
+                                <o:PropertySetter PropertyName="f_communityid" Operator="f_communityid like 'this'"/>
+                            </a:Data.Prop>
+                        </TextBox>
+                        <Button Content="查  询" x:Name="searchbutton" Grid.Column="3" Grid.Row="2" Click="{m:Exp Str=userfilesearch.DataContext.Search()}" Margin="0,0,5,0" HorizontalAlignment="Right" Width="50"/>
+                    </Grid>
+                    <sdk:DataGrid x:Name="userfiles" Margin="0"  
             		AutoGenerateColumns="False" Width="Auto" Background="{x:Null}" IsReadOnly="True" >
-            		<a:Data.Items>
-    					<o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
+                        <a:Data.Items>
+                            <o:PagedObjectList Name="userfileslist" WebClientInfo="{StaticResource dbclient}"
     						Path="{m:Exp Str=$from t_userinfo where \{userfilesearch.DataContext.Condition\} and f_whethergivepassbook\=\'未发\' and f_filiale\=\'\{\LoginUser.f_fengongsi\}\'}"
     						IsOld="{m:Exp Str=print.State\=\=$End$}"
 							PageIndex="{m:Exp Str=pager.PageIndex}" PageSize="{m:Exp Str=pager.PageSize}" SumNames="f_times"/>
-    				</a:Data.Items>
-    				<sdk:DataGrid.Columns>
-    					<sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
-    					<sdk:DataGridTextColumn d:IsLocked="True" Header="是否发折" Binding="{Binding f_whethergivepassbook}"/>
-    					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名/单位名称" Binding="{Binding f_username}"/>
-    					<sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
-    					<sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
-						<sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
-    					
-    				</sdk:DataGrid.Columns>
-            	</sdk:DataGrid>
-             <!--提交按钮-->
-			</toolkit:DockPanel>
-        </c:BusyIndicatorEx>
-        <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=SaveAction.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
-            <Grid Background="{x:Null}" x:Name="userfile" >
-            	<a:Data.Context>
-            		<o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
+                        </a:Data.Items>
+                        <sdk:DataGrid.Columns>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="序  号" Binding="{Binding Index}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="是否发折" Binding="{Binding f_whethergivepassbook}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户姓名/单位名称" Binding="{Binding f_username}"/>
+                            <sdk:DataGridTextColumn d:IsLocked="True" Header="用户编号" Binding="{Binding f_userid}"/>
+                            <sdk:DataGridTextColumn Header="卡号" Binding="{Binding f_cardid}"/>
+                            <sdk:DataGridTextColumn Header="地址" Binding="{Binding f_address}"/>
+
+                        </sdk:DataGrid.Columns>
+                    </sdk:DataGrid>
+                    <!--提交按钮-->
+                </toolkit:DockPanel>
+            </c:BusyIndicatorEx>
+            <c:BusyIndicatorEx BusyContent="正在工作，请稍等" IsBusy="{m:Exp Str=SaveAction.IsBusy}" Margin="5,0,0,0" Grid.Column="1" >
+                <Grid Background="{x:Null}" x:Name="userfile" >
+                    <a:Data.Context>
+                        <o:GeneralObject  Name="userfilego" WebClientInfo="{StaticResource dbclient}" 
 						EntityType="t_fazhe"
 						IsInit="{m:Exp Str='print.State==$End'}"        	>
-            			<o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=users.f_idnumber\=>Completed}" />
-					</o:GeneralObject>
-				</a:Data.Context>
-				 
-				<toolkit:DockPanel>
-					
-					<toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" >
-						<Button x:Name="save" Content="发  折" Margin="5" 
+                            <o:PropertySetter PropertyName="f_idnumber" NoDependValue="{m:Exp Str=users.f_idnumber\=>Completed}" />
+                        </o:GeneralObject>
+                    </a:Data.Context>
+
+                    <toolkit:DockPanel>
+
+                        <toolkit:DockPanel toolkit:DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                            <Button x:Name="save" Content="发  折" Margin="5" 
 							IsEnabled="{m:Exp Str=!userfile.DataContext.HasErrors}"
 							Click="{m:Exp Str=users.f_recoverypassbookdate\=userfile.DataContext.f_recoverypassbookdate;users.f_zherownum\=13;users.f_whethergivepassbook\=$已发$;users.f_foldnum\=userfile.DataContext.f_foldnum;SaveAction.Invoke()}" Width="98"/>
-						<Button Content="清空" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();users.New();userfiles.SelectedItem \= null}" Width="50"/>
-				 	</toolkit:DockPanel>
-					
-					<Grid toolkit:DockPanel.Dock="Top" Margin="0,0,0,20"  >
-						<Grid.Background>
-							<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-								<GradientStop Color="#FFF2F8FF" Offset="0"/>
-								<GradientStop Color="#FFDDF2FD" Offset="1"/>
-						 	</LinearGradientBrush>
-						</Grid.Background>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35" />
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="35"/>
-							<RowDefinition Height="295"/>
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="110"/>
-							<ColumnDefinition Width="0.3*"/>
-							<ColumnDefinition Width="130"/>
-							<ColumnDefinition Width="0.3*"/>
-							<ColumnDefinition Width="110"/>
-							<ColumnDefinition Width="0.3*"/>
-						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Margin="0,6,0,3" TextWrapping="Wrap" TextAlignment="Right">
+                            <Button Content="清空" Margin="5" Click="{m:Exp Str=userfile.DataContext.New();users.New();userfiles.SelectedItem \= null}" Width="50"/>
+                        </toolkit:DockPanel>
+
+                        <Grid toolkit:DockPanel.Dock="Top" Margin="0,0,0,20"  >
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                    <GradientStop Color="#FFF2F8FF" Offset="0"/>
+                                    <GradientStop Color="#FFDDF2FD" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35" />
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="295"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="0.3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="0,6,0,3" TextWrapping="Wrap" TextAlignment="Right">
 							<Run Text="用户"/>
 							<Run Text="ID"/>
 							<Run Text="号"/>
 							<Run Text="："/>
-						</TextBlock>
-						<TextBlock Margin="0,5,0,4" TextWrapping="Wrap" Text="是否发折：" TextAlignment="Right" Grid.Row="6"/>
-						<TextBlock Text="用户姓名：" Margin="0,7,0,5" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2"/>
-						<TextBlock Text="用户类型：" Grid.Column="4" Margin="0,7,0,5" TextWrapping="Wrap" TextAlignment="Right"/>
-						<TextBlock Margin="0,8,0,4" TextWrapping="Wrap" Text="购气折编号：" TextAlignment="Right" HorizontalAlignment="Right" Grid.Row="3"/>
-						<TextBox Text="{m:Bind Path=f_userid}" a:ControlAttach.FocusToOnEnter="gqzbh"  Grid.Column="1" Margin="0,6,0,3" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_userid"  NoDependValue="{m:Exp Str=users.f_userid}" NotNull="True"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_whethergivepassbook}"  Grid.Column="1" Margin="0,5,0,4" Grid.Row="6" TextWrapping="Wrap" Height="26" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_whethergivepassbook"
+                            </TextBlock>
+                            <TextBlock Margin="0,5,0,4" TextWrapping="Wrap" Text="是否发折：" TextAlignment="Right" Grid.Row="6"/>
+                            <TextBlock Text="用户姓名：" Margin="0,7,0,5" TextWrapping="Wrap"  TextAlignment="Right" Grid.Column="2"/>
+                            <TextBlock Text="用户类型：" Grid.Column="4" Margin="0,7,0,5" TextWrapping="Wrap" TextAlignment="Right"/>
+                            <TextBlock Margin="0,8,0,4" TextWrapping="Wrap" Text="购气折编号：" TextAlignment="Right" HorizontalAlignment="Right" Grid.Row="3"/>
+                            <TextBox Text="{m:Bind Path=f_userid}" a:ControlAttach.FocusToOnEnter="gqzbh"  Grid.Column="1" Margin="0,6,0,3" Grid.Row="0" TextWrapping="Wrap" Grid.ColumnSpan="1">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_userid"  NoDependValue="{m:Exp Str=users.f_userid}" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_whethergivepassbook}"  Grid.Column="1" Margin="0,5,0,4" Grid.Row="6" TextWrapping="Wrap" Height="26" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_whethergivepassbook"
 									Default="是"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_username}"   Grid.Column="3" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" Grid.Row="0" IsReadOnly="True"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=users.f_username}" NotNull="True"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0,7,0,5" Grid.Row="0" IsReadOnly="True" IsEnabled="True" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_usertype" NoDependValue="{m:Exp Str=users.f_usertype}" />
-							</a:Data.Prop>	
-						</TextBox>
-						<TextBox x:Name="gqzbh" Text="{m:Bind Path=f_foldnum}"  a:ControlAttach.FocusToOnEnter="bh" Grid.Column="1" Margin="0,8,0,4" Grid.Row="3" TextWrapping="Wrap" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_foldnum"  />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" Text="部       门：" TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_parentname}" Grid.Column="1" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_parentname" NotNull="True" 
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_username}"   Grid.Column="3" Margin="0,7,0,5" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" Grid.Row="0" IsReadOnly="True"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_username" NoDependValue="{m:Exp Str=users.f_username}" NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_usertype}" Grid.Column="5" Margin="0,7,0,5" Grid.Row="0" IsReadOnly="True" IsEnabled="True" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_usertype" NoDependValue="{m:Exp Str=users.f_usertype}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox x:Name="gqzbh" Text="{m:Bind Path=f_foldnum}"  a:ControlAttach.FocusToOnEnter="bh" Grid.Column="1" Margin="0,8,0,4" Grid.Row="3" TextWrapping="Wrap" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_foldnum"  NotNull="True"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" Text="部       门：" TextAlignment="Right"/>
+                            <TextBox Text="{m:Bind Path=f_parentname}" Grid.Column="1" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_parentname" NotNull="True" 
 									Default="{m:Exp Str=LoginUser.f_parentname}"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Grid.Column="2" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" Text="操  作 人："  TextAlignment="Right"/>
-						<TextBox Text="{m:Bind Path=f_rcoperator}" Grid.Column="3" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_rcoperator" NotNull="True"  
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Grid.Column="2" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" Text="操  作 人："  TextAlignment="Right"/>
+                            <TextBox Text="{m:Bind Path=f_rcoperator}" Grid.Column="3" Margin="0,4,0,8" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_rcoperator" NotNull="True"  
 									Default="{m:Exp Str=LoginUser.name}"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Grid.Column="2" Margin="20,6,0,6" Grid.Row="6" TextWrapping="Wrap" Text="发折日期：" TextAlignment="Right"/>
-						<sdk:DatePicker SelectedDate="{m:Bind Path=f_recoverypassbookdate}" IsEnabled="False" Grid.Column="3" Margin="0,6" Grid.Row="6"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_recoverypassbookdate" NotNull="True" 
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Grid.Column="2" Margin="20,6,0,6" Grid.Row="6" TextWrapping="Wrap" Text="发折日期：" TextAlignment="Right"/>
+                            <sdk:DatePicker SelectedDate="{m:Bind Path=f_recoverypassbookdate}" IsEnabled="False" Grid.Column="3" Margin="0,6" Grid.Row="6"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_recoverypassbookdate" NotNull="True" 
 									Default="{m:Exp Str=SysTime.Today}"/>
-							</a:Data.Prop>
-						</sdk:DatePicker>
-						<TextBlock Text="小区地址：" Grid.Row="1" Margin="0,5" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
-						<TextBlock Text="电话号码：" Grid.Row="1" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-						<TextBlock Text="小区名称：" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
-						<TextBox Text="{m:Bind Path=f_address}"  Grid.Column="5" Grid.Row="1" Margin="0,5" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=users.f_address}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_phone}"  Grid.Column="1" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_phone" NoDependValue="{m:Exp Str=users.f_phone}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_districtname}"  Grid.Column="3" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap"  Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_districtname" NoDependValue="{m:Exp Str=users.f_districtname}"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_apartment}"   Grid.Column="3" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_apartment" NoDependValue="{m:Exp Str=users.f_apartment}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Text="门  牌  号：" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
-						<TextBox Text="{m:Bind Path=f_cusDom}"   Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,2,0,3" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_cusDom" NoDependValue="{m:Exp Str=users.f_cusDom}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Text="楼        号：" Margin="0,2,0,3" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-						<TextBlock Text="气表型号：" Grid.Column="2" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-						<TextBlock Text="气表厂家：" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
-						<TextBlock Text="表　　号：" Grid.Column="4" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" d:LayoutOverrides="Height"/>
-						<ComboBox x:Name="CoboxPinp"  DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" IsEnabled="False" ItemsSource="{m:Exp Str=qbpplist}"  SelectedValue="{m:Bind Path=f_gaswatchbrand}"  Grid.Column="1" Margin="0,5" Grid.Row="4"  Height="25"  HorizontalAlignment="Stretch" FontSize="13.333">
-					 		<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_gaswatchbrand"    NoDependValue="{m:Exp Str=users.f_gaswatchbrand}" />
-							</a:Data.Prop>
-						</ComboBox>
-						<ComboBox x:Name="DaXiaoKa" IsEnabled="False" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber"   ItemsSource="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber}"  SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,2,0,3" Grid.Row="4" Height="25"  HorizontalAlignment="Stretch" FontSize="13.333">	
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_metertype"   NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber.Count &gt; 0 :CoboxPinp.SelectedItem.qbnumber.First().f_qbnumber\,null}" Default="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber.Count &gt; 0 :CoboxPinp.SelectedItem.qbnumber.First().f_qbnumber\,null}"/>
-							</a:Data.Prop>
-						</ComboBox>
-						<TextBox Text="{m:Bind Path=f_gasmetermanufacturers}"  IsReadOnly="True" Grid.Column="5" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap"   Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_gasmetermanufacturers" Default="{m:Exp Str=users.f_gasmetermanufacturers}" NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.f_changjia}"/>
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox x:Name="bh" Text="{m:Bind Path=f_meternumber}" a:ControlAttach.FocusToOnEnter="bs" Grid.Column="5" Margin="0,2,0,3" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_meternumber" NoDependValue="{m:Exp Str=users.f_meternumber}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBox Text="{m:Bind Path=f_maxzhishu}"  Grid.Column="2" Margin="20,2,0,8" Grid.Row="7" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="GridBox" Visibility="Collapsed" >
-									<a:Data.Prop>
+                                </a:Data.Prop>
+                            </sdk:DatePicker>
+                            <TextBlock Text="小区地址：" Grid.Row="1" Margin="0,5" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+                            <TextBlock Text="电话号码：" Grid.Row="1" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                            <TextBlock Text="小区名称：" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
+                            <TextBox Text="{m:Bind Path=f_address}"  Grid.Column="5" Grid.Row="1" Margin="0,5" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_address" NoDependValue="{m:Exp Str=users.f_address}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_phone}"  Grid.Column="1" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap"   Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_phone" NoDependValue="{m:Exp Str=users.f_phone}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_districtname}"  Grid.Column="3" Margin="0,2,0,3" Grid.Row="1" TextWrapping="Wrap"  Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_districtname" NoDependValue="{m:Exp Str=users.f_districtname}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_apartment}"   Grid.Column="3" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_apartment" NoDependValue="{m:Exp Str=users.f_apartment}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="门  牌  号：" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="2"/>
+                            <TextBox Text="{m:Bind Path=f_cusDom}"   Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,2,0,3" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_cusDom" NoDependValue="{m:Exp Str=users.f_cusDom}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="楼        号：" Margin="0,2,0,3" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                            <TextBlock Text="气表型号：" Grid.Column="2" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+                            <TextBlock Text="气表厂家：" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+                            <TextBlock Text="表　　号：" Grid.Column="4" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25" d:LayoutOverrides="Height"/>
+                            <ComboBox x:Name="CoboxPinp"  DisplayMemberPath="f_pinpai" SelectedValuePath="f_pinpai" IsEnabled="False" ItemsSource="{m:Exp Str=qbpplist}"  SelectedValue="{m:Bind Path=f_gaswatchbrand}"  Grid.Column="1" Margin="0,5" Grid.Row="4"  Height="25"  HorizontalAlignment="Stretch" FontSize="13.333">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_gaswatchbrand"    NoDependValue="{m:Exp Str=meters.f_gaswatchbrand}" />
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <ComboBox x:Name="DaXiaoKa" IsEnabled="False" DisplayMemberPath="f_qbnumber" SelectedValuePath="f_qbnumber"   ItemsSource="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber}"  SelectedValue="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,2,0,3" Grid.Row="4" Height="25"  HorizontalAlignment="Stretch" FontSize="13.333">
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_metertype"   NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber.Count &gt; 0 :CoboxPinp.SelectedItem.qbnumber.First().f_qbnumber\,null}" Default="{m:Exp Str=CoboxPinp.SelectedItem.qbnumber.Count &gt; 0 :CoboxPinp.SelectedItem.qbnumber.First().f_qbnumber\,null}"/>
+                                </a:Data.Prop>
+                            </ComboBox>
+                            <TextBox Text="{m:Bind Path=f_gasmetermanufacturers}"  IsReadOnly="True" Grid.Column="5" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap"   Height="25" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_gasmetermanufacturers" Default="{m:Exp Str=meters.f_gasmetermanufacturers}" NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.f_changjia}"/>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox x:Name="bh" Text="{m:Bind Path=f_meternumber}" a:ControlAttach.FocusToOnEnter="bs" Grid.Column="5" Margin="0,2,0,3" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="False" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_meternumber" NoDependValue="{m:Exp Str=meters.f_meternumber}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_maxzhishu}"  Grid.Column="2" Margin="20,2,0,8" Grid.Row="7" TextWrapping="Wrap" Grid.ColumnSpan="1" Height="25" VerticalAlignment="Stretch" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="GridBox" Visibility="Collapsed" >
+                                <a:Data.Prop>
 
-										<o:PropertySetter PropertyName="f_maxzhishu"  Default="{m:Exp Str=users.f_maxzhishu}"   NoDependValue="{m:Exp Str=DaXiaoKa.SelectedItem.f_maxzhishu}"  />
+                                    <o:PropertySetter PropertyName="f_maxzhishu"  Default="{m:Exp Str=meters.f_maxzhishu}"   NoDependValue="{m:Exp Str=DaXiaoKa.SelectedItem.f_maxzhishu}"  />
 
-									</a:Data.Prop>
-								</TextBox>
-							<TextBox Text="{m:Bind Path=yhh}"  Grid.Column="3" Margin="25,2,46,8" Grid.Row="7" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="1.923,0.4" HorizontalAlignment="Stretch" Width="Auto" Visibility="Collapsed"  >
-									<a:Data.Prop>
-										<o:PropertySetter PropertyName="yhh"     NoDependValue="{m:Exp Str=users.yhh}"  />
-									</a:Data.Prop>	
-								</TextBox>
-						<TextBox Text="{m:Bind Path=f_aliasname}"    Margin="0,2,0,3" TextWrapping="Wrap"  IsReadOnly="True" Height="25" VerticalAlignment="Stretch" Grid.Row="5" Grid.ColumnSpan="1" Grid.Column="3" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_aliasname" NoDependValue="{m:Exp Str=users.f_aliasname}"  />
-							</a:Data.Prop>
-						</TextBox>
-						<StackPanel Grid.ColumnSpan="1" Grid.Column="0" Visibility="{m:Exp Str=userfile.DataContext.f_gasproperties\=\=$混合型$:$Visible$\,$Collapsed$}" Margin="0,2,0,3" Grid.Row="5" Height="25"  VerticalAlignment="Stretch"  >
-							<TextBlock Margin="0"  Text="混合气价：" Height="25"  HorizontalAlignment="right" Visibility="Collapsed"/>
-						</StackPanel>
-						<TextBlock Text="别    名：" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="5" Height="25" RenderTransformOrigin="0.51,1.16"/>
-						<TextBox Text="{m:Bind Path=f_gasmeterstyle}"    Margin="0,2,0,3" TextWrapping="Wrap"  IsReadOnly="True" Height="25" VerticalAlignment="Stretch" Grid.Row="5" Grid.ColumnSpan="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1"  >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_gasmeterstyle" Default="{m:Exp Str=users.f_gasmeterstyle}" NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.f_changjia}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Text="气表类型：" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25"/>
-						<TextBlock Text="气表品牌：" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
-								 
-								 
-								
-						<TextBox Text="{m:Bind Path=f_rightaddress}" IsReadOnly="True" Grid.Column="5" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
-							<a:Data.Prop>
-								<o:PropertySetter PropertyName="f_rightaddress" NoDependValue="{m:Exp Str=userfile.DataContext.f_cusDom!\=null and userfile.DataContext.f_apartment!\=null:$\{userfile.DataContext.f_cusDom\}号楼\{userfile.DataContext.f_apartment\}$\,$$}" />
-							</a:Data.Prop>
-						</TextBox>
-						<TextBlock Text="住      址：" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
-					</Grid>
-					
-				</toolkit:DockPanel> 
-        	</Grid>
-    	</c:BusyIndicatorEx>
-		<sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"   Margin="1,0,0,0" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
-    	</Grid>
-		
-		<Grid x:Name="fazheprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-483,0,0,-730" Grid.ColumnSpan="1" Height="604">
-			<a:Data.Context>
-	            <o:GeneralObject  Name="fzprint" WebClientInfo="{StaticResource dbclient}" EntityType="t_fazhe"  >		      		
-				</o:GeneralObject>
-		    </a:Data.Context>
-			<Grid.RowDefinitions >
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="24"/>
-				<RowDefinition Height="40"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>
-				<RowDefinition Height="32"/>	
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="80"/>
-				<ColumnDefinition Width="200"/>
-				<ColumnDefinition Width="80"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-			<sdk:Label Margin="0,4,163,3" Content="用户姓名：" Visibility="Collapsed" FontSize="13.333" Grid.Row="1" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="3" Width="0"/>
-			<sdk:Label Content="气表底数：" Visibility="Collapsed" FontSize="13.333" Grid.Row="5" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,4,1,3" Width="0"/>
-			<sdk:Label Content="单    位：" Visibility="Collapsed" FontSize="13.333" Grid.Row="2" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,4,200,3" Grid.Column="1" Width="0"/>
-			<sdk:Label Content="发证日期：" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,3,200,4" Grid.Column="1" Width="0"/>
-			<sdk:Label Content="气表厂家：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,200,4" Grid.Column="1" Width="0"/>
-			<sdk:Label Content="气表型号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="3" Margin="0,4,163,0" Width="0"/>
-			<sdk:Label Margin="0,4,200,0" Content="住　　址：" Visibility="Collapsed" FontSize="13.333" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Column="1" Width="0"/>
-			<sdk:Label Margin="0,4,200,3" Content="用户ID号：" Visibility="Collapsed" FontSize="13.333" HorizontalAlignment="Right" VerticalContentAlignment="Top" Grid.Row="1" Grid.Column="1" Width="0"/>
-			<TextBlock Text="{m:Exp Str=userfile.DataContext.f_userid}" Grid.Column="1" Padding="0,2,0,0" Margin="4,31,76,8" FontSize="16" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-			<TextBlock Text="{m:Exp Str=userfile.DataContext.f_usertype\=\=$民用$:users.f_username\,users.f_linkname}" Grid.Column="2" Grid.Row="1" Padding="0,2,0,0" Margin="54,0,87,7" FontSize="16" Grid.ColumnSpan="2"/>
-			<TextBlock Text="{m:Exp Str=userfile.DataContext.f_address}" Grid.Column="1" Grid.Row="2" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
-			<TextBlock Text="{m:Exp Str=users.f_stair1price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="47" Padding="0,2,0,0" Margin="0,4,0,3" FontSize="12"/>
-			<TextBlock Text="{m:Exp Str=users.f_stair2price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="47" Padding="0,2,0,0" Margin="0,4,0,0" FontSize="12"/>
-			<TextBlock Text="{m:Exp Str=users.f_stair3price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="47" Padding="0,2,0,0" Margin="0,6,0,4" FontSize="12"/>
-			<sdk:Label Content="气表表号：" Visibility="Collapsed" FontSize="13.333" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,6,163,4" Grid.Column="3" Width="0"/>
-			<sdk:Label Content="年" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Left" VerticalContentAlignment="Top" Margin="72,3,0,4" Grid.Column="1" Width="0"/>
-			<sdk:Label Content="月" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" VerticalContentAlignment="Top" Margin="0,3,74,4" Grid.Column="1" HorizontalAlignment="Right" Width="0"/>	
-			<sdk:Label Content="日" Visibility="Collapsed" FontSize="13.333" Grid.Row="6" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,3,34,4" Grid.Column="1" Width="0"/>
-			<TextBlock Text="一阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="0,4,0,3" FontSize="12"/>
-			<TextBlock Text="二阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="0,4,0,0" FontSize="12"/>
-			<TextBlock Text="三阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="0,6,0,4" FontSize="12"/>
-			<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="2"  Width="35" Padding="0,2,0,0" Margin="50,4,0,3" FontSize="12"/>
-			<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="3"  Width="35" Padding="0,2,0,0" Margin="50,4,0,0" FontSize="12"/>
-			<TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="4"  Width="35" Padding="0,2,0,0" Margin="50,6,0,4" FontSize="12"/>
-		</Grid>
-        <c:PrintObj Name="zzprint" Message="是否打印购气证" Area="{m:Res Key=fazheprint}"  UseDefaultPrinter="False"/>		
-		<c:MessageTipObj Name="nouser" Tip="{m:Exp Str=$该用户已经发过折子$}"  IsShow="{m:Exp Str=users.State\=\=$LoadError$}"/>
-	</Grid>
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=yhh}"  Grid.Column="3" Margin="25,2,46,8" Grid.Row="7" Height="25" VerticalAlignment="Stretch" RenderTransformOrigin="1.923,0.4" HorizontalAlignment="Stretch" Width="Auto" Visibility="Collapsed"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="yhh"     NoDependValue="{m:Exp Str=meters.yhh}"  />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBox Text="{m:Bind Path=f_aliasname}"    Margin="0,2,0,3" TextWrapping="Wrap"  IsReadOnly="True" Height="25" VerticalAlignment="Stretch" Grid.Row="5" Grid.ColumnSpan="1" Grid.Column="3" HorizontalAlignment="Stretch" Width="Auto" d:LayoutOverrides="Height"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_aliasname" NoDependValue="{m:Exp Str=meters.f_aliasname}"  />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <StackPanel Grid.ColumnSpan="1" Grid.Column="0" Visibility="{m:Exp Str=userfile.DataContext.f_gasproperties\=\=$混合型$:$Visible$\,$Collapsed$}" Margin="0,2,0,3" Grid.Row="5" Height="25"  VerticalAlignment="Stretch"  >
+                                <TextBlock Margin="0"  Text="混合气价：" Height="25"  HorizontalAlignment="right" Visibility="Collapsed"/>
+                            </StackPanel>
+                            <TextBlock Text="别    名：" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Column="2" Grid.Row="5" Height="25" RenderTransformOrigin="0.51,1.16"/>
+                            <TextBox Text="{m:Bind Path=f_gasmeterstyle}"    Margin="0,2,0,3" TextWrapping="Wrap"  IsReadOnly="True" Height="25" VerticalAlignment="Stretch" Grid.Row="5" Grid.ColumnSpan="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="Auto" Grid.RowSpan="1"  >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_gasmeterstyle" Default="{m:Exp Str=meters.f_gasmeterstyle}" NoDependValue="{m:Exp Str=CoboxPinp.SelectedItem.f_changjia}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="气表类型：" Margin="0,2,0,3" TextWrapping="Wrap" TextAlignment="Right" Grid.Row="5" Height="25"/>
+                            <TextBlock Text="气表品牌：" Margin="0,2,0,3" Grid.Row="4" TextWrapping="Wrap" TextAlignment="Right" Height="25"/>
+
+
+
+                            <TextBox Text="{m:Bind Path=f_rightaddress}" IsReadOnly="True" Grid.Column="5" Grid.Row="2" TextWrapping="Wrap"  Height="25" VerticalAlignment="Stretch" Margin="0,5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.5,0.5" >
+                                <a:Data.Prop>
+                                    <o:PropertySetter PropertyName="f_rightaddress" NoDependValue="{m:Exp Str=userfile.DataContext.f_cusDom!\=null and userfile.DataContext.f_apartment!\=null:$\{userfile.DataContext.f_cusDom\}号楼\{userfile.DataContext.f_apartment\}$\,$$}" />
+                                </a:Data.Prop>
+                            </TextBox>
+                            <TextBlock Text="住      址：" Margin="0,5" Grid.Row="2" TextWrapping="Wrap" TextAlignment="Right" Height="25" Grid.Column="4"/>
+                        </Grid>
+
+                    </toolkit:DockPanel>
+                </Grid>
+            </c:BusyIndicatorEx>
+            <sdk:DataPager x:Name="pager" Source="{Binding Path=ItemsSource.Count,ElementName=userfiles,Converter={StaticResource DataPagerConverter}}"   Margin="1,0,0,0" PageSize="20" Height="24" VerticalAlignment="Bottom"/>
+        </Grid>
+
+        <Grid x:Name="fazheprint"  Background="White"  HorizontalAlignment="Left" Width="523"  VerticalAlignment="Bottom" Margin="-459,0,0,-727" Grid.ColumnSpan="1" Height="604">
+            <a:Data.Context>
+                <o:GeneralObject  Name="fzprint" WebClientInfo="{StaticResource dbclient}" EntityType="t_fazhe"  >
+                </o:GeneralObject>
+            </a:Data.Context>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{m:Exp Str=userfile.DataContext.f_usertype\=\=$民用$:users.f_username\,users.f_linkname}" Grid.Column="1" Padding="0,2,0,0" Margin="4,31,76,8" FontSize="16" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+            <TextBlock Text="{m:Exp Str=userfile.DataContext.f_userid}" Grid.Column="2" Grid.Row="1" Padding="0,2,0,0" Margin="54,0,87,7" FontSize="16" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=userfile.DataContext.f_address}" Grid.Column="1" Grid.Row="2" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=meters.f_userid}" Grid.Column="1" Grid.Row="5" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=userfile.DataContext.f_metertype}" Grid.Column="1" Grid.Row="6" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=users.f_gasproperties}" Grid.Column="1" Grid.Row="7" Padding="0,2,0,0" Margin="4,2,76,5" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=users.f_stair1price}" Grid.Column="1"  HorizontalAlignment="Left" Grid.Row="8"  Width="47" Padding="0,2,0,0" Margin="40,1,0,6" FontSize="12"/>
+            <TextBlock Text="{m:Exp Str=users.f_stair2price}" Grid.Column="1"  HorizontalAlignment="Left" Grid.Row="8"  Width="47" Padding="0,2,0,0" Margin="161,2,0,10" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{m:Exp Str=users.f_stair3price}" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="8"  Width="47" Padding="0,2,0,0" Margin="25,1,0,1" FontSize="12"/>
+            <TextBlock Text="一阶:" Grid.Column="1"  HorizontalAlignment="Right" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="0,0,165,7" FontSize="12"/>
+            <TextBlock Text="二阶:" Grid.Column="1"  HorizontalAlignment="Right" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="0,0,38,12" FontSize="12"/>
+            <TextBlock Text="三阶:" Grid.Column="2"  HorizontalAlignment="Right" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="0,0,143,2" FontSize="12" Grid.ColumnSpan="2"/>
+            <TextBlock Text="元" Grid.Column="1"  HorizontalAlignment="Left" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="92,0,0,7" FontSize="12"/>
+            <TextBlock Text="元" Grid.Column="2"  HorizontalAlignment="Left" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="14,1,0,11" FontSize="12"/>
+            <TextBlock Text="元" Grid.Column="3"  HorizontalAlignment="Left" Grid.Row="8"  Width="35" Padding="0,2,0,0" Margin="77,1,0,1" FontSize="12"/>
+        </Grid>
+        <c:PrintObj Name="zzprint" Message="是否打印购气证" Area="{m:Res Key=fazheprint}"  UseDefaultPrinter="False"/>
+        <c:MessageTipObj Name="nouser" Tip="{m:Exp Str=$该用户已经发过折子$}"  IsShow="{m:Exp Str=users.State\=\=$LoadError$}"/>
+    </Grid>
 </UserControl>

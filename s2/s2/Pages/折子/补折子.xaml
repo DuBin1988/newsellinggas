@@ -25,11 +25,14 @@
 			<o:GeneralObject Name="buzhefei" EntityType="t_singlevalue" WebClientInfo="{StaticResource dbclient}" 
 		  		Path="one/from t_singlevalue where name='补折费' "   >
 				</o:GeneralObject>
-				
-		 
-			
-	 <!--打印-->
-		<b:SyncActionFactory Name="print"  CanSave="{m:Exp Str=SaveAction.State\=\=$End$}"  >
+
+            <b:HQLAction Name="UpdateZheNum"   WebClientInfo="{StaticResource dbclient}" 
+                    CanSave="{m:Exp Str=SaveAction.State\=\=$End$}"			        
+                    HQL="{m:Exp Str=$update t_userinfo  set f_foldnum\=\{userfile.DataContext.f_newfoldnum\}\,f_zherownum\=\'13\'\ where f_userid \=\'\{userfile.DataContext.f_userid\}\'$}"/>
+
+
+            <!--打印-->
+       <b:SyncActionFactory Name="print"  CanSave="{m:Exp Str=UpdateZheNum.State\=\=$End$}"  >
 	   		<b:CallMethodAction    Name="printzhezi" TargetObject="{m:Exp Str=printzz}"     MethodName="TipPrint"/>  
 	   </b:SyncActionFactory> 
 	  
@@ -39,6 +42,11 @@
 			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
 				<!--换折重置行号 -->
 				<o:PropertySetter PropertyName="f_zherownum" NoDependValue="{m:Exp Str=userfile.DataContext.f_type\=\=$换折$:13\,users.f_zherownum}"/>
+        </o:GeneralObject>	
+        <!--表对象 -->
+       <o:GeneralObject Name="meters" EntityType="t_userinfo" WebClientInfo="{StaticResource dbclient}"
+		Path="{m:Exp Str=$one/from t_userfiles where f_userinfoid\=\{userfiles.SelectedItem.f_userid\}}"
+			 IsInit="{m:Exp Str='print.State\=\=$End$' }">
         </o:GeneralObject>	
 			
 			<!--补折对象 -->
@@ -106,7 +114,7 @@
     						<TextBlock Margin="0,8,0,2" Grid.Row="3" TextWrapping="Wrap" Text="气表厂家：" TextAlignment="Right" Height="25"/>
     						<TextBox Text="{m:Bind Path=f_gasmetermanufacturers}" IsReadOnly="True" Grid.Column="1" Margin="0,7,0,3" Grid.Row="3" TextWrapping="Wrap" IsEnabled="True" Height="25" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_gasmetermanufacturers" Value="{m:Exp Str=users.f_gasmetermanufacturers}"/>
+                                    <o:PropertySetter PropertyName="f_gasmetermanufacturers" Default="{m:Exp Str=meters.f_gasmetermanufacturers}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<TextBlock Margin="0,6" TextWrapping="Wrap" Text="卡       号：" TextAlignment="Right" Grid.Row="2"/>
@@ -143,12 +151,12 @@
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_gaswatchbrand}" Grid.Column="3" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" Height="23" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Stretch">
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=users.f_gaswatchbrand}"/>
+                                    <o:PropertySetter PropertyName="f_gaswatchbrand" Value="{m:Exp Str=meters.f_gaswatchbrand}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_metertype}" Grid.Column="3" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Height="23" IsReadOnly="True" VerticalAlignment="Stretch">
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=users.f_metertype}"/>
+                                    <o:PropertySetter PropertyName="f_metertype" Value="{m:Exp Str=meters.f_metertype}"/>
     							</a:Data.Prop>
     						</TextBox>
 							<TextBlock Text="业务类型：" Margin="0,7,0,3" TextWrapping="Wrap" Grid.Column="2" Grid.Row="3" TextAlignment="Right" Height="25" FontSize="13.333"/>
@@ -171,7 +179,7 @@
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_meternumber}" IsReadOnly="True"  Grid.Column="5" Margin="0,6" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=users.f_meternumber}"/>
+                                    <o:PropertySetter PropertyName="f_meternumber" Value="{m:Exp Str=meters.f_meternumber}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_oldfoldnum}" IsReadOnly="True" Grid.Column="3" Margin="0,6" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
@@ -245,7 +253,7 @@
     						</TextBox>
     						<TextBox Text="{m:Bind Path=f_gaspricetype}" IsReadOnly="True" Grid.Column="5" Margin="0,6" Grid.Row="1" TextWrapping="Wrap" IsEnabled="True" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=users.f_gaspricetype}"/>
+                                    <o:PropertySetter PropertyName="f_gaspricetype" Value="{m:Exp Str=users.f_gasproperties}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<sdk:DatePicker SelectedDate="{m:Bind Path=f_recoverypassbookdate}" IsEnabled="False" Grid.Column="5" Margin="0,1,0,5" Grid.Row="8"  IsTodayHighlighted="True" IsDropDownOpen="False" SelectedDateFormat="Short"  HorizontalAlignment="Stretch" Height="29" VerticalAlignment="Stretch" >
@@ -258,7 +266,7 @@
     						<TextBlock Margin="50,7,0,5" Grid.Row="4" TextWrapping="Wrap" Text="新折编号：" TextAlignment="Right" Grid.Column="4"/>
     						<TextBox Text="{m:Bind Path=f_newfoldnum}"   Grid.Column="5" Margin="0,7,0,5" Grid.Row="4" TextWrapping="Wrap" Grid.ColumnSpan="1" IsEnabled="True" HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" >
     							<a:Data.Prop>
-    								<o:PropertySetter PropertyName="f_newfoldnum"   Value="{m:Exp Str=users.f_foldnum}"/>
+    								<o:PropertySetter PropertyName="f_newfoldnum" NotNull="True"  Value="{m:Exp Str=users.f_foldnum}"/>
     							</a:Data.Prop>
     						</TextBox>
     						<TextBlock Margin="0,5,-2,5" Grid.Row="7" TextWrapping="Wrap" Text="部   门：" TextAlignment="Right" HorizontalAlignment="Right" Height="25"/>
