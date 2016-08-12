@@ -522,7 +522,7 @@ Margin="18.667,158.706,381.139,0"/>
 
         <c:PrintObj Name="print" Area="{m:Res Key=aofengprint}" Completed="print_Completed"/>
         <c:PrintObj Name="zzprint" Message="是否打印折子？" Area="{m:Res Key=zheziprint}" />
-        <Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="477"  VerticalAlignment="Bottom" Margin="574,0,-251,-764" Height="516">
+        <Grid x:Name="zheziprint"  Background="White"  HorizontalAlignment="Left" Width="477"  VerticalAlignment="Bottom" Margin="574,0,-251,-764" Height="556">
             <a:Data.Context>
                 <o:GeneralObject  x:Name="zheprint" WebClientInfo="{StaticResource dbclient}" 
         			EntityType="t_myfaka"  />
@@ -541,7 +541,7 @@ Margin="18.667,158.706,381.139,0"/>
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="17"/>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="120"/>
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="17"/>
@@ -566,14 +566,14 @@ Margin="18.667,158.706,381.139,0"/>
                     <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yy-MM$)}" FontSize="12" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="10,0,40,0"  />
+                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yy-MM$)}" FontSize="12" Grid.Column="0" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="26,0,24,0"  />
                 <TextBlock Text="{m:Exp Str=kbfee.lastrecord}" FontSize="12" Grid.Row="0" Grid.Column="2" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
                 <TextBlock Text="{m:Exp Str=kbfee.f_pregas}" FontSize="12" Grid.Row="0" Grid.Column="3" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" />
                 <TextBlock Text="{m:Exp Str=kbfee.f_totalcost}" FontSize="12" Grid.Row="0" Grid.Column="4" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
                 <TextBlock Text="{m:Exp Str=kbfee.f_benqizhye}" FontSize="12" Grid.Row="0" Grid.Column="5" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
                 <TextBlock Text="{m:Exp Str=kbfee.f_grossproceeds}" FontSize="12" Grid.Row="0" Grid.Column="6" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
-                <TextBlock Text="{m:Exp Str=kbfee.f_sgoperator}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />
-                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="8" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom"  />      
+                <TextBlock Text="{m:Exp Str=kbfee.f_sgoperator}" FontSize="12" Grid.Row="0" Grid.Column="7" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="24,0,26,0"  />
+                <TextBlock Text="{m:Exp Str=SysTime.Now.ToString($yyyyMMdd$)}" FontSize="12" Grid.Row="0" Grid.Column="8" Height="20"  TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="17,0,-27,0"  />      
             </Grid>
         </Grid>
     </Grid>
