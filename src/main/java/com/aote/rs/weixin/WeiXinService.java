@@ -459,9 +459,10 @@ public class WeiXinService {
 			map.put("f_out_trade_no", reData.getOut_trade_no());
 			map.put("f_attach", reData.getAttach());
 			map.put("f_time_end", reData.getTime_end());
+			map.put("f_message", "Œ¥∂‘’À");
 			Map<String, Object> r = selList(reData.getOpenid());
 			map.put("f_userid", r.get("f_userid").toString());
-
+			
 			Map<String, Object> row = selweixin(reData.getTransaction_id());
 			if (row == null) {
 
