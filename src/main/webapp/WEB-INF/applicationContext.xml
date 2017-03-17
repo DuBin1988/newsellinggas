@@ -31,9 +31,9 @@
 		class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-     	<property name="url" value="jdbc:sqlserver://127.0.0.1:1433;database=gongyigastest;" />
+     	<property name="url" value="jdbc:sqlserver://127.0.0.1:1433;database=gongyigas;" />
  		<property name="username" value="sa" />
- 			<property name="password" value="123456" />
+ 			<property name="password" value="root" />
 	</bean>
 
  
@@ -109,6 +109,39 @@
 		<property name="port" value="7777" />
 		<property name="timeout" value="5000" />
 	</bean>
+	
+	<!-- 微信补账  每5分钟 -->
+    <bean id="WChargeTask" class="com.aote.quartz.WChargeTask">
+	</bean>
+	
+	<bean id="WCharge"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="WChargeTask" />
+		</property>
+		<property name="targetMethod">
+			<value>update</value>
+		</property>
+		<property name="concurrent" value="false"></property>
+	</bean>
+
+	<bean id="remindCronTriggeristaBcServer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="WCharge" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="scheduleristaBCServer"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<ref bean="remindCronTriggeristaBcServer" />
+		</property>
+	</bean>
+		
+	
 	<!-- 定时提取
 	<bean id="updateTask" class="com.aote.quartz.UpdateTask" >
 		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
