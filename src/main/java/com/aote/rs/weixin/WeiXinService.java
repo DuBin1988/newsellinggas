@@ -157,7 +157,21 @@ public class WeiXinService {
 						+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 				response.sendRedirect(redirect_url);
 
-			} else {
+			}else if(state.equals("qianysoft"))
+			{
+				Map<String, Object> map = selList(openid);
+				if(map == null){
+					// 重定向到绑定页面
+					String return_url = "http://aftest.qynetwork.net/mobile/index.php";
+					response.sendRedirect(return_url);
+				}
+				else{
+				String userid = map.get("f_userid").toString();
+				String to_Url = "http://aftest.qynetwork.net/mobile/index.php?member_u_key=" + userid;
+				response.sendRedirect(to_Url);
+				}	
+			}
+			else {
 				Map<String, Object> map = selList(openid);
 				if (map == null) {
 					// 重定向到绑定页面
@@ -458,11 +472,12 @@ public class WeiXinService {
 			map.put("f_transaction_id", reData.getTransaction_id());
 			map.put("f_out_trade_no", reData.getOut_trade_no());
 			map.put("f_attach", reData.getAttach());
-			map.put("f_time_end", reData.getTime_end());
+			//对账用
 			map.put("f_message", "未对账");
+			map.put("f_time_end", reData.getTime_end());
 			Map<String, Object> r = selList(reData.getOpenid());
 			map.put("f_userid", r.get("f_userid").toString());
-			
+
 			Map<String, Object> row = selweixin(reData.getTransaction_id());
 			if (row == null) {
 
