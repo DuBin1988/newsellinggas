@@ -34,7 +34,8 @@ public class WChargeTask {
 				String  userId=user.get("f_userid").toString();
 				int  pay= (Integer) user.get("f_total_fee");
 				BigDecimal payMent = new BigDecimal(pay);
-				payMent=payMent.divide(new BigDecimal(100), 2);
+//				payMent=payMent.divide(new BigDecimal(100), 2);
+				payMent=payMent.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
 				int a=this.findCharge(sn);
 				if(a!=0){
 					//更新为已对账
