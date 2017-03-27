@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -476,8 +477,13 @@ public class WeiXinService {
 			map.put("f_message", "未对账");
 			map.put("f_time_end", reData.getTime_end());
 			Map<String, Object> r = selList(reData.getOpenid());
+			//为空   查解绑表20170324
+			if(r==null){
+				Map<String, Object> ru = selunbundlingList(reData.getOpenid());
+				map.put("f_userid", ru.get("f_userid").toString());
+			}else{
 			map.put("f_userid", r.get("f_userid").toString());
-
+			}
 			Map<String, Object> row = selweixin(reData.getTransaction_id());
 			if (row == null) {
 
@@ -618,6 +624,24 @@ public class WeiXinService {
 		else
 			return (Map<String, Object>) list.get(0);
 	}
+	/**
+	 * 查解绑表20170324
+	 * @param openid
+	 * @return
+	 */
+	private Map<String, Object> selunbundlingList(String openid) {
+
+		String sql = "from t_weixinunbundling  where f_openid='" + openid + "'";
+		List list = this.hibernateTemplate.find(sql);
+		log.debug("查询用户id" + sql);
+		int x = list.size();
+		System.out.println(x);
+		if (list.size() != 1)
+			return null;
+		else
+			return (Map<String, Object>) list.get(0);
+	}
+
 
 	// 查询微信交易码
 	private Map<String, Object> selweixin(String f_transaction_id) {
@@ -748,15 +772,65 @@ public class WeiXinService {
 			object.put("message", "请您检查输入编号是否正确,或您尚未绑定");
 
 		} else {
+			//查询是否存交易
+			Map<String, Object> map =selWeixinreturn(f_userid,openid);
+
+			if(map==null){
+				//未查到交易 存解绑表20170324
+				Date now=new Date();
+				SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
+				String date=sf.format(now);
+				SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
+				String time=formatTime.format(date);
+				try {
+					insertunbundling(f_userid,openid,date,time);
+				} catch (ParseException e) {
+					log.debug(e);
+					e.printStackTrace();
+				}
+			}
 			String sql = "update t_userfiles set f_openid=NULL  where "
 					+ " f_userid='" + f_userid + "'";
 
 			int length = this.hibernateTemplate.bulkUpdate(sql);
-			log.debug("用户解绑" + sql);
+			log.debug("用户解绑" + sql+"解绑openid:"+openid+"解绑用户编号:"+f_userid);
 			object.put("message", "解绑成功");
 
 		}
 		return object;
 	};
+	/**
+	 * 查询交易是否保存20170324
+	 */
+	private Map<String, Object> selWeixinreturn(String f_userid,String openid) {
+
+		String sql = "from t_weixinreturnxml   where f_userid='"
+				+ f_userid + "' and f_openid='"+openid+"'";
+		List listwx = this.hibernateTemplate.find(sql);
+		log.debug("查询是否存微信交易" + sql);
+		int x = listwx.size();
+
+		if (listwx.size() != 1)
+			return null;
+		else
+			return (Map<String, Object>) listwx.get(0);
+	}
+	/**
+	 * 未存交易  存解绑20170324
+	 * @param f_userid
+	 * @param openid
+	 * @param date
+	 * @throws ParseException 
+	 */
+	public void insertunbundling(String f_userid,String openid,String date,String time) throws ParseException{
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("f_userid", f_userid);
+		map.put("f_openid", openid);
+		SimpleDateFormat formatDate = new SimpleDateFormat("yyyyMMdd");
+		map.put("f_date", formatDate.parse(date));
+		SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
+		map.put("f_time", formatTime.parse(time));
+		hibernateTemplate.saveOrUpdate("t_weixinunbundling", map);
+	}
 
 }

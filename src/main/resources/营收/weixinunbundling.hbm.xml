@@ -1,0 +1,21 @@
+<?xml version="1.0"  encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--微信解绑-->
+    <class   entity-name="t_weixinunbundling" table="t_weixinunbundling" >	
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+		   <!-- openid-->
+		<property name="f_openid" type="string"/>
+			<!-- 用户编号-->
+		<property name="f_userid" type="string"/>
+			<!-- 解绑时间-->
+		<property name="f_date" type="date"/>
+			<!-- 解绑时间-->
+		<property name="f_time" type="time"/>
+		
+	</class> 
+</hibernate-mapping>
