@@ -3,13 +3,17 @@ package com.aote.quartz;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import com.aote.rs.Deposit;
+import com.aote.rs.OverdueService;
 /**
  * 微信补账
  * @author Administrator
@@ -20,6 +24,9 @@ public class WChargeTask {
 	static Logger log = Logger.getLogger(WChargeTask.class);
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+	
+	public OverdueService overdueService=new OverdueService();
+	public Deposit deposit=new Deposit();
 	public boolean finished = true;
 	
 	public void update() throws Exception {
@@ -42,69 +49,21 @@ public class WChargeTask {
 					this.updateWeixinUser(sn);
 					continue;
 				}else{
-				
-				Map userMap = this.findUser(userId);
-				double nowmoney= (Double) userMap.get("f_zhye");
-				BigDecimal nm = new BigDecimal(nowmoney);
-				//最新结余
-				BigDecimal zhye=payMent.add(nm);
 				//收费时间
 				String paytime=user.get("f_time_end").toString();
 				SimpleDateFormat formatDate = new SimpleDateFormat("yyyyMMdd");
-				Date deliverydate =formatDate.parse(paytime.substring(0,8));
+				Date dt =formatDate.parse(paytime.substring(0,8));
 				formatDate = new SimpleDateFormat("HHmmss");
-				Date deliverytime = formatDate.parse(paytime.substring(8,14));
-				Map sale = new HashMap<String, Object>();
-//				sale.put("f_preamount", debts.subtract(zhinajin).doubleValue());
-//				sale.put("f_pregas", debtGas.doubleValue());
-//				sale.put("f_zhinajin", zhinajin.doubleValue());
-//				sale.put("f_useful", handIds);
-//				sale.put("lastinputdate", lastinputdate);
-//				sale.put("f_benqizhye", nowye.doubleValue());
-//				sale.put("f_totalcost", f_totalfee.doubleValue());
-//				sale.put("f_finallygas", debtGas.doubleValue());
-//				sale.put("f_finallybought", debtGas.doubleValue());
-				sale.put("f_yhxz", userMap.get("f_yhxz"));
-				sale.put("f_zhye", userMap.get("f_zhye"));
-				sale.put("f_gasmeterstyle", userMap.get("f_gasmeterstyle"));
-				sale.put("f_apartment", userMap.get("f_apartment"));
-				sale.put("f_userid", userMap.get("f_userid"));
-				sale.put("f_username", userMap.get("f_username"));
-				sale.put("f_address", userMap.get("f_address"));
-				sale.put("f_districtname", userMap.get("f_districtname"));
-				sale.put("f_gaswatchbrand", userMap.get("f_gaswatchbrand"));
-				sale.put("f_metertype", userMap.get("f_metertype"));
-				sale.put("f_gaspricetype", userMap.get("f_gaspricetype"));
-				sale.put("f_gasprice", userMap.get("f_gasprice"));
-				sale.put("f_usertype", userMap.get("f_usertype"));
-				sale.put("f_gasproperties", userMap.get("f_gasproperties"));
-				sale.put("f_beginfee", userMap.get("f_beginfee"));
-				sale.put("f_payment", "现金");
-				sale.put("f_grossproceeds", payMent.doubleValue());
-				sale.put("f_givechange", 0.0);
-				sale.put("f_meternumber", userMap.get("f_meternumber"));
-				sale.put("f_finabuygasdate", deliverydate);
-				sale.put("f_deliverydate", deliverydate);
-				sale.put("f_deliverytime", deliverytime);
-				
-					sale.put("f_filiale", "微信");
-					sale.put("f_sgnetwork", "微信");
-					sale.put("f_sgoperator", "微信");
-					sale.put("f_payfeetype", "微信支付");
-					sale.put("f_comtype", "微信");
-
-				sale.put("f_jiezhangstate", "未结账");
-
-				sale.put("f_payfeevalid", "有效");
-				sale.put("f_amountmaintenance", 0.0);
-				sale.put("f_banksn", sn);
-				sale.put("f_beizhu", "微信补账");
-				String OrgStr = userMap.get("f_OrgStr") + "";
-				sale.put("f_OrgStr", OrgStr.substring(0, OrgStr.lastIndexOf(".") + 1)
-						+ "微信");
-				this.hibernateTemplate.save("t_sellinggas", sale);
-				// 更新用户结余
-				this.updateUser(userId, zhye.doubleValue());
+				Date tm = formatDate.parse(paytime.substring(8,14));
+				//滞纳金
+				double zhinajin=getzhinajin(userId);
+				String bankCode="";
+				String jiGouNo="";
+				String guiYuanNo="weixin";
+				deposit.setHibernateTemplate(hibernateTemplate);
+				deposit.deposit(userId, new SimpleDateFormat("yyyyMMdd").format(dt), new SimpleDateFormat("HHmmss").format(tm), 
+						          payMent.toString(), zhinajin+"", sn, bankCode, jiGouNo, guiYuanNo);
+		
 				//更新为已对账
 				this.updateWeixinUser(sn);
 				}
@@ -128,16 +87,6 @@ public class WChargeTask {
 	}
 	
 	/**
-	 * 更新用户结余
-	 */
-	private void updateUser(String userId, double zhye) throws Exception {
-		// 更新用户
-		String sql = "update t_userfiles  set f_zhye=" + zhye
-				+" where f_userid='"+userId+ "'";
-		this.hibernateTemplate.bulkUpdate(sql);
-		log.debug(" 更新用户结余:" + sql);
-	}
-	/**
 	 * 更新微信为已对账
 	 */
 	private void updateWeixinUser(String sn)  {
@@ -146,20 +95,20 @@ public class WChargeTask {
 		this.hibernateTemplate.bulkUpdate(sql);
 		log.debug(" 更新已对账:" + sql);
 	}
-	/**
-	 * 查找用户信息
-	 */
-	private Map<String, Object> findUser(String userid) {
-		final String userSql = "from t_userfiles  where f_userid='" + userid
-				+ "'  ";
-		List userlist = this.hibernateTemplate.find(userSql);
-		if (userlist.size() != 1) {
-			return null;
-		}
-		Map<String, Object> userMap = (Map<String, Object>) userlist.get(0);
-		log.debug(" 查找用户信息:" + userSql);
-		return userMap;
-	}
+//	/**
+//	 * 查找用户信息
+//	 */
+//	private Map<String, Object> findUser(String userid) {
+//		final String userSql = "from t_userfiles  where f_userid='" + userid
+//				+ "'  ";
+//		List userlist = this.hibernateTemplate.find(userSql);
+//		if (userlist.size() != 1) {
+//			return null;
+//		}
+//		Map<String, Object> userMap = (Map<String, Object>) userlist.get(0);
+//		log.debug(" 查找用户信息:" + userSql);
+//		return userMap;
+//	}
 	/**
 	 * 查找收费信息
 	 */
@@ -176,5 +125,42 @@ public class WChargeTask {
 		log.debug(" 查找收费信息:" + userSql);
 		return a;
 	}
-	
+	/**
+	 * 查欠费
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	private String findHands(String userId) throws Exception {
+		final String sql = "from t_handplan where shifoujiaofei='否' and f_state='已抄表' and lastrecord is not null and f_userid='"
+				+ userId + "' order by id";
+		log.debug(sql);
+		return sql;
+	}
+	/**
+	 * 计算滞纳金
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public double getzhinajin(String userId) throws Exception {
+		double zhinajin=0;
+		String hql = findHands(userId);
+		overdueService.setHibernateTemplate(hibernateTemplate);
+		JSONArray arr =overdueService.invoke(hql);
+		log.debug(arr);
+		if (arr.length() == 0) {
+			zhinajin = 0;
+ 		} else {
+ 			for (int i = 0; i < arr.length(); i++) {
+			JSONObject object = arr.getJSONObject(i);
+			zhinajin = object.getDouble("f_zhinajin")+zhinajin;
+			log.debug(zhinajin);
+			log.debug("返回滞纳金:" + zhinajin);
+ 			}
+		}
+		log.debug("查询时计算滞纳金结束：" + userId);
+		return zhinajin;
+	}
+
 }
