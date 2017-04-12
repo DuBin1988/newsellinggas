@@ -772,23 +772,23 @@ public class WeiXinService {
 			object.put("message", "请您检查输入编号是否正确,或您尚未绑定");
 
 		} else {
-			//查询是否存交易
-			Map<String, Object> map =selWeixinreturn(f_userid,openid);
-
-			if(map==null){
-				//未查到交易 存解绑表20170324
-				Date now=new Date();
-				SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
-				String date=sf.format(now);
-				SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
-				String time=formatTime.format(date);
-				try {
-					insertunbundling(f_userid,openid,date,time);
-				} catch (ParseException e) {
-					log.debug(e);
-					e.printStackTrace();
-				}
-			}
+//			//查询是否存交易
+//			Map<String, Object> map =selWeixinreturn(f_userid,openid);
+//
+//			if(map==null){
+//				//未查到交易 存解绑表20170324
+//				Date now=new Date();
+//				SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
+//				String date=sf.format(now);
+//				SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
+//				String time=formatTime.format(date);
+//				try {
+//					insertunbundling(f_userid,openid,date,time);
+//				} catch (ParseException e) {
+//					log.debug(e);
+//					e.printStackTrace();
+//				}
+//			}
 			String sql = "update t_userfiles set f_openid=NULL  where "
 					+ " f_userid='" + f_userid + "'";
 
@@ -798,7 +798,7 @@ public class WeiXinService {
 
 		}
 		return object;
-	};
+	}
 	/**
 	 * 查询交易是否保存20170324
 	 */
