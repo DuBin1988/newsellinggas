@@ -479,7 +479,7 @@ public class WeiXinService {
 			Map<String, Object> r = selList(reData.getOpenid());
 			//为空   查解绑表20170324
 			if(r==null){
-				Map<String, Object> ru = selunbundlingList(reData.getOpenid());
+				Map<String, Object> ru = selunbundlingList(reData.getOpenid(),reData.getTransaction_id());
 				map.put("f_userid", ru.get("f_userid").toString());
 			}else{
 			map.put("f_userid", r.get("f_userid").toString());
@@ -629,9 +629,9 @@ public class WeiXinService {
 	 * @param openid
 	 * @return
 	 */
-	private Map<String, Object> selunbundlingList(String openid) {
+	private Map<String, Object> selunbundlingList(String openid,String f_transaction_id) {
 
-		String sql = "from t_weixinunbundling  where f_openid='" + openid + "'";
+		String sql = "from t_weixinunbundling  where f_openid='"+openid+"' and f_transaction_id="+f_transaction_id+"'";
 		List list = this.hibernateTemplate.find(sql);
 		log.debug("查询用户id" + sql);
 		int x = list.size();
@@ -772,23 +772,20 @@ public class WeiXinService {
 			object.put("message", "请您检查输入编号是否正确,或您尚未绑定");
 
 		} else {
-//			//查询是否存交易
-//			Map<String, Object> map =selWeixinreturn(f_userid,openid);
-//
-//			if(map==null){
-//				//未查到交易 存解绑表20170324
-//				Date now=new Date();
-//				SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
-//				String date=sf.format(now);
-//				SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
-//				String time=formatTime.format(date);
-//				try {
-//					insertunbundling(f_userid,openid,date,time);
-//				} catch (ParseException e) {
-//					log.debug(e);
-//					e.printStackTrace();
-//				}
-//			}
+			//sava解绑表
+			String f_transaction_id="";
+			Map<String, Object> row = selweixinsn(f_openid);
+			if(row == null){
+				f_transaction_id="0";
+			}else{
+				f_transaction_id=row.get("f_transaction_id").toString();
+			}
+			try {
+				insertunbundling(f_userid,openid,f_transaction_id);
+			} catch (ParseException e) {
+				log.debug("存解绑出错"+e);
+				e.printStackTrace();
+			}
 			String sql = "update t_userfiles set f_openid=NULL  where "
 					+ " f_userid='" + f_userid + "'";
 
@@ -800,36 +797,35 @@ public class WeiXinService {
 		return object;
 	}
 	/**
-	 * 查询交易是否保存20170324
+	 *  查询微信交易码
+	 * @param f_transaction_id
+	 * @return
 	 */
-	private Map<String, Object> selWeixinreturn(String f_userid,String openid) {
+		private Map<String, Object> selweixinsn(String f_openid) {
 
-		String sql = "from t_weixinreturnxml   where f_userid='"
-				+ f_userid + "' and f_openid='"+openid+"'";
-		List listwx = this.hibernateTemplate.find(sql);
-		log.debug("查询是否存微信交易" + sql);
-		int x = listwx.size();
+			String sql = "from t_weixinreturnxml   where f_openid='"+f_openid+"'";
+			List listwx = this.hibernateTemplate.find(sql);
+			log.debug("查询微信交易码" + sql);
+			int x = listwx.size();
 
-		if (listwx.size() != 1)
-			return null;
-		else
-			return (Map<String, Object>) listwx.get(0);
-	}
+			if (listwx.size() != 1)
+				return null;
+			else
+				return (Map<String, Object>) listwx.get(0);
+		}
+	
 	/**
-	 * 未存交易  存解绑20170324
+	 *  存解绑20170324
 	 * @param f_userid
 	 * @param openid
 	 * @param date
 	 * @throws ParseException 
 	 */
-	public void insertunbundling(String f_userid,String openid,String date,String time) throws ParseException{
+	public void insertunbundling(String f_userid,String openid,String tid) throws ParseException{
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("f_userid", f_userid);
 		map.put("f_openid", openid);
-		SimpleDateFormat formatDate = new SimpleDateFormat("yyyyMMdd");
-		map.put("f_date", formatDate.parse(date));
-		SimpleDateFormat formatTime = new SimpleDateFormat("HHmmss");
-		map.put("f_time", formatTime.parse(time));
+		map.put("f_transaction_id", tid);
 		hibernateTemplate.saveOrUpdate("t_weixinunbundling", map);
 	}
 

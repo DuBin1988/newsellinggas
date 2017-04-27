@@ -117,7 +117,7 @@ public class WChargeTask {
 		final String userSql = "from t_sellinggas  where f_banksn='"+sn
 				+ "'";
 		List userlist = this.hibernateTemplate.find(userSql);
-		if (userlist.size() != 1) {
+		if (userlist == null ||userlist.size() != 1) {
 			return a;
 		}else{
 			a=1;
