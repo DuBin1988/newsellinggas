@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>蓝牙写卡</title>
+		
+		<style type="text/css">
+			.blueye {
+				display: flex;
+				
+				/*width: 100%;*/
+				padding: 10px;
+				border-radius: 5px;
+				font-size: 18px;
+				background: #95c4f0;
+			}
+			.blueye input {
+				height: 35px;
+				font-size: 1.2em;
+				background: #4694dd;
+				background: #4694dd;
+				border: none;
+				border-radius: 5px;
+				color: white;		
+				cursor: pointer;
+			}
+			.blueinput {
+				margin: auto;
+				font-size: 18px;
+				border-radius:5px;
+				height: 38px;
+				margin-top: 10px;
+				margin-bottom: 10px;
+				padding-left: 10px;
+				width: 96%;
+			}
+			.input-btn {
+				width: 50%;
+				margin: 5px;
+				-webkit-box-flex: 1;
+				height: 40px;
+				background: #4694dd;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 1.2em;
+				margin-top: 10px;
+			}
+			.input-btn-write {
+				width: 100%;
+				margin: 5px;
+				-webkit-box-flex: 1;
+				height: 40px;
+				background: #4694dd;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 1.2em;
+				margin-top: 10px;
+			}
+			.modifyStyle {
+				padding: 4px 10px;
+			}
+			.flex {
+				display: flex;
+			}
+			.table {
+				display: flex;
+				justify-content: space-between;
+				align-items:center;
+				padding: 5px 10px;
+				margin-top: 5px;
+				height: 30px;
+				border-top: #ccc solid 2px;
+			}
+			.table input {
+				height: 30px;
+				font-size: 1.2em;
+				background: #4694dd;
+				background: #4694dd;
+				border: none;
+				border-radius: 5px;
+				color: white;		
+				cursor: pointer;
+			}
+			.init{
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				padding-top: 50%;
+				background-color: #4694DD;
+				opacity: 0.8;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			.fail{
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				padding-top: 50%;
+				background-color: #fff;
+				opacity: 0.8;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			/*写卡失败记录的样式 */
+			.kuai {
+			display: flex;
+			flex-direction: column;
+			padding-left: 10px;
+			border: 1px solid #eee;
+			border-radius: 10px;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+		.kuai input, .back {
+			width: 100%;
+			-webkit-box-flex: 1;
+			height: 30px;
+			background: #4694dd;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.2em;
+			margin-top: 5px;
+		}
+		.buttom{
+			margin-bottom: 5px;
+		}
+		/* loading加载器样式  */
+		#loadering {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			padding-top: 50%;
+			flex-direction: column;
+			position: fixed;
+			align-items: center;
+			background: rgba(255,255,255,0.8);
+		}
+		#loader {
+			display: flex;
+			justify-content: center;
+			align-items:　center;
+			background: rgba(255,255,255,0.8);
+		}
+		.dot {
+			height: 20px;
+			width: 20px;
+			border-radius: 10px;
+			display: inline-block;
+			position: relative;
+			margin-left: 20px;
+		}
+		
+		#dot1 {
+			background: #ea4335;
+			animation-name: dotloader;
+			animation-duration: 1s;
+			animation-delay: 0.1s;
+			animation-iteration-count: infinite;
+		}
+		#dot2 {
+			background: #34a853;
+			animation-name: dotloader;
+			animation-duration: 1s;
+			animation-delay: 0.2s;
+			animation-iteration-count: infinite;
+		}
+		#dot3 {
+			background: #4285f4;
+			animation-name: dotloader;
+			animation-duration: 1s;
+			animation-delay: 0.3s;
+			animation-iteration-count: infinite;
+		}
+		#dot4 {
+			background: #fbbc05;
+			animation-name: dotloader;
+			animation-duration: 1s;
+			animation-delay: 0.4s;
+			animation-iteration-count: infinite;
+		}
+		#loader h4 {
+			width: 100%;
+			text-align: center;
+		}
+		
+		@keyframes dotloader{
+			0%  { top: 0px;}
+			15% { top: 10px;}
+			30% { top: 0px;}
+			100%{ top: 0px;}
+			
+		}
+		</style>
+	</head>
+	<body>
+		<div id="loadering" style="display: none;">
+			<div id="loader" >
+				<div id="dot1" class="dot"></div>
+				<div id="dot2" class="dot"></div>
+				<div id="dot3" class="dot"></div>
+				<div id="dot4" class="dot"></div>
+			</div>
+			<h4>写卡中，请耐性等待，勿进行任何操作</h4>
+		</div>
+		<div id="fail" style="display:none;">
+			<input type="button" class="back buttom" id="back" onclick="back()" value="返 &nbsp;&nbsp;&nbsp;回" />
+		</div>
+		<div class="fail">
+		</div>
+	<div id="write">
+		<div class="init">请稍等,页面初始化中...</br>
+			由于网络环境和设备问题，可能等待时间较长，如果等待时间过长，请更换至网络环境较好的地方，重新启动操作，给您带来的不便敬请谅解！
+		</div>
+		<span id="tixing" class="blueye">
+			<span id="yue"></span>
+		</span>
+		
+		<input type="number" class="blueinput" id="shuru" onpropertychange="hanshu()" placeholder="请输入购气金额，部分卡会进行气量取整"/>
+
+		<span id="kegouqiliang" class="blueye">
+			<span id="shurujine" >输入的金额为 0.00可购买:0.00方气</span>
+		</span>
+		
+		<div id="chongzhi" class="blueye modifyStyle" style="display: none;">
+			<span>
+				当前余额不足，请充值
+			</span>
+			<input type="button" name="" id="bzchongzhi" value="充值" onclick="f_jiaofe()"/>
+		</div>
+		
+		<div class="flex">
+			<input type="button" class="input-btn-write" name="" id="xieka"  value="写卡" onclick="xieka()"/>	
+		</div>
+		
+		
+		<div class="flex">
+			<input type="button" class="input-btn" name="" id="saomiao" onclick="saomiao()" value="扫描设备" />
+			<input type="button" class="input-btn" name="" id="chaxun" onclick="chaxun()" value="查询写卡失败记录" />
+		</div>
+		
+		<div id="">
+			<table width="100%" style="margin-top: 10px;">
+				<tr id="devicelist"></tr>
+			</table>
+		</div>
+	</div>
+		<script src="js/jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.json-2.3.min.js"></script>
+	    <script src="js/jbase64.js"></script>
+        <script src="http://res.wx.qq.com/open/js/jweixin-1.1.0.js"> </script>  
+		<script src="js/rmtlife.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/util.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<script type="text/javascript">
+		
+		function getUrlParam(name) {
+			var param = decodeURI(window.location.search.substr(1));
+			//alert(param);
+			//alert(window.location.href);
+			//构造一个含有目标参数的正则表达式对象 
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			//匹配目标参数 
+			var r = param.match(reg);
+			//返回参数值 
+			if (r != null)
+				return unescape(r[2]);
+			return null;
+		}
+		
+			
+			function init() {
+				var url = window.location.href.split("#")[0];
+				
+				var path = "/rs/weixin/sign?url=" + url;   
+				//alert(url);
+				$.getJSON(path.replace(/&/g, "$")	, function(data) {
+					/*判断返回是否正确*/
+					if (data.error != null && data.error != "undefined") {
+						alert(data.error);
+						return;
+					}
+					console.log(data);
+					//获取配置参数的参数
+					var appId = data.appid;
+					var timeStamp = data.timestamp;
+					var nonceStr = data.noncestr;
+					var signature = data.signature;
+							
+					wx.config({
+						beta:true,                  //坑：这个很重要，必须配置这个为true,才能调用微信的硬件API
+					    debug: false,               //是否开启调试模式，会自动弹一些消息框显示微信返回的数据
+					    appId: appId,        //让后台返回appid
+					    timestamp: timeStamp,          //让后台返回生成证书时用的时间戳
+					    nonceStr: nonceStr,        //让后台返回生成证书时用的随机串
+					    signature: signature,            //让后台返回已当前URL地址生成的证书
+					    jsApiList: [                //需要调用的接口，都得在这里面写一遍
+					        "openWXDeviceLib",//初始化设备库（只支持蓝牙设备）
+					        "closeWXDeviceLib",//关闭设备库（只支持蓝牙设备）
+					        "getWXDeviceInfos",//获取设备信息（获取当前用户已绑定的蓝牙设备列表）
+					        "sendDataToWXDevice",//发送数据给设备
+					        "startScanWXDevice",//扫描设备（获取周围所有的设备列表，无论绑定还是未被绑定的设备都会扫描到）
+					        "stopScanWXDevice",//停止扫描设备
+					        "connectWXDevice",//连接设备
+					        "disconnectWXDevice",//断开设备连接
+					        "getWXDeviceTicket",//获取操作凭证
+			
+					        //下面是监听事件：
+					        "onWXDeviceBindStateChange",//微信客户端设备绑定状态被改变时触发此事件
+					        "onWXDeviceStateChange",//监听连接状态，可以监听连接中、连接上、连接断开
+					        "onReceiveDataFromWXDevice",//接收到来自设备的数据时触发
+					        "onScanWXDeviceResult",//扫描到某个设备时触发
+					        "onWXDeviceBluetoothStateChange",//手机蓝牙打开或关闭时触发
+					    ]
+					});
+					// alert("初始化完成 ");
+					wx.ready(function() {
+						//alert("初始化设备库 ");
+							
+						//初始化设备库 需填写参数 公众号的原始ID
+						// 奥枫gh_c02001711bbf
+					    WeixinJSBridge.invoke("openWXDeviceLib", {'brandUserName':'gh_c02001711bbf'}, function(res){
+					    	//alert("255openWXDeviceLib-->"+JSON.stringify(res));
+					    	// mlog("打开设备返回："+res.err_msg);  
+					        if (res.err_msg == 'openWXDeviceLib:ok') {
+					            if (res.bluetoothState == 'off') {
+					                $("#xieka").val("未连接设备，无法写卡");
+					                $("#xieka").attr("disabled","disabled");
+					                $("#saomiao").val("请先打开手机蓝牙");
+					                $("#saomiao").attr("disabled","disabled");
+					            };
+					            if (res.bluetoothState == 'unauthorized') {
+					            };
+					            if (res.bluetoothState == 'on') {
+					            	 $("#xieka").val("未连接设备，无法写卡");
+					            	 $("#xieka").attr("disabled","disabled");
+					               // alert("打开微信硬件库成功");
+					            };
+						        $(".fail").fadeOut();
+					        }else {
+					            alert("打开微信硬件库失败！");
+					            $(".fail").text("打开微信硬件库失败！无法进行任何操作！");
+					        }
+					    });
+						
+					    //手机蓝牙状态改变时触发 （这是监听事件的调用方法，注意，监听事件都没有参数）
+				        wx.on('onWXDeviceBluetoothStateChange',function(res){
+				        	//alert(JSON.stringify(res));
+				        	if(res.state == "on"){ //打开蓝牙
+				        		 // alert("蓝牙已打开");
+				        		 $("#saomiao").val("扫描设备");
+					             $("#saomiao").removeAttr("disabled")
+				        	}else {
+				        		alert("蓝牙已关闭");
+				        		 $("#saomiao").val("请先打开手机蓝牙");
+					             $("#saomiao").attr("disabled","disabled");
+				        	}
+				        });
+					    
+				        //设备绑定状态改变事件（解绑成功，绑定成功的瞬间，会触发）
+				        wx.on('onWXDeviceBindStateChange',function(res){
+				        	//alert("设备绑定状态监听"+JSON.stringify(res) + "bindsate"+ res.state);
+				        	if(res.state == "bind"){ // 有设备绑定
+				        		//alert(res.deviceId);
+				        		$("span#"+res.deviceId).text("已绑定未连接 ");
+				        		$("input#"+res.deviceId).attr("value","解绑");
+				        		$("input#"+res.deviceId).attr("onclick","jbind(\' "+ res.deviceId +"\')");
+				        	}else{
+				        		//alert(res.deviceId);
+				        		$("span#"+res.deviceId).text("未绑定 ");
+				        		$("input#"+res.deviceId).attr("value","绑定");
+				        		$("input#"+res.deviceId).attr("onclick","bind(\' "+ res.deviceId +"\')");
+				        		$("#xieka").val("未连接设备，无法写卡");
+				                $("#xieka").attr("disabled","disabled");
+				        	}
+				        });
+				        
+				      	//设备连接状态改变
+				        wx.on('onWXDeviceStateChange',function(res){
+				            //有3个状态：connecting连接中,connected已连接,unconnected未连接
+				            //每当手机和设备之间的状态改变的瞬间，会触发一次
+				            //alert(JSON.stringify(res));
+				            if(res.state === "connected"){
+				            	connectdevice = "1";
+				            	deviceId = res.deviceId;
+				            	$("span#"+res.deviceId).text("已连接 ");
+				            	$("#xieka").val("写卡 ");
+				            	$("#xieka").removeAttr("disabled");
+				            }
+				            if(res.state === "disconnected"){
+				            	connectdevice = "0";
+				            	// alert("断开与设备连接，请重新连接");
+				            	$("#xieka").val("未连接设备，无法写卡");
+				                $("#xieka").attr("disabled","disabled");
+				                $("span#"+res.deviceId).text("已绑定未连接 ");
+				            }
+				            if(res.state === "connecting"){
+				            	connectdevice = "0";
+				            	//alert("开始扫描");
+				                $("span#"+res.deviceId).text("扫描连接中");
+				            }
+				        });
+				        // 扫描到摸个设备 
+				        my_onScanWXDeviceResult();
+				        //获取绑定设备的信息
+				        my_getWXDeviceInfos();
+				        my_onReceiveDataFromWXDevice();
+				        wx.error(function(res){
+				        	$(".fail").text("错误：" + JSON.stringify(res));
+						   // alert("错误sdf信息："+JSON.stringify(res));
+						});
+				       // alert("完成设备初始化");
+				        $(".init").fadeOut();
+			
+					});
+				});
+			}
+			init();
+			var realgqjine;// 真实的购汽金额
+			var realgqgas;// 真实的购气量 
+			var chMoney;// 输入的充值金额
+			var gq; //输入的充值金额可购汽量 
+			var yue; // 账户余额
+			var gas; // 当前累计购汽量
+			function hint(){ 
+				var gz = getZhye("11006875");
+				//alert("gz");
+				//alert(JSON.stringify(gz));
+				// var gz = getZhye(getUrlParam("f_userid"));
+				//var yue = getUrlParam("ic_zhye");
+				//var gas = getUrlParam("pregas");
+				//yue = gz.f_zhye;
+				//gas = gz.gas;
+				//alert(yue);
+				//alert(gas);
+				// 为做真蓝创源通用，将真实购汽信息放在读卡后显示 
+				//var realcanBuy = canbuyGas(gas,yue);
+				var canBuy = buyGas(gas,yue);
+				//alert(canBuy);
+				//alert("本月累计购汽" + gas);
+				//alert("当余额：" + yue);
+				//$('#yue').text("当前余额为 "+yue+"元（可购买"+realcanBuy.realGas+"方气）");
+				$('#yue').text("当前余额为 "+yue+"元（可购买"+canBuy+"方气）");
+				$('#shuru').bind('input propertychange', function() {
+					
+					chMoney = $("#shuru").val() -0;
+					//alert("gas="+ gas + "--chMoney= " + chMoney);
+					// 真实的购汽金额和购汽量 ,为创源真蓝通用，放到读卡后显示 
+					var realgq = canbuyGas(gas,chMoney);
+					realgqjine = realgq.realJine;
+					realgqgas = realgq.realGas;
+					//alert("realgqjine="+ realgqjine + "--realgqgas= " + realgqgas);
+					gq = buyGas(gas,chMoney);
+					// $("#shurujine").text("购气金额为：" + realgqjine + "可购买:"+ realgqgas +"方气");
+					$("#shurujine").text("购气金额为：" + chMoney + "可购买:"+ gq +"方气");
+					if (chMoney > yue) {
+						$("#kegouqiliang").css("display", "none");
+						$("#chongzhi").css({"display": "flex","justify-content": "space-between","align-items":"center"});
+						$("#writecard").attr({"disabled":"disabled"});
+						$("#xieka").val("余额不足，无法写卡");
+		                $("#xieka").attr("disabled","disabled");
+					} else {
+						$("#kegouqiliang").css("display", "block");
+						$("#chongzhi").css("display", "none");
+						$("#writecard").removeAttr("disabled")
+						if(connectdevice === "1"){
+							$("#xieka").val("写卡");
+			                $("#xieka").removeAttr("disabled");
+						}
+						
+					}
+				});
+			}
+			hint();
+			// 点击扫描按钮提哦用扫描函数
+			function saomiao() {
+				//alert("扫描设备");
+				$("#saomiao").val("设备扫描中...");
+				$("#saomiao").attr("disabled","disabled");
+				var result = my_startScanWXDevice();
+				if(result == "0") {
+					alert("扫描失败，请确认设备蓝牙与手机蓝牙已打开");
+				}
+			}
+			// 扫描到设备是更新设备列表
+			function onmacids(macids) {
+				//alert("扫描到的设备id为： " + macids);
+				var ids = macids.split("&");
+				ids.splice(ids.length-1,1); // 去除最后一项无效项 
+				//alert("ids--->"+ ids);
+				for(var i=0; i<ids.length; i++){
+					//alert("ids-i-"+ids[i]);
+					$("#devicelist").append('<td class="table"><span>' + ids[i].split("_")[2] 
+					+'</span><span id="' + ids[i] 
+					+ '">未绑定</span><input type="button" value="绑定" id="'
+					+ ids[i]+'" onclick="bind(\''+ids[i]+'\')"/></td>');
+				}
+			}
+			// 绑定按钮openId
+			function bind(macid) {
+				//alert("绑定 id为--> "+ macid);
+				my_getWXDeviceTicket(macid, getUrlParam('openid'));
+			}
+			function jbind(macid) {
+				//alert("解绑id--> "+ macid);
+				if(confirm("是否真的需要解绑？")){
+					my_getWXDeviceTicketUb(macid, getUrlParam('openid'));
+				}
+				
+			}
+			
+			function xieka() {
+				$('#loadering').css("display","");
+				var xkje = $("#shuru").val() -0;
+				if(xkje <= 0) {
+					alert("请输入正确的写入的金额");
+					$('#loadering').css("display","none");
+					return 
+				}
+				h5(xkje);
+			}
+			// 查看写卡失败记录
+			function chaxun(){
+				$("#fail").css("display","");
+				$("#write").css("display","none");
+				//var userid= getUrlParam('f_userid');
+				var userid = '11006875';
+				var path = "rs/weixin/WriteFail?userid="+userid;
+				$.getJSON(path,function(ret) {
+					if(ret.length === 0) {
+						$("#fail").append('<div class="kuai">未有写卡失败记录</div>');
+					}else {
+						ret.forEach(function(obj) {
+							$("#fail").append('<div class="kuai">'+
+									'<span>用户姓名：'+obj.f_username+'</span>' +
+									'<span>卡&nbsp;&nbsp;号：'+obj.f_iccard+'</span>' +
+									'<span>写卡金额：'+obj.f_writefee+'</span>' +
+									'<span>可购气量：'+obj.f_writegas+'</span>' +
+									'<span>写卡日期：'+obj.f_writedate+'</span>' +
+									//'<input type="button" value="重新写卡" onclick="reWrite('+obj.f_writefee+')"/>' +
+								'</div>');
+						});
+					}
+				})
+			}
+			function reWrite(jine) {
+				if(connectdevice === "1"){
+					alert("重新写卡金额为：" + jine);
+					
+				}else{
+					alert("未连接设备请先连接设备");
+				}
+				
+			}
+			function back() {
+				$("#write").css("display","");
+				$("#fail").css("display","none");
+				$(".kuai").remove();
+			}
+			
+			function f_jiaofe() {
+				var openid = getUrlParam('openid');
+				var qf = getUrlParam('f_zhye');
+				document.location.href = "pay.html?openid=" + openid + "&qf=" + qf;
+			};
+			
+		</script>
+	</body>
+</html>
