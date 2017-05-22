@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<!-- 手机微信缴费写卡表 -->
+	<class   entity-name="t_writeiccard" table="t_writeiccard" >	
+		<id name="id" type="int">
+			<generator class="identity"></generator>
+		</id>
+		<!-- 用户编号 -->
+		<property name="f_userid" type="string"/>
+		
+		<!-- 用户姓名 -->
+		<property name="f_username" type="string"/>
+		
+		<!-- 用户地址 -->
+		<property name="f_address" type="string"/>
+		
+		<!-- ic卡号 -->
+		<property name="f_iccard" type="string"/>
+		
+		<!-- 写卡金额 -->
+		<property name="f_writefee" type="double"/>
+		
+		<!-- 写卡方式 -->
+		<property name="f_writetype" type="string"/>
+		
+		<!-- 写卡标示 -->
+		<property name="f_writemark" type="string"/>
+		
+		<!-- 写卡前余额 -->
+		<property name="f_beforwriteye" type="double"/>
+		
+		<!-- 写卡后余额 -->
+		<property name="f_afterwriteye" type="double"/>
+		
+		<!-- 写卡气量 -->
+		<property name="f_writegas" type="double"/>
+		
+		<!-- 写卡前气量 -->
+		<property name="f_beforwritegas" type="double"/>
+		
+		<!-- 写卡后气量 -->
+		<property name="f_afterwritegas" type="double"/>
+		
+		<!-- 写卡日期   yyyy-MM-dd HH:mm:ss-->
+		<property name="f_writedate" type="string"/>
+	
+		<!-- 写卡前表累计购汽金额，只针对真兰金额表 -->
+		<property name="f_beforljjine" type="double"/>
+		
+		<!-- 写卡后表累计购汽金额，只针对真兰金额表 -->
+		<property name="f_afertljjine" type="double"/>
+		
+		<!-- 卡厂家 -->
+		<property name="f_factory" type="string"/>
+		
+		<!-- 用户性质 -->
+		<property name="f_yhxz" type="string"/>
+		<!-- 小区 -->
+		<property name="f_districtname" type="string"/>
+		<!-- 气价类型 -->
+		<property name="f_gaspricetype" type="string"/>
+		<!-- 气价 -->
+		<property name="f_gasprice" type="double"/>
+		<!-- 用户类型 -->
+		<property name="f_usertype" type="string"/>
+		<!-- 用气类型 -->
+		<property name="f_gasproperties" type="string"/>
+		
+	</class>
+
+</hibernate-mapping>
