@@ -301,7 +301,12 @@ public class WeiXinService {
 			data.setNonce_str(WxSign.getNonceStr());
 			data.setNotify_url(Configure.NOTIFY_URL);
 			data.setOut_trade_no(WxSign.getNonceStr());
-			data.setTotal_fee((int) (Double.parseDouble(money) * 100));// 单位：分
+			log.debug("页面金额"+money);
+			BigDecimal mon=new BigDecimal(money);
+			BigDecimal m = mon.multiply(new BigDecimal(100));
+			data.setTotal_fee(m.intValue());// 单位：分
+			log.debug("页面金额"+m);
+//			data.setTotal_fee((int) (Double.parseDouble(money) * 100));// 单位：分
 			data.setTrade_type("JSAPI");
 			data.setSpbill_create_ip(request.getRemoteAddr());
 			data.setOpenid(openid);
