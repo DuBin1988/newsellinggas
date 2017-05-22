@@ -99,7 +99,7 @@ public class WeiXinService {
 			
 			// String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
 //			String redirect_uri = "http://aofeng.s1.natapp.cc/rs/weixin/getopenid";
-			String redirect_uri = "http://weixin.uxinxin.com/test/rs/weixin/getopenid";
+			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
 //			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
@@ -180,7 +180,7 @@ public class WeiXinService {
 				Map<String, Object> map = selList(openid);
 				if (map == null) {
 					// 重定向到绑定页面
-					String redirect_url = "/test/bind.jsp?openid=" + openid
+					String redirect_url = "/bind.jsp?openid=" + openid
 							+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 					response.sendRedirect(redirect_url);
 				} else {
@@ -216,7 +216,7 @@ public class WeiXinService {
 					double pregas = getPregas(f_userid);
 					System.out.println("pregas" + pregas);
 
-					String redirect_url = "/test/qf.html?openid=" + openid
+					String redirect_url = "/qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
 							+ "&arr=" + arr + "&f_userid=" + f_userid
