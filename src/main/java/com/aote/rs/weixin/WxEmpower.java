@@ -116,7 +116,6 @@ public class WxEmpower {
                        l_urlStream));  
                while ((sCurrentLine = l_reader.readLine()) != null) {  
                    sTotalString += sCurrentLine + "\r\n";  
-          
                }  
                 
 	       } catch (Exception e) {

@@ -225,20 +225,26 @@ public class WxCertificate {
 	public static String doPost(String data, Map<String, Object> map, String gas,
 			String jine,String ljine,String factory,String cardid, JSONObject price, int times)
 	{
-		System.out.println("请求写卡开始");
-//		创源使用
-		String date = getDate("yyyyMMdd");
-		System.out.println("获取日期为"+date);
-		int pirce = (int)((Double)map.get("f_stair1price") *100);
-		System.out.println(pirce);
-		int f_metergasnums = (int)((Double)map.get("f_metergasnums") * 1);
-		// 真蓝使用
-		System.out.println("写卡写卡次数" + times);
 		
-		System.out.println("picre="+pirce+",f_metergasnums="+f_metergasnums);
-		String url = "";
-		JSONObject param = new JSONObject();
 		try {
+			System.out.println("请求写卡开始");
+//			创源使用
+			String date = getDate("yyyyMMdd");
+			System.out.println("获取日期为"+date);
+			int pirce = (int)(Double.parseDouble(price.getString("f_stair1price")) * 100);
+			System.out.println(pirce);
+			int f_metergasnums = 0;
+			Double gasnums =  (Double) map.get("f_metergasnums");
+			if (gasnums != null) {
+				f_metergasnums = (int)(gasnums.doubleValue());
+			}
+			
+			// 真蓝使用
+			System.out.println("写卡写卡次数" + times);
+			
+			System.out.println("picre="+pirce+",f_metergasnums="+f_metergasnums);
+			String url = "";
+			JSONObject param = new JSONObject();
 			if(factory.equals("ZhenLan")) {
 				url = "http://127.0.0.1:8001/WriteGasCard"
 						+ "/" + factory          //厂家

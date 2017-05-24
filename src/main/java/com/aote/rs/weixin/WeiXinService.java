@@ -99,7 +99,7 @@ public class WeiXinService {
 			
 			// String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
 //			String redirect_uri = "http://aofeng.s1.natapp.cc/rs/weixin/getopenid";
-			String redirect_uri = "http://weixin.uxinxin.com/rs/weixin/getopenid";
+			String redirect_uri = "http://weixin.uxinxin.com/test/rs/weixin/getopenid";
 //			System.out.println("==============");
 			String code_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
 					+ appid
@@ -162,7 +162,7 @@ public class WeiXinService {
 
 			}
 			if (state.equals("relieve")) {
-				String redirect_url = "/jbind.jsp?openid=" + openid
+				String redirect_url = "/test/jbind.jsp?openid=" + openid
 						+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 				response.sendRedirect(redirect_url);
 			}else if(state.equals("qianysoft")){
@@ -180,7 +180,7 @@ public class WeiXinService {
 				Map<String, Object> map = selList(openid);
 				if (map == null) {
 					// 重定向到绑定页面
-					String redirect_url = "/bind.jsp?openid=" + openid
+					String redirect_url = "/test/bind.jsp?openid=" + openid
 							+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 					response.sendRedirect(redirect_url);
 				} else {
@@ -216,7 +216,7 @@ public class WeiXinService {
 					double pregas = getPregas(f_userid);
 					System.out.println("pregas" + pregas);
 
-					String redirect_url = "/qf.html?openid=" + openid
+					String redirect_url = "/test/qf.html?openid=" + openid
 							+ "&showwxpaytitle=1" + "&f_zhye=" + f_zhye
 							+ "&money=" + money + "&zhinajin=" + zhinajin
 							+ "&arr=" + arr + "&f_userid=" + f_userid
@@ -1000,21 +1000,22 @@ public class WeiXinService {
 			return "";
 		}
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
+		log.debug("卡云服务返回数据后查询"+f_userid +"账户余额返回的数据：" + map.toString());
 		// 取出账户余额
 		double zhye = (Double) map.get("f_zhye");
 		System.out.println("当前账户余额为：" + zhye);
-		log.debug("当前账户余额为：" + zhye);
+		log.debug(f_userid + "当前账户余额为：" + zhye);
 		
 		BigDecimal xieka = BigDecimal.valueOf(money);
 		BigDecimal jfzhye = BigDecimal.valueOf(zhye);
 		double newzhye = Double.valueOf(jfzhye.subtract(xieka).toString());
-		System.out.println("充值后的账户余额为：" + newzhye);
-		log.debug("充值后的账户余额为：" + newzhye);
+		System.out.println(f_userid + "充值后的账户余额为：" + newzhye);
+		log.debug(f_userid + "充值后的账户余额为：" + newzhye);
 		
 		double f_metergasnums = (Double) map.get("f_metergasnums") + writegas;
 		double f_cumulativepurchase = (Double) map.get("f_cumulativepurchase") + writegas;
-		System.out.println("充值后的账户余额为：" + newzhye);
-		log.debug("充值后的账户余额为：" + newzhye);
+		System.out.println(f_userid + "充值后的账户余额为：" + newzhye);
+		log.debug(f_userid + "充值后的账户余额为：" + newzhye);
 
 		String writeDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		Map<String, Object> mapWrite = new HashMap<String, Object>();
@@ -1044,7 +1045,7 @@ public class WeiXinService {
 		mapWrite.put("f_cumulativemoney", map.get("f_cumulativemoney"));//用户类型
 		txUpdate(money, newzhye, (String)map.get("f_userid"), writegas, f_metergasnums, f_cumulativepurchase, mapWrite,times);
 
-		return "success";
+		return writeDate;
 	}
 	/**
 	 * 写卡成功回调的函数，将写卡记录中的未写卡改为已写卡，修改写卡密码
@@ -1067,7 +1068,6 @@ public class WeiXinService {
 		
 		String kmm = req.getParameter("kmm");
 		String f_userid = req.getParameter("userid");
-//		String f_userid = "11006875";
 		String sql2 = "update t_userfiles set kmm = '"+ kmm +"' where f_userid = '"
 				+ f_userid + "'";
 		this.hibernateTemplate.bulkUpdate(sql2);
@@ -1129,7 +1129,7 @@ public class WeiXinService {
 		savemap.put("f_sgoperator", "微信蓝牙"); //操作员
 		savemap.put("f_payfeetype", "余额扣除");//收费类型
 		savemap.put("f_jiezhangstate", "已结账"); // 结账状态
-		savemap.put("f_deliverytime", WxCertificate.getDate("yyyy-MM-dd", dates[0])); //缴费时间
+		savemap.put("f_deliverytime", WxCertificate.getDate("HH:mm:ss", dates[1])); //缴费时间
 		savemap.put("f_deliverydate", WxCertificate.getDate("yyyy-MM-dd", dates[0])); // 缴费日期
 		
 		savemap.put("f_payfeevalid", "有效"); // 有效无效
@@ -1308,6 +1308,7 @@ public class WeiXinService {
 	public String getDatas(@Context HttpServletRequest req,
 			@Context HttpServletResponse resp) {
 		String datas = req.getParameter("cardinfo");
+		log.debug("从卡中读出的数据："+datas);
 		System.out.println(datas);
 		String data = WxCertificate.doPost(datas);
 		System.out.println(data);
@@ -1320,8 +1321,7 @@ public class WeiXinService {
 		// 读到的卡数据
 		String datas = req.getParameter("cardinfo");
 		// 表编号
-//		String f_userid = req.getParameter("f_userid");
-		String f_userid = "11006875";
+		String f_userid = req.getParameter("f_userid");
 		// 购气量的卡数据
 		String gas = req.getParameter("gas");
 		String factory = req.getParameter("factory");
@@ -1364,6 +1364,7 @@ public class WeiXinService {
 		
 		Map map = (Map) list.get(0);
 		System.out.println("map" + map.toString());
+		log.debug("map" + map.toString());
 		String data = WxCertificate.doPost(datas, map, gas, jine, ljine, factory, 
 				cardid, getPrice(), Integer.parseInt(times)+1); // Integer.parseInt(times) + 1
 		// 从云服务中拿到正确的数据之后，增加一条写卡记录，并修档案中相应的数据

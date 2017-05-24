@@ -6,8 +6,8 @@ f_stair1price = 2.25;
 f_stair2price = 2.93;
 // 从后台获取阶梯气价
 (function() {
-//	var path = "/rs/weixin/price?userid=" + getUrlParam('f_userid'); 
-	var path = "/rs/weixin/price?userid='11006875'"; 
+	var path = "rs/weixin/price?userid=" + getUrlParam('f_userid'); 
+	//var path = "/rs/weixin/price?userid='11006875'"; 
 //	alert(path);
 	$.getJSON(path.replace(/&/g, "$")	, function(data) {
 		// alert(JSON.stringify(data));
@@ -20,8 +20,7 @@ f_stair2price = 2.93;
 		f_stair1amount = data.f_stair1amount;
 		f_stair1price = data.f_stair1price;
 		f_stair2price = data.f_stair2price;
-		//alert("f_stair1amount="+f_stair1amount+",f_stair1price="
-				//+f_stair1price+",f_stair2price="+f_stair2price);
+		alert("f_stair1amount="+f_stair1amount+",f_stair1price="+f_stair1price+",f_stair2price="+f_stair2price);
 	});
 })();
 // 计算当前金额的可购气量
@@ -70,7 +69,7 @@ function canbuyGas(gas,jine) {
 // 获取用户的余额，为保证余额的真实与实时性
 function getZhye(userid){
 	$.ajaxSettings.async = false; 
-	var path = "/rs/weixin/zhye?userid=" + userid;   
+	var path = "rs/weixin/zhye?userid=" + userid;   
 	//alert(path);
 	var getData = $.getJSON(path.replace(/&/g, "$")	, function(data) {
 		//alert("getZhye");
@@ -80,9 +79,11 @@ function getZhye(userid){
 			alert(data.error);
 			return;
 		}
-		// alert(data);
+		//alert(JSON.stringify(data));
 		gas = data.gas;
 		yue = data.f_zhye;
+		//alert(gas);
+		//alert(yue);
 		return data;
 	});
 }

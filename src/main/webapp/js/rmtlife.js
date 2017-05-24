@@ -1020,13 +1020,14 @@ function orgData(data){
 		readData = datas;
 		datas = "";
 	}
+	//alert("duwankashuju-->"+readData);
 	readServices(readData);
 }
 // 从卡里读出的内容存储起来，方便写卡完成后
 var readData
 function readServices(datas) {
-//	alert("向云服务请求");
-//	alert(datas);
+	// alert("向云服务请求");
+	//alert(datas);
 	$.ajax({
 		type:'GET', //GET
 		url: "rs/weixin/datas",
@@ -1071,7 +1072,8 @@ function readServices(datas) {
 	    },
 	    error: function(res) {
 	    	$('#loadering').css("display","none");
-	    	alert("向云服务发送读取卡数据error："+JSON.stringify(res));
+	    	//alert("向云服务发送读取卡数据error："+JSON.stringify(res));
+			alert("向云服务发送读取卡数据失败");
 	    }
 	});
 }
@@ -1090,7 +1092,7 @@ function writeServices(datas, factory, cardid, times, LjMoney) {
 		wdata = {"cardinfo": datas, "f_userid": getUrlParam('f_userid'), 
 			"gas": realgqgas, "jine": realgqjine, "factory":factory, "cardid": cardid, "times":times, "ljine":0}
 	}
-//	alert(times);
+	alert(wdata);
 	$.ajax({
 		type:'GET',
 		url: "rs/weixin/writedata",

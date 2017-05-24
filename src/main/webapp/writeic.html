@@ -3,9 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
+		<meta charset="UTF-8">
 		<title>蓝牙写卡</title>
 		
 		<style type="text/css">
@@ -212,7 +210,7 @@
 				<div id="dot3" class="dot"></div>
 				<div id="dot4" class="dot"></div>
 			</div>
-			<h4>写卡中，请耐性等待，勿进行任何操作</h4>
+			<h4>写卡中，请耐心等候，勿进行任何操作</h4>
 		</div>
 		<div id="fail" style="display:none;">
 			<input type="button" class="back buttom" id="back" onclick="back()" value="返 &nbsp;&nbsp;&nbsp;回" />
@@ -284,7 +282,7 @@
 			function init() {
 				var url = window.location.href.split("#")[0];
 				
-				var path = "/rs/weixin/sign?url=" + url;   
+				var path = "/test/rs/weixin/sign?url=" + url;   
 				//alert(url);
 				$.getJSON(path.replace(/&/g, "$")	, function(data) {
 					/*判断返回是否正确*/
@@ -301,7 +299,7 @@
 							
 					wx.config({
 						beta:true,                  //坑：这个很重要，必须配置这个为true,才能调用微信的硬件API
-					    debug: false,               //是否开启调试模式，会自动弹一些消息框显示微信返回的数据
+					    debug: true,               //是否开启调试模式，会自动弹一些消息框显示微信返回的数据
 					    appId: appId,        //让后台返回appid
 					    timestamp: timeStamp,          //让后台返回生成证书时用的时间戳
 					    nonceStr: nonceStr,        //让后台返回生成证书时用的随机串
@@ -421,7 +419,7 @@
 				        	$(".fail").text("错误：" + JSON.stringify(res));
 						   // alert("错误sdf信息："+JSON.stringify(res));
 						});
-				       // alert("完成设备初始化");
+				       //alert("完成设备初始化");
 				        $(".init").fadeOut();
 			
 					});
@@ -435,14 +433,9 @@
 			var yue; // 账户余额
 			var gas; // 当前累计购汽量
 			function hint(){ 
-				var gz = getZhye("11006875");
-				//alert("gz");
-				//alert(JSON.stringify(gz));
-				// var gz = getZhye(getUrlParam("f_userid"));
-				//var yue = getUrlParam("ic_zhye");
-				//var gas = getUrlParam("pregas");
-				//yue = gz.f_zhye;
-				//gas = gz.gas;
+				//alert(getUrlParam("f_userid"));
+				getZhye(getUrlParam("f_userid"));
+				//getZhye("11023285");
 				//alert(yue);
 				//alert(gas);
 				// 为做真蓝创源通用，将真实购汽信息放在读卡后显示 
@@ -535,8 +528,7 @@
 			function chaxun(){
 				$("#fail").css("display","");
 				$("#write").css("display","none");
-				//var userid= getUrlParam('f_userid');
-				var userid = '11006875';
+				var userid= getUrlParam('f_userid');
 				var path = "rs/weixin/WriteFail?userid="+userid;
 				$.getJSON(path,function(ret) {
 					if(ret.length === 0) {
