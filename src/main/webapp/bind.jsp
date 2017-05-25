@@ -65,7 +65,8 @@
 		xhttp.send();
 	}
 	function f_bind() {
-		var openid = getUrlParam('openid');
+		//var openid = getUrlParam('openid');
+		var openid = "caonimamade";
 		var f_userid = document.getElementById("username").value;
 		//var message = alert(document.getElementById("sel").style.display);
 		if (document.getElementById("sel").style.display == 'block') {

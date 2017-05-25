@@ -270,7 +270,8 @@ public class WeiXinService {
 		obj1.put("ic_zhye", o.getString("f_zhye"));
 		// 又来判断是卡表还是基表用户
 		obj1.put("f_address", o.getString("f_address"));
-
+		double pregas = getPregas(f_userid);
+		obj1.put("pregas", pregas);
 		for (int i = x; i > 0; i--) {
 			obj = new JSONObject();
 			String le = new String(b, len + 8 - 68 * i, 68);
@@ -718,10 +719,11 @@ public class WeiXinService {
 		try {
 
 			String sql = "from t_userfiles   where f_userid='" + f_userid + "'";
-
+			System.out.println(sql);
 			List list = this.hibernateTemplate.find(sql);
 			log.debug("查询用户基本信息" + sql);
 			Map<String, Object> map = (Map<String, Object>) list.get(0);
+			System.out.println("shimeyisi");
 			JSONObject jo = new JSONObject();
 
 			if (list.size() == 0) {
@@ -745,6 +747,7 @@ public class WeiXinService {
 				jo.put("f_address", f_address);
 				jo.put("f_openid", f_openid);
 				jo.put("f_zhye", f_zhye);
+				System.out.println(jo.toString());
 				return jo;
 			}
 		} catch (Exception e) {
@@ -764,7 +767,8 @@ public class WeiXinService {
 		String sqluser = "from t_userfiles   where f_openid='" + openid + "'";
 		List list = this.hibernateTemplate.find(sqluser);
 		log.debug(list.size());
-		if (f_openid.equals("") && list.size() == 0) {
+		System.out.println(list.size());
+		if (list.size() == 0) {
 			String sql = "update t_userfiles set f_openid='" + openid
 					+ "'  where " + " f_userid='" + f_userid + "'";
 			int length = this.hibernateTemplate.bulkUpdate(sql);
@@ -1134,11 +1138,18 @@ public class WeiXinService {
 		
 		savemap.put("f_payfeevalid", "有效"); // 有效无效
 		savemap.put("f_preamount", jine); // 应交金额
+		savemap.put("f_totalcost", jine); // 应交金额
 		savemap.put("f_pregas", writegas); // 预购气量
 		savemap.put("f_allamont", f_metergasnums); // 
 		savemap.put("f_stairtype", ""); // 
 		savemap.put("f_benqizhye", 0.00); //
 		savemap.put("f_zhinajin", 0.00); //
+		
+		savemap.put("f_cardid", map.get("f_cardid")); // 有效无效
+		savemap.put("f_cardid", map.get("f_districtname")); // 有效无效
+		savemap.put("f_times", times);
+		savemap.put("f_metergasnums", f_metergasnums);
+		savemap.put("f_cumulativepurchase", f_cumulativepurchase);
 		
 		log.debug("修改用户档案表的sql为" + sqla);
 		log.debug("增加充值记录数据为：" + map.toString());
@@ -1476,4 +1487,16 @@ public class WeiXinService {
 		obj.put("f_zhye", map.get("f_zhye"));
 		return obj;
 	}
+	
+	// 查询用户
+		@GET
+		@Path("/empower")
+		public String empowerMac(@Context HttpServletRequest req,
+				@Context HttpServletResponse resp) {
+			String mac = req.getParameter("mac");
+			log.debug("授权设备编号为：" + mac);
+			System.out.println(mac);
+			WxEmpower.empower(mac);
+			return "success";
+		}
 }

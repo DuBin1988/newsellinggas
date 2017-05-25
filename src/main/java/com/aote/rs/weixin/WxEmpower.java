@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.codehaus.jettison.json.JSONObject;
 
 /**
@@ -16,28 +17,13 @@ import org.codehaus.jettison.json.JSONObject;
 public class WxEmpower {
 	public static String product_id = "28640"; // 测试账号的产品id，正式上线要改的
 	public static String deviceid = "";
-	public static String appid = "wx792911e3847493a9";
-	public static String appsecret = "69a3f6984900192382e6cd08bac34d45";
-	public static String mac="884AEA45CBE8";
+//	public static String mac="884AEA45CBE8";
 	// 根据access_token（有效时间为7000秒）和product_id（添加设备时就生成了）
 	/**
 	 * 获取deviceid
 	 * @return deviceid 当请求出现错误是，将微信返回的错误信息返回
 	 */
-	public static String getDeviceid() {
-		// 获取当前时间戳，用来判断access_token是否过期
-		String newtime = WxSign.getTimeStamp();
-		String oldtime = WxCertificate.oldtime;
-		int timediffent = Integer.valueOf(newtime) - Integer.valueOf(oldtime);
-		System.out.println("请求的时间差为-->" + timediffent);
-		// 失效重新请求
-		String access_token  = "";
-		if(timediffent > 7000) {
-			access_token  = WxCertificate.getToken(appid, appsecret);
-		}else{
-			access_token  = WxCertificate.token;
-		}
-		
+	public static String getDeviceid(String access_token) {
 		String url = "https://api.weixin.qq.com/device/getqrcode?"
 				+ "access_token="+access_token 
 				+ "&product_id="+product_id;
@@ -63,9 +49,11 @@ public class WxEmpower {
 	 * @param deviceId
 	 * @return
 	 */
-	public void empower(String access_token, String deviceId) {
+	public static void empower(String mac) {
+		String access_token = WxCertificate.getToken(Configure.getAppid(), Configure.getSecret());
+		String deviceid = getDeviceid(access_token);
         String params="{\"device_num\":\"1\",\"device_list\":[{"
-                   +"\"id\":\""+deviceId+"\","
+                   +"\"id\":\""+deviceid+"\","
                    +"\"mac\":\""+mac+"\","
                     +"\"connect_protocol\":\"3\","
                     +"\"auth_key\":\"\","
@@ -84,7 +72,7 @@ public class WxEmpower {
                   System.out.println("返回："+s);
 	}
 	
-	public String sendPost(String requrl,String param){
+	public static String sendPost(String requrl,String param){
         URL url;
          String sTotalString="";  
        try {

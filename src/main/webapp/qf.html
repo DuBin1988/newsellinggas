@@ -14,6 +14,7 @@
 <script src="js/knockout.mapping-latest.js"></script>
 <script src="js/knockout.validation.min.js"></script>
 <script src='js/af.js'></script>
+<script src='js/util.js'></script>
 <body>
 <HEAD>
 <script language="javascript" type="text/javascript "
@@ -34,24 +35,47 @@
 	}
 	function payload() {
 		//获取参数
-		
+		// alert(window.location.href);
 		var qf = getUrlParam('money');
 		var zhye1 = getUrlParam('f_zhye');
 		var zhinajin1 = getUrlParam('zhinajin');
-		//alert(qf);
-		//alert(zhye1);
+		// alert(qf);
+		// alert(zhye1);
 		var userid = getUrlParam('f_userid');
-		//alert(userid);
 		var username = getUrlParam('f_username');
-		//alert(username);
 		var address = getUrlParam('f_address');
-		//alert(address);
-		$("#userid1").html(userid);
-		$("#username1").html(username);
-		$("#address1").html(address);
-		$("#qianfei").html(qf);
-		$("#zhye").html(zhye1);
-		$("#znj").html(zhinajin1);
+		var kahao = getUrlParam('f_cardid');
+		// alert(f_gasmeterstyle); // 为卡表用户添加 （开始）
+		var f_gasmeterstyle = getUrlParam('f_gasmeterstyle');
+		var gas = getUrlParam('pregas');
+		var ic_zhye = getUrlParam('ic_zhye');
+		//alert("类型"+f_gasmeterstyle);
+		if (f_gasmeterstyle === "卡表") {
+			// alert(f_gasmeterstyle);
+			$("#jibiao").hide();
+			$("#userid2").html(userid);
+			$("#username2").html(username);
+			$("#address2").html(address);
+			$("#kahao2").html(kahao);
+			// 调取划价服务，求取剩余金额可购买的气量
+			//alert(zhye1);
+			//alert(ic_zhye);
+			//alert(gas);
+			//alert(JSON.stringify(canbuyGas(gas,ic_zhye)));
+			$("#kzhye").html(ic_zhye);
+			$("#gql").html(buyGas(gas,ic_zhye));
+		
+		}else {
+			$("#kabiao").hide();
+			$("#bluetooth").hide();
+			//alert(address);
+			$("#userid1").html(userid);
+			$("#username1").html(username);
+			$("#address1").html(address);
+			$("#qianfei").html(qf);
+			$("#zhye").html(zhye1);
+			$("#znj").html(zhinajin1);
+		}
 	}
 	$(function() {
 		var tbody = "";
@@ -79,7 +103,19 @@
 	function f_jiaofe() {
 		var openid = getUrlParam('openid');
 		var qf = getUrlParam('money');
-		document.location.href = "pay.html?openid=" + openid + "&qf=" + qf;
+		document.location.href = "pay.html?openid=" + openid + "&qf=" + qf
+		+ "&f_gasmeterstyle=" + getUrlParam('f_gasmeterstyle')+ "&ic_zhye=" + getUrlParam('ic_zhye');
+	};
+	function bluetoothWrite () {
+		var openid = getUrlParam('openid');
+		var qf = getUrlParam('money');
+		var uid = getUrlParam('f_userid');
+		var uname = getUrlParam('f_username');
+		var f_zhye = getUrlParam('f_zhye');
+		var pregas = getUrlParam('pregas');
+		var ic_zhye = getUrlParam('ic_zhye');
+		document.location.href = "writeic.html?openid=" + openid + "&qf=" + qf + "&f_userid=" 
+				+ uid + "&f_zhye=" + f_zhye + "&ic_zhye=" + ic_zhye + "&pregas=" + pregas;
 	}
 </script>
 </HEAD>
@@ -89,7 +125,7 @@
 		<span></span>
 	</div>
 	<aside class="dq">
-		<ol>
+		<ol id="jibiao">
 			<li>编号：<span id="userid1"></span></li>
 			<li>姓名：<span id="username1"></span></li>
 			<li>地址：<span id="address1"></span></li>
@@ -97,9 +133,20 @@
 			<li>您的上期结余金额为：<span id="zhye"></span></li>
 			<li>您的本期结算账户余额为：<span id="qianfei"></span></li>
 		</ol>
+		
+		<ol id="kabiao">
+			<li>编号：<span id="userid2"></span></li>
+			<li>姓名：<span id="username2"></span></li>
+			<li>卡号：<span id="kahao2"></span></li>
+			<li>地址：<span id="address2"></span></li>
+			<li>账户余额：<span id="kzhye"></span>(可购买<span id="gql"></span>方气)</li>
+		</ol>
 	</aside>
 	<div class="btn">
 		<input type="submit" value="去交费" class="bdbtn" onclick="f_jiaofe();">
+		
+		<input id="bluetooth" type="submit" value="蓝牙写卡" class="bdbtn" onclick="bluetoothWrite();"
+		style="margin-top:30px;">
 	</div>
 
 </body>

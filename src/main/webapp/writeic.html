@@ -280,6 +280,7 @@
 		
 			
 			function init() {
+			alert("开始");
 				var url = window.location.href.split("#")[0];
 				
 				var path = "/test/rs/weixin/sign?url=" + url;   
@@ -328,9 +329,9 @@
 						//alert("初始化设备库 ");
 							
 						//初始化设备库 需填写参数 公众号的原始ID
-						// 奥枫gh_c02001711bbf
-					    WeixinJSBridge.invoke("openWXDeviceLib", {'brandUserName':'gh_c02001711bbf'}, function(res){
-					    	//alert("255openWXDeviceLib-->"+JSON.stringify(res));
+						//, {'brandUserName':'gh_ebfedc46bcde'}
+					    WeixinJSBridge.invoke("openWXDeviceLib",{'brandUserName':'gh_ebfedc46bcde'}, function(res){
+					    	//alert("333openWXDeviceLib-->"+JSON.stringify(res));
 					    	// mlog("打开设备返回："+res.err_msg);  
 					        if (res.err_msg == 'openWXDeviceLib:ok') {
 					            if (res.bluetoothState == 'off') {
@@ -399,10 +400,12 @@
 				            }
 				            if(res.state === "disconnected"){
 				            	connectdevice = "0";
-				            	// alert("断开与设备连接，请重新连接");
+				            	//alert("断开与设备连接，请重新连接");
 				            	$("#xieka").val("未连接设备，无法写卡");
 				                $("#xieka").attr("disabled","disabled");
 				                $("span#"+res.deviceId).text("已绑定未连接 ");
+								//alert("haha");
+								$("#loadering").css("display","none");
 				            }
 				            if(res.state === "connecting"){
 				            	connectdevice = "0";

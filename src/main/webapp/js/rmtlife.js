@@ -83,7 +83,7 @@ function my_openWXDeviceLib() {
                 $("#xieka").val("未连接设备，无法写卡");
                 $("#xieka").attr("disabled", "disabled");
                 
-                $("#saomiao").val("请打弿手机蓝牙");
+                $("#saomiao").val("请打手机蓝牙");
                 $("#saomiao").attr("disabled", "disabled");
             };
             if (res.bluetoothState == 'unauthorized') {

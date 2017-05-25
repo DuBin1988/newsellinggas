@@ -29,7 +29,14 @@
 	function payload() {
 		//获取参数
 		var qf = getUrlParam('qf');
-		$("#qianfei").html(qf);
+		var f_gasmeterstyle = getUrlParam('f_gasmeterstyle');
+		var ic_zhye = getUrlParam('ic_zhye');
+		alert(f_gasmeterstyle + "--" + ic_zhye);
+		if (f_gasmeterstyle === "卡表") {
+			$("#qianfei").html(qf);
+		}else {
+			$("#qianfei").html(ic_zhye);
+		}
 
 	}
 
@@ -40,18 +47,22 @@
 		var openid = getUrlParam('openid');
 		var date = getUrlParam('date');
 		var money = document.getElementById("money").value;
-		var qianfei = -getUrlParam('qf');
-		if (qianfei> money) {
-			alert("缴费金额应该大于欠费金额，请重新输入!");
-			//还原为可点击
-			document.getElementById("btn").disabled = false;
-			return;
+		var f_gasmeterstyle = getUrlParam('f_gasmeterstyle');
+		if (f_gasmeterstyle != "卡表") {
+			var qianfei = -getUrlParam('qf');
+			if (qianfei> money) {
+				alert("缴费金额应该大于欠费金额，请重新输入!");
+				//还原为可点击
+				document.getElementById("btn").disabled = false;
+				return;
+			}
 		}
 		
 		var date = new Date();
 		var mytime = date.toLocaleTimeString()
 		var path = "/rs/weixin/getprepayid?openid=" + openid + "&money="
 				+ money + "&date=" + mytime;
+		alert(path);
 		var detail;
 		$.getJSON(path, function(data) {
 			/*判断返回是否正确*/
@@ -61,12 +72,14 @@
 			}
 
 			//调用支付接口
+			alert(JSON.stringify(data));
 			var appId = data.appId;
 			var timeStamp = data.timeStamp;
 			var nonceStr = data.nonceStr;
 			var pg = data.pg;
 			var signType = data.signType;
 			var paySign = data.sign;
+			alert("haha");
 			WeixinJSBridge.invoke('getBrandWCPayRequest', {
 				"appId" : appId,//"wx2421b1c4370ec43b", //公众号名称，由商户传入   
 				"timeStamp" : timeStamp,//"1395712654", //时间戳，自1970年以来的秒数   
@@ -75,7 +88,7 @@
 				"signType" : signType,//"MD5", //微信签名方式:   
 				"paySign" : paySign,//"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
 			}, function(res) { // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回  ok，但并不保证它绝对可靠。  
-				//alert(res.err_msg);
+				alert(JSON.stringify(res));
 				document.getElementById("btn").disabled = false;
 				if (res.err_msg == "get_brand_wcpay_request:ok") {
 					//支付成功
