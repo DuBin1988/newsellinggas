@@ -5,13 +5,20 @@ public class Configure {
 //这个就是自己要保管好的私有Key了（切记只能放在自己的后台代码里，不能放在任何可能被看到源代码的客户端程序中）
 	// 每次自己Post数据给API的时候都要用这个key来对所有字段进行签名，生成的签名会放在Sign这个字段，API收到Post数据的时候也会用同样的签名算法对Post过来的数据进行签名和验证
 	// 收到API的返回的时候也要用这个key来对返回的数据算下签名，跟API的Sign数据进行比较，如果值不一致，有可能数据被第三方给篡改
-
+// 巩义
 	private static String key = "jw1ugmy2hlribgufwgms06dwenlk541w";
 	
 	private static String secret="f67782ad1ee28747b14bd4acc3220eb9";
 
 	//微信分配的公众号ID（开通公众号之后可以获取到）
 	private static String appID = "wxce2e7d7bba8dbe3a";
+	// 奥枫
+//	private static String key = "jw1ugmy2hlribgufwgms06dwenlk541w";
+//	
+//	private static String secret="ddb66436a62b78dfaebc749d797545b7";
+//
+//	//微信分配的公众号ID（开通公众号之后可以获取到）
+//	private static String appID = "wxb018b15c0fbf46e6";
 
 	public static String getSecret() {
 		return secret;

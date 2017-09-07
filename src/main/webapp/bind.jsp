@@ -91,6 +91,8 @@
 					var f_userid = obj.f_userid;
 					var f_username = obj.f_username;
 					var f_address = obj.f_address;
+					var f_gasmeterstyle = odj.f_gasmeterstyle; // 为卡表用户添加 
+					var pregas = odj.pregas;
 					var arr1 = obj.arr;
 					var arr = JSON.stringify(arr1);
 					document.location.href = "qf.html?openid=" + openid
@@ -98,7 +100,8 @@
 							+ "&money=" + money + "&zhinajin=" + zhinajin
 							+ "&arr=" + arr + "&f_userid=" + f_userid
 							+ "&f_username=" + f_username + "&f_address="
-							+ f_address;
+							+ f_address + "&f_gasmeterstyle" + f_gasmeterstyle + "&f_cardid" + f_cardid 
+							+ "&pregas" + pregas;
 				}
 			};
 			xhttp.open("GET", "rs/weixin/one/" + f_userid + "/" + openid, true);

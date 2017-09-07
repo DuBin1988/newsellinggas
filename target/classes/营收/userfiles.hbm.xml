@@ -303,19 +303,19 @@
 		<!--责任部门-->
 		<property name="f_zerenbumen" type="string"/>
 		<!--下面是用气设备 --> 
-	    <set name="f_device" cascade="all-delete-orphan">
+	    <set name="f_device" cascade="all-delete-orphan" lazy="false">
           <key column="parentid" on-delete="noaction" /> 
           <one-to-many entity-name="t_devices" not-found="exception" /> 
         </set>
         
       	<!--下面是档案变更 --> 
-	   	<set name="f_hallchange" cascade="all-delete-orphan">
+	   	<set name="f_hallchange" cascade="all-delete-orphan" lazy="false">
           <key column="parentid" on-delete="noaction" /> 
           <one-to-many entity-name="t_fileschange" not-found="exception" /> 
         </set>
         
       	<!--抄表记录--> 
-	   	<set name="f_handplan" cascade="all-delete-orphan">
+	   	<set name="f_handplan" cascade="all-delete-orphan" lazy="false">
           <key column="users" on-delete="noaction" /> 
           <one-to-many entity-name="t_handplan" not-found="exception" /> 
         </set>

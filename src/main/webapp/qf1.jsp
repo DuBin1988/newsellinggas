@@ -30,6 +30,7 @@
 		return null;
 	}
 	function payload() {
+		alert("-------------------");
 		//获取参数
 		var qf = getUrlParam('money');
 		var zhye1 = getUrlParam('f_zhye');
@@ -44,7 +45,7 @@
 	$(function() {
 		var tbody = "";
 		var array = getUrlParam('arr');
-		
+		alert("-------------------");
 		var list = JSON.parse(array);
 		//------------遍历对象 .each的使用-------------  
 		//对象语法JSON数据格式(当服务器端回调回来的对象数据格式是json数据格式，必须保证JSON的格式要求，回调的对象必须使用eval函数进行转化（否则将得不到Object）。本文不作详细介绍服务器端回调的数据问题，我们将直接自定义对象)  			 11.   $("#result ").html("------------遍历对象.each的使用-------------");  

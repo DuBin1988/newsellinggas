@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>写卡失败记录</title>
+	<style type="text/css">
+		.kuai {
+			display: flex;
+			flex-direction: column;
+			padding-left: 10px;
+			border: 1px solid #eee;
+			border-radius: 10px;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+		span {
+			/*display: block;*/
+		}
+		.kuai input {
+			width: 100%;
+			-webkit-box-flex: 1;
+			height: 30px;
+			background: #4694dd;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.2em;
+			margin-top: 5px;
+		}
+	</style>
+</head>
+<body onload="load()">
+	<div id="fail"></div>
+	<script src="js/jquery-1.7.2.min.js"></script>
+	<script src="js/jquery.json-2.3.min.js"></script>
+	<script type="text/javascript">
+		function load() {
+			getRecord();
+		}
+		function getRecord() {
+			var userid= "123456";
+			var path = "rs/weixin/WriteFail?userid="+userid;
+			$.getJSON(path,function(ret) {
+				ret.forEach(function(obj) {
+					$("#fail").append('<div class="kuai">'+
+							'<span>用户姓名：'+obj.f_username+'</span>' +
+							'<span>卡&nbsp;&nbsp;号：'+obj.f_iccard+'</span>' +
+							'<span>写卡金额：'+obj.f_writefee+'</span>' +
+							'<span>可购气量：'+obj.f_writegas+'</span>' +
+							'<span>写卡日期：'+obj.f_writedate+'</span>' +
+							'<input type="button" value="重新写卡" />' +
+						'</div>');
+				});
+			})
+		}
+	</script>
+</body>
+</html>
