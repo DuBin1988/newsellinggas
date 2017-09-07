@@ -109,7 +109,12 @@
 		<property name="port" value="7777" />
 		<property name="timeout" value="5000" />
 	</bean>
+<<<<<<< HEAD
 	<!-- 微信补账  每8分钟 -->
+=======
+	
+	<!-- 微信补账  每5分钟 -->
+>>>>>>> 629bafab79288d299eb0be1460653b4a6b0672b9
     <bean id="WChargeTask" class="com.aote.quartz.WChargeTask">
 	</bean>
 	
@@ -129,7 +134,11 @@
 			<ref bean="WCharge" />
 		</property>
 		<property name="cronExpression">
+<<<<<<< HEAD
 			<value>0 0/8 * * * ?</value>
+=======
+			<value>0 0/5 * * * ?</value>
+>>>>>>> 629bafab79288d299eb0be1460653b4a6b0672b9
 		</property>
 	</bean>
 
@@ -140,6 +149,10 @@
 		</property>
 	</bean>
 		
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 629bafab79288d299eb0be1460653b4a6b0672b9
 	<!-- 定时提取
 	<bean id="updateTask" class="com.aote.quartz.UpdateTask" >
 		<property name="hibernateTemplate" ref="hibernateTemplate"></property>

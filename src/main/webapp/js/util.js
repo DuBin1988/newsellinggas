@@ -1,4 +1,3 @@
-﻿
 // 阶梯气价分别是一阶气量，一阶气价，二阶气量，二阶气价(二阶气量无用，卡表不限购)
 var f_stair1amount,f_stair1price,f_stair2amount,f_stair2price;
 f_stair1amount = 100;

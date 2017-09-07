@@ -1,4 +1,4 @@
-﻿// 微信签名路径
+// 微信签名路径
 var appIdstr = "";
 var timestampstr = "";
 var nonceStrstr = "";

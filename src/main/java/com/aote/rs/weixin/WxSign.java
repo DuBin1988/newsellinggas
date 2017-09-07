@@ -1,6 +1,9 @@
 package com.aote.rs.weixin;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -33,10 +36,15 @@ public class WxSign {
 	}
 
 	public static String getNonceStr() {
-		Random random = new Random();
-		return MD5.MD5Encode(String.valueOf(random.nextInt(10000)),
-				characterEncoding);
-	}
+		SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
+				Locale.getDefault());
+		Date date = new Date();
+		String OrderID = format.format(date);
+		Random Serial = new Random();
+		OrderID = OrderID + Serial.nextInt();
+		OrderID = OrderID.substring(0,15);
+		return OrderID;
+			}
 
 	public static String getTimeStamp() {
 		return String.valueOf(System.currentTimeMillis() / 1000);

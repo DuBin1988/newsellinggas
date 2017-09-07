@@ -162,7 +162,7 @@ public class WeiXinService {
 
 			}
 			if (state.equals("relieve")) {
-				String redirect_url = "/jbind.jsp?openid=" + openid
+				String redirect_url = "/test/jbind.jsp?openid=" + openid
 						+ "&showwxpaytitle=1" + "&uuid=" + uuid;
 				response.sendRedirect(redirect_url);
 			}else if(state.equals("qianysoft")){
@@ -270,7 +270,8 @@ public class WeiXinService {
 		obj1.put("ic_zhye", o.getString("f_zhye"));
 		// 又来判断是卡表还是基表用户
 		obj1.put("f_address", o.getString("f_address"));
-
+		double pregas = getPregas(f_userid);
+		obj1.put("pregas", pregas);
 		for (int i = x; i > 0; i--) {
 			obj = new JSONObject();
 			String le = new String(b, len + 8 - 68 * i, 68);
@@ -733,10 +734,11 @@ public class WeiXinService {
 		try {
 
 			String sql = "from t_userfiles   where f_userid='" + f_userid + "'";
-
+			System.out.println(sql);
 			List list = this.hibernateTemplate.find(sql);
 			log.debug("查询用户基本信息" + sql);
 			Map<String, Object> map = (Map<String, Object>) list.get(0);
+			System.out.println("shimeyisi");
 			JSONObject jo = new JSONObject();
 
 			if (list.size() == 0) {
@@ -873,7 +875,6 @@ public class WeiXinService {
 		}
 		return object;
 	}
-
 	/**
 	 *  查询微信交易码
 	 * @param f_transaction_id
@@ -1015,14 +1016,17 @@ public class WeiXinService {
 			return "";
 		}
 		Map<String, Object> map = (Map<String, Object>) list.get(0);
+
+		log.debug("卡云服务返回数据后查询"+f_userid +"账户余额返回的数据：" + map.toString());
 		// 取出账户余额
 		double zhye = (Double) map.get("f_zhye");
 		System.out.println("当前账户余额为：" + zhye);
-		log.debug("当前账户余额为：" + zhye);
+		log.debug(f_userid + "当前账户余额为：" + zhye);
 		
 		BigDecimal xieka = BigDecimal.valueOf(money);
 		BigDecimal jfzhye = BigDecimal.valueOf(zhye);
 		double newzhye = Double.valueOf(jfzhye.subtract(xieka).toString());
+
 		System.out.println("充值后的账户余额为：" + newzhye);
 		log.debug("充值后的账户余额为：" + newzhye);
 		
@@ -1030,6 +1034,7 @@ public class WeiXinService {
 		double f_cumulativepurchase = (Double) map.get("f_cumulativepurchase") + writegas;
 		System.out.println("充值后的账户余额为：" + newzhye);
 		log.debug("充值后的账户余额为：" + newzhye);
+
 
 		String writeDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		Map<String, Object> mapWrite = new HashMap<String, Object>();
@@ -1059,7 +1064,9 @@ public class WeiXinService {
 		mapWrite.put("f_cumulativemoney", map.get("f_cumulativemoney"));//用户类型
 		txUpdate(money, newzhye, (String)map.get("f_userid"), writegas, f_metergasnums, f_cumulativepurchase, mapWrite,times);
 
+
 		return "success";
+
 	}
 	/**
 	 * 写卡成功回调的函数，将写卡记录中的未写卡改为已写卡，修改写卡密码
@@ -1077,6 +1084,7 @@ public class WeiXinService {
 		String sql = "update t_writeiccard set f_writemark = '已写卡' where f_iccard = '"
 				+ f_iccard + "' and f_writedate = '" + writeDate + "'";
 		this.hibernateTemplate.bulkUpdate(sql);
+
 		
 		String kmm = req.getParameter("kmm");
 		String f_userid = req.getParameter("userid");
@@ -1085,6 +1093,7 @@ public class WeiXinService {
 		this.hibernateTemplate.bulkUpdate(sql2);
 		log.debug("修改写卡标示为已写卡：" + sql);
 		log.debug("修改卡密码：" + sql2);
+
 		return "success";
 	}
 
@@ -1142,17 +1151,25 @@ public class WeiXinService {
 		savemap.put("f_sgoperator", "微信蓝牙"); //操作员
 		savemap.put("f_payfeetype", "余额扣除");//收费类型
 		savemap.put("f_jiezhangstate", "已结账"); // 结账状态
-		savemap.put("f_deliverytime", WxCertificate.getDate("yyyy-MM-dd", dates[0])); //缴费时间
+		savemap.put("f_deliverytime", WxCertificate.getDate("HH:mm:ss", dates[1])); //缴费时间
+
 		savemap.put("f_deliverydate", WxCertificate.getDate("yyyy-MM-dd", dates[0])); // 缴费日期
 		
 		savemap.put("f_payfeevalid", "有效"); // 有效无效
 		savemap.put("f_preamount", jine); // 应交金额
+
+		savemap.put("f_totalcost", jine); // 应交金额
 		savemap.put("f_pregas", writegas); // 预购气量
 		savemap.put("f_allamont", f_metergasnums); // 
 		savemap.put("f_stairtype", ""); // 
 		savemap.put("f_benqizhye", 0.00); //
 		savemap.put("f_zhinajin", 0.00); //
 		
+		savemap.put("f_cardid", map.get("f_cardid")); // 有效无效
+		savemap.put("f_cardid", map.get("f_districtname")); // 有效无效
+		savemap.put("f_times", times);
+		savemap.put("f_metergasnums", f_metergasnums);
+		savemap.put("f_cumulativepurchase", f_cumulativepurchase);
 		log.debug("修改用户档案表的sql为" + sqla);
 		log.debug("增加充值记录数据为：" + map.toString());
 		// 配置文件中的事务不起作用，所以使用这种方法进行事务操作
@@ -1321,6 +1338,7 @@ public class WeiXinService {
 	public String getDatas(@Context HttpServletRequest req,
 			@Context HttpServletResponse resp) {
 		String datas = req.getParameter("cardinfo");
+		log.debug("从卡中读出的数据："+datas);
 		System.out.println(datas);
 		String data = WxCertificate.doPost(datas);
 		System.out.println(data);
@@ -1334,7 +1352,6 @@ public class WeiXinService {
 		String datas = req.getParameter("cardinfo");
 		// 表编号
 		String f_userid = req.getParameter("f_userid");
-
 		// 购气量的卡数据
 		String gas = req.getParameter("gas");
 		String factory = req.getParameter("factory");
@@ -1461,7 +1478,9 @@ public class WeiXinService {
 			@Context HttpServletResponse resp) throws JSONException {
 		String userid = req.getParameter("userid");
 		System.out.println(userid);
+
 		final String sql = "select * from t_userfiles where f_userid = '" + userid + "'";
+
 		
 		List list = this.hibernateTemplate.executeFind(new HibernateCallback() {
 			
@@ -1482,6 +1501,7 @@ public class WeiXinService {
 		double gas = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue(); // 获取当月累计购气量
 		log.debug("查询到" + userid + "当前账户当月累计购气量为：" + gas);
 		log.debug("查询到" + userid + "当前账户账户余额为：" + map.get("f_zhye"));
+
 		System.out.println(map.toString());
 		JSONObject obj = new JSONObject();
 		obj.put("gas", gas);
@@ -1490,4 +1510,17 @@ public class WeiXinService {
 		obj.put("f_aliasname", map.get("f_aliasname"));
 		return obj;
 	}
+
+	
+	// 查询用户
+//		@GET
+//		@Path("/empower")
+//		public String empowerMac(@Context HttpServletRequest req,
+//				@Context HttpServletResponse resp) {
+//			String mac = req.getParameter("mac");
+//			log.debug("授权设备编号为：" + mac);
+//			System.out.println(mac);
+//			WxEmpower.empower(mac);
+//			return "success";
+//		}
 }
